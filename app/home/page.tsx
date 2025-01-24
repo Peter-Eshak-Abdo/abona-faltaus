@@ -15,13 +15,13 @@ function Home() {
         <a href="site/carousel.html" className="btn btn-primary">
           عرض فقرات
         </a>
-        <a href="blog/al7an/" className="btn btn-primary">
+        <a href="al7an/" className="btn btn-primary">
           الحان
         </a>
-        <a href="../blog/tranim/" className="btn btn-primary">
+        <a href="tranim/" className="btn btn-primary">
           ترانيم
         </a>
-        <a href="blog/w3zat/w3zat.html" className="btn btn-primary">
+        <a href="w3zat/w3zat.html" className="btn btn-primary">
           وعظات
         </a>
         <a href="#" className="btn btn-primary">

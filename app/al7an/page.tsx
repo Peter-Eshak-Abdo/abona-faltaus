@@ -1,4 +1,6 @@
-import SoundPlayer from "./sounds";
+import SomKebirPlayer from "./SomKebirPlayer";
+import KeahkPlayer from "./KeahkPlayer";
+
 
 function Al7an() {
   return (
@@ -22,9 +24,7 @@ function Al7an() {
                 </h4>
                 <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                   <div className="accordion-body">
-                    <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="sec-som-kebir">
-                      <SoundPlayer />
-                    </div>
+                    <SomKebirPlayer />
                   </div>
                 </div>
               </div>
@@ -43,9 +43,7 @@ function Al7an() {
                 </h4>
                 <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
                   <div className="accordion-body">
-                    <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="sec-keahk">
-                      <SoundPlayer />
-                    </div>
+                    <KeahkPlayer />
                   </div>
                 </div>
               </div>
@@ -58,4 +56,8 @@ function Al7an() {
 }
 
 export default Al7an;
+
+
+
+
 

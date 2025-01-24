@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "predeploy": "rm -rf out",
-    "deploy": "npm run build && npm run export && firebase deploy"
+    "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {
     "next": "15.1.3",
