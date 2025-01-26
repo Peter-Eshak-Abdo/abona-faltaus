@@ -3,6 +3,7 @@
 function Footer() {
   return (
     <footer className="container pt-5 mt-5">
+      <hr className="featurette-divider" />
       <div className="row">
         <div className="col-6 col-md-2 mb-3">
           <h5>Section</h5>
@@ -142,3 +143,4 @@ function Footer() {
 }
 
 export default Footer;
+

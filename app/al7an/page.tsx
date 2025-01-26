@@ -1,27 +1,35 @@
 import SomKebirPlayer from "./SomKebirPlayer";
 import KeahkPlayer from "./KeahkPlayer";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 
 function Al7an() {
   return (
     <>
+      <Header />
       <main className="container pt-4 mt-5">
+        <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
+          {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
+          <h1 className="display-1 text-center m-5 text-primary fw-bolder">صفحة ابونا فلتاؤس</h1>
+          <p className="fs-2 text-secondry text-center fw-light mt-5">قسم الالحان الارثوذكسية المسيحية</p>
+        </div>
         <div className="bd-example-snippet bd-code-snippet">
           <div className="bd-example m-0 border-0">
             <div className="accordion" id="accordionExample">
               <div className="accordion-item">
                 <h4 className="accordion-header">
                   <button
-                    className="accordion-button"
+                    className="accordion-button collapsed"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#collapseOne"
-                    aria-expanded="true"
+                    aria-expanded="false"
                     aria-controls="collapseOne"
                   >
                     قسم الحان الصوم الكبير
                   </button>
                 </h4>
-                <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                <div id="collapseOne" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
                   <div className="accordion-body">
                     <SomKebirPlayer />
                     {/* <SomKebirPlayer source={sounds.filter((sound) => sound.monasba === "som-kebir").map((sound) => sound.src)} /> */}
@@ -51,9 +59,14 @@ function Al7an() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 }
 
 export default Al7an;
+
+
+
+
 

@@ -1,9 +1,12 @@
+import Link from "next/link";
+
 function Header() {
   return (
     <header data-bs-theme="dark">
       <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <div className="container-fluid">
+        <div className="container-fluid d-flex justify-content-between">
           <a className="navbar-brand" href="#">
+            <img src="./images/img.jpg" alt="صورة لابونا فلتاؤس" className=" rounded d-inline-block align-text-center mx-2" width={60} height={40} />
             أبونا فلتاؤس
           </a>
           <button
@@ -20,27 +23,38 @@ function Header() {
           <div className="collapse navbar-collapse" id="navbarCollapse">
             <ul className="navbar-nav me-auto mb-2 mb-md-0">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">
+                <Link href={"/"} className="nav-link active">
+                  {/* aria-current="page" */}
                   الصفحة الرئيسية
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <Link href={"/al7an"} className="nav-link active">
                   الحان
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link disabled" aria-disabled="true">
+                <Link href={"/tranim"} className="nav-link active">
+                  ترانيم
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link href={"/3zat"} className="nav-link active">
+                  عظات
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link href={"/"} className="nav-link active">
                   آيات
-                </a>
+                </Link>
               </li>
             </ul>
-            <form className="d-flex" role="search">
+            {/* <form className="d-flex" role="search">
               <input className="form-control me-2" type="search" placeholder="بحث" aria-label="بحث" />
               <button className="btn btn-outline-success" type="submit">
                 بحث
               </button>
-            </form>
+            </form> */}
           </div>
         </div>
       </nav>
@@ -49,3 +63,4 @@ function Header() {
 }
 
 export default Header;
+

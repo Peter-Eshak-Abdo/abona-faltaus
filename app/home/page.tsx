@@ -1,54 +1,73 @@
 // import Image from "next/image";
 import Link from "next/link";
+
 function Home() {
   return (
     <main className="container">
       <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
-        {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
+        {/* <Image src="./images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
+        <img
+          src="./images/img.jpg"
+          alt="صورة لابونا فلتاؤس"
+          className="img-thumbnail rounded"
+          width={750}
+          height={500}
+          sizes="(max-width: 768px) 90vw"
+        />
         <h1 className="display-1 text-center m-5 text-primary fw-bolder">اهلاً بك في صفحة ابونا فلتاؤس</h1>
         <p className="fs-4 text-secondry text-center fw-light mt-5">صفحة مخصصة للألحان والترانيم والمقالات والآيات والتعاليم المسيحية الارثوذكسية</p>
       </div>
       <div className="d-flex flex-row justify-content-evenly">
-        <a href="site/blog.html" className="btn btn-primary">
+        {/* <a href="site/blog.html" className="btn btn-primary">
           اقراء مقالات دينية
-        </a>
-        {/* <a href="site/carousel.html" className="btn btn-primary">
-          عرض فقرات
         </a> */}
-        <Link href={"#"}>عرض فقرات</Link>
-        <Link href={"/al7an"}>
-          الحان
+        <div className="d-grid gap-2 col-3 mx-auto">
+          <Link href={"#"} className="btn btn-primary">
+            عرض فقرات
           </Link>
-        <Link href={"/tranim"}>ترانيم</Link>
-        <Link href={"/w3zat"}>وعظات</Link>
-        <Link href={"#"}>آيات</Link>
-        {/* <a href="al7an/" className="btn btn-primary"></a>
-        <a href="tranim/" className="btn btn-primary">
-          ترانيم
-        </a>
-        <a href="w3zat/w3zat.html" className="btn btn-primary">
-          وعظات
-        </a>
-        <a href="#" className="btn btn-primary">
-          آيات
-        </a> */}
+        </div>
+        <div className="d-grid gap-2 col-5 mx-auto">
+          <Link href={"#sec-al7an-tranim-3zat"} className="btn btn-outline-primary">
+            قسم الالحان والترانيم والعظات
+          </Link>
+        </div>
+        <div className="d-grid gap-2 col-3 mx-auto ">
+          <Link href={"#"} className="btn btn-primary">
+            آيات
+          </Link>
+        </div>
       </div>
-      <hr className="featurette-divider" />
+      <hr className="featurette-divider" id="sec-al7an-tranim-3zat" />
+      <br />
       <br />
       <div className="container marketing">
         <div className="row featurette">
-          <div className="col-md-7">
-            <a href="site/sounds.html">
-              <h2 className="featurette-heading fw-normal lh-1">قسم الالحان والترانيم والوعظات</h2>
-            </a>
+          <div className="col-md-7 text-start">
+            <h2 className="featurette-heading fw-normal lh-1 fw-bolder">قسم الالحان والترانيم والعظات</h2>
             <div className="lead">
-              يوجد مجموعات من الالحان مقسمين علي حسب كل مناسبة الالحان الخاص بها.{" "}
-              <p className="text-secondary">وسيضاف قريباً كلمات اللحنان قبطي وعربي وقبطي معرب.</p>
+              يوجد مجموعات من الالحان مقسمين علي حسب كل مناسبة الالحان الخاص بها.
+              <p className="text-secondary">وسيضاف قريباً كلمات الالحان قبطي وعربي وقبطي معرب.</p>
+              <div className="d-grid gap-2 col-6 mx-auto">
+                <Link href={"/al7an"} className="btn btn-outline-primary">
+                  الحان
+                </Link>
+              </div>
               <br />
-              وفي قسم الترانيم يوجد ترانيم مجمعة ليس لها مناسبة واقسام للترانيم المخصصة لكل مناسبة.{" "}
+              وفي قسم الترانيم يوجد ترانيم مجمعة ليس لها مناسبة واقسام للترانيم المخصصة لكل مناسبة.
               <p className="text-secondary">وسيضاف كلمات الترانيم.</p>
+              <div className="d-grid gap-2 col-6 mx-auto">
+                <Link href={"/tranim"} className="btn btn-outline-primary">
+                  ترانيم
+                </Link>
+              </div>
               <br />
-              وفي قسم الوعظات مقسمة لكل اب كاهن.
+              وفي قسم العظات مقسمة لكل اب كاهن.
+              <p className="text-secondary">وسيضاف تقسيمات لكل اب كاهن.</p>
+              <div className="d-grid gap-2 col-6 mx-auto">
+                <Link href={"/3zat"} className="btn btn-outline-primary">
+                  عظات
+                </Link>
+              </div>
               <br />
             </div>
           </div>
@@ -74,7 +93,7 @@ function Home() {
 
         <hr className="featurette-divider" />
         <div className="row featurette">
-          <div className="col-md-7 order-md-2">
+          <div className="col-md-7 order-md-2 text-start">
             <h2 className="featurette-heading fw-normal lh-1">قسم الآيات</h2>
             <p className="lead">في هذا القسم يوجد الآيات المحفوظة</p>
           </div>
@@ -100,7 +119,7 @@ function Home() {
 
         <hr className="featurette-divider" />
         <div className="row featurette">
-          <div className="col-md-7">
+          <div className="col-md-7 text-start">
             <h2 className="featurette-heading fw-normal lh-1">قسم الفقرات</h2>
             <div className="lead">
               يوجد مواقع لسهيل عمل الفقرات مثل:
@@ -137,15 +156,4 @@ function Home() {
 }
 
 export default Home;
-
-
-
-
-
-
-
-
-
-
-
 
