@@ -1,15 +1,16 @@
-import Link from "next/link";
+import Header from "../components/Header";
+import HomeP from "./home/page";
+import Footer from "../components/Footer";
 
 function Home() {
   return (
-    <div>
-      <h1>Welcome to the Home Page!</h1>
-      <Link href="/about"> Go to About Us </Link>
-      <Link href="/blog/al7an"> Al7an Section </Link>
-      <Link href="/blog/tranim"> Tranim Section </Link>
-      <Link href="/blog/w3zat"> W3zat Section </Link>
-    </div>
+    <>
+      <Header />
+      <HomeP />
+      <Footer />
+    </>
   );
 }
 
 export default Home;
+

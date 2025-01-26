@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": ".next",
+    "public": "out",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -9,9 +9,10 @@
     "rewrites": [
       {
         "source": "**",
-        "destination": "/_next/static/development/_buildManifest.js"
+        "destination": "@/app/page.tsx"
       }
     ]
   }
 }
+
 
