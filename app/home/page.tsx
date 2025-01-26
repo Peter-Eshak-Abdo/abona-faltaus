@@ -18,12 +18,9 @@ function Home() {
         <p className="fs-4 text-secondry text-center fw-light mt-5">صفحة مخصصة للألحان والترانيم والمقالات والآيات والتعاليم المسيحية الارثوذكسية</p>
       </div>
       <div className="d-flex flex-row justify-content-evenly">
-        {/* <a href="site/blog.html" className="btn btn-primary">
-          اقراء مقالات دينية
-        </a> */}
         <div className="d-grid gap-2 col-3 mx-auto">
-          <Link href={"#"} className="btn btn-primary">
-            عرض فقرات
+          <Link href={"#sec-ayat-mkalat"} className="btn btn-primary">
+            الآيات والمقالات الدينية
           </Link>
         </div>
         <div className="d-grid gap-2 col-5 mx-auto">
@@ -31,9 +28,9 @@ function Home() {
             قسم الالحان والترانيم والعظات
           </Link>
         </div>
-        <div className="d-grid gap-2 col-3 mx-auto ">
-          <Link href={"#"} className="btn btn-primary">
-            آيات
+        <div className="d-grid gap-2 col-3 mx-auto">
+          <Link href={"#sec-fqrat"} className="btn btn-primary">
+            عرض فقرات
           </Link>
         </div>
       </div>
@@ -91,11 +88,23 @@ function Home() {
           </div>
         </div>
 
-        <hr className="featurette-divider" />
+        <hr className="featurette-divider" id="sec-ayat-mkalat" />
         <div className="row featurette">
           <div className="col-md-7 order-md-2 text-start">
-            <h2 className="featurette-heading fw-normal lh-1">قسم الآيات</h2>
+            <h2 className="featurette-heading fw-normal lh-1">قسم الآيات والمقالات</h2>
             <p className="lead">في هذا القسم يوجد الآيات المحفوظة</p>
+            <div className="d-grid gap-2 col-6 mx-auto">
+              <Link href={"/ayat"} className="btn btn-outline-primary">
+                الآيات
+              </Link>
+            </div>
+            <br />
+            <p className="lead">في هذا المقالات الدينية</p>
+            <div className="d-grid gap-2 col-6 mx-auto">
+              <Link href={"/mkalat"} className="btn btn-outline-primary">
+                المقالات
+              </Link>
+            </div>
           </div>
           <div className="col-md-5 order-md-1">
             <svg
@@ -117,7 +126,7 @@ function Home() {
           </div>
         </div>
 
-        <hr className="featurette-divider" />
+        <hr className="featurette-divider" id="sec-fqrat"/>
         <div className="row featurette">
           <div className="col-md-7 text-start">
             <h2 className="featurette-heading fw-normal lh-1">قسم الفقرات</h2>
@@ -156,4 +165,6 @@ function Home() {
 }
 
 export default Home;
+
+
 
