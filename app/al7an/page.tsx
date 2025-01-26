@@ -1,7 +1,6 @@
 import SomKebirPlayer from "./SomKebirPlayer";
 import KeahkPlayer from "./KeahkPlayer";
 
-
 function Al7an() {
   return (
     <>
@@ -25,6 +24,7 @@ function Al7an() {
                 <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                   <div className="accordion-body">
                     <SomKebirPlayer />
+                    {/* <SomKebirPlayer source={sounds.filter((sound) => sound.monasba === "som-kebir").map((sound) => sound.src)} /> */}
                   </div>
                 </div>
               </div>
@@ -56,8 +56,4 @@ function Al7an() {
 }
 
 export default Al7an;
-
-
-
-
 

@@ -217,16 +217,16 @@
 //     }
 //   }
 "use client";
-import React, { useEffect } from "react";
+// import React, { useEffect } from "react";
 
-interface Sound {
-  monasba: string;
-  name: string;
-  duration: string;
-  src: string;
-}
+// interface Sound {
+//   monasba: string;
+//   name: string;
+//   duration: string;
+//   src: string;
+// }
 
-const sounds: Sound[] = [
+const sounds = [
   {
     monasba: "som-kebir",
     name: "لحن إنثو تي تي شوري",
@@ -293,10 +293,10 @@ const sounds: Sound[] = [
 ];
 
 const KeahkPlayer: React.FC = () => {
-  useEffect(() => {
-    // Moved the alert inside useEffect to avoid running it on every render.
-    // alert("Hello!");
-  }, []); // Empty dependency array ensures this runs only once on mount
+  // useEffect(() => {
+  //   // Moved the alert inside useEffect to avoid running it on every render.
+  //   alert("Hello!");
+  // }, []); // Empty dependency array ensures this runs only once on mount
 
   return (
     <div id="sec-keahk" className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
@@ -304,16 +304,14 @@ const KeahkPlayer: React.FC = () => {
         .filter((sound) => sound.monasba === "keahk")
         .map((sound, index) => (
           <div className="col" key={`keahk-${index}`}>
-            {" "}
-            {/* Added key for React */}
             <div className="card shadow-sm pt-3 ps-3" key={`keahk-${index}`}>
               <div className="d-flex justify-content-center align-items-center">
-                <audio controls>
+                <audio controls is="x-audio" id={`keahk-audio-${index}`}>
                   <source src={sound.src} type="audio/mpeg" />
                   متصفحك لا يدعم ملفات الصوت.
                 </audio>
               </div>
-              <div className="card-body">
+              <div className="card-body text-start">
                 <p className="card-text">
                   <span className="fw-bold">اسم اللحن: </span>
                   {sound.name}
@@ -327,7 +325,10 @@ const KeahkPlayer: React.FC = () => {
                       تفاصيل
                     </button>
                   </div>
-                  <small className="text-body-secondary">{sound.duration}</small>
+                  <small className="text-body-secondary">
+{/* {(document.getElementById(`keahk-audio-${index}`) as HTMLAudioElement)?.duration} */}
+                    {sound.duration}
+                  </small>
                 </div>
               </div>
             </div>
@@ -338,6 +339,7 @@ const KeahkPlayer: React.FC = () => {
 };
 
 export default KeahkPlayer;
+
 
 
 

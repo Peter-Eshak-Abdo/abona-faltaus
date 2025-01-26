@@ -1,5 +1,5 @@
 // import Image from "next/image";
-
+import Link from "next/link";
 function Home() {
   return (
     <main className="container">
@@ -12,12 +12,17 @@ function Home() {
         <a href="site/blog.html" className="btn btn-primary">
           اقراء مقالات دينية
         </a>
-        <a href="site/carousel.html" className="btn btn-primary">
+        {/* <a href="site/carousel.html" className="btn btn-primary">
           عرض فقرات
-        </a>
-        <a href="al7an/" className="btn btn-primary">
+        </a> */}
+        <Link href={"#"}>عرض فقرات</Link>
+        <Link href={"/al7an"}>
           الحان
-        </a>
+          </Link>
+        <Link href={"/tranim"}>ترانيم</Link>
+        <Link href={"/w3zat"}>وعظات</Link>
+        <Link href={"#"}>آيات</Link>
+        {/* <a href="al7an/" className="btn btn-primary"></a>
         <a href="tranim/" className="btn btn-primary">
           ترانيم
         </a>
@@ -26,7 +31,7 @@ function Home() {
         </a>
         <a href="#" className="btn btn-primary">
           آيات
-        </a>
+        </a> */}
       </div>
       <hr className="featurette-divider" />
       <br />
@@ -132,6 +137,14 @@ function Home() {
 }
 
 export default Home;
+
+
+
+
+
+
+
+
 
 
 
