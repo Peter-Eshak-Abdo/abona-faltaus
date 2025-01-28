@@ -2,12 +2,12 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import AbDaodLam3yAltobaPlayer from "./AbDaodLam3yAltobaPlayer";
 import AbDaodLam3yAlslaPlayer from "./AbDaodLam3yAlslaPlayer";
+import BabaShenodaPlayer from "./BabaShenodaPlayer";
 
 function W3zat() {
   return (
     <>
       <Header />
-
       <main className="container pt-4 mt-5">
         <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
           {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
@@ -74,9 +74,7 @@ function W3zat() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {/* <div className="accordion-item">
+              <div className="accordion-item">
                 <h4 className="accordion-header">
                   <button
                     className="accordion-button collapsed"
@@ -86,15 +84,17 @@ function W3zat() {
                     aria-expanded="false"
                     aria-controls="collapseTwo"
                   >
-                    قسم ترانيم عيد القيامة
+                    قسم عظات البابا شنودة الثالث
                   </button>
                 </h4>
                 <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
                   <div className="accordion-body">
-                    <AbDaodLam3yAltobaPlayer />
+                    <BabaShenodaPlayer />
                   </div>
                 </div>
-              </div> */}
+              </div>
+            </div>
+          </div>
         </div>
       </main>
       <Footer />
