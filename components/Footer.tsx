@@ -56,7 +56,7 @@ function Footer() {
         <div className="col-md-5 offset-md-1 mb-3">
           <form>
             <h5>اشترك علشان يصلك كل جديد</h5>
-            <p>ده طبعاً لسة مش بعرف اعملك ف سيبك من الحتة ده دلوقتي وشوف باقيتة الصفحة وحلاص</p>
+            <p>ده طبعاً لسة مش بعرف اعملك ف سيبك من الحت ده دلوقتي وشوف باقيتة الصفحة وحلاص</p>
             <div className="d-flex flex-column flex-sm-row w-100 gap-2">
               <label htmlFor="newsletter1" className="visually-hidden">
                 ايميلك
@@ -83,12 +83,13 @@ function Footer() {
           <li className="ms-3">
             <a className="text-body" href="https://wa.me/message/AOH44Q2TY3H2E1" title="Whatsapp">
               <i className="bi bi-whatsapp text-success">
-                <p className="fs-1 fw-bolder text-primary-emphasis">Whatsapp</p>
+                
+                {/* <p className="fs-1 fw-bolder text-primary-emphasis">Whatsapp</p> */}
               </i>
             </a>
           </li>
           <li className="ms-3">
-            <p className="fs-1 fw-bolder text-primary-emphasis">Whatsapp</p>
+            {/* <p className="fs-1 fw-bolder text-primary-emphasis">Whatsapp</p> */}
             <a className="text-body" href="https://wa.me/qr/36KBTEORX2N3O1" title="Whatsapp">
               <i className="bi bi-whatsapp text-success-emphasis"></i>
             </a>
