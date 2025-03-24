@@ -83,7 +83,7 @@ function Footer() {
           <li className="ms-3">
             <a className="text-body" href="https://wa.me/message/AOH44Q2TY3H2E1" title="Whatsapp">
               <i className="bi bi-whatsapp text-success">
-                
+
                 {/* <p className="fs-1 fw-bolder text-primary-emphasis">Whatsapp</p> */}
               </i>
             </a>
@@ -101,4 +101,3 @@ function Footer() {
 }
 
 export default Footer;
-
