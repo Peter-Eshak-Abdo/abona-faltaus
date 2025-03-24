@@ -2,6 +2,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import AbDaodLam3yAltobaPlayer from "./AbDaodLam3yAltobaPlayer";
 import AbDaodLam3yAlslaPlayer from "./AbDaodLam3yAlslaPlayer";
+import BabaShenodyPlayer from "./BabaShenodyPlayer";
 
 function W3zat() {
   return (
@@ -11,9 +12,20 @@ function W3zat() {
       <main className="container pt-4 mt-5">
         <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
           {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
-          <h1 className="display-1 text-center m-5 text-primary fw-bolder">صفحة ابونا فلتاؤس</h1>
-          <p className="fs-2 text-secondry text-center fw-light mt-5">قسم العظات الارثوذكسية المسيحية</p>
-          <img src="./images/sec1.jpeg" alt="قسم العظات" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" />
+          <h1 className="display-1 text-center m-5 text-primary fw-bolder">
+            صفحة ابونا فلتاؤس
+          </h1>
+          <p className="fs-2 text-secondry text-center fw-light mt-5">
+            قسم العظات الارثوذكسية المسيحية
+          </p>
+          <img
+            src="./images/sec1.jpeg"
+            alt="قسم الالحان والترانيم والعظات"
+            className="img-thumbnail rounded"
+            width={400}
+            height={200}
+            sizes="(max-width: 768px) 90vw"
+          />
         </div>
         <div className="bd-example-snippet bd-code-snippet">
           <div className="bd-example m-0 border-0">
@@ -31,7 +43,11 @@ function W3zat() {
                     قسم عظات ابونا داؤد لمعي
                   </button>
                 </h4>
-                <div id="collapseOne" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div
+                  id="collapseOne"
+                  className="accordion-collapse collapse"
+                  data-bs-parent="#accordionExample"
+                >
                   <div className="accordion-body">
                     <div className="accordion-item">
                       <h4 className="accordion-header">
@@ -46,7 +62,11 @@ function W3zat() {
                           قسم الصلاة
                         </button>
                       </h4>
-                      <div id="collapseAlsla" className="accordion-collapse collapse" data-bs-parent="#accordionExample1">
+                      <div
+                        id="collapseAlsla"
+                        className="accordion-collapse collapse"
+                        data-bs-parent="#accordionExample1"
+                      >
                         <div className="accordion-body">
                           <AbDaodLam3yAlslaPlayer />
                         </div>
@@ -66,7 +86,11 @@ function W3zat() {
                           قسم التوبة
                         </button>
                       </h4>
-                      <div id="collapseAltoba" className="accordion-collapse collapse" data-bs-parent="#accordionExample1">
+                      <div
+                        id="collapseAltoba"
+                        className="accordion-collapse collapse"
+                        data-bs-parent="#accordionExample1"
+                      >
                         <div className="accordion-body">
                           <AbDaodLam3yAltobaPlayer />
                         </div>
@@ -75,9 +99,7 @@ function W3zat() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {/* <div className="accordion-item">
+              <div className="accordion-item">
                 <h4 className="accordion-header">
                   <button
                     className="accordion-button collapsed"
@@ -87,15 +109,21 @@ function W3zat() {
                     aria-expanded="false"
                     aria-controls="collapseTwo"
                   >
-                    قسم ترانيم عيد القيامة
+                    قسم عظات البابا شنودة
                   </button>
                 </h4>
-                <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div
+                  id="collapseTwo"
+                  className="accordion-collapse collapse"
+                  data-bs-parent="#accordionExample"
+                >
                   <div className="accordion-body">
-                    <AbDaodLam3yAltobaPlayer />
+                    <BabaShenodyPlayer />
                   </div>
                 </div>
-              </div> */}
+              </div>
+            </div>
+          </div>
         </div>
       </main>
       <Footer />
@@ -104,4 +132,3 @@ function W3zat() {
 }
 
 export default W3zat;
-
