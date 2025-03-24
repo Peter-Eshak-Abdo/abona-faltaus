@@ -25,6 +25,12 @@ const sounds = [
     duration: "12:17",
     src: "./al7an/مديحة_يا_أم_النور_يا_فخر_الأمة.mp3",
   },
+  {
+    monasba: "nhdet-al3dra",
+    name: "لحن فاي بي إبليمين",
+    duration: "4:47",
+    src: "./al7an/لحن فاي بي إبليمين.mp3",
+  },
 ];
 
 const NhdetAl3draPlayer: React.FC = () => {

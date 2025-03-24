@@ -238,27 +238,21 @@
 // }
 
 const sounds = [
-  {
-    monasba: "som-kebir",
-    name: "لحن إنثو تي تي شوري",
-    duration: "3:06",
-    // src: "https://www.dropbox.com/scl/fi/i03y7cndra6lqxcz2mzog/06.mp3?rlkey=ts1l7ps97knknc23e6m40rloq&st=c7yx2pxn&dl=0",
-    // src: "https://drive.google.com/file/d/1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI/view?usp=drive_link",
-    // src: "https://cisuezedu-my.sharepoint.com/:u:/g/personal/fciugs118_ci_suez_edu_eg/ER1off32v05Fn7y9P8FUONIBtuAHrFAB-KitY7-zIiIjcg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=hfRX4X",
+  // {
+  //   monasba: "som-kebir",
+  //   name: "لحن إنثو تي تي شوري",
+  //   duration: "3:06",
+  //   // src: "https://www.dropbox.com/scl/fi/i03y7cndra6lqxcz2mzog/06.mp3?rlkey=ts1l7ps97knknc23e6m40rloq&st=c7yx2pxn&dl=0",
+  //   // src: "https://drive.google.com/file/d/1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI/view?usp=drive_link",
+  //   // src: "https://cisuezedu-my.sharepoint.com/:u:/g/personal/fciugs118_ci_suez_edu_eg/ER1off32v05Fn7y9P8FUONIBtuAHrFAB-KitY7-zIiIjcg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=hfRX4X",
 
-    src: "./al7an/06 لحن إنثو تي تي شوري الصيامي.mp3",
-  },
+  //   src: "./al7an/06 لحن إنثو تي تي شوري الصيامي.mp3",
+  // },
   {
     monasba: "keahk",
     name: "التوزيع الكيهكى",
     duration: "1:40",
     src: "./al7an/التوزيع الكيهكى.mp3",
-  },
-  {
-    monasba: "som-kebir",
-    name: "الليلويا إي ا ايخون",
-    duration: "2:04",
-    src: "./al7an/الليلويا إي ا ايخون.mp3",
   },
   {
     monasba: "keahk",
@@ -291,16 +285,94 @@ const sounds = [
     src: "./al7an/الهوس_الرابع-قبطي.mp3",
   },
   {
-    monasba: "som-kebir",
-    name: "توزيع الصوم الكبير",
-    duration: "14:40",
-    src: "./al7an/توزيع الصوم الكبير .mp3",
-  },
-  {
     monasba: "keahk",
     name: "ثيؤطوكية_الأحد_قبطي",
     duration: "6:57",
     src: "./al7an/ثيؤطوكية_الأحد_شاشف_إنسوب_إمينى.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "ثيؤطوكية_الاربعاء_كل_الطغمات_السمائية",
+    duration: "7:57",
+    src: "./al7an/ثيؤطوكية_الاربعاء_كل_الطغمات_السمائية.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "ذكصولوجية شهر كيهك_كى غار",
+    duration: "4:18",
+    src: "./al7an/ذكصولوجية شهر كيهك_كى غار.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن السبع طرائق",
+    duration: "26:44",
+    src: "./al7an/لحن السبع طرائق.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن تي جاليلي اي",
+    duration: "11:42",
+    src: "./al7an/لحن تي جاليلي اي.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن ميغالو",
+    duration: "12:18",
+    src: "./al7an/لحن ميغالو.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن ني صافيف تيرو",
+    duration: "5:42",
+    src: "./al7an/لحن ني صافيف تيرو.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس",
+    duration: "7:55",
+    src: "./al7an/لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن_اريبصالين",
+    duration: "7:55",
+    src: "./al7an/لحن_اريبصالين.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن_تين_اويه_أنسوك",
+    duration: "7:02",
+    src: "./al7an/لحن_تين_اويه_أنسوك.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن_تين_ثينو_الكبير",
+    duration: "11:18",
+    src: "./al7an/لحن_تين_ثينو_الكبير.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن_تينين",
+    duration: "7:25",
+    src: "./al7an/لحن_تينين.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن_سيموتى",
+    duration: "7:45",
+    src: "./al7an/لحن_سيموتى.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن_شيري_نيه_ماريا",
+    duration: "6:50",
+    src: "./al7an/لحن_شيري_نيه_ماريا.mp3",
+  },
+  {
+    monasba: "keahk",
+    name: "لحن(الهوس_الثالث)آسمو_ابشويس",
+    duration: "20:35",
+    src: "./al7an/لحن(الهوس_الثالث)آسمو_ابشويس.mp3",
   },
 ];
 

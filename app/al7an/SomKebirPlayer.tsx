@@ -151,7 +151,7 @@ const sounds = [
     src: "./al7an/لحن فاي إيطاف إينف.mp3",
   },
   {
-    monasba: "keahk",
+    monasba: "nhdet-al3dra",
     name: "لحن فاي بي إبليمين",
     duration: "4:47",
     src: "./al7an/لحن فاي بي إبليمين.mp3",
