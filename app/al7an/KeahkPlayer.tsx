@@ -1,3 +1,14 @@
+// import React, { useEffect } from "react";
+// import Howl from "react-howler";
+// interface Sound {
+//   monasba: string;
+//   name: string;
+//   duration: string;
+//   src: string;
+// }
+
+// const sounds: Sound[] = [
+
 // const sounds = [
 //   {
 //     monasba: "som-kebir",
@@ -233,6 +244,7 @@ const sounds = [
     duration: "3:06",
     // src: "https://www.dropbox.com/scl/fi/i03y7cndra6lqxcz2mzog/06.mp3?rlkey=ts1l7ps97knknc23e6m40rloq&st=c7yx2pxn&dl=0",
     // src: "https://drive.google.com/file/d/1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI/view?usp=drive_link",
+    // src: "https://cisuezedu-my.sharepoint.com/:u:/g/personal/fciugs118_ci_suez_edu_eg/ER1off32v05Fn7y9P8FUONIBtuAHrFAB-KitY7-zIiIjcg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=hfRX4X",
 
     src: "./al7an/06 لحن إنثو تي تي شوري الصيامي.mp3",
   },
@@ -288,7 +300,7 @@ const sounds = [
     monasba: "keahk",
     name: "ثيؤطوكية_الأحد_قبطي",
     duration: "6:57",
-    src: "./al7an/ثيؤطوكية_الأحد_قبطي.mp3",
+    src: "./al7an/ثيؤطوكية_الأحد_شاشف_إنسوب_إمينى.mp3",
   },
 ];
 
@@ -298,8 +310,41 @@ const KeahkPlayer: React.FC = () => {
   //   alert("Hello!");
   // }, []); // Empty dependency array ensures this runs only once on mount
 
+  //   const soun = new Howl({
+  //   src: [sounds], // Path to the audio file in the `public` folder
+  //   preload: true, // Load audio in the background
+  // });
+  // const [soundsss, setSound] = useState<Howl | null>(null);
+  // useEffect(() => {
+  //   const newSound = new Howl({
+  //     src: source,
+  //     preload: true,
+  //   });
+  //   setSound(newSound);
+  //   return () => {
+  //     if (newSound)
+  //       newSound.unload();
+
+  //   };
+  // }, [source]);
+
+  // const handlePlay = () => {
+  //   if (soundsss)
+  //     soundsss.play();
+
+  // };
+
+  // const handlePause = () => {
+  //   if (soundsss)
+  //     soundsss.pause();
+
+  // };
+
   return (
-    <div id="sec-keahk" className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+    <div
+      id="sec-keahk"
+      className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"
+    >
       {sounds
         .filter((sound) => sound.monasba === "keahk")
         .map((sound, index) => (
@@ -317,16 +362,20 @@ const KeahkPlayer: React.FC = () => {
                   {sound.name}
                 </p>
                 <p className="card-text">
-                  <span className="fw-bold">المناسبة التي يقال فيها: </span>تسبحة كيهك او تسبحة نصف الليل
+                  <span className="fw-bold">المناسبة التي يقال فيها: </span>
+                  تسبحة كيهك او تسبحة نصف الليل
                 </p>
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="btn-group">
-                    <button type="button" className="btn btn-sm btn-outline-secondary">
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-secondary"
+                    >
                       تفاصيل
                     </button>
                   </div>
                   <small className="text-body-secondary">
-{/* {(document.getElementById(`keahk-audio-${index}`) as HTMLAudioElement)?.duration} */}
+                    {/* {(document.getElementById(`keahk-audio-${index}`) as HTMLAudioElement)?.duration} */}
                     {sound.duration}
                   </small>
                 </div>
@@ -339,10 +388,3 @@ const KeahkPlayer: React.FC = () => {
 };
 
 export default KeahkPlayer;
-
-
-
-
-
-
-
