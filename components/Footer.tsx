@@ -9,12 +9,18 @@ function Footer() {
           <h5>الآيات والمقالات الدينية</h5>
           <ul className="nav flex-column">
             <li className="nav-item mb-2">
-              <Link href={"/al7an"} className="nav-link p-0 text-body-secondary">
+              <Link
+                href={"/al7an"}
+                className="nav-link p-0 text-body-secondary"
+              >
                 الحان
               </Link>
             </li>
             <li className="nav-item mb-2">
-              <Link href={"/tranim"} className="nav-link p-0 text-body-secondary">
+              <Link
+                href={"/tranim"}
+                className="nav-link p-0 text-body-secondary"
+              >
                 ترانيم
               </Link>
             </li>
@@ -35,7 +41,10 @@ function Footer() {
               </Link>
             </li>
             <li className="nav-item mb-2">
-              <Link href={"/mkalat"} className="nav-link p-0 text-body-secondary">
+              <Link
+                href={"/mkalat"}
+                className="nav-link p-0 text-body-secondary"
+              >
                 المقالات
               </Link>
             </li>
@@ -56,12 +65,20 @@ function Footer() {
         <div className="col-md-5 offset-md-1 mb-3">
           <form>
             <h5>اشترك علشان يصلك كل جديد</h5>
-            <p>ده طبعاً لسة مش بعرف اعملك ف سيبك من الحت ده دلوقتي وشوف باقيتة الصفحة وحلاص</p>
+            <p>
+              ده طبعاً لسة مش بعرف اعملك ف سيبك من الحت ده دلوقتي وشوف باقيتة
+              الصفحة وحلاص
+            </p>
             <div className="d-flex flex-column flex-sm-row w-100 gap-2">
               <label htmlFor="newsletter1" className="visually-hidden">
                 ايميلك
               </label>
-              <input id="newsletter1" type="text" className="form-control" placeholder="Email address" />
+              <input
+                id="newsletter1"
+                type="text"
+                className="form-control"
+                placeholder="Email address"
+              />
               <button className="btn btn-primary disabled" type="button">
                 ماقلتلك ماتشتركش ياعم
               </button>
@@ -74,24 +91,41 @@ function Footer() {
         <p>&copy; جميع الحقوق محفوظة لدي تفاحة طبعاً.</p>
         <ul className="list-unstyled d-flex">
           <li className="ms-3">
-            <a href="tel:+01221331602">01221331602</a> || <a href="tel:+01202224608">01202224608</a>
+            <a href="tel:+01221331602">
+              <i className="bi bi-telephone fs-1"></i>
+            </a>{" "}
+            ||{" "}
+            <a href="tel:+01202224608">
+              <i className="bi bi-telephone-fill fs-1"></i>
+            </a>
             مترنش علشان مش فاضي
           </li>
           <li className="ms-3">
-            Email: <a href="mailto:petereshak11gmail.com">petereshak11gmail.com</a>يعم مش هشوفة
+            Email:{" "}
+            <a href="mailto:petereshak11gmail.com">
+              <i className="bi bi-envelope fs-1"></i>
+            </a>
+            يعم مش هشوفة
           </li>
           <li className="ms-3">
-            <a className="text-body" href="https://wa.me/message/AOH44Q2TY3H2E1" title="Whatsapp">
-              <i className="bi bi-whatsapp text-success">
-
+            <a
+              className="text-body"
+              href="https://wa.me/message/AOH44Q2TY3H2E1"
+              title="Whatsapp"
+            >
+              <i className="bi bi-whatsapp text-success fs-1">
                 {/* <p className="fs-1 fw-bolder text-primary-emphasis">Whatsapp</p> */}
               </i>
             </a>
           </li>
           <li className="ms-3">
             {/* <p className="fs-1 fw-bolder text-primary-emphasis">Whatsapp</p> */}
-            <a className="text-body" href="https://wa.me/qr/36KBTEORX2N3O1" title="Whatsapp">
-              <i className="bi bi-whatsapp text-success-emphasis"></i>
+            <a
+              className="text-body"
+              href="https://wa.me/qr/36KBTEORX2N3O1"
+              title="Whatsapp"
+            >
+              <i className="bi bi-whatsapp text-success-emphasis fs-1"></i>
             </a>
           </li>
         </ul>

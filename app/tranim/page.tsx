@@ -13,6 +13,7 @@ function Tranim() {
           {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
           <h1 className="display-1 text-center m-5 text-primary fw-bolder">صفحة ابونا فلتاؤس</h1>
           <p className="fs-2 text-secondry text-center fw-light mt-5">قسم الترانيم الارثوذكسية المسيحية</p>
+          <img src="./images/sec1.jpeg" alt="قسم الترانيم" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" />
         </div>
         <div className="bd-example-snippet bd-code-snippet">
           <div className="bd-example m-0 border-0">
