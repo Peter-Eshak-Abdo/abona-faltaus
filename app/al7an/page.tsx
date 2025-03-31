@@ -52,6 +52,13 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <SomKebirPlayer />
+                    <iframe
+                      src="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf"
+                      title="قسم الحان الصوم الكبير و صوم نينوي"
+                      width="100%"
+                      height="500"
+                    ></iframe>
+
                     {/* <SomKebirPlayer source={sounds.filter((sound) => sound.monasba === "som-kebir").map((sound) => sound.src)} /> */}
                   </div>
                 </div>
@@ -76,6 +83,18 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <KeahkPlayer />
+                    <iframe
+                      src="./al7an/pdf/التسبحة.pdf"
+                      title="قسم الحان التسبحة"
+                      width="100%"
+                      height="500"
+                    ></iframe>
+                    <iframe
+                      src="./al7an/pdf/كيهك و الميلاد.pdf"
+                      title="قسم الحان كيهك و الميلاد"
+                      width="100%"
+                      height="500"
+                    ></iframe>
                   </div>
                 </div>
               </div>
@@ -99,6 +118,30 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <Asbo3AlamPlayer />
+                    <iframe
+                      src="./al7an/pdf/سبت لعازر و احد الشعانين.pdf"
+                      title="قسم الحان سبت لعازر و احد الشعانين"
+                      width="100%"
+                      height="500"
+                    ></iframe>
+                    <iframe
+                      src="./al7an/pdf/البصخة.pdf"
+                      title="قسم الحان البصخة"
+                      width="100%"
+                      height="500"
+                    ></iframe>
+                    <iframe
+                      src="./al7an/pdf/مزامير البصخة.pdf"
+                      title="قسم الحان مزامير البصخة"
+                      width="100%"
+                      height="500"
+                    ></iframe>
+                    <iframe
+                      src="./al7an/pdf/سبت الفرح.pdf"
+                      title="قسم الحان سبت الفرح"
+                      width="100%"
+                      height="500"
+                    ></iframe>
                   </div>
                 </div>
               </div>
@@ -122,6 +165,12 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <SnawiPlayer />
+                    <iframe
+                      src="./al7an/pdf/الطقس السنوي.pdf"
+                      title="قسم الحان الطقس السنوي"
+                      width="100%"
+                      height="500"
+                    ></iframe>
                   </div>
                 </div>
               </div>
@@ -145,6 +194,12 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <KhmacenPlayer />
+                    <iframe
+                      src="./al7an/pdf/الخماسين.pdf"
+                      title="قسم الحان خماسين"
+                      width="100%"
+                      height="500"
+                    ></iframe>
                   </div>
                 </div>
               </div>
@@ -181,8 +236,3 @@ function Al7an() {
 }
 
 export default Al7an;
-
-
-
-
-
