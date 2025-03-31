@@ -243,6 +243,7 @@ const sounds = [
     name: "التوزيع الكيهكى",
     duration: "1:40",
     src: "./al7an/التوزيع الكيهكى.mp3",
+    hazatSrc: "./al7an/hazat/كيهك و الميلاد_page-0052.jpg",
   },
   {
     monasba: "keahk",
@@ -291,6 +292,9 @@ const sounds = [
     name: "ذكصولوجية شهر كيهك_كى غار",
     duration: "4:18",
     src: "./al7an/ذكصولوجية شهر كيهك_كى غار.mp3",
+    hazatSrc: "./al7an/hazat/كيهك و الميلاد_page-0009.jpg",
+    hazatSrc1: "./al7an/hazat/كيهك و الميلاد_page-0010.jpg",
+    hazatSrc2: "./al7an/hazat/كيهك و الميلاد_page-0011.jpg",
   },
   {
     monasba: "keahk",
@@ -300,15 +304,11 @@ const sounds = [
   },
   {
     monasba: "keahk",
-    name: "لحن ميغالو",
-    duration: "12:18",
-    src: "./al7an/لحن ميغالو.mp3",
-  },
-  {
-    monasba: "keahk",
     name: "لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس",
     duration: "7:55",
     src: "./al7an/لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس.mp3",
+    hazatSrc: "./al7an/hazat/التسبحة_page-0038.jpg",
+    hazatSrc1: "./al7an/hazat/التسبحة_page-0039.jpg",
   },
   {
     monasba: "keahk",
@@ -321,36 +321,59 @@ const sounds = [
     name: "لحن_تين_اويه_أنسوك",
     duration: "7:02",
     src: "./al7an/لحن_تين_اويه_أنسوك.mp3",
+    hazatSrc: "./al7an/hazat/التسبحة_page-0047.jpg",
+    hazatSrc1: "./al7an/hazat/التسبحة_page-0048.jpg",
+    hazatSrc2: "./al7an/hazat/التسبحة_page-0049.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن_تين_ثينو_الكبير",
     duration: "11:18",
     src: "./al7an/لحن_تين_ثينو_الكبير.mp3",
+    hazatSrc: "./al7an/hazat/التسبحة_page-0024.jpg",
+    hazatSrc1: "./al7an/hazat/التسبحة_page-0025.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن_تينين",
     duration: "7:25",
     src: "./al7an/لحن_تينين.mp3",
+    hazatSrc: "./al7an/hazat/التسبحة_page-0042.jpg",
+    hazatSrc1: "./al7an/hazat/التسبحة_page-0043.jpg",
+    hazatSrc2: "./al7an/hazat/التسبحة_page-0044.jpg",
+    hazatSrc3: "./al7an/hazat/التسبحة_page-0045.jpg",
+    hazatSrc4: "./al7an/hazat/التسبحة_page-0046.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن_سيموتى",
     duration: "7:45",
     src: "./al7an/لحن_سيموتى.mp3",
+    hazatSrc: "./al7an/hazat/التسبحة_page-0056.jpg",
+    hazatSrc1: "./al7an/hazat/التسبحة_page-0057.jpg",
+    hazatSrc2: "./al7an/hazat/التسبحة_page-0058.jpg",
+    hazatSrc3: "./al7an/hazat/التسبحة_page-0059.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن_شيري_نيه_ماريا",
     duration: "6:50",
     src: "./al7an/لحن_شيري_نيه_ماريا.mp3",
+    hazatSrc: "./al7an/hazat/التسبحة_page-0053.jpg",
+    hazatSrc1: "./al7an/hazat/التسبحة_page-0054.jpg",
+    hazatSrc2: "./al7an/hazat/التسبحة_page-0055.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن(الهوس_الثالث)آسمو_ابشويس",
     duration: "20:35",
     src: "./al7an/لحن(الهوس_الثالث)آسمو_ابشويس.mp3",
+    hazatSrc: "./al7an/hazat/التسبحة_page-0036.jpg",
+    hazatSrc1: "./al7an/hazat/التسبحة_page-0037.jpg",
+    hazatSrc2: "./al7an/hazat/التسبحة_page-0038.jpg",
+    hazatSrc3: "./al7an/hazat/التسبحة_page-0039.jpg",
+    hazatSrc4: "./al7an/hazat/التسبحة_page-0040.jpg",
+    hazatSrc5: "./al7an/hazat/التسبحة_page-0041.jpg",
   },
 ];
 
@@ -389,7 +412,6 @@ const KeahkPlayer: React.FC = () => {
   //     soundsss.pause();
 
   // };
-
   return (
     <div
       id="sec-keahk"
@@ -415,6 +437,11 @@ const KeahkPlayer: React.FC = () => {
                   <span className="fw-bold">المناسبة التي يقال فيها: </span>
                   تسبحة كيهك او تسبحة نصف الليل
                 </p>
+                <img
+                  src={sound.hazatSrc}
+                  alt={sound.name}
+                  className="img-thumbnail"
+                />
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="btn-group">
                     <button

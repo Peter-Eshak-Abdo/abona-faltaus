@@ -96,11 +96,11 @@ function Footer() {
         </a>
         <ul className="list-unstyled d-flex">
           <li className="ms-3">
-            <a href="tel:+01221331602">
+            <a href="tel:01221331602">
               <i className="bi bi-telephone fs-1"></i>
             </a>{" "}
             ||{" "}
-            <a href="tel:+01202224608">
+            <a href="tel:01202224608">
               <i className="bi bi-telephone-fill fs-1"></i>
             </a>
             مترنش علشان مش فاضي

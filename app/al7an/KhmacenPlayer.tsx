@@ -6,20 +6,22 @@ const sounds = [
     name: "لحن السبع طرائق",
     duration: "26:44",
     src: "./al7an/لحن السبع طرائق.mp3",
+    hazatSrc: "./al7an/hazat/الخماسين_page-0014.png",
   },
   {
     monasba: "khmacen",
     name: "لحن ني صافيف تيرو",
     duration: "5:42",
     src: "./al7an/لحن ني صافيف تيرو.mp3",
+    hazatSrc: "./al7an/hazat/الخماسين_page-0079.png",
   },
 
-  {
-    monasba: "khmacen",
-    name: "لحن_اوكيريوس_ميتاسو",
-    duration: "4:26",
-    src: "./al7an/لحن_اوكيريوس_ميتاسو.mp3",
-  },
+  // { // صوم الرسل
+  //   monasba: "khmacen",
+  //   name: "لحن_اوكيريوس_ميتاسو",
+  //   duration: "4:26",
+  //   src: "./al7an/لحن_اوكيريوس_ميتاسو.mp3",
+  // },
 ];
 
 const KhmacenPlayer: React.FC = () => {
@@ -50,6 +52,12 @@ const KhmacenPlayer: React.FC = () => {
                   </span>
                   الخماسين المقدسة
                 </p>
+                <img
+                  src={sound.hazatSrc}
+                  alt={sound.name}
+                  className="img-thumbnail"
+                />
+
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="btn-group">
                     <button

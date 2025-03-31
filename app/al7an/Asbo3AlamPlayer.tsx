@@ -6,24 +6,28 @@ const sounds = [
     name: "لحن افلوجيمينوس",
     duration: "6:33",
     src: "./al7an/لحن افلوجيمينوس.mp3",
+    hazatSrc: "./al7an/hazat/سبت لعازر و احد الشعانين_page-0119.png",
   },
   {
     monasba: "asbo3-alam",
     name: "لحن بيك إثرونوس",
     duration: "18:23",
     src: "./al7an/لحن بيك إثرونوس.mp3",
+    hazatSrc: "./al7an/hazat/البصخة_page-0084.png",
   },
   {
     monasba: "asbo3-alam",
     name: "لحن_اومونوجنيس",
     duration: "11:12",
     src: "./al7an/لحن_اومونوجنيس.mp3",
+    hazatSrc: "./al7an/hazat/البصخة_page-0067.png",
   },
   {
     monasba: "asbo3-alam",
     name: "لحن_مقدمه_العظه_اوكاتي",
     duration: "11:08",
     src: "./al7an/لحن_مقدمه_العظه_اوكاتي.mp3",
+    hazatSrc: "./al7an/hazat/البصخة_page-0014.png",
   },
 ];
 
@@ -58,6 +62,12 @@ const Asbo3AlamPlayer: React.FC = () => {
                   </span>
                   اسبوع الآلام
                 </p>
+                <img
+                  src={sound.hazatSrc}
+                  alt={sound.name}
+                  className="img-thumbnail"
+                />
+
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="btn-group">
                     <button
