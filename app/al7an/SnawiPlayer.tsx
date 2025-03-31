@@ -6,12 +6,14 @@ const sounds = [
     name: "لحن بينشتي الصغير",
     duration: "4:31",
     src: "./al7an/لحن بينشتي الصغير.mp3",
+    hazatSrc: "./al7an/hazat/الطقس السنوي_page-0065.jpg",
   },
   {
     monasba: "snawi",
     name: "لحن_البركة_(تين_أوأوشت)",
     duration: "2:03",
     src: "./al7an/لحن_البركة_(تين_أوأوشت).mp3",
+    hazatSrc: "./al7an/hazat/الطقس السنوي_page-00207.jpg",
   },
 ];
 
@@ -25,10 +27,7 @@ const SnawiPlayer: React.FC = () => {
         .filter((sound) => sound.monasba === "snawi")
         .map((sound, index) => (
           <div className="col" key={`snawi-${index}`}>
-            <div
-              className="card shadow-sm pt-3 ps-3"
-              key={`snawi-${index}`}
-            >
+            <div className="card shadow-sm pt-3 ps-3" key={`snawi-${index}`}>
               <div className="d-flex justify-content-center align-items-center">
                 <audio controls>
                   <source src={sound.src} type="audio/mpeg" />
@@ -46,6 +45,7 @@ const SnawiPlayer: React.FC = () => {
                   </span>
                   سنوي
                 </p>
+                <img src={sound.hazatSrc} alt={sound.name} />
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="btn-group">
                     <button

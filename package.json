@@ -1,6 +1,6 @@
 {
   "name": "abona-faltaus",
-  "version": "0.1.0",
+  "version": "2.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -8,7 +8,7 @@
     "export": "next export",
     "start": "next start",
     "lint": "next lint",
-    "predeploy": "rm -rf out",
+    "predeploy": "rd /s /q out",
     "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {

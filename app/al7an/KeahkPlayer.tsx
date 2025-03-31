@@ -238,16 +238,6 @@
 // }
 
 const sounds = [
-  // {
-  //   monasba: "som-kebir",
-  //   name: "لحن إنثو تي تي شوري",
-  //   duration: "3:06",
-  //   // src: "https://www.dropbox.com/scl/fi/i03y7cndra6lqxcz2mzog/06.mp3?rlkey=ts1l7ps97knknc23e6m40rloq&st=c7yx2pxn&dl=0",
-  //   // src: "https://drive.google.com/file/d/1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI/view?usp=drive_link",
-  //   // src: "https://cisuezedu-my.sharepoint.com/:u:/g/personal/fciugs118_ci_suez_edu_eg/ER1off32v05Fn7y9P8FUONIBtuAHrFAB-KitY7-zIiIjcg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=hfRX4X",
-
-  //   src: "./al7an/06 لحن إنثو تي تي شوري الصيامي.mp3",
-  // },
   {
     monasba: "keahk",
     name: "التوزيع الكيهكى",
@@ -304,12 +294,6 @@ const sounds = [
   },
   {
     monasba: "keahk",
-    name: "لحن السبع طرائق",
-    duration: "26:44",
-    src: "./al7an/لحن السبع طرائق.mp3",
-  },
-  {
-    monasba: "keahk",
     name: "لحن تي جاليلي اي",
     duration: "11:42",
     src: "./al7an/لحن تي جاليلي اي.mp3",
@@ -319,12 +303,6 @@ const sounds = [
     name: "لحن ميغالو",
     duration: "12:18",
     src: "./al7an/لحن ميغالو.mp3",
-  },
-  {
-    monasba: "keahk",
-    name: "لحن ني صافيف تيرو",
-    duration: "5:42",
-    src: "./al7an/لحن ني صافيف تيرو.mp3",
   },
   {
     monasba: "keahk",

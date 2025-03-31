@@ -23,21 +23,21 @@ function Home() {
         </p>
       </div>
       <div className="d-flex flex-row justify-content-evenly">
-        <div className="d-grid gap-2 col-3 mx-auto">
-          <Link href={"#sec-ayat-mkalat"} className="btn btn-primary">
+        <div className="d-grid col-3 mx-auto">
+          <Link href={"#sec-ayat-mkalat"} className="btn btn-primary fs-4">
             الآيات والمقالات الدينية
           </Link>
         </div>
-        <div className="d-grid gap-2 col-5 mx-auto">
+        <div className="d-grid col-5 mx-auto">
           <Link
             href={"#sec-al7an-tranim-3zat"}
-            className="btn btn-outline-primary"
+            className="btn btn-outline-primary fs-4"
           >
             قسم الالحان والترانيم والعظات
           </Link>
         </div>
-        <div className="d-grid gap-2 col-3 mx-auto">
-          <Link href={"#sec-fqrat"} className="btn btn-primary">
+        <div className="d-grid col-2 mx-auto">
+          <Link href={"#sec-fqrat"} className="btn btn-primary fs-4">
             عرض فقرات
           </Link>
         </div>
@@ -48,26 +48,28 @@ function Home() {
       <div className="container marketing">
         <div className="row featurette">
           <div className="col-md-7 text-start">
-            <h2 className="featurette-heading fw-normal lh-1 fw-bolder">
+            <p className="featurette-heading lh-1 fw-bolder fs-2">
               قسم الالحان والترانيم والعظات
-            </h2>
-            <div className="lead">
+            </p>
+            <div className="lead fs-4">
               يوجد مجموعات من الالحان مقسمين علي حسب كل مناسبة الالحان الخاص
               بها.
-              <p className="text-secondary">
+              <p className="text-secondary  fs-4">
                 وسيضاف قريباً كلمات الالحان قبطي وعربي وقبطي معرب.
               </p>
               <div className="d-grid gap-2 col-6 mx-auto">
-                <Link href={"/al7an"} className="btn btn-outline-primary">
+                <Link href={"/al7an"} className="btn btn-outline-primary fs-5">
                   الحان
                 </Link>
               </div>
               <br />
-              وفي قسم الترانيم يوجد ترانيم مجمعة ليس لها مناسبة واقسام للترانيم
-              المخصصة لكل مناسبة.
+              <p className=" fs-4">
+                وفي قسم الترانيم يوجد ترانيم مجمعة ليس لها مناسبة واقسام
+                للترانيم المخصصة لكل مناسبة.
+              </p>
               <p className="text-secondary">وسيضاف كلمات الترانيم.</p>
               <div className="d-grid gap-2 col-6 mx-auto">
-                <Link href={"/tranim"} className="btn btn-outline-primary">
+                <Link href={"/tranim"} className="btn btn-outline-primary fs-5">
                   ترانيم
                 </Link>
               </div>
@@ -75,7 +77,7 @@ function Home() {
               وفي قسم العظات مقسمة لكل اب كاهن.
               <p className="text-secondary">وسيضاف تقسيمات لكل اب كاهن.</p>
               <div className="d-grid gap-2 col-6 mx-auto">
-                <Link href={"/3zat"} className="btn btn-outline-primary">
+                <Link href={"/3zat"} className="btn btn-outline-primary fs-5">
                   عظات
                 </Link>
               </div>
@@ -97,19 +99,19 @@ function Home() {
 
         <div className="row featurette">
           <div className="col-md-7 order-md-2 text-start">
-            <h2 className="featurette-heading fw-normal lh-1">
+            <p className="featurette-heading fw-bolder lh-1 fs-2">
               قسم الآيات والمقالات
-            </h2>
-            <p className="lead">في هذا القسم يوجد الآيات المحفوظة</p>
+            </p>
+            <p className="lead fs-4">في هذا القسم يوجد الآيات المحفوظة</p>
             <div className="d-grid gap-2 col-6 mx-auto">
-              <Link href={"/ayat"} className="btn btn-outline-primary">
+              <Link href={"/ayat"} className="btn btn-outline-primary fs-5 disabled">
                 الآيات
               </Link>
             </div>
             <br />
-            <p className="lead">في هذا المقالات الدينية</p>
+            <p className="lead fs-4">في هذا المقالات الدينية</p>
             <div className="d-grid gap-2 col-6 mx-auto">
-              <Link href={"/mkalat"} className="btn btn-outline-primary">
+              <Link href={"/mkalat"} className="btn btn-outline-primary fs-5">
                 المقالات
               </Link>
             </div>
@@ -129,8 +131,8 @@ function Home() {
         <hr className="featurette-divider" id="sec-fqrat" />
         <div className="row featurette">
           <div className="col-md-7 text-start">
-            <h2 className="featurette-heading fw-normal lh-1">قسم الفقرات</h2>
-            <div className="lead">
+            <p className="featurette-heading fw-bolder lh-1 fs-2">قسم الفقرات</p>
+            <div className="lead fs-4">
               يوجد مواقع لسهيل عمل الفقرات مثل:
               <ul>
                 <li>لعمل تصاميم الرحلات</li>

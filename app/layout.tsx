@@ -73,9 +73,8 @@ function RootLayout({
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         ></Script> */}
-        {/* Service worker registration is handled outside JSX */}
         <link rel="manifest" id="manifest-placeholder" href="./manifest.webmanifest"/>
-        {serviceWorker()}
+        {/* Service worker is registered as a side effect */}
       </head>
       <body >
         {children}

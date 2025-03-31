@@ -3,6 +3,19 @@
 const sounds = [
   {
     monasba: "khmacen",
+    name: "لحن السبع طرائق",
+    duration: "26:44",
+    src: "./al7an/لحن السبع طرائق.mp3",
+  },
+  {
+    monasba: "khmacen",
+    name: "لحن ني صافيف تيرو",
+    duration: "5:42",
+    src: "./al7an/لحن ني صافيف تيرو.mp3",
+  },
+
+  {
+    monasba: "khmacen",
     name: "لحن_اوكيريوس_ميتاسو",
     duration: "4:26",
     src: "./al7an/لحن_اوكيريوس_ميتاسو.mp3",

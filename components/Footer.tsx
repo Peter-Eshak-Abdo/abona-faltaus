@@ -6,7 +6,7 @@ function Footer() {
       <hr className="featurette-divider" />
       <div className="row">
         <div className="col-6 col-md-2 mb-3">
-          <h5>الآيات والمقالات الدينية</h5>
+              <h5> قسم الالحان والترانيم والعظات</h5>
           <ul className="nav flex-column">
             <li className="nav-item mb-2">
               <Link
@@ -20,7 +20,7 @@ function Footer() {
               <Link
                 href={"/tranim"}
                 className="nav-link p-0 text-body-secondary"
-              >
+                >
                 ترانيم
               </Link>
             </li>
@@ -33,7 +33,7 @@ function Footer() {
         </div>
 
         <div className="col-6 col-md-2 mb-3">
-          <h5> قسم الالحان والترانيم والعظات</h5>
+                <h5>الآيات والمقالات الدينية</h5>
           <ul className="nav flex-column">
             <li className="nav-item mb-2">
               <Link href={"/ayat"} className="nav-link p-0 text-body-secondary">
@@ -88,7 +88,12 @@ function Footer() {
       </div>
 
       <div className="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-        <p>&copy; جميع الحقوق محفوظة لدي تفاحة طبعاً.</p>
+        <a
+          href="https://tofa7a-5e936.web.app/"
+          className="link-offset-2 link-underline link-underline-opacity-0link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+        >
+          <p>&copy; جميع الحقوق محفوظة لدي تفاحة طبعاً.</p>
+        </a>
         <ul className="list-unstyled d-flex">
           <li className="ms-3">
             <a href="tel:+01221331602">
@@ -104,7 +109,7 @@ function Footer() {
             Email:{" "}
             <a href="mailto:petereshak11gmail.com">
               <i className="bi bi-envelope fs-1"></i>
-            </a>
+            </a><br />
             يعم مش هشوفة
           </li>
           <li className="ms-3">
@@ -126,6 +131,14 @@ function Footer() {
               title="Whatsapp"
             >
               <i className="bi bi-whatsapp text-success-emphasis fs-1"></i>
+            </a>
+          </li>
+          <li className="ms-3">
+            <a
+              href="https://tofa7a-5e936.web.app/"
+              className="link-offset-2 link-underline link-underline-opacity-0link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+            >
+              <i className="bi bi-person-circle fs-1"> عن المطور</i>
             </a>
           </li>
         </ul>
