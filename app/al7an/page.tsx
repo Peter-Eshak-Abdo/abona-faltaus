@@ -1,13 +1,25 @@
+import Header from "@/components/Header";
 import SomKebirPlayer from "./SomKebirPlayer";
 import KeahkPlayer from "./KeahkPlayer";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import Asbo3AlamPlayer from "./Asbo3AlamPlayer";
 import SnawiPlayer from "./SnawiPlayer";
 import KhmacenPlayer from "./KhmacenPlayer";
 import NhdetAl3draPlayer from "./NhdetAl3draPlayer";
+import Footer from "@/components/Footer";
 
+const PdfViewer = ({ pdfUrl }: { pdfUrl: string }) => {
+  return (
+    <embed
+      src={pdfUrl}
+      title="قسم الحان الصوم الكبير و صوم نينوي"
+      type="application/pdf"
+      width="85%"
+      height="600px" // Adjust as needed
+    />
+  );
+};
 function Al7an() {
+  const pdfUrl = "./al7an/pdf/الصوم الكبير و صوم نينوي.pdf"; // Path to your PDF file
   return (
     <>
       <Header />
@@ -48,18 +60,20 @@ function Al7an() {
                 <div
                   id="collapseOne"
                   className="accordion-collapse collapse"
-                  data-bs-parent="#accordionExample"
                 >
                   <div className="accordion-body">
                     <SomKebirPlayer />
                     <iframe
                       src="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf"
                       title="قسم الحان الصوم الكبير و صوم نينوي"
-                      width="100%"
+                      width="85%"
                       height="500"
                     ></iframe>
-
-                    {/* <SomKebirPlayer source={sounds.filter((sound) => sound.monasba === "som-kebir").map((sound) => sound.src)} /> */}
+                    <object data="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf" type="application/pdf" width="85%" height="500px">
+                      <p>Unable to display PDF file. <a href="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf">Download</a> instead.</p>
+                    </object>
+                    <PdfViewer pdfUrl={pdfUrl} />
+                    <embed src="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf" type="application/pdf" width="85%" height="500px" />
                   </div>
                 </div>
               </div>
@@ -79,7 +93,7 @@ function Al7an() {
                 <div
                   id="collapseTwo"
                   className="accordion-collapse collapse"
-                  data-bs-parent="#accordionExample"
+
                 >
                   <div className="accordion-body">
                     <KeahkPlayer />
@@ -114,7 +128,7 @@ function Al7an() {
                 <div
                   id="collapseThree"
                   className="accordion-collapse collapse"
-                  data-bs-parent="#accordionExample"
+
                 >
                   <div className="accordion-body">
                     <Asbo3AlamPlayer />
@@ -161,7 +175,7 @@ function Al7an() {
                 <div
                   id="collapseFour"
                   className="accordion-collapse collapse"
-                  data-bs-parent="#accordionExample"
+
                 >
                   <div className="accordion-body">
                     <SnawiPlayer />
@@ -190,7 +204,7 @@ function Al7an() {
                 <div
                   id="collapseFive"
                   className="accordion-collapse collapse"
-                  data-bs-parent="#accordionExample"
+
                 >
                   <div className="accordion-body">
                     <KhmacenPlayer />
@@ -219,7 +233,7 @@ function Al7an() {
                 <div
                   id="collapseSix"
                   className="accordion-collapse collapse"
-                  data-bs-parent="#accordionExample"
+
                 >
                   <div className="accordion-body">
                     <NhdetAl3draPlayer />

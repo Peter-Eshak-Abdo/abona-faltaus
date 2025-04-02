@@ -31,7 +31,7 @@ function Tranim() {
                     قسم ترانيم عيد الميلاد
                   </button>
                 </h4>
-                <div id="collapseOne" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div id="collapseOne" className="accordion-collapse collapse">
                   <div className="accordion-body">
                     <MeladPlayer />
                   </div>
@@ -50,7 +50,7 @@ function Tranim() {
                     قسم ترانيم عيد القيامة
                   </button>
                 </h4>
-                <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div id="collapseTwo" className="accordion-collapse collapse" >
                   <div className="accordion-body">
                     <KyamaPlayer />
                   </div>

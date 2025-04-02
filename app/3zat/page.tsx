@@ -46,7 +46,7 @@ function W3zat() {
                 <div
                   id="collapseOne"
                   className="accordion-collapse collapse"
-                  data-bs-parent="#accordionExample"
+
                 >
                   <div className="accordion-body">
                     <div className="accordion-item">
@@ -65,7 +65,7 @@ function W3zat() {
                       <div
                         id="collapseAlsla"
                         className="accordion-collapse collapse"
-                        data-bs-parent="#accordionExample1"
+                        
                       >
                         <div className="accordion-body">
                           <AbDaodLam3yAlslaPlayer />
@@ -115,7 +115,7 @@ function W3zat() {
                 <div
                   id="collapseTwo"
                   className="accordion-collapse collapse"
-                  data-bs-parent="#accordionExample"
+
                 >
                   <div className="accordion-body">
                     <BabaShenodyPlayer />

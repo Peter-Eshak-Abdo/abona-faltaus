@@ -53,7 +53,7 @@ function Home() {
             </p>
             <div className="lead fs-4">
               يوجد مجموعات من الالحان مقسمين علي حسب كل مناسبة الالحان الخاص
-              بها.
+              بها ويوجد هزات كل لحن وملف هزات كل مناسبة.
               <p className="text-secondary  fs-4">
                 وسيضاف قريباً كلمات الالحان قبطي وعربي وقبطي معرب.
               </p>
@@ -109,7 +109,7 @@ function Home() {
               </Link>
             </div>
             <br />
-            <p className="lead fs-4">في هذا المقالات الدينية</p>
+            <p className="lead fs-4">يوجد مقالات من اباء كهنة او مقالات حياتية</p>
             <div className="d-grid gap-2 col-6 mx-auto">
               <Link href={"/mkalat"} className="btn btn-outline-primary fs-5">
                 المقالات

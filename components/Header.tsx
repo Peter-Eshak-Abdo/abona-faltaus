@@ -44,8 +44,13 @@ function Header() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link href={"/"} className="nav-link active">
+                <Link href={"/ayat"} className="nav-link active">
                   آيات
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link href={"/mkalat"} className="nav-link active">
+                  مقالات
                 </Link>
               </li>
             </ul>
@@ -63,4 +68,3 @@ function Header() {
 }
 
 export default Header;
-

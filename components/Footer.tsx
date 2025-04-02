@@ -4,9 +4,12 @@ function Footer() {
   return (
     <footer className="container pt-5 mt-5">
       <hr className="featurette-divider" />
+      <Link href={"/"} className="nav-link p-0 text-body fs-4 fw-bolder mb-3 text-center">
+        الصفحة الرئيسية
+      </Link>
       <div className="row">
         <div className="col-6 col-md-2 mb-3">
-              <h5> قسم الالحان والترانيم والعظات</h5>
+          <h5> قسم الالحان والترانيم والعظات</h5>
           <ul className="nav flex-column">
             <li className="nav-item mb-2">
               <Link
@@ -20,7 +23,7 @@ function Footer() {
               <Link
                 href={"/tranim"}
                 className="nav-link p-0 text-body-secondary"
-                >
+              >
                 ترانيم
               </Link>
             </li>
@@ -33,7 +36,7 @@ function Footer() {
         </div>
 
         <div className="col-6 col-md-2 mb-3">
-                <h5>الآيات والمقالات الدينية</h5>
+          <h5>الآيات والمقالات الدينية</h5>
           <ul className="nav flex-column">
             <li className="nav-item mb-2">
               <Link href={"/ayat"} className="nav-link p-0 text-body-secondary">
@@ -66,8 +69,8 @@ function Footer() {
           <form>
             <h5>اشترك علشان يصلك كل جديد</h5>
             <p>
-              ده طبعاً لسة مش بعرف اعملك ف سيبك من الحت ده دلوقتي وشوف باقيتة
-              الصفحة وحلاص
+              ده طبعاً لسة مش بعرف اعملك ف سيبك من الحته ديه دلوقتي وشوف باقيتة
+              الصفحة وخلاص
             </p>
             <div className="d-flex flex-column flex-sm-row w-100 gap-2">
               <label htmlFor="newsletter1" className="visually-hidden">
@@ -90,7 +93,7 @@ function Footer() {
       <div className="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
         <a
           href="https://tofa7a-5e936.web.app/"
-          className="link-offset-2 link-underline link-underline-opacity-0link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+          className="link-offset-2 link-underline  link-offset-3-hover link-underline-opacity-0 link-underline-opacity-75-hover"
         >
           <p>&copy; جميع الحقوق محفوظة لدي تفاحة طبعاً.</p>
         </a>
@@ -109,7 +112,8 @@ function Footer() {
             Email:{" "}
             <a href="mailto:petereshak11gmail.com">
               <i className="bi bi-envelope fs-1"></i>
-            </a><br />
+            </a>
+            <br />
             يعم مش هشوفة
           </li>
           <li className="ms-3">
@@ -119,12 +123,10 @@ function Footer() {
               title="Whatsapp"
             >
               <i className="bi bi-whatsapp text-success fs-1">
-                {/* <p className="fs-1 fw-bolder text-primary-emphasis">Whatsapp</p> */}
               </i>
             </a>
           </li>
           <li className="ms-3">
-            {/* <p className="fs-1 fw-bolder text-primary-emphasis">Whatsapp</p> */}
             <a
               className="text-body"
               href="https://wa.me/qr/36KBTEORX2N3O1"
@@ -136,7 +138,7 @@ function Footer() {
           <li className="ms-3">
             <a
               href="https://tofa7a-5e936.web.app/"
-              className="link-offset-2 link-underline link-underline-opacity-0link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+              className="link-offset-2 link-underline link-offset-3-hover link-underline-opacity-0 link-underline-opacity-75-hover"
             >
               <i className="bi bi-person-circle fs-1"> عن المطور</i>
             </a>

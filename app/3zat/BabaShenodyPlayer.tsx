@@ -77,14 +77,11 @@ const BabaShenodyPlayer: React.FC = () => {
               </div>
               <div className="card-body text-start">
                 <p className="card-text">
-                  <span className="fw-bold">ابونا: </span>داؤد لمعي
+                  <span className="fw-bold">ابونا: </span>البابا شنودة الثالث
                 </p>
                 <p className="card-text">
                   <span className="fw-bold">اسم الوعظة: </span>
                   {sound.name}
-                </p>
-                <p className="card-text">
-                  <span className="fw-bold">تتحدث عن: </span>الصلاة
                 </p>
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="btn-group">
@@ -108,4 +105,3 @@ const BabaShenodyPlayer: React.FC = () => {
 };
 
 export default BabaShenodyPlayer;
-

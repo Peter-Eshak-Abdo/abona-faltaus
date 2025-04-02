@@ -31,7 +31,7 @@ const sounds = [
     name: "لحن ميغالو",
     duration: "12:18",
     src: "./al7an/لحن ميغالو.mp3",
-    hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
+    // hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
   },
   {
     monasba: "som-kebir",
