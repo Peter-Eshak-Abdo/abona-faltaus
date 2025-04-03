@@ -7,19 +7,19 @@ import KhmacenPlayer from "./KhmacenPlayer";
 import NhdetAl3draPlayer from "./NhdetAl3draPlayer";
 import Footer from "@/components/Footer";
 
-const PdfViewer = ({ pdfUrl }: { pdfUrl: string }) => {
-  return (
-    <embed
-      src={pdfUrl}
-      title="قسم الحان الصوم الكبير و صوم نينوي"
-      type="application/pdf"
-      width="85%"
-      height="600px" // Adjust as needed
-    />
-  );
-};
+// const PdfViewer = ({ pdfUrl }: { pdfUrl: string }) => {
+//   return (
+//     <embed
+//       src={pdfUrl}
+//       title="قسم الحان الصوم الكبير و صوم نينوي"
+//       type="application/pdf"
+//       width="85%"
+//       height="600px" // Adjust as needed
+//     />
+//   );
+// };
 function Al7an() {
-  const pdfUrl = "./al7an/pdf/الصوم الكبير و صوم نينوي.pdf"; // Path to your PDF file
+  // const pdfUrl = "./al7an/pdf/الصوم الكبير و صوم نينوي.pdf"; // Path to your PDF file
   return (
     <>
       <Header />
@@ -40,6 +40,18 @@ function Al7an() {
             height={500}
             sizes="(max-width: 768px) 90vw"
           />
+          <a href="./al7an/pdf/النيروز و الصليب.pdf" download={"النيروز و الصليب.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات عيد النيروز و الصليب</a>
+          <a href="./al7an/pdf/كيهك و الميلاد.pdf" download={"كيهك و الميلاد.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات شهر كيهك و عيد الميلاد</a>
+          <a href="./al7an/pdf/التسبحة.pdf" download={"التسبحة.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات التسبحة</a>
+          <a href="./al7an/pdf/الطقس السنوي.pdf" download={"الطقس السنوي.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات السنوي</a>
+          <a href="./al7an/pdf/الغطاس و اللقان.pdf" download={"الغطاس و اللقان.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات عيد الغطاس و اللقان</a>
+          <a href="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf" download={"هزات الصوم الكبير و صوم نينوي.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات الصوم الكبير وصوم نينوي</a>
+          <a href="./al7an/pdf/سبت لعازر و احد الشعانين.pdf" download={"سبت لعازر و احد الشعانين.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات سبت لعازر واحد الشعانين</a>
+          <a href="./al7an/pdf/البصخة.pdf" download={"البصخة.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات البصخة</a>
+          <a href="./al7an/pdf/مزامير البصخة.pdf" download={"مزامير البصخة.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات مزامير البصخة</a>
+          <a href="./al7an/pdf/سبت الفرح.pdf" download={"سبت الفرح.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات سبت الفرح</a>
+          <a href="./al7an/pdf/الخماسين.pdf" download={"الخماسين.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات الخماسين</a>
+          <a href="./al7an/pdf/صوم الرسل.pdf" download={"صوم الرسل.pdf"} className="btn btn-primary my-2">تنزيل ملف هزات صوم الرسل</a>
         </div>
         <div className="bd-example-snippet bd-code-snippet">
           <div className="bd-example m-0 border-0">
@@ -63,7 +75,7 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <SomKebirPlayer />
-                    <iframe
+                    {/* <iframe
                       src="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf"
                       title="قسم الحان الصوم الكبير و صوم نينوي"
                       width="85%"
@@ -73,7 +85,7 @@ function Al7an() {
                       <p>Unable to display PDF file. <a href="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf">Download</a> instead.</p>
                     </object>
                     <PdfViewer pdfUrl={pdfUrl} />
-                    <embed src="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf" type="application/pdf" width="85%" height="500px" />
+                    <embed src="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf" type="application/pdf" width="85%" height="500px" /> */}
                   </div>
                 </div>
               </div>
@@ -97,7 +109,7 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <KeahkPlayer />
-                    <iframe
+                    {/* <iframe
                       src="./al7an/pdf/التسبحة.pdf"
                       title="قسم الحان التسبحة"
                       width="100%"
@@ -108,7 +120,7 @@ function Al7an() {
                       title="قسم الحان كيهك و الميلاد"
                       width="100%"
                       height="500"
-                    ></iframe>
+                    ></iframe> */}
                   </div>
                 </div>
               </div>
@@ -132,7 +144,7 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <Asbo3AlamPlayer />
-                    <iframe
+                    {/* <iframe
                       src="./al7an/pdf/سبت لعازر و احد الشعانين.pdf"
                       title="قسم الحان سبت لعازر و احد الشعانين"
                       width="100%"
@@ -155,7 +167,7 @@ function Al7an() {
                       title="قسم الحان سبت الفرح"
                       width="100%"
                       height="500"
-                    ></iframe>
+                    ></iframe> */}
                   </div>
                 </div>
               </div>
@@ -179,12 +191,12 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <SnawiPlayer />
-                    <iframe
+                    {/* <iframe
                       src="./al7an/pdf/الطقس السنوي.pdf"
                       title="قسم الحان الطقس السنوي"
                       width="100%"
                       height="500"
-                    ></iframe>
+                    ></iframe> */}
                   </div>
                 </div>
               </div>
@@ -208,12 +220,12 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <KhmacenPlayer />
-                    <iframe
+                    {/* <iframe
                       src="./al7an/pdf/الخماسين.pdf"
                       title="قسم الحان خماسين"
                       width="100%"
                       height="500"
-                    ></iframe>
+                    ></iframe> */}
                   </div>
                 </div>
               </div>
