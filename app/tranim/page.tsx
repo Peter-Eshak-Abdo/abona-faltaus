@@ -1,13 +1,9 @@
-import Header from "@/components/Header";
 import KyamaPlayer from "./KyamaPlayer";
 import MeladPlayer from "./MeladPlayer";
-import Footer from "@/components/Footer";
 
 function Tranim() {
   return (
     <>
-      <Header />
-
       <main className="container pt-4 mt-5">
         <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
           {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
@@ -60,10 +56,8 @@ function Tranim() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }
 
 export default Tranim;
-

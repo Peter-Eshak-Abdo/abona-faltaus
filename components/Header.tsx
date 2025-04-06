@@ -2,6 +2,7 @@ import Link from "next/link";
 
 function Header() {
   return (
+<>
     <header data-bs-theme="dark">
       <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div className="container-fluid d-flex justify-content-between">
@@ -63,7 +64,9 @@ function Header() {
           </div>
         </div>
       </nav>
-    </header>
+      </header>
+      <br className="my-5" /><br className="my-5" /><br className="my-5" />
+    </>
   );
 }
 

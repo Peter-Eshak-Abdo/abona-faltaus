@@ -140,7 +140,7 @@ const SomKebirPlayer: React.FC = () => {
                           </div>
                           <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button className="btn-information" data-bs-target="#payment${[i]}" data-bs-toggle="modal">Open Payment</button>
+                            <button className="btn btn-information" data-bs-target="#payment${[i]}" data-bs-toggle="modal">Open Payment</button>
                           </div>
                         </div>
                       </div>

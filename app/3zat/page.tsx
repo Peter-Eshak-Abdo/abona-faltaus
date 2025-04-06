@@ -1,14 +1,15 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import AbDaodLam3yAltobaPlayer from "./AbDaodLam3yAltobaPlayer";
 import AbDaodLam3yAlslaPlayer from "./AbDaodLam3yAlslaPlayer";
 import BabaShenodyPlayer from "./BabaShenodyPlayer";
 
+export const metadata = {
+  title: "قسم العظات",
+  description: "قسم العظات الارثوذكسية المسيحية",
+  keywords: "العظات, العظات الارثوذكسية, عظات ابونا فلتاؤس, عظات ابونا داؤد لمعي, عظات البابا شنودة",
+}
 function W3zat() {
   return (
     <>
-      <Header />
-
       <main className="container pt-4 mt-5">
         <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
           {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
@@ -65,7 +66,7 @@ function W3zat() {
                       <div
                         id="collapseAlsla"
                         className="accordion-collapse collapse"
-                        
+
                       >
                         <div className="accordion-body">
                           <AbDaodLam3yAlslaPlayer />
@@ -126,7 +127,6 @@ function W3zat() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }

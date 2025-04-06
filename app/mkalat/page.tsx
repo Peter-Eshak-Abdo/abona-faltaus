@@ -1,11 +1,7 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-
 function Mkalat() {
   return (
     <>
       {/* <link href="../css/bootstrap/blog.rtl.css" rel="stylesheet" /> */}
-      <Header />
       <br className="mt-5" />
       <main className="container mt-5">
         <div className="row g-5">
@@ -339,7 +335,6 @@ function Mkalat() {
         </div>
       </main>
 
-      <Footer />
     </>
   );
 }

@@ -1,12 +1,9 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 
 function Ayat() {
   return (
     <>
-      <Header />
       <h1>Ayat</h1>
-      <img src="${TripsData[i].imageUrl}" className="card-img-top" alt="${TripsData[i].name}" />
+      {/* <img src="${TripsData[i].imageUrl}" className="card-img-top" alt="${TripsData[i].name}" />
       <div className="card-body">
         <h5 className="card-title">TripsData[i].name</h5>
         <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card&#39;s content.</p>
@@ -192,19 +189,18 @@ function Ayat() {
               </div>
             </div>
             <div className="modal-footer">
-              {/* <button className="btn btn-secondary" data-bs-target="#info${[i]}" data-bs-whatever="@Tofa7a" data-bs-toggle="modal">
+               <button className="btn btn-secondary" data-bs-target="#info${[i]}" data-bs-whatever="@Tofa7a" data-bs-toggle="modal">
                 Back to first
               </button>
               <button className="btn-information" data-bs-target="#info" data-bs-whatever="@Tofa7a" data-bs-nameUni="${
                     TripsData[i].name
                   } University" data-bs-toggle="modal">
                 Submit
-              </button> */}
+              </button>
             </div>
           </div>
         </div>
-      </div>
-      <Footer />
+      </div> */}
     </>
   );
 }

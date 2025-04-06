@@ -1,5 +1,7 @@
 import "./globals.css";
 import Script from "next/script";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 function serviceWorker() {
   if ("serviceWorker" in navigator) {
@@ -65,7 +67,12 @@ function RootLayout({
           href="./manifest.webmanifest"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <Header />
+        
+        {children}
+        <Footer />
+      </body>
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
         integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="

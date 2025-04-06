@@ -1,11 +1,15 @@
-import Header from "@/components/Header";
 import SomKebirPlayer from "./SomKebirPlayer";
 import KeahkPlayer from "./KeahkPlayer";
 import Asbo3AlamPlayer from "./Asbo3AlamPlayer";
 import SnawiPlayer from "./SnawiPlayer";
 import KhmacenPlayer from "./KhmacenPlayer";
 import NhdetAl3draPlayer from "./NhdetAl3draPlayer";
-import Footer from "@/components/Footer";
+
+export const metadata = {
+  title: "قسم الحان",
+  description: "قسم الحان الارثوذكسية المسيحية",
+  keywords:"الحان , طقس صنوي , طقس كيهك , طقس الصوم الكبير , طقس الخماسين , طقس عيد الميلاد , طقس عيد الغطاس , طقس عيد النيروز , طقس عيد الصليب , طقس عيد القيامة , طقس عيد العذراء",
+}
 
 // const PdfViewer = ({ pdfUrl }: { pdfUrl: string }) => {
 //   return (
@@ -22,7 +26,6 @@ function Al7an() {
   // const pdfUrl = "./al7an/pdf/الصوم الكبير و صوم نينوي.pdf"; // Path to your PDF file
   return (
     <>
-      <Header />
       <main className="container pt-4 mt-5">
         <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
           {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
@@ -256,7 +259,6 @@ function Al7an() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }
