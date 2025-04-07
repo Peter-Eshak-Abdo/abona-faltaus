@@ -4,6 +4,7 @@ import Asbo3AlamPlayer from "./Asbo3AlamPlayer";
 import SnawiPlayer from "./SnawiPlayer";
 import KhmacenPlayer from "./KhmacenPlayer";
 import NhdetAl3draPlayer from "./NhdetAl3draPlayer";
+import Image from "next/image";
 
 export const metadata = {
   title: "قسم الحان",
@@ -35,8 +36,8 @@ function Al7an() {
           <p className="fs-2 text-secondry text-center fw-light mt-5">
             قسم الالحان الارثوذكسية المسيحية
           </p>
-          <img
-            src="./images/sec1.jpeg"
+          <Image
+            src="/images/sec1.jpeg"
             alt="قسم الالحان والترانيم والعظات"
             className="img-thumbnail rounded"
             width={750}

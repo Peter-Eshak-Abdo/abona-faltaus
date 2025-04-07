@@ -51,7 +51,7 @@ const SnawiPlayer: React.FC = () => {
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="btn-group">
                     <Link
-                      href={`./al7an/al7an-tfasil/${index}`}
+                      href={`./al7an/al7an-tfasil/snawi-${index}`}
                       className="btn btn-sm btn-outline-secondary"
                     >
                       تفاصيل

@@ -40,6 +40,18 @@
 //     ]
 //   },
 // }
+// module.exports = {
+//   images: {
+//     remotePatterns: [
+//       {
+//         protocol: 'https',
+//         hostname: '',
+//         port: '',
+
+//       },
+//     ],
+//   },
+// }
 const nextConfig = {
   // output: 'export',
   /* config options here */

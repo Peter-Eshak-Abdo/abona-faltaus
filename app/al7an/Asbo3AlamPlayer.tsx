@@ -1,33 +1,35 @@
 "use client";
 
+import Image from "next/image";
+
 const sounds = [
   {
     monasba: "asbo3-alam",
     name: "لحن افلوجيمينوس",
     duration: "6:33",
     src: "./al7an/لحن افلوجيمينوس.mp3",
-    hazatSrc: "./al7an/hazat/سبت لعازر و احد الشعانين_page-0119.png",
+    hazatSrc: "/al7an/hazat/سبت لعازر و احد الشعانين_page-0119.png",
   },
   {
     monasba: "asbo3-alam",
     name: "لحن بيك إثرونوس",
     duration: "18:23",
     src: "./al7an/لحن بيك إثرونوس.mp3",
-    hazatSrc: "./al7an/hazat/البصخة_page-0084.png",
+    hazatSrc: "/al7an/hazat/البصخة_page-0084.png",
   },
   {
     monasba: "asbo3-alam",
     name: "لحن_اومونوجنيس",
     duration: "11:12",
     src: "./al7an/لحن_اومونوجنيس.mp3",
-    hazatSrc: "./al7an/hazat/البصخة_page-0067.png",
+    hazatSrc: "/al7an/hazat/البصخة_page-0067.png",
   },
   {
     monasba: "asbo3-alam",
     name: "لحن_مقدمه_العظه_اوكاتي",
     duration: "11:08",
     src: "./al7an/لحن_مقدمه_العظه_اوكاتي.mp3",
-    hazatSrc: "./al7an/hazat/البصخة_page-0014.png",
+    hazatSrc: "/al7an/hazat/البصخة_page-0014.png",
   },
 ];
 
@@ -67,7 +69,9 @@ const Asbo3AlamPlayer: React.FC = () => {
                   alt={sound.name}
                   className="img-thumbnail"
                 /> */}
-
+                <a href={sound.hazatSrc} target="_blank" rel="noopener noreferrer">
+                    <Image src={sound.hazatSrc} className="card-img-top" alt={sound.name} width={200} height={450}/>
+                </a>
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="btn-group">
                     <button
@@ -94,7 +98,7 @@ const Asbo3AlamPlayer: React.FC = () => {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div className="modal-body">
-                            <img src={sound.hazatSrc} className="card-img-top" alt={sound.name} />
+                            <Image src={sound.hazatSrc} className="card-img-top" alt={sound.name} width={200} height={350}/>
                             {/* {sound.hazatSrc1 == "" ? <p>مفيش صورة لللحن ده</p> : <img
                               src={sound.hazatSrc1}
                               alt={sound.name}
@@ -132,21 +136,6 @@ const Asbo3AlamPlayer: React.FC = () => {
                           </div>
                           <div className="modal-body">
                             <h4 className="mb-3">Payment TripsData[i].payment LE</h4>
-
-                            <div className="my-3">
-                              <div className="form-check">
-                                <input id="credit" name="paymentMethod" type="radio" className="form-check-input" checked required />
-                                <label className="form-check-label" htmlFor="credit">Credit card</label>
-                              </div>
-                              <div className="form-check">
-                                <input id="debit" name="paymentMethod" type="radio" className="form-check-input" required />
-                                <label className="form-check-label" htmlFor="debit">Debit card</label>
-                              </div>
-                              <div className="form-check">
-                                <input id="paypal" name="paymentMethod" type="radio" className="form-check-input" required />
-                                <label className="form-check-label" htmlFor="paypal">PayPal</label>
-                              </div>
-                            </div>
 
                             <div className="row gy-3">
                               <div className="col-md-6">

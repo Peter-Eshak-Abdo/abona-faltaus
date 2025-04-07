@@ -1,4 +1,5 @@
 // import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 
 function Home() {
@@ -6,8 +7,8 @@ function Home() {
     <main className="container">
       <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
         {/* <Image src="./images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
-        <img
-          src="./images/img.jpg"
+        <Image
+          src="/images/img.jpg"
           alt="صورة لابونا فلتاؤس"
           className="img-thumbnail rounded"
           width={750}
@@ -85,8 +86,8 @@ function Home() {
             </div>
           </div>
           <div className="col-md-5">
-            <img
-              src="./images/sec1.jpeg"
+            <Image
+              src="/images/sec1.jpeg"
               alt="قسم الالحان والترانيم والعظات"
               className="img-thumbnail rounded"
               width={750}
@@ -117,8 +118,8 @@ function Home() {
             </div>
           </div>
           <div className="col-md-5 order-md-1">
-            <img
-              src="./images/sec2.jpeg"
+            <Image
+              src="/images/sec2.jpeg"
               alt="قسم الآيات والمقالات"
               className="img-thumbnail rounded"
               width={750}
@@ -143,8 +144,8 @@ function Home() {
             </div>
           </div>
           <div className="col-md-5">
-            <img
-              src="./images/sec3.jpeg"
+            <Image
+              src="/images/sec3.jpeg"
               alt="قسم الفقرات"
               className="img-thumbnail rounded"
               width={750}

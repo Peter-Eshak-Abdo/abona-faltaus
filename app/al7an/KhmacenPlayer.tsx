@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 const sounds = [
   {
@@ -84,7 +85,7 @@ const KhmacenPlayer: React.FC = () => {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div className="modal-body">
-                            <img src={sound.hazatSrc} className="card-img-top" alt={sound.name} />
+                            {sound.hazatSrc ? <Image src={sound.hazatSrc || ""} className="card-img-top" alt={sound.name} width={300} height={450}/> : <p>مفيش صورة لللحن ده</p>}
                             {/* {sound.hazatSrc1 == "" ? <p>مفيش صورة لللحن ده</p> : <img
                               src={sound.hazatSrc1}
                               alt={sound.name}
@@ -122,21 +123,6 @@ const KhmacenPlayer: React.FC = () => {
                           </div>
                           <div className="modal-body">
                             <h4 className="mb-3">Payment TripsData[i].payment LE</h4>
-
-                            <div className="my-3">
-                              <div className="form-check">
-                                <input id="credit" name="paymentMethod" type="radio" className="form-check-input" checked required />
-                                <label className="form-check-label" htmlFor="credit">Credit card</label>
-                              </div>
-                              <div className="form-check">
-                                <input id="debit" name="paymentMethod" type="radio" className="form-check-input" required />
-                                <label className="form-check-label" htmlFor="debit">Debit card</label>
-                              </div>
-                              <div className="form-check">
-                                <input id="paypal" name="paymentMethod" type="radio" className="form-check-input" required />
-                                <label className="form-check-label" htmlFor="paypal">PayPal</label>
-                              </div>
-                            </div>
 
                             <div className="row gy-3">
                               <div className="col-md-6">

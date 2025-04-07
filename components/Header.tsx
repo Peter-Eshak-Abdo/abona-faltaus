@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 function Header() {
@@ -7,7 +8,7 @@ function Header() {
       <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div className="container-fluid d-flex justify-content-between">
           <a className="navbar-brand" href="#">
-            <img src="./images/img.jpg" alt="صورة لابونا فلتاؤس" className=" rounded d-inline-block align-text-center mx-2" width={60} height={40} />
+            <Image src="/images/img.jpg" alt="صورة لابونا فلتاؤس" className="rounded d-inline-block align-text-center mx-2" width={60} height={40} />
             أبونا فلتاؤس
           </a>
           <button

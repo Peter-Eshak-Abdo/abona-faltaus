@@ -1,6 +1,7 @@
 import AbDaodLam3yAltobaPlayer from "./AbDaodLam3yAltobaPlayer";
 import AbDaodLam3yAlslaPlayer from "./AbDaodLam3yAlslaPlayer";
 import BabaShenodyPlayer from "./BabaShenodyPlayer";
+import Image from "next/image";
 
 export const metadata = {
   title: "قسم العظات",
@@ -19,8 +20,8 @@ function W3zat() {
           <p className="fs-2 text-secondry text-center fw-light mt-5">
             قسم العظات الارثوذكسية المسيحية
           </p>
-          <img
-            src="./images/sec1.jpeg"
+          <Image
+            src="/images/sec1.jpeg"
             alt="قسم الالحان والترانيم والعظات"
             className="img-thumbnail rounded"
             width={400}

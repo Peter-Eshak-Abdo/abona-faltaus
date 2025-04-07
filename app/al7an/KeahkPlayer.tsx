@@ -228,6 +228,9 @@
 //     }
 //   }
 "use client";
+
+import Image from "next/image";
+
 // import React, { useEffect } from "react";
 
 // interface Sound {
@@ -243,7 +246,7 @@ const sounds = [
     name: "التوزيع الكيهكى",
     duration: "1:40",
     src: "./al7an/التوزيع الكيهكى.mp3",
-    hazatSrc: "./al7an/hazat/كيهك و الميلاد_page-0052.jpg",
+    hazatSrc: "/al7an/hazat/كيهك و الميلاد_page-0052.jpg",
   },
   {
     monasba: "keahk",
@@ -292,9 +295,9 @@ const sounds = [
     name: "ذكصولوجية شهر كيهك_كى غار",
     duration: "4:18",
     src: "./al7an/ذكصولوجية شهر كيهك_كى غار.mp3",
-    hazatSrc: "./al7an/hazat/كيهك و الميلاد_page-0009.jpg",
-    hazatSrc1: "./al7an/hazat/كيهك و الميلاد_page-0010.jpg",
-    hazatSrc2: "./al7an/hazat/كيهك و الميلاد_page-0011.jpg",
+    hazatSrc: "/al7an/hazat/كيهك و الميلاد_page-0009.jpg",
+    hazatSrc1: "/al7an/hazat/كيهك و الميلاد_page-0010.jpg",
+    hazatSrc2: "/al7an/hazat/كيهك و الميلاد_page-0011.jpg",
   },
   {
     monasba: "keahk",
@@ -307,8 +310,8 @@ const sounds = [
     name: "لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس",
     duration: "7:55",
     src: "./al7an/لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس.mp3",
-    hazatSrc: "./al7an/hazat/التسبحة_page-0038.jpg",
-    hazatSrc1: "./al7an/hazat/التسبحة_page-0039.jpg",
+    hazatSrc: "/al7an/hazat/التسبحة_page-0038.jpg",
+    hazatSrc1: "/al7an/hazat/التسبحة_page-0039.jpg",
   },
   {
     monasba: "keahk",
@@ -321,59 +324,59 @@ const sounds = [
     name: "لحن_تين_اويه_أنسوك",
     duration: "7:02",
     src: "./al7an/لحن_تين_اويه_أنسوك.mp3",
-    hazatSrc: "./al7an/hazat/التسبحة_page-0047.jpg",
-    hazatSrc1: "./al7an/hazat/التسبحة_page-0048.jpg",
-    hazatSrc2: "./al7an/hazat/التسبحة_page-0049.jpg",
+    hazatSrc: "/al7an/hazat/التسبحة_page-0047.jpg",
+    hazatSrc1: "/al7an/hazat/التسبحة_page-0048.jpg",
+    hazatSrc2: "/al7an/hazat/التسبحة_page-0049.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن_تين_ثينو_الكبير",
     duration: "11:18",
     src: "./al7an/لحن_تين_ثينو_الكبير.mp3",
-    hazatSrc: "./al7an/hazat/التسبحة_page-0024.jpg",
-    hazatSrc1: "./al7an/hazat/التسبحة_page-0025.jpg",
+    hazatSrc: "/al7an/hazat/التسبحة_page-0024.jpg",
+    hazatSrc1: "/al7an/hazat/التسبحة_page-0025.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن_تينين",
     duration: "7:25",
     src: "./al7an/لحن_تينين.mp3",
-    hazatSrc: "./al7an/hazat/التسبحة_page-0042.jpg",
-    hazatSrc1: "./al7an/hazat/التسبحة_page-0043.jpg",
-    hazatSrc2: "./al7an/hazat/التسبحة_page-0044.jpg",
-    hazatSrc3: "./al7an/hazat/التسبحة_page-0045.jpg",
-    hazatSrc4: "./al7an/hazat/التسبحة_page-0046.jpg",
+    hazatSrc: "/al7an/hazat/التسبحة_page-0042.jpg",
+    hazatSrc1: "/al7an/hazat/التسبحة_page-0043.jpg",
+    hazatSrc2: "/al7an/hazat/التسبحة_page-0044.jpg",
+    hazatSrc3: "/al7an/hazat/التسبحة_page-0045.jpg",
+    hazatSrc4: "/al7an/hazat/التسبحة_page-0046.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن_سيموتى",
     duration: "7:45",
     src: "./al7an/لحن_سيموتى.mp3",
-    hazatSrc: "./al7an/hazat/التسبحة_page-0056.jpg",
-    hazatSrc1: "./al7an/hazat/التسبحة_page-0057.jpg",
-    hazatSrc2: "./al7an/hazat/التسبحة_page-0058.jpg",
-    hazatSrc3: "./al7an/hazat/التسبحة_page-0059.jpg",
+    hazatSrc: "/al7an/hazat/التسبحة_page-0056.jpg",
+    hazatSrc1: "/al7an/hazat/التسبحة_page-0057.jpg",
+    hazatSrc2: "/al7an/hazat/التسبحة_page-0058.jpg",
+    hazatSrc3: "/al7an/hazat/التسبحة_page-0059.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن_شيري_نيه_ماريا",
     duration: "6:50",
     src: "./al7an/لحن_شيري_نيه_ماريا.mp3",
-    hazatSrc: "./al7an/hazat/التسبحة_page-0053.jpg",
-    hazatSrc1: "./al7an/hazat/التسبحة_page-0054.jpg",
-    hazatSrc2: "./al7an/hazat/التسبحة_page-0055.jpg",
+    hazatSrc: "/al7an/hazat/التسبحة_page-0053.jpg",
+    hazatSrc1: "/al7an/hazat/التسبحة_page-0054.jpg",
+    hazatSrc2: "/al7an/hazat/التسبحة_page-0055.jpg",
   },
   {
     monasba: "keahk",
     name: "لحن(الهوس_الثالث)آسمو_ابشويس",
     duration: "20:35",
     src: "./al7an/لحن(الهوس_الثالث)آسمو_ابشويس.mp3",
-    hazatSrc: "./al7an/hazat/التسبحة_page-0036.jpg",
-    hazatSrc1: "./al7an/hazat/التسبحة_page-0037.jpg",
-    hazatSrc2: "./al7an/hazat/التسبحة_page-0038.jpg",
-    hazatSrc3: "./al7an/hazat/التسبحة_page-0039.jpg",
-    hazatSrc4: "./al7an/hazat/التسبحة_page-0040.jpg",
-    hazatSrc5: "./al7an/hazat/التسبحة_page-0041.jpg",
+    hazatSrc: "/al7an/hazat/التسبحة_page-0036.jpg",
+    hazatSrc1: "/al7an/hazat/التسبحة_page-0037.jpg",
+    hazatSrc2: "/al7an/hazat/التسبحة_page-0038.jpg",
+    hazatSrc3: "/al7an/hazat/التسبحة_page-0039.jpg",
+    hazatSrc4: "/al7an/hazat/التسبحة_page-0040.jpg",
+    hazatSrc5: "/al7an/hazat/التسبحة_page-0041.jpg",
   },
 ];
 
@@ -463,27 +466,29 @@ const KeahkPlayer: React.FC = () => {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div className="modal-body">
-                            <img src={sound.hazatSrc} className="card-img-top" alt={sound.name} />
-                            {sound.hazatSrc1 == ""? <p>مفيش صورة لللحن ده</p>: <img
-                              src={sound.hazatSrc1}
+                            {sound.hazatSrc ? <Image src={sound.hazatSrc || ""} className="card-img-top" alt={sound.name} width={300} height={450}/> : <p>مفيش صورة لللحن ده</p>}
+
+                            {sound.hazatSrc1 == ""? <p>مفيش صورة لللحن ده</p>: <Image
+                              src={sound.hazatSrc1 || ""}
                               alt={sound.name}
-                              className="img-thumbnail"/>}
-                            {sound.hazatSrc2 == ""? <br />: <img
-                              src={sound.hazatSrc2}
+                              className="img-thumbnail" width={300} height={450}/>}
+                            {sound.hazatSrc2 == ""? <br />: <Image
+                              src={sound.hazatSrc2 || ""}
                               alt={sound.name}
-                              className="img-thumbnail"/>}
-                            {sound.hazatSrc3 == ""?<br />: <img
-                              src={sound.hazatSrc3}
+                              className="img-thumbnail"
+                              width={300} height={450}/>}
+                            {sound.hazatSrc3 == ""?<br />: <Image
+                              src={sound.hazatSrc3 || ""}
                               alt={sound.name}
-                              className="img-thumbnail"/>}
-                            {sound.hazatSrc4 == ""? <br />: <img
-                              src={sound.hazatSrc4}
+                              className="img-thumbnail" width={300} height={450}/>}
+                            {sound.hazatSrc4 == ""? <br />: <Image
+                              src={sound.hazatSrc4 || ""}
                               alt={sound.name}
-                              className="img-thumbnail"/>}
-                            {sound.hazatSrc5 == ""? <br />: <img
-                              src={sound.hazatSrc5}
+                              className="img-thumbnail" width={300} height={450}/>}
+                            {sound.hazatSrc5 == ""? <br />: <Image
+                              src={sound.hazatSrc5 || ""}
                               alt={sound.name}
-                              className="img-thumbnail"/>}
+                              className="img-thumbnail" width={300} height={450}/>}
                           </div>
                           <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -501,21 +506,6 @@ const KeahkPlayer: React.FC = () => {
                           </div>
                           <div className="modal-body">
                             <h4 className="mb-3">Payment TripsData[i].payment LE</h4>
-
-                            <div className="my-3">
-                              <div className="form-check">
-                                <input id="credit" name="paymentMethod" type="radio" className="form-check-input" checked required />
-                                <label className="form-check-label" htmlFor="credit">Credit card</label>
-                              </div>
-                              <div className="form-check">
-                                <input id="debit" name="paymentMethod" type="radio" className="form-check-input" required />
-                                <label className="form-check-label" htmlFor="debit">Debit card</label>
-                              </div>
-                              <div className="form-check">
-                                <input id="paypal" name="paymentMethod" type="radio" className="form-check-input" required />
-                                <label className="form-check-label" htmlFor="paypal">PayPal</label>
-                              </div>
-                            </div>
 
                             <div className="row gy-3">
                               <div className="col-md-6">
