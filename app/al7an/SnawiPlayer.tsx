@@ -1,6 +1,6 @@
 "use client";
-
 import Link from "next/link";
+import snawi from './snawi.json';
 
 const sounds = [
   {
@@ -50,13 +50,23 @@ const SnawiPlayer: React.FC = () => {
                 {/* <img src={sound.hazatSrc} alt={sound.name} className="img-thumbnail" /> */}
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="btn-group">
-                    <Link
+                    <ul>
+                      {snawi.snawi.map(la7n => (
+                        <li key={la7n.id}>
+                          <Link href={`/al7an/tfasil/${la7n.id}`} legacyBehavior>
+                          {/* <Link href={`/al7an/al7an-tfasil/${la7n.id}`} legacyBehavior> */}
+                            <a>{la7n.name}</a>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                    {/* <Link
                       href={`./al7an/al7an-tfasil/snawi-${index}`}
                       className="btn btn-sm btn-outline-secondary"
                     >
                       تفاصيل
                     </Link>
-
+ */}
                   </div>
                   <small className="text-body-secondary">
                     {sound.duration}

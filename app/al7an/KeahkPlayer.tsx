@@ -248,48 +248,55 @@ const sounds = [
     src: "./al7an/التوزيع الكيهكى.mp3",
     hazatSrc: "/al7an/hazat/كيهك و الميلاد_page-0052.jpg",
   },
-  {
-    monasba: "keahk",
-    name: "مجمع التسبحة",
-    duration: "20:07",
-    src: "./al7an/المجمع_التسبحة.mp3",
-  },
-  {
-    monasba: "keahk",
-    name: "الهوس الأول قبطي",
-    duration: "7:06",
-    src: "./al7an/الهوس الأول قبطي.mp3",
-  },
-  {
-    monasba: "keahk",
-    name: "الهوس الأول عربي",
-    duration: "3:33",
-    src: "./al7an/الهوس_الاول-عربي.mp3",
-  },
-  {
-    monasba: "keahk",
-    name: "الهوس الثاني قبطي",
-    duration: "4:33",
-    src: "./al7an/الهوس_الثاني-قبطي.mp3",
-  },
-  {
-    monasba: "keahk",
-    name: "الهوس الرابع قبطي",
-    duration: "7:00",
-    src: "./al7an/الهوس_الرابع-قبطي.mp3",
-  },
-  {
-    monasba: "keahk",
-    name: "ثيؤطوكية_الأحد_قبطي",
-    duration: "6:57",
-    src: "./al7an/ثيؤطوكية_الأحد_شاشف_إنسوب_إمينى.mp3",
-  },
-  {
-    monasba: "keahk",
-    name: "ثيؤطوكية_الاربعاء_كل_الطغمات_السمائية",
-    duration: "7:57",
-    src: "./al7an/ثيؤطوكية_الاربعاء_كل_الطغمات_السمائية.mp3",
-  },
+  // {
+  //   monasba: "keahk",
+  //   name: "مجمع التسبحة",
+  //   duration: "20:07",
+  //   src: "./al7an/المجمع_التسبحة.mp3",
+  //   hazatSrc: null
+  // },
+  // {
+  //   monasba: "keahk",
+  //   name: "الهوس الأول قبطي",
+  //   duration: "7:06",
+  //   src: "./al7an/الهوس الأول قبطي.mp3",
+  //   hazatSrc: null
+  // },
+  // {
+  //   monasba: "keahk",
+  //   name: "الهوس الأول عربي",
+  //   duration: "3:33",
+  //   src: "./al7an/الهوس_الاول-عربي.mp3",
+  //   hazatSrc: null
+  // },
+  // {
+  //   monasba: "keahk",
+  //   name: "الهوس الثاني قبطي",
+  //   duration: "4:33",
+  //   src: "./al7an/الهوس_الثاني-قبطي.mp3",
+  //   hazatSrc: null
+  // },
+  // {
+  //   monasba: "keahk",
+  //   name: "الهوس الرابع قبطي",
+  //   duration: "7:00",
+  //   src: "./al7an/الهوس_الرابع-قبطي.mp3",
+  //   hazatSrc: null
+  // },
+  // {
+  //   monasba: "keahk",
+  //   name: "ثيؤطوكية_الأحد_قبطي",
+  //   duration: "6:57",
+  //   src: "./al7an/ثيؤطوكية_الأحد_شاشف_إنسوب_إمينى.mp3",
+  //   hazatSrc: null
+  // },
+  // {
+  //   monasba: "keahk",
+  //   name: "ثيؤطوكية_الاربعاء_كل_الطغمات_السمائية",
+  //   duration: "7:57",
+  //   src: "./al7an/ثيؤطوكية_الاربعاء_كل_الطغمات_السمائية.mp3",
+  //   hazatSrc: null
+  // },
   {
     monasba: "keahk",
     name: "ذكصولوجية شهر كيهك_كى غار",
@@ -304,6 +311,7 @@ const sounds = [
     name: "لحن تي جاليلي اي",
     duration: "11:42",
     src: "./al7an/لحن تي جاليلي اي.mp3",
+    hazatSrc: null
   },
   {
     monasba: "keahk",
@@ -313,12 +321,13 @@ const sounds = [
     hazatSrc: "/al7an/hazat/التسبحة_page-0038.jpg",
     hazatSrc1: "/al7an/hazat/التسبحة_page-0039.jpg",
   },
-  {
-    monasba: "keahk",
-    name: "لحن_اريبصالين",
-    duration: "7:55",
-    src: "./al7an/لحن_اريبصالين.mp3",
-  },
+  // {
+  //   monasba: "keahk",
+  //   name: "لحن_اريبصالين",
+  //   duration: "7:55",
+  //   src: "./al7an/لحن_اريبصالين.mp3",
+  //   hazatSrc: null
+  // },
   {
     monasba: "keahk",
     name: "لحن_تين_اويه_أنسوك",

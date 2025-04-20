@@ -8,7 +8,7 @@ const sounds = [
     name: "الليلويا إي ا ايخون",
     duration: "2:04",
     src: "./al7an/الليلويا إي ا ايخون.mp3",
-    hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0031.jpg",
+    hazatSrc: "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0031.jpg",
   },
   {
     id: "2",
@@ -19,8 +19,10 @@ const sounds = [
     // src: "https://drive.google.com/file/d/1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI/view?usp=drive_link",
     // src: "https://cisuezedu-my.sharepoint.com/:u:/g/personal/fciugs118_ci_suez_edu_eg/ER1off32v05Fn7y9P8FUONIBtuAHrFAB-KitY7-zIiIjcg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=hfRX4X",
     // src: "https://drive.google.com/uc?export=download&id=1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI"
-    src: "./al7an/06 لحن إنثو تي تي شوري الصيامي.mp3",
-    hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
+    src: "https://docs.google.com/uc?export=download&id=1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI",
+
+    // src: "./al7an/06 لحن إنثو تي تي شوري الصيامي.mp3",
+    hazatSrc: "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
   },
   {
     id: "3",
@@ -28,23 +30,24 @@ const sounds = [
     name: "لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti",
     duration: "3:45",
     src: "./al7an/لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti.mp3",
-    hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0036.jpg",
+    hazatSrc: "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0036.jpg",
   },
-  {
-    id: "4",
-    monasba: "som-kebir",
-    name: "لحن ميغالو",
-    duration: "12:18",
-    src: "./al7an/لحن ميغالو.mp3",
-    // hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
-  },
+  // {
+  //   id: "4",
+  //   monasba: "som-kebir",
+  //   name: "لحن ميغالو",
+  //   duration: "12:18",
+  //   src: "./al7an/لحن ميغالو.mp3",
+  //   hazatSrc: null
+  //   // hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
+  // },
   {
     id: "5",
     monasba: "som-kebir",
     name: "توزيع أيام صوم نينوى وأيام الصوم الكبير _ Distribution for Weekdays of Lent",
     duration: "14:40",
     src: "./al7an/توزيع أيام صوم نينوى وأيام الصوم الكبير _ Distribution for Weekdays of Lent.mp3",
-    hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0047.jpg",
+    hazatSrc: "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0047.jpg",
   },
   {
     id: "6",
@@ -52,7 +55,7 @@ const sounds = [
     name: "سوماتوس ختام أيام الصوم الكبير _ Somatos Concluding Canon for Weekdays of Lent",
     duration: "2:45",
     src: "./al7an/سوماتوس ختام أيام الصوم الكبير _ Somatos Concluding Canon for Weekdays of Lent.mp3",
-    hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0059.jpg",
+    hazatSrc: "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0059.jpg",
   },
   // {
     //   monasba: "som-kebir",
@@ -133,7 +136,7 @@ const SomKebirPlayer: React.FC = () => {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div className="modal-body">
-                            {sound.hazatSrc ? <Image src={sound.hazatSrc || ""} className="card-img-top" alt={sound.name} width={300} height={450} /> : <p>مفيش صورة لللحن ده</p>}
+                            <Image src={sound.hazatSrc} className="card-img-top" alt={sound.name} width={300} height={450} />
                             {/* {sound.hazatSrc1 == ""? <p>مفيش صورة لللحن ده</p>: <img
                               src={sound.hazatSrc1}
                               alt={sound.name}

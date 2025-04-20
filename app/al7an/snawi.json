@@ -1,0 +1,20 @@
+{
+  "snawi": [
+    {
+      "id": "1",
+      "monasba": "snawi",
+      "name": "لحن بينشتي الصغير",
+      "duration": "4:31",
+      "src": "./al7an/لحن بينشتي الصغير.mp3",
+      "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0207.jpg"
+    },
+    {
+      "id": "2",
+      "monasba": "snawi",
+      "name": "لحن_البركة_(تين_أوأوشت)",
+      "duration": "2:03",
+      "src": "./al7an/لحن_البركة_(تين_أوأوشت).mp3",
+      "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0066.jpg"
+    }
+  ]
+}

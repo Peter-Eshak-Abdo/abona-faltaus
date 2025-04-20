@@ -7,14 +7,14 @@ const sounds = [
     name: "لحن السبع طرائق",
     duration: "26:44",
     src: "./al7an/لحن السبع طرائق.mp3",
-    hazatSrc: "./al7an/hazat/الخماسين_page-0014.png",
+    hazatSrc: "/al7an/hazat/الخماسين_page-0014.png",
   },
   {
     monasba: "khmacen",
     name: "لحن ني صافيف تيرو",
     duration: "5:42",
     src: "./al7an/لحن ني صافيف تيرو.mp3",
-    hazatSrc: "./al7an/hazat/الخماسين_page-0079.png",
+    hazatSrc: "/al7an/hazat/الخماسين_page-0079.png",
   },
 
   // { // صوم الرسل
@@ -85,7 +85,7 @@ const KhmacenPlayer: React.FC = () => {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div className="modal-body">
-                            {sound.hazatSrc ? <Image src={sound.hazatSrc || ""} className="card-img-top" alt={sound.name} width={300} height={450}/> : <p>مفيش صورة لللحن ده</p>}
+                            <Image src={sound.hazatSrc} className="card-img-top" alt={sound.name} width={300} height={450}/> 
                             {/* {sound.hazatSrc1 == "" ? <p>مفيش صورة لللحن ده</p> : <img
                               src={sound.hazatSrc1}
                               alt={sound.name}

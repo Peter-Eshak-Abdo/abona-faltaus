@@ -2,6 +2,7 @@ import "./globals.css";
 import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Head from "next/head";
 
 function serviceWorker() {
   if ("serviceWorker" in navigator) {
@@ -27,7 +28,7 @@ function RootLayout({
   serviceWorker();
   return (
     <html lang="ar" dir="rtl">
-      <head>
+      <Head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>ابونا فلتاؤس السرياني</title>
@@ -66,10 +67,9 @@ function RootLayout({
           id="manifest-placeholder"
           href="./manifest.webmanifest"
         />
-      </head>
+      </Head>
       <body>
         <Header />
-        
         {children}
         <Footer />
       </body>

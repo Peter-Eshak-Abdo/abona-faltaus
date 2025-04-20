@@ -1,15 +1,17 @@
 import SomKebirPlayer from "./SomKebirPlayer";
 import KeahkPlayer from "./KeahkPlayer";
 import Asbo3AlamPlayer from "./Asbo3AlamPlayer";
-import SnawiPlayer from "./SnawiPlayer";
+// import SnawiPlayer from "./SnawiPlayer";
 import KhmacenPlayer from "./KhmacenPlayer";
 import NhdetAl3draPlayer from "./NhdetAl3draPlayer";
 import Image from "next/image";
+import Link from "next/link";
+// import snawi from './snawi.json';
 
 export const metadata = {
   title: "قسم الحان",
   description: "قسم الحان الارثوذكسية المسيحية",
-  keywords:"الحان , طقس صنوي , طقس كيهك , طقس الصوم الكبير , طقس الخماسين , طقس عيد الميلاد , طقس عيد الغطاس , طقس عيد النيروز , طقس عيد الصليب , طقس عيد القيامة , طقس عيد العذراء",
+  keywords: "الحان , طقس صنوي , طقس كيهك , طقس الصوم الكبير , طقس الخماسين , طقس عيد الميلاد , طقس عيد الغطاس , طقس عيد النيروز , طقس عيد الصليب , طقس عيد القيامة , طقس عيد العذراء",
 }
 
 // const PdfViewer = ({ pdfUrl }: { pdfUrl: string }) => {
@@ -79,6 +81,11 @@ function Al7an() {
                 >
                   <div className="accordion-body">
                     <SomKebirPlayer />
+                    <audio controls>
+                      <source src="https://docs.google.com/uc?export=download&id=1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI" type="audio/mp3" />
+                      Your browser does not support the audio element.
+                    </audio>
+
                     {/* <iframe
                       src="./al7an/pdf/الصوم الكبير و صوم نينوي.pdf"
                       title="قسم الحان الصوم الكبير و صوم نينوي"
@@ -191,10 +198,29 @@ function Al7an() {
                 <div
                   id="collapseFour"
                   className="accordion-collapse collapse"
-
                 >
                   <div className="accordion-body">
-                    <SnawiPlayer />
+                    {/* <ul>
+                      {snawi.snawi.map(la7n => (
+                        <li key={la7n.id}>
+                          <Link href={`/al7an/al7an-tfasil/${la7n.id}`} legacyBehavior>
+                            <a>{la7n.name}</a>
+                          </Link>
+                        </li>
+                      ))}
+              </ul> */}
+                    <ul>
+                      <li>
+                        <Link href="/al7an/al7an-tfasil/1">Post 1</Link>
+                      </li>
+                      <li>
+                        <Link href="/al7an/al7an-tfasil/2">Post 2</Link>
+                      </li>
+                      <li>
+                        <Link href="/al7an/al7an-tfasil/3">Post 3</Link>
+                      </li>
+                    </ul>
+                    {/* <SnawiPlayer /> */}
                     {/* <iframe
                       src="./al7an/pdf/الطقس السنوي.pdf"
                       title="قسم الحان الطقس السنوي"
