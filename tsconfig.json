@@ -35,7 +35,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/al7an/al7an-tfasil/[id]/[id].js"
-  ],
+, "app/bible/page.js", "app/bible/[abbrev]/page.js"  ],
   "exclude": [
     "node_modules"
   ],

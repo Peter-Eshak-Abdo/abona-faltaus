@@ -105,9 +105,12 @@ function Home() {
             </p>
             <p className="lead fs-4">في هذا القسم يوجد الآيات المحفوظة</p>
             <div className="d-grid gap-2 col-6 mx-auto">
-              <Link href={"/ayat"} className="btn btn-outline-primary fs-5 disabled">
+              <Link href={"/bible"} className="btn btn-outline-primary fs-5">
                 الآيات
               </Link>
+              {/* <Link href={"/ayat"} className="btn btn-outline-primary fs-5 disabled">
+                الآيات
+              </Link> */}
             </div>
             <br />
             <p className="lead fs-4">يوجد مقالات من اباء كهنة او مقالات حياتية</p>
