@@ -5,7 +5,7 @@ import Asbo3AlamPlayer from "./Asbo3AlamPlayer";
 import KhmacenPlayer from "./KhmacenPlayer";
 import NhdetAl3draPlayer from "./NhdetAl3draPlayer";
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
 // import snawi from './snawi.json';
 
 export const metadata = {

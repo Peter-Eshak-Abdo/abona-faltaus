@@ -34,7 +34,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-, "app/bible/page.js", "app/bible/[abbrev]/page.js"  ],
+     "app/bible/page.js",
+      "app/bible/[abbrev]/page.js"
+  ],
   "exclude": [
     "node_modules"
   ],
