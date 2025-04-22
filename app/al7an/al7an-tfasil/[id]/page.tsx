@@ -261,11 +261,10 @@ export async function generateStaticParams() {
 }
 
 // Page component
-export default async function BlogPostPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function Page({ params, }: { params: { id: string }; }) {
+  const { id } = params; // باقي الكود }
+
+// export default async function BlogPostPage({params}: {params: { id: string };}) {
   const post = await getBlogPost(params.id);
 
   if (!post) {
@@ -274,7 +273,8 @@ export default async function BlogPostPage({
 
   return (
     <div>
-      <p>ID: {params.id}</p>
+      <p>ID: {id}</p>
+      {/* <p>ID: {params.id}</p> */}
       <h1>{post.title}</h1>
       <p>{post.content}</p>
     </div>
