@@ -209,7 +209,7 @@ function Al7an() {
                         </li>
                       ))}
               </ul> */}
-                    <ul>
+                    {/* <ul>
                       <li>
                         <Link href="/al7an/al7an-tfasil/1">Post 1</Link>
                       </li>
@@ -219,7 +219,7 @@ function Al7an() {
                       <li>
                         <Link href="/al7an/al7an-tfasil/3">Post 3</Link>
                       </li>
-                    </ul>
+                    </ul> */}
                     {/* <SnawiPlayer /> */}
                     {/* <iframe
                       src="./al7an/pdf/الطقس السنوي.pdf"
