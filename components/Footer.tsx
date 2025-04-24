@@ -57,11 +57,12 @@ function Footer() {
         </div>
 
         <div className="col-6 col-md-2 mb-3">
-          <h5>الآيات والمقالات الدينية</h5>
+          <h5>الكتاب المقدس والمقالات الدينية</h5>
+          <h6 className="text-body-secondary">عارف الصورة غلط هبقي اغيرها بعدين</h6>
           <ul className="nav flex-column">
             <li className="nav-item mb-2">
-              <Link href={"/ayat"} className="nav-link p-0 text-body-secondary">
-                الآيات
+              <Link href={"/bible"} className="nav-link p-0 text-body-secondary">
+                الكتاب المقدس
               </Link>
             </li>
             <li className="nav-item mb-2">

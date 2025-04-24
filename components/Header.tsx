@@ -11,7 +11,7 @@ const links = [
   { name: 'الحان', href: '/al7an' },
   { name: 'ترانيم', href: '/tranim' },
   { name: 'عظات', href: '/3zat' },
-  { name: 'آيات', href: '/ayat' },
+  { name: 'الكتاب المقدس', href: '/bible' },
   { name: 'مقالات', href: '/mkalat' },
 ];
 

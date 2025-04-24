@@ -26,7 +26,7 @@ function Home() {
       <div className="d-flex flex-row justify-content-evenly">
         <div className="d-grid col-3 mx-auto">
           <Link href={"#sec-ayat-mkalat"} className="btn btn-primary fs-4">
-            الآيات والمقالات الدينية
+            الكتاب المقدس والمقالات الدينية
           </Link>
         </div>
         <div className="d-grid col-5 mx-auto">
@@ -103,10 +103,12 @@ function Home() {
             <p className="featurette-heading fw-bolder lh-1 fs-2">
               قسم الآيات والمقالات
             </p>
-            <p className="lead fs-4">في هذا القسم يوجد الآيات المحفوظة</p>
+            <p className="lead fs-4">في هذا القسم يوجد الكتاب المقدس</p>
+            <p className="text-secondary fs-4">Thanks to : <p className="text-bold">Androw Akladuos Bekhet</p> for his ideas that hepled me alot</p>
+            <h6 className="text-secondary">عارف انه مش كامل في مشكلة وانا مش فاهمها ف لما افهمها هبقي اشوف</h6>
             <div className="d-grid gap-2 col-6 mx-auto">
               <Link href={"/bible"} className="btn btn-outline-primary fs-5">
-                الآيات
+                الكتاب المقدس
               </Link>
               {/* <Link href={"/ayat"} className="btn btn-outline-primary fs-5 disabled">
                 الآيات

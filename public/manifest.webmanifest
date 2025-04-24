@@ -38,5 +38,19 @@
       "type": "image/icon",
       "sizes": "any"
     }
+  ],
+  "description": "تطبيق ابونا فلتاؤس السرياني هو تطبيق فيه الحان وعظات وترانيم والكتاب المقدس.",
+  "screenshots": [
+    {
+      "src": "/images/screenshots/homepage-wide.png",
+      "type": "image/png",
+      "sizes": "1280x720"
+    },
+    {
+      "src": "/images/screenshots/homepage-mobile.png",
+      "type": "image/png",
+      "sizes": "360x640"
+    }
   ]
+
 }
