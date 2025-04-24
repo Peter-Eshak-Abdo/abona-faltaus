@@ -1,18 +1,7 @@
 'use client';
 import Link from "next/link";
-import clsx from "clsx";
-import { usePathname } from 'next/navigation';
-// const links = [
-//   { name: 'الصفحة الرئيسية', href: '/' },
-//   { name: 'الحان', href: '/al7an' },
-//   { name: 'ترانيم', href: '/tranim' },
-//   { name: 'عظات', href: '/3zat' },
-//   { name: 'آيات', href: '/ayat' },
-//   { name: 'مقالات', href: '/mkalat' },
-// ];
 
 function Footer() {
-  const pathname = usePathname();
   return (
     <footer className="container pt-5 mt-5">
       <hr className="featurette-divider" />
@@ -26,26 +15,18 @@ function Footer() {
             <li className="nav-item mb-2">
               <Link
                 href={"/al7an"}
-                className={clsx(
-                  "d-flex h-auto flex-grow-1 align-items-center justify-content-center gap-2 rounded bg-light p-3 text-sm fw-medium hover-bg-sky-100 hover-text-blue-600 d-md-flex-none d-md-justify-start d-md-p-2 d-md-px-3", {
-                  'bg-sky-100 text-blue-600': pathname === "/al7an",
-                })}
+                className="nav-link p-0 text-body-secondary"
               >
-              <p className="hidden md:block">
-                الحان</p>
+                الحان
               </Link>
             </li>
             <li className="nav-item mb-2">
               <Link
                 href={"/tranim"}
-                className={clsx(
-                  "d-flex h-auto flex-grow-1 align-items-center justify-content-center gap-2 rounded bg-light p-3 text-sm fw-medium hover-bg-sky-100 hover-text-blue-600 d-md-flex-none d-md-justify-start d-md-p-2 d-md-px-3", {
-                  'bg-sky-100 text-blue-600': pathname === "/tranim",
-                })}
+                className="nav-link p-0 text-body-secondary"
               >
-                  <p className="hidden md:block">
                 ترانيم
-                </p>
+
               </Link>
             </li>
             <li className="nav-item mb-2">

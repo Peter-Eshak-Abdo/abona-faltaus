@@ -166,7 +166,9 @@
       <button onclick="loadQuestion()">السؤال التالي ↻</button>
     </div>
 
-    <audio id="choral" autoplay loop volume="0.2">
+    <audio id="choral" autoplay loop volume="1">
+      <!-- <audio id="choral" autoplay loop volume="0.2"> -->
+      <source src="/al7an/لحن_البركة_(تين_أوأوشت).mp3" type="audio/mp3" />
       <source src="/al7an/لحن(الهوس_الثالث)آسمو_ابشويس.mp3" type="audio/mp3" />
       <source src="/al7an/لحن_تين_ثينو_الكبير.mp3" type="audio/mp3" />
       <source src="/al7an/لحن_تينين.mp3" type="audio/mp3" />
@@ -324,7 +326,7 @@
         {
           q: "كم عدد أيام الخليقة؟",
           a: ["5", "6", "7", "8"],
-           correct: 1,
+          correct: 1,
         },
         {
           q: "في أي مدينة تم صلب السيد المسيح؟",
@@ -476,6 +478,18 @@
 
       // تشغيل أول سؤال تلقائيًا
       loadQuestion();
+      
+      function goOnlineHandler() {
+        window.location.href = '/';
+      }
+
+      if (navigator.onLine) {
+        // لو الصفحة اشتغلت والمستخدم أصلاً أونلاين، يرجّعه للرئيسية
+        goOnlineHandler();
+      } else {
+        // أول ما يرجع الإنترنت، نرجّعه للرئيسية
+        window.addEventListener('online', goOnlineHandler);
+      }
     </script>
   </body>
 

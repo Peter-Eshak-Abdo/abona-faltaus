@@ -1,4 +1,9 @@
+'use client';
+import { usePathname } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+
 import "./globals.css";
+import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
 import Header from "@/components/Header";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
@@ -21,11 +26,18 @@ function serviceWorker() {
   }
 }
 
+const vazirmatn = Vazirmatn({
+  subsets: ["arabic"],
+  display: "swap",
+  weight: ["400", "700"],
+});
+
 function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
   serviceWorker();
   return (
     <html lang="ar" dir="rtl">
@@ -69,10 +81,21 @@ function RootLayout({
           href="./manifest.webmanifest"
         />
       </head>
-      <body>
+      <body className={vazirmatn.className}>
         <Header />
         <ServiceWorkerRegister />
-        {children}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="container mx-auto px-4"
+          >
+          {children}
+          </motion.div>
+        </AnimatePresence>
         <Footer />
       </body>
       <Script

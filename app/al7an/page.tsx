@@ -9,8 +9,8 @@ import Image from "next/image";
 // import snawi from './snawi.json';
 
 export const metadata = {
-  title: "قسم الحان",
-  description: "قسم الحان الارثوذكسية المسيحية",
+  title: " الحان",
+  description: " الحان الارثوذكسية المسيحية",
   keywords: "الحان , طقس صنوي , طقس كيهك , طقس الصوم الكبير , طقس الخماسين , طقس عيد الميلاد , طقس عيد الغطاس , طقس عيد النيروز , طقس عيد الصليب , طقس عيد القيامة , طقس عيد العذراء",
 }
 
@@ -36,11 +36,11 @@ function Al7an() {
             صفحة ابونا فلتاؤس
           </h1>
           <p className="fs-2 text-secondry text-center fw-light mt-5">
-            قسم الالحان الارثوذكسية المسيحية
+            الالحان الارثوذكسية المسيحية
           </p>
           <Image
             src="/images/sec1.jpeg"
-            alt="قسم الالحان والترانيم والعظات"
+            alt=" الالحان والترانيم والعظات"
             className="img-thumbnail rounded"
             width={750}
             height={500}
@@ -72,7 +72,7 @@ function Al7an() {
                     aria-expanded="false"
                     aria-controls="collapseOne"
                   >
-                    قسم الحان الصوم الكبير
+                     الحان الصوم الكبير
                   </button>
                 </h4>
                 <div
@@ -110,7 +110,7 @@ function Al7an() {
                     aria-expanded="false"
                     aria-controls="collapseTwo"
                   >
-                    قسم الحان كيهك
+                     الحان كيهك
                   </button>
                 </h4>
                 <div
@@ -145,7 +145,7 @@ function Al7an() {
                     aria-expanded="false"
                     aria-controls="collapseThree"
                   >
-                    قسم الحان اسبوع الآلام
+                     الحان اسبوع الآلام
                   </button>
                 </h4>
                 <div
@@ -192,7 +192,7 @@ function Al7an() {
                     aria-expanded="false"
                     aria-controls="collapseFour"
                   >
-                    قسم الحان سنوي
+                     الحان سنوي
                   </button>
                 </h4>
                 <div
@@ -240,7 +240,7 @@ function Al7an() {
                     aria-expanded="false"
                     aria-controls="collapseFive"
                   >
-                    قسم الحان خماسين
+                     الحان خماسين
                   </button>
                 </h4>
                 <div
@@ -269,7 +269,7 @@ function Al7an() {
                     aria-expanded="false"
                     aria-controls="collapseSix"
                   >
-                    قسم الحان نهضة العذراء
+                     الحان نهضة العذراء
                   </button>
                 </h4>
                 <div

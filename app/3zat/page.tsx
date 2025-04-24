@@ -18,7 +18,7 @@ function W3zat() {
             صفحة ابونا فلتاؤس
           </h1>
           <p className="fs-2 text-secondry text-center fw-light mt-5">
-            قسم العظات الارثوذكسية المسيحية
+             العظات الارثوذكسية المسيحية
           </p>
           <Image
             src="/images/sec1.jpeg"

@@ -9,8 +9,8 @@ function Tranim() {
         <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
           {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
           <h1 className="display-1 text-center m-5 text-primary fw-bolder">صفحة ابونا فلتاؤس</h1>
-          <p className="fs-2 text-secondry text-center fw-light mt-5">قسم الترانيم الارثوذكسية المسيحية</p>
-          <Image src="/images/sec1.jpeg" alt="قسم الترانيم" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" />
+          <p className="fs-2 text-secondry text-center fw-light mt-5"> الترانيم الارثوذكسية المسيحية</p>
+          <Image src="/images/sec1.jpeg" alt=" الترانيم" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" />
         </div>
         <div className="bd-example-snippet bd-code-snippet">
           <div className="bd-example m-0 border-0">
@@ -25,7 +25,7 @@ function Tranim() {
                     aria-expanded="false"
                     aria-controls="collapseOne"
                   >
-                    قسم ترانيم عيد الميلاد
+                     ترانيم عيد الميلاد
                   </button>
                 </h4>
                 <div id="collapseOne" className="accordion-collapse collapse">
@@ -44,7 +44,7 @@ function Tranim() {
                     aria-expanded="false"
                     aria-controls="collapseTwo"
                   >
-                    قسم ترانيم عيد القيامة
+                     ترانيم عيد القيامة
                   </button>
                 </h4>
                 <div id="collapseTwo" className="accordion-collapse collapse" >

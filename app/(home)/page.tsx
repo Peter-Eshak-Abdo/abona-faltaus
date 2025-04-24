@@ -8,9 +8,9 @@ function Home() {
       <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
         {/* <Image src="./images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
         <Image
-          src="/images/img.jpg"
+          src="/images/logo.jpg"
           alt="صورة لابونا فلتاؤس"
-          className="img-thumbnail rounded"
+          className=" rounded"
           width={750}
           height={500}
           sizes="(max-width: 768px) 90vw"
@@ -34,10 +34,10 @@ function Home() {
             href={"#sec-al7an-tranim-3zat"}
             className="btn btn-outline-primary fs-4"
           >
-            قسم الالحان والترانيم والعظات
+            الالحان والترانيم والعظات
           </Link>
         </div>
-        <div className="d-grid col-2 mx-auto">
+        <div className="d-grid col-3 mx-auto">
           <Link href={"#sec-fqrat"} className="btn btn-primary fs-4">
             عرض فقرات
           </Link>
@@ -50,7 +50,7 @@ function Home() {
         <div className="row featurette">
           <div className="col-md-7 text-start">
             <p className="featurette-heading lh-1 fw-bolder fs-2">
-              قسم الالحان والترانيم والعظات
+              الالحان والترانيم والعظات
             </p>
             <div className="lead fs-4">
               يوجد مجموعات من الالحان مقسمين علي حسب كل مناسبة الالحان الخاص
@@ -65,7 +65,7 @@ function Home() {
               </div>
               <br />
               <p className=" fs-4">
-                وفي قسم الترانيم يوجد ترانيم مجمعة ليس لها مناسبة واقسام
+                وفي الترانيم يوجد ترانيم مجمعة ليس لها مناسبة واقسام
                 للترانيم المخصصة لكل مناسبة.
               </p>
               <p className="text-secondary">وسيضاف كلمات الترانيم.</p>
@@ -75,7 +75,7 @@ function Home() {
                 </Link>
               </div>
               <br />
-              وفي قسم العظات مقسمة لكل اب كاهن.
+              وفي العظات مقسمة لكل اب كاهن.
               <p className="text-secondary">وسيضاف تقسيمات لكل اب كاهن.</p>
               <div className="d-grid gap-2 col-6 mx-auto">
                 <Link href={"/3zat"} className="btn btn-outline-primary fs-5">
@@ -88,7 +88,7 @@ function Home() {
           <div className="col-md-5">
             <Image
               src="/images/sec1.jpeg"
-              alt="قسم الالحان والترانيم والعظات"
+              alt="الالحان والترانيم والعظات"
               className="img-thumbnail rounded"
               width={750}
               height={500}
@@ -101,10 +101,10 @@ function Home() {
         <div className="row featurette">
           <div className="col-md-7 order-md-2 text-start">
             <p className="featurette-heading fw-bolder lh-1 fs-2">
-              قسم الآيات والمقالات
+              الكتاب المقدس والمقالات
             </p>
-            <p className="lead fs-4">في هذا القسم يوجد الكتاب المقدس</p>
-            <p className="text-secondary fs-4">Thanks to : <p className="text-bold">Androw Akladuos Bekhet</p> for his ideas that hepled me alot</p>
+            <p className="lead fs-4">في هذا  يوجد الكتاب المقدس</p>
+            <p className="text-secondary fs-3">Thanks to : <p className="text-bold">Androw Akladuos Bekhet</p> for his ideas that hepled me alot</p>
             <h6 className="text-secondary">عارف انه مش كامل في مشكلة وانا مش فاهمها ف لما افهمها هبقي اشوف</h6>
             <div className="d-grid gap-2 col-6 mx-auto">
               <Link href={"/bible"} className="btn btn-outline-primary fs-5">
@@ -125,7 +125,7 @@ function Home() {
           <div className="col-md-5 order-md-1">
             <Image
               src="/images/sec2.jpeg"
-              alt="قسم الآيات والمقالات"
+              alt=" الآيات والمقالات"
               className="img-thumbnail rounded"
               width={750}
               height={500}
@@ -137,7 +137,7 @@ function Home() {
         <hr className="featurette-divider" id="sec-fqrat" />
         <div className="row featurette">
           <div className="col-md-7 text-start">
-            <p className="featurette-heading fw-bolder lh-1 fs-2">قسم الفقرات</p>
+            <p className="featurette-heading fw-bolder lh-1 fs-2"> الفقرات</p>
             <div className="lead fs-4">
               يوجد مواقع لسهيل عمل الفقرات مثل:
               <ul>
@@ -151,7 +151,7 @@ function Home() {
           <div className="col-md-5">
             <Image
               src="/images/sec3.jpeg"
-              alt="قسم الفقرات"
+              alt=" الفقرات"
               className="img-thumbnail rounded"
               width={750}
               height={500}
