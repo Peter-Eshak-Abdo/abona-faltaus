@@ -1,16 +1,94 @@
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 
   <head>
-    <title>مفيش نت</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
+    <meta charset="UTF-8" />
+    <title>أنت غير متصل بالإنترنت</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        text-align: center;
+        background: #f0f4f8;
+        color: #333;
+        margin: 0;
+        padding: 2rem;
+        direction: rtl;
+      }
 
-  <body>
-    <h1>أنت غير متصل بالإنترنت</h1>
-    <p>حاول لاحقًا.</p>
-    
-    <p>يسطا من الاخر مفيش نت او باقتك خلصت ف متصدعناش ولما تشحن نت ابقي تعالا تاني</p>
-  </body>
+  h1 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 2rem;
+  }
+
+  #game {
+    margin: 2rem auto;
+    max-width: 400px;
+    background: #fff;
+    border: 2px solid #ccc;
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+  }
+
+  button:hover {
+    background: #0056b3;
+  }
+
+  #verse {
+    font-weight: bold;
+    font-size: 1.2rem;
+    min-height: 80px;
+  }
+
+  small {
+    display: block;
+    margin-top: 1rem;
+    color: #999;
+  }
+</style>
+</head>
+
+<body>
+  <h1>🚫 لا يوجد اتصال بالإنترنت</h1>
+  <p>لكن لا تقلق، إليك آية مشجعة ولعبة خفيفة أثناء الانتظار.</p>
+<div id="game">
+  <div id="verse">اضغط الزر لعرض آية</div>
+  <button onclick="showRandomVerse()">أعرض آية</button>
+  <small>آيات من الكتاب المقدس</small>
+</div>
+
+<script>
+  const verses = [
+    'كل الأشياء تعمل معًا للخير للذين يحبون الله - رومية ٨:٢٨',
+    'الرب نوري وخلاصي، ممن أخاف؟ - مزمور ٢٧:١',
+    'أستطيع كل شيء في المسيح الذي يقويني - فيلبي ٤:١٣',
+    'الرب راعيّ، فلا يعوزني شيء - مزمور ٢٣:١',
+    'الرب قريب من المنكسري القلوب - مزمور ٣٤:١٨',
+    'سلامي أترك لكم، سلامي أعطيكم - يوحنا ١٤:٢٧'
+  ];
+
+  function showRandomVerse() {
+    const random = verses[Math.floor(Math.random() * verses.length)];
+    document.getElementById('verse').textContent = random;
+  }
+</script>
+</body>
 
 </html>
