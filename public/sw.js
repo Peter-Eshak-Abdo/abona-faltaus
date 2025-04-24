@@ -35,7 +35,8 @@
 // export default ServiceWorkerComponent;
 
 const CACHE_NAME = "abona-faltaus-cache-v2.6.0";
-const OFFLINE_URL = ["/", "/offline.html"];
+const OFFLINE_URL = ["/offline.html"];
+// const OFFLINE_URL = ["/", "/offline.html"];
 const FILES_TO_CACHE = [
   OFFLINE_URL,
   "/al7an/لحن_البركة_(تين_أوأوشت).mp3",
