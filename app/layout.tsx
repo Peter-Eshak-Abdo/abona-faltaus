@@ -1,6 +1,7 @@
 import "./globals.css";
 import Script from "next/script";
 import Header from "@/components/Header";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import Footer from "@/components/Footer";
 
 function serviceWorker() {
@@ -70,6 +71,7 @@ function RootLayout({
       </head>
       <body>
         <Header />
+        <ServiceWorkerRegister />
         {children}
         <Footer />
       </body>

@@ -1,23 +1,54 @@
-self.addEventListener("push", function (event) {
-  if (event.data) {
-    const data = event.data.json();
-    const options = {
-      body: data.body,
-      icon: data.icon || "./images/icons/icon-192x192.png",
-      image: data.image || "./images/icons/icon-512x512.png",
-      badge: "/badge.png",
-      vibrate: [100, 50, 100],
-      data: {
-        dateOfArrival: Date.now(),
-        primaryKey: "2",
-      },
-    };
-    event.waitUntil(self.registration.showNotification(data.title, options));
-  }
+// import { useEffect } from "react";
+
+// const CACHE_NAME = "abona-cache-v1";
+// const urlsToCache = ["/", "/offline.html"];
+
+// self.addEventListener("install", (event) => {
+//   event.waitUntil(
+//     caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+//   );
+// });
+
+// self.addEventListener("fetch", (event) => {
+//   event.respondWith(
+//     fetch(event.request).catch(() =>
+//       caches
+//         .match(event.request)
+//         .then((res) => res || caches.match("/offline.html"))
+//     )
+//   );
+// });
+
+// const ServiceWorkerComponent = () => {
+//   useEffect(() => {
+//     if ("serviceWorker" in navigator) {
+//       navigator.serviceWorker
+//         .register("/sw.js")
+//         .then((reg) => console.log("SW registered", reg.scope))
+//         .catch((err) => console.error("SW failed", err));
+//     }
+//   }, []);
+
+//   return null;
+// };
+
+// export default ServiceWorkerComponent;
+
+const CACHE_NAME = "abona-cache-v1";
+const urlsToCache = ["/", "/offline.html"];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+  );
 });
 
-self.addEventListener("notificationclick", function (event) {
-  console.log("Notification click received.");
-  event.notification.close();
-  event.waitUntil(clients.openWindow("<https://your-website.com>"));
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    fetch(event.request).catch(() =>
+      caches
+        .match(event.request)
+        .then((res) => res || caches.match("/offline.html"))
+    )
+  );
 });
