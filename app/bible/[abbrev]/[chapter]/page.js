@@ -140,53 +140,6 @@ export default async function ChapterPage({ params, searchParams }) {
         }}
       />
 
-      {/* <div className="space-y-2">
-        {verses.map((verse, idx) => (
-          <p key={idx} className="leading-relaxed">
-            <strong>{idx + 1}</strong> - {verse}
-          </p>
-        ))}
-      </div>
- */}
-      {/* <div className="mt-6 flex gap-4">
-        {chapterIndex > 0 && (
-          <Link
-            href={`/bible/${abbrev}/${parseInt(chapter) - 1}`}
-            className="text-blue-600 underline"
-          >
-            ← الإصحاح السابق
-          </Link>
-        )}
-        {chapterIndex < book.chapters.length - 1 && (
-          <Link
-            href={`/bible/${abbrev}/${parseInt(chapter) + 1}`}
-            className="text-blue-600 underline"
-          >
-            الإصحاح التالي →
-          </Link>
-        )}
-      </div> */}
-      {/* <div className="flex justify-between mt-6">
-        {" "}
-        {chapterIndex > 0 && (
-          <Link
-            href={`/bible/${abbrev}/${chapterIndex}`}
-            className="text-blue-600 hover:underline"
-          >
-            {" "}
-            ← السابق{" "}
-          </Link>
-        )}{" "}
-        {chapterIndex < book.chapters.length - 1 && (
-          <Link
-            href={`/bible/${abbrev}/${chapterIndex + 2}`}
-            className="text-blue-600 hover:underline"
-          >
-            {" "}
-            التالي →{" "}
-          </Link>
-        )}{" "}
-      </div> */}
     </div>
   );
 }
