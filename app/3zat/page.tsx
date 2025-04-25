@@ -47,7 +47,7 @@ function W3zat() {
                 </h4>
                 <div
                   id="collapseOne"
-                  className="accordion-collapse collapse"
+                  className="accordion-collapse collapse visible"
 
                 >
                   <div className="accordion-body">
@@ -66,7 +66,7 @@ function W3zat() {
                       </h4>
                       <div
                         id="collapseAlsla"
-                        className="accordion-collapse collapse"
+                        className="accordion-collapse collapse visible"
 
                       >
                         <div className="accordion-body">
@@ -90,7 +90,7 @@ function W3zat() {
                       </h4>
                       <div
                         id="collapseAltoba"
-                        className="accordion-collapse collapse"
+                        className="accordion-collapse collapse visible"
                         data-bs-parent="#accordionExample1"
                       >
                         <div className="accordion-body">

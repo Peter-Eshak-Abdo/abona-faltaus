@@ -2,10 +2,8 @@ import fs from "fs/promises";
 import path from "path";
 import Link from "next/link";
 import { bookNames, oldTestament, newTestament } from "@/lib/books";
-// import SearchModal from '@/components/SearchModal';
 
 export default async function BibleHomePage() {
-
   const filePath = path.join(process.cwd(), "public", "ar_svd.json");
   const fileData = await fs.readFile(filePath, "utf-8");
   const bible = JSON.parse(fileData.replace(/^\uFEFF/, ""));
@@ -14,7 +12,7 @@ export default async function BibleHomePage() {
     abbrevs
       .map((abbr) => {
         const book = bible.find((b) => b.abbrev === abbr);
-        if (!book) return console.warn(`Book ${abbr} not found in JSON file`);;
+        if (!book) return console.warn(`Book ${abbr} not found in JSON file`);
         return { abbrev: abbr, name: bookNames[abbr] || abbr };
       })
       .filter(Boolean);
@@ -24,15 +22,7 @@ export default async function BibleHomePage() {
 
   return (
     <div className="space-y-8">
-      {/* <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">الكتاب المقدس</h1>
-        <button
-          onClick={() => setIsSearchOpen(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          🔍 بحث
-        </button>
-      </div> */}
+      <h1 className="text-3xl font-bold">الكتاب المقدس</h1>
       <section>
         <h2 className="text-xl font-semibold mb-2">العهد القديم</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -61,19 +51,6 @@ export default async function BibleHomePage() {
           ))}
         </div>
       </section>
-      {/* {isSearchOpen && <SearchModal onClose={() => setIsSearchOpen(false)} />} */}
     </div>
   );
 }
-//--------------------------------------------------------------------------------------------------
-// import fs from "fs/promises";
-// import path from "path";
-// import BibleClientPage from "./BibleClientPage";
-
-// export default async function BibleHomePage() {
-//   const filePath = path.join(process.cwd(), "public", "ar_svd.json");
-//   const fileData = await fs.readFile(filePath, "utf-8");
-//   const bible = JSON.parse(fileData.replace(/^\uFEFF/, ""));
-
-//   return <BibleClientPage bible={bible} />;
-// }

@@ -77,7 +77,7 @@ function Al7an() {
                 </h4>
                 <div
                   id="collapseOne"
-                  className="accordion-collapse collapse"
+                  className="accordion-collapse collapse visible"
                 >
                   <div className="accordion-body">
                     <SomKebirPlayer />
@@ -115,7 +115,7 @@ function Al7an() {
                 </h4>
                 <div
                   id="collapseTwo"
-                  className="accordion-collapse collapse"
+                  className="accordion-collapse collapse visible"
 
                 >
                   <div className="accordion-body">
@@ -150,7 +150,7 @@ function Al7an() {
                 </h4>
                 <div
                   id="collapseThree"
-                  className="accordion-collapse collapse"
+                  className="accordion-collapse collapse visible"
 
                 >
                   <div className="accordion-body">
@@ -197,7 +197,7 @@ function Al7an() {
                 </h4>
                 <div
                   id="collapseFour"
-                  className="accordion-collapse collapse"
+                  className="accordion-collapse collapse visible"
                 >
                   <div className="accordion-body">
                     {/* <ul>
@@ -245,7 +245,7 @@ function Al7an() {
                 </h4>
                 <div
                   id="collapseFive"
-                  className="accordion-collapse collapse"
+                  className="accordion-collapse collapse visible"
 
                 >
                   <div className="accordion-body">
@@ -274,8 +274,7 @@ function Al7an() {
                 </h4>
                 <div
                   id="collapseSix"
-                  className="accordion-collapse collapse"
-
+                  className="accordion-collapse collapse visible"
                 >
                   <div className="accordion-body">
                     <NhdetAl3draPlayer />

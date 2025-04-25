@@ -1,4 +1,5 @@
 // import Image from "next/image";
+import "../globals.css";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -23,7 +24,7 @@ function Home() {
           الارثوذكسية
         </p>
       </div>
-      <div className="d-flex flex-row justify-content-evenly">
+      {/* <div className="d-flex flex-row justify-content-evenly">
         <div className="d-grid col-3 mx-auto">
           <Link href={"#sec-ayat-mkalat"} className="btn btn-primary fs-4">
             الكتاب المقدس والمقالات الدينية
@@ -42,8 +43,48 @@ function Home() {
             عرض فقرات
           </Link>
         </div>
+      </div> */}
+      <div className="container-fluid p-0">
+        <div className="row g-2 justify-content-center">
+          <div className="col-12 col-sm-4 col-md-3 d-flex">
+            <Link
+              href={"#sec-ayat-mkalat"}
+              className="btn btn-primary w-100 fs-4 fs-sm-5 py-2"
+            >
+              الكتاب المقدس والمقالات
+            </Link>
+          </div>
+          <div className="col-12 col-sm-4 col-md-5 d-flex">
+            <Link
+              href={"#sec-al7an-tranim-3zat"}
+              className="btn btn-outline-primary w-100 fs-4 fs-sm-5 py-2"
+            >
+              الالحان والترانيم والعظات
+            </Link>
+          </div>
+          <div className="col-12 col-sm-4 col-md-3 d-flex">
+            <Link
+              href={"#sec-fqrat"}
+              className="btn btn-primary w-100 fs-4 fs-sm-5 py-2"
+            >
+              عرض فقرات
+            </Link>
+          </div>
+        </div>
       </div>
       <hr className="featurette-divider" id="sec-al7an-tranim-3zat" />
+      <br />
+      <br />
+      {/* <div className="relative my-12">
+        <div className="absolute inset-0 flex items-center">
+          <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent w-full animate-draw"></div>
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-white dark:bg-gray-900 px-6 text-2xl font-bold text-primary transform transition-all duration-500 hover:scale-110">
+            الالحان والترانيم والعظات
+          </span>
+        </div>
+      </div> */}
       <br />
       <br />
       <div className="container marketing">

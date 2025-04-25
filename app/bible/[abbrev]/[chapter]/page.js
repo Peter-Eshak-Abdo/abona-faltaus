@@ -23,7 +23,7 @@ export default async function ChapterPage({ params, searchParams }) {
   if (!verses) return <div>❌ لم يتم العثور على الإصحاح</div>;
 
 
-  const fontSizeClass = {vsm: "fs-6", sm: "fs-5", base: "fs-4", lg: "fs-3" , vlg:"fs-2"}[font] || "fs-4";
+  const fontSizeClass = {sm: "fs-6", base: "fs-3", lg: "fs-1" }[font] || "fs-4";
   // const fontSizeClass = { sm: "text-sm", base: "text-base", lg: "text-lg" }[font] || "text-base";
   return (
     <>
@@ -47,14 +47,6 @@ export default async function ChapterPage({ params, searchParams }) {
       <div className="flex gap-2 text-sm">
         <span>حجم الخط:</span>
         <Link
-          href={`?font=vsm`}
-          className={`px-2 border rounded ${
-            font === "vsm" ? "bg-gray-200" : ""
-          }`}
-        >
-          A--
-        </Link>
-        <Link
           href={`?font=sm`}
           className={`px-2 border rounded ${
             font === "sm" ? "bg-gray-200" : ""
@@ -77,14 +69,6 @@ export default async function ChapterPage({ params, searchParams }) {
           }`}
         >
           A+
-        </Link>
-        <Link
-          href={`?font=vlg`}
-          className={`px-2 border rounded ${
-            font === "vlg" ? "bg-gray-200" : ""
-          }`}
-        >
-          A++
         </Link>
       </div>
 

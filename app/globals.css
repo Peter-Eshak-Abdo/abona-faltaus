@@ -59,3 +59,18 @@ a {
   top: 0;
   font-weight: bold;
 }
+
+/* Home*/
+@keyframes drawLine {
+  0% {
+    width: 0%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-draw {
+  animation: drawLine 1.5s ease-out forwards;
+}
