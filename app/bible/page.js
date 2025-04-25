@@ -23,7 +23,7 @@ export default async function BibleHomePage() {
   const newBooks = getBooks(newTestament);
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="space-y-8">
       {/* <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">الكتاب المقدس</h1>
         <button

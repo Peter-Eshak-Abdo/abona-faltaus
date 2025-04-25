@@ -5,7 +5,9 @@ import { bookNames } from "@/lib/books";
 
 export default async function ChapterPage({ params, searchParams }) {
   const { abbrev, chapter } = await params;
-  const font = searchParams?.font || "base";
+  const awaitedSearchParams = await searchParams; // Await the searchParams
+  const font = awaitedSearchParams?.font || "base";
+  // const font = searchParams?.font || "base";
 
   const filePath = path.join(process.cwd(), "public", "ar_svd.json");
   const fileData = await fs.readFile(filePath, "utf-8");
@@ -21,10 +23,10 @@ export default async function ChapterPage({ params, searchParams }) {
   if (!verses) return <div>❌ لم يتم العثور على الإصحاح</div>;
 
 
-  const fontSizeClass =
-    { sm: "text-sm", base: "text-base", lg: "text-lg" }[font] || "text-base";
+  const fontSizeClass = {vsm: "fs-6", sm: "fs-5", base: "fs-4", lg: "fs-3" , vlg:"fs-2"}[font] || "fs-4";
+  // const fontSizeClass = { sm: "text-sm", base: "text-base", lg: "text-lg" }[font] || "text-base";
   return (
-    <div className="p-5">
+    <>
       <div className="mb-4 text-sm text-gray-500">
         {" "}
         <Link href="/bible" className="hover:underline">
@@ -44,6 +46,14 @@ export default async function ChapterPage({ params, searchParams }) {
       {/* حجم الخط */}
       <div className="flex gap-2 text-sm">
         <span>حجم الخط:</span>
+        <Link
+          href={`?font=vsm`}
+          className={`px-2 border rounded ${
+            font === "vsm" ? "bg-gray-200" : ""
+          }`}
+        >
+          A--
+        </Link>
         <Link
           href={`?font=sm`}
           className={`px-2 border rounded ${
@@ -67,6 +77,14 @@ export default async function ChapterPage({ params, searchParams }) {
           }`}
         >
           A+
+        </Link>
+        <Link
+          href={`?font=vlg`}
+          className={`px-2 border rounded ${
+            font === "vlg" ? "bg-gray-200" : ""
+          }`}
+        >
+          A++
         </Link>
       </div>
 
@@ -140,6 +158,6 @@ export default async function ChapterPage({ params, searchParams }) {
         }}
       />
 
-    </div>
+    </>
   );
 }

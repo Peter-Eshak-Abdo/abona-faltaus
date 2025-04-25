@@ -13,7 +13,7 @@ function Home() {
           className=" rounded"
           width={750}
           height={500}
-          sizes="(max-width: 768px) 90vw"
+          sizes="(max-width: 768px) 80vw"
         />
         <h1 className="display-1 text-center m-5 text-primary fw-bolder">
           اهلاً بك في صفحة ابونا فلتاؤس

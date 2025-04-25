@@ -22,7 +22,7 @@ export default async function BookPage({ params }) {
   const bookName = bookNames[abbrev] || `سفر ${abbrev.toUpperCase()}`;
 
   return (
-    <div className="p-6">
+    <>
       {" "}
       <h1 className="text-2xl font-bold mb-4">{bookName}</h1>{" "}
       <p className="mb-4">عدد الإصحاحات: {book.chapters.length}</p>
@@ -37,6 +37,6 @@ export default async function BookPage({ params }) {
           </Link>
         ))}
       </div>
-    </div>
+    </>
   );
 }
