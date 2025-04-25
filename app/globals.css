@@ -47,3 +47,15 @@ a {
     color-scheme: dark;
   }
 }
+
+#verses p {
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+#verses .verse-num {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: bold;
+}
