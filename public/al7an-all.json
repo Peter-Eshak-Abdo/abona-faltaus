@@ -1,0 +1,246 @@
+  [
+    {
+      "سنوي": [
+        {
+          "id": "1",
+          "monasba": "snawi",
+          "name": "لحن بينشتي الصغير",
+          "duration": "4:31",
+          "src": "./al7an/لحن بينشتي الصغير.mp3",
+          "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0207.jpg"
+        },
+        {
+          "id": "2",
+          "monasba": "snawi",
+          "name": "لحن_البركة_(تين_أوأوشت)",
+          "duration": "2:03",
+          "src": "./al7an/لحن_البركة_(تين_أوأوشت).mp3",
+          "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0066.jpg"
+        }
+      ]
+    },
+    {
+      "الصوم الكبير": [
+        {
+          "monasba": "som-kebir",
+          "name": "الليلويا إي ا ايخون",
+          "duration": "2:04",
+          "src": "./al7an/الليلويا إي ا ايخون.mp3",
+          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0031.jpg"
+        },
+        {
+          "monasba": "som-kebir",
+          "name": "لحن إنثو تي تي شوري",
+          "duration": "3:06",
+          "src": "./al7an/06 لحن إنثو تي تي شوري الصيامي.mp3",
+          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg"
+        },
+        {
+          "monasba": "som-kebir",
+          "name": "لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti",
+          "duration": "3:45",
+          "src": "./al7an/لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti.mp3",
+          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0036.jpg"
+        },
+        {
+          "monasba": "som-kebir",
+          "name": "لحن ميغالو",
+          "duration": "12:18",
+          "src": "./al7an/لحن ميغالو.mp3",
+          "hazatSrc": ""
+        },
+        {
+          "monasba": "som-kebir",
+          "name": "توزيع أيام صوم نينوى وأيام الصوم الكبير _ Distribution for Weekdays of Lent",
+          "duration": "14:40",
+          "src": "./al7an/توزيع أيام صوم نينوى وأيام الصوم الكبير _ Distribution for Weekdays of Lent.mp3",
+          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0047.jpg"
+        },
+        {
+          "monasba": "som-kebir",
+          "name": "سوماتوس ختام أيام الصوم الكبير _ Somatos Concluding Canon for Weekdays of Lent",
+          "duration": "2:45",
+          "src": "./al7an/سوماتوس ختام أيام الصوم الكبير _ Somatos Concluding Canon for Weekdays of Lent.mp3",
+          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0059.jpg"
+        }
+      ]
+    },
+    {
+      "اسبوع الآلام": [
+        {
+          "monasba": "asbo3-alam",
+          "name": "لحن افلوجيمينوس",
+          "duration": "6:33",
+          "src": "./al7an/لحن افلوجيمينوس.mp3",
+          "hazatSrc": "/al7an/hazat/سبت لعازر و احد الشعانين_page-0119.png"
+        },
+        {
+          "monasba": "asbo3-alam",
+          "name": "لحن بيك إثرونوس",
+          "duration": "18:23",
+          "src": "./al7an/لحن بيك إثرونوس.mp3",
+          "hazatSrc": "/al7an/hazat/البصخة_page-0084.png"
+        },
+        {
+          "monasba": "asbo3-alam",
+          "name": "لحن_اومونوجنيس",
+          "duration": "11:12",
+          "src": "./al7an/لحن_اومونوجنيس.mp3",
+          "hazatSrc": "/al7an/hazat/البصخة_page-0067.png"
+        },
+        {
+          "monasba": "asbo3-alam",
+          "name": "لحن_مقدمه_العظه_اوكاتي",
+          "duration": "11:08",
+          "src": "./al7an/لحن_مقدمه_العظه_اوكاتي.mp3",
+          "hazatSrc": "/al7an/hazat/البصخة_page-0014.png"
+        }
+      ]
+    },
+    {
+      "الخماسين": [
+        {
+          "monasba": "khmacen",
+          "name": "لحن السبع طرائق",
+          "duration": "26:44",
+          "src": "./al7an/لحن السبع طرائق.mp3",
+          "hazatSrc": "/al7an/hazat/الخماسين_page-0014.png"
+        },
+        {
+          "monasba": "khmacen",
+          "name": "لحن ني صافيف تيرو",
+          "duration": "5:42",
+          "src": "./al7an/لحن ني صافيف تيرو.mp3",
+          "hazatSrc": "/al7an/hazat/الخماسين_page-0079.png"
+        }
+      ]
+    },
+    {
+      "نهضة العذراء": [
+        {
+          "monasba": "nhdet-al3dra",
+          "name": "لحن سينا اتشو كثيره هي عجايبك",
+          "duration": "1:57",
+          "src": "./al7an/لحن سينا اتشو كثيره هي عجايبك.mp3"
+        },
+        {
+          "monasba": "nhdet-al3dra",
+          "name": "لحن_اوموف_اممو",
+          "duration": "7:40",
+          "src": "./al7an/لحن_اوموف_اممو.mp3"
+        },
+        {
+          "monasba": "nhdet-al3dra",
+          "name": "لحن_راشي_ني",
+          "duration": "12:52",
+          "src": "./al7an/لحن_راشي_ني.mp3"
+        },
+        {
+          "monasba": "nhdet-al3dra",
+          "name": "مديحة_يا_أم_النور_يا_فخر_الأمة",
+          "duration": "12:17",
+          "src": "./al7an/مديحة_يا_أم_النور_يا_فخر_الأمة.mp3"
+        },
+        {
+          "monasba": "nhdet-al3dra",
+          "name": "لحن فاي بي إبليمين",
+          "duration": "4:47",
+          "src": "./al7an/لحن فاي بي إبليمين.mp3"
+        }
+      ]
+    },
+    {
+      "كيهك وتسبحة": [
+        {
+          "monasba": "keahk",
+          "name": "التوزيع الكيهكى",
+          "duration": "1:40",
+          "src": "./al7an/التوزيع الكيهكى.mp3",
+          "hazatSrc": "/al7an/hazat/كيهك و الميلاد_page-0052.jpg"
+        },
+        {
+          "monasba": "keahk",
+          "name": "ذكصولوجية شهر كيهك_كى غار",
+          "duration": "4:18",
+          "src": "./al7an/ذكصولوجية شهر كيهك_كى غار.mp3",
+          "hazatSrc": "/al7an/hazat/كيهك و الميلاد_page-0009.jpg",
+          "hazatSrc1": "/al7an/hazat/كيهك و الميلاد_page-0010.jpg",
+          "hazatSrc2": "/al7an/hazat/كيهك و الميلاد_page-0011.jpg"
+        },
+        {
+          "monasba": "keahk",
+          "name": "لحن تي جاليلي اي",
+          "duration": "11:42",
+          "src": "./al7an/لحن تي جاليلي اي.mp3",
+          "hazatSrc": null
+        },
+        {
+          "monasba": "keahk",
+          "name": "لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس",
+          "duration": "7:55",
+          "src": "./al7an/لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس.mp3",
+          "hazatSrc": "/al7an/hazat/التسبحة_page-0038.jpg",
+          "hazatSrc1": "/al7an/hazat/التسبحة_page-0039.jpg"
+        },
+        {
+          "monasba": "keahk",
+          "name": "لحن_تين_اويه_أنسوك",
+          "duration": "7:02",
+          "src": "./al7an/لحن_تين_اويه_أنسوك.mp3",
+          "hazatSrc": "/al7an/hazat/التسبحة_page-0047.jpg",
+          "hazatSrc1": "/al7an/hazat/التسبحة_page-0048.jpg",
+          "hazatSrc2": "/al7an/hazat/التسبحة_page-0049.jpg"
+        },
+        {
+          "monasba": "keahk",
+          "name": "لحن_تين_ثينو_الكبير",
+          "duration": "11:18",
+          "src": "./al7an/لحن_تين_ثينو_الكبير.mp3",
+          "hazatSrc": "/al7an/hazat/التسبحة_page-0024.jpg",
+          "hazatSrc1": "/al7an/hazat/التسبحة_page-0025.jpg"
+        },
+        {
+          "monasba": "keahk",
+          "name": "لحن_تينين",
+          "duration": "7:25",
+          "src": "./al7an/لحن_تينين.mp3",
+          "hazatSrc": "/al7an/hazat/التسبحة_page-0042.jpg",
+          "hazatSrc1": "/al7an/hazat/التسبحة_page-0043.jpg",
+          "hazatSrc2": "/al7an/hazat/التسبحة_page-0044.jpg",
+          "hazatSrc3": "/al7an/hazat/التسبحة_page-0045.jpg",
+          "hazatSrc4": "/al7an/hazat/التسبحة_page-0046.jpg"
+        },
+        {
+          "monasba": "keahk",
+          "name": "لحن_سيموتى",
+          "duration": "7:45",
+          "src": "./al7an/لحن_سيموتى.mp3",
+          "hazatSrc": "/al7an/hazat/التسبحة_page-0056.jpg",
+          "hazatSrc1": "/al7an/hazat/التسبحة_page-0057.jpg",
+          "hazatSrc2": "/al7an/hazat/التسبحة_page-0058.jpg",
+          "hazatSrc3": "/al7an/hazat/التسبحة_page-0059.jpg"
+        },
+        {
+          "monasba": "keahk",
+          "name": "لحن_شيري_نيه_ماريا",
+          "duration": "6:50",
+          "src": "./al7an/لحن_شيري_نيه_ماريا.mp3",
+          "hazatSrc": "/al7an/hazat/التسبحة_page-0053.jpg",
+          "hazatSrc1": "/al7an/hazat/التسبحة_page-0054.jpg",
+          "hazatSrc2": "/al7an/hazat/التسبحة_page-0055.jpg"
+        },
+        {
+          "monasba": "keahk",
+          "name": "لحن(الهوس_الثالث)آسمو_ابشويس",
+          "duration": "20:35",
+          "src": "./al7an/لحن(الهوس_الثالث)آسمو_ابشويس.mp3",
+          "hazatSrc": "/al7an/hazat/التسبحة_page-0036.jpg",
+          "hazatSrc1": "/al7an/hazat/التسبحة_page-0037.jpg",
+          "hazatSrc2": "/al7an/hazat/التسبحة_page-0038.jpg",
+          "hazatSrc3": "/al7an/hazat/التسبحة_page-0039.jpg",
+          "hazatSrc4": "/al7an/hazat/التسبحة_page-0040.jpg",
+          "hazatSrc5": "/al7an/hazat/التسبحة_page-0041.jpg"
+        }
+      ]
+    }
+  ]

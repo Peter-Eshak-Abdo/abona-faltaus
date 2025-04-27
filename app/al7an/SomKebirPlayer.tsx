@@ -19,9 +19,9 @@ const sounds = [
     // src: "https://drive.google.com/file/d/1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI/view?usp=drive_link",
     // src: "https://cisuezedu-my.sharepoint.com/:u:/g/personal/fciugs118_ci_suez_edu_eg/ER1off32v05Fn7y9P8FUONIBtuAHrFAB-KitY7-zIiIjcg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=hfRX4X",
     // src: "https://drive.google.com/uc?export=download&id=1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI"
-    src: "https://docs.google.com/uc?export=download&id=1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI",
+    // src: "https://docs.google.com/uc?export=download&id=1LAFS_6kNqL100fqwKgfy2_wWKmBGSsOI",
 
-    // src: "./al7an/06 لحن إنثو تي تي شوري الصيامي.mp3",
+    src: "./al7an/06 لحن إنثو تي تي شوري الصيامي.mp3",
     hazatSrc: "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
   },
   {
@@ -32,15 +32,15 @@ const sounds = [
     src: "./al7an/لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti.mp3",
     hazatSrc: "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0036.jpg",
   },
-  // {
-  //   id: "4",
-  //   monasba: "som-kebir",
-  //   name: "لحن ميغالو",
-  //   duration: "12:18",
-  //   src: "./al7an/لحن ميغالو.mp3",
-  //   hazatSrc: null
-  //   // hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
-  // },
+  {
+    id: "4",
+    monasba: "som-kebir",
+    name: "لحن ميغالو",
+    duration: "12:18",
+    src: "./al7an/لحن ميغالو.mp3",
+    hazatSrc: ""
+    // hazatSrc: "./al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
+  },
   {
     id: "5",
     monasba: "som-kebir",

@@ -36,7 +36,7 @@
     ".next/types/**/*.ts",
      "app/bible/page.js",
       "app/bible/[abbrev]/page.js"
-, "components/Header.jsx"  ],
+, "components/Header.jsx", "app/al7an/[monasba]/page.jsx", "app/al7an/[monasba]/[name]/page.jsx"  ],
   "exclude": [
     "node_modules"
   ],
