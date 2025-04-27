@@ -9,6 +9,18 @@ export default async function MonasbaPage({ params }) {
 
   return (
     <div className="container mt-5">
+      <nav aria-label="breadcrumb" className="mb-4">
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link href="/">الرئيسية</Link>
+          </li>
+          <li className="breadcrumb-item">
+            <Link href="/al7an">الألحان</Link>
+          </li>
+          <li className="breadcrumb-item" aria-current="page">ألحان مناسبة: {monasba}</li>
+        </ol>
+      </nav>
+
       <h1>ألحان مناسبة: {monasba}</h1>
       <ul className="list-group">
         {allAl7an.map((l7n, idx) => (

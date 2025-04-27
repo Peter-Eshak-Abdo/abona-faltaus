@@ -1,4 +1,3 @@
-// import Image from "next/image";
 import "../globals.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,10 +10,10 @@ function Home() {
         <Image
           src="/images/logo.jpg"
           alt="صورة لابونا فلتاؤس"
-          className=" rounded"
+          className="w-75 rounded img-fluid"
           width={750}
           height={500}
-          sizes="(max-width: 768px) 80vw"
+          sizes="(max-width: 768px) 80vw, (max-width: 1200px) 50vw, 33vw"
         />
         <h1 className="display-1 text-center m-5 text-primary fw-bolder">
           اهلاً بك في صفحة ابونا فلتاؤس
@@ -24,26 +23,6 @@ function Home() {
           الارثوذكسية
         </p>
       </div>
-      {/* <div className="d-flex flex-row justify-content-evenly">
-        <div className="d-grid col-3 mx-auto">
-          <Link href={"#sec-ayat-mkalat"} className="btn btn-primary fs-4">
-            الكتاب المقدس والمقالات الدينية
-          </Link>
-        </div>
-        <div className="d-grid col-5 mx-auto">
-          <Link
-            href={"#sec-al7an-tranim-3zat"}
-            className="btn btn-outline-primary fs-4"
-          >
-            الالحان والترانيم والعظات
-          </Link>
-        </div>
-        <div className="d-grid col-3 mx-auto">
-          <Link href={"#sec-fqrat"} className="btn btn-primary fs-4">
-            عرض فقرات
-          </Link>
-        </div>
-      </div> */}
       <div className="container-fluid p-0">
         <div className="row g-2 justify-content-center">
           <div className="col-12 col-sm-4 col-md-3 d-flex">
@@ -138,7 +117,7 @@ function Home() {
           </div>
         </div>
         <hr className="featurette-divider" id="sec-ayat-mkalat" />
-
+<br /><br /><br /><br />
         <div className="row featurette">
           <div className="col-md-7 order-md-2 text-start">
             <p className="featurette-heading fw-bolder lh-1 fs-2">
@@ -151,10 +130,7 @@ function Home() {
               <Link href={"/bible"} className="btn btn-outline-primary fs-5">
                 الكتاب المقدس
               </Link>
-              {/* <Link href={"/ayat"} className="btn btn-outline-primary fs-5 disabled">
-                الآيات
-              </Link> */}
-            </div>
+\            </div>
             <br />
             <p className="lead fs-4">يوجد مقالات من اباء كهنة او مقالات حياتية</p>
             <div className="d-grid gap-2 col-6 mx-auto">
@@ -176,6 +152,7 @@ function Home() {
         </div>
 
         <hr className="featurette-divider" id="sec-fqrat" />
+        <br /><br /><br /><br />
         <div className="row featurette">
           <div className="col-md-7 text-start">
             <p className="featurette-heading fw-bolder lh-1 fs-2"> الفقرات</p>

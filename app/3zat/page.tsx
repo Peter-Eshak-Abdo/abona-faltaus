@@ -116,7 +116,7 @@ function W3zat() {
                 </h4>
                 <div
                   id="collapseTwo"
-                  className="accordion-collapse collapse"
+                  className="accordion-collapse collapse visible"
 
                 >
                   <div className="accordion-body">
