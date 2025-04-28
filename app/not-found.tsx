@@ -1,12 +1,9 @@
 import Link from "next/link";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 // import "./not-found.module.css";
 
 export default function NotFound() {
   return (
     <>
-      <Header />
       <br className="my-5" />
       <br className="my-5" />
       <br className="my-5" />
@@ -29,7 +26,6 @@ export default function NotFound() {
         >
         </div>
       </div>
-      <Footer />
     </>
   );
 }

@@ -46,7 +46,7 @@ function Home() {
               href={"#sec-fqrat"}
               className="btn btn-primary w-100 fs-4 fs-sm-5 py-2"
             >
-              عرض فقرات
+              الفقرات والامتحانات
             </Link>
           </div>
         </div>
@@ -130,7 +130,7 @@ function Home() {
               <Link href={"/bible"} className="btn btn-outline-primary fs-5">
                 الكتاب المقدس
               </Link>
-\            </div>
+            </div>
             <br />
             <p className="lead fs-4">يوجد مقالات من اباء كهنة او مقالات حياتية</p>
             <div className="d-grid gap-2 col-6 mx-auto">
@@ -138,6 +138,7 @@ function Home() {
                 المقالات
               </Link>
             </div>
+            <h6 className="text-body-secondary">عارف الصورة غلط هبقي اغيرها بعدين</h6>
           </div>
           <div className="col-md-5 order-md-1">
             <Image
@@ -157,13 +158,19 @@ function Home() {
           <div className="col-md-7 text-start">
             <p className="featurette-heading fw-bolder lh-1 fs-2"> الفقرات</p>
             <div className="lead fs-4">
-              يوجد مواقع لسهيل عمل الفقرات مثل:
+              يوجد مواقع لتسهيل عمل الفقرات مثل:
               <ul>
                 <li>لعمل تصاميم الرحلات</li>
                 <li>كتاب مقدس</li>
                 <li>قنوات للوعظات</li>
                 <li>لعمل باوربوينت</li>
               </ul>
+              <p className="lead fs-4">في الامتحانات فردية ومجموعات</p>
+              <div className="d-grid gap-2 col-6 mx-auto">
+              <Link href={"/exam"} className="btn btn-outline-primary fs-5">
+                الامتحانات
+              </Link>
+              </div>
             </div>
           </div>
           <div className="col-md-5">

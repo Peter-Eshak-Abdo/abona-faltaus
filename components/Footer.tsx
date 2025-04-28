@@ -191,7 +191,6 @@ function Footer() {
 
           <div className="col-6 col-md-2 mb-3">
             <h5>الكتاب المقدس والمقالات الدينية</h5>
-            <h6 className="text-body-secondary">عارف الصورة غلط هبقي اغيرها بعدين</h6>
             <ul className="nav flex-column">
               <li className="nav-item mb-2">
                 <Link href={"/bible"} className="nav-link p-0 text-body-secondary">
@@ -210,8 +209,8 @@ function Footer() {
             <h5> عرض فقرات</h5>
             <ul className="nav flex-column">
               <li className="nav-item mb-2">
-                <Link href={"#"} className="nav-link p-0 text-body-secondary">
-                  الفقرات
+                <Link href={"/exam"} className="nav-link p-0 text-body-secondary">
+                  الامتحانات
                 </Link>
               </li>
             </ul>
