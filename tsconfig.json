@@ -34,9 +34,13 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-     "app/bible/page.js",
-      "app/bible/[abbrev]/page.js"
-, "components/Header.jsx", "app/al7an/[monasba]/page.jsx", "app/al7an/[monasba]/[name]/page.jsx", "app/exam/individual-questions/page.tsx"  ],
+    "app/bible/page.js",
+    "app/bible/[abbrev]/page.js",
+    "components/Header.jsx",
+    "app/al7an/[monasba]/page.jsx",
+    "app/al7an/[monasba]/[name]/page.jsx",
+    "app/exam/individual-questions/exam-individual/page.tsx"
+  ],
   "exclude": [
     "node_modules"
   ],

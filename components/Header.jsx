@@ -75,9 +75,6 @@ function Header() {
             className={`collapse visible navbar-collapse ${
               !isCollapsed ? "show" : ""
             }`}
-            style={{
-              visibility: "visible !important",
-            }}
             id="navbarNav"
           >
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">

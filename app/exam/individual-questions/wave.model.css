@@ -1,0 +1,20 @@
+.wave-animation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 120px;
+  width: 100%;
+  background: url('/exam/wave.svg') repeat-x;
+  animation: wave 8s linear infinite;
+  z-index: -1;
+}
+
+@keyframes wave {
+  from {
+    background-position-x: 0;
+  }
+
+  to {
+    background-position-x: 1000px;
+  }
+}

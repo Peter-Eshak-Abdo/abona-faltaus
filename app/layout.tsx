@@ -1,31 +1,14 @@
 'use client';
+import "./globals.css";
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-
-import "./globals.css";
+import { useEffect } from "react";
 import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
 import Header from "@/components/Header";
-import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import Footer from "@/components/Footer";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { SpeedInsights } from '@vercel/speed-insights/next';
-
-function serviceWorker() {
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", async () => {
-      try {
-        const registration = await navigator.serviceWorker.register("sw.js");
-        console.log("Service worker registered for scope", registration.scope);
-      } catch (err) {
-        if (err instanceof Error) {
-          console.error(err.name, err.message);
-        } else {
-          console.error(err);
-        }
-      }
-    });
-  }
-}
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -38,23 +21,34 @@ function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async () => {
+        try {
+          const registration = await navigator.serviceWorker.register("sw.js");
+          console.log("Service worker registered for scope", registration.scope);
+        } catch (err) {
+          console.error(err instanceof Error ? `${err.name}: ${err.message}` : err);
+        }
+      });
+    }
+  }, []);
   const pathname = usePathname();
-  serviceWorker();
   return (
     <html lang="ar" dir="rtl">
       <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="author" content="بيتر اسحاق عبده" />
+        {/* <meta charSet="UTF-8" />
         <title>ابونا فلتاؤس السرياني</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
           name="description"
           content="الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية"
         />
-        <meta name="author" content="بيتر اسحاق عبده" />
         <meta
           name="keywords"
           content="الحان , عظات , وعظات , ترانيم , مقالات دينية , امتحانات , اسئلة دينية , ابونا فلتاؤس السرياني , الكتاب المقدس , كنيسة , ارثوذكسية"
-        />
+        /> */}
         <link rel="icon" href="./images/icons/favicon.ico" sizes="any" />
         <link
           href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"

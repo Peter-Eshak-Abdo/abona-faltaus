@@ -1,42 +1,61 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
-export default function HomePage() {
+export default function ExamPage() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-12 text-center">نظام الاختبارات الإلكتروني</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white px-4 py-10">
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-3xl md:text-4xl font-bold text-center text-blue-800 mb-10"
+      >
+        نظام الاختبارات الإلكتروني
+      </motion.h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl mt-5">
-        {/* بطاقة الأسئلة المجمعة */}
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out">
-          <h2 className="text-xl font-semibold mb-4 text-center">الأسئلة المجمعة</h2>
-          <p className="text-gray-600 mb-6 text-center">
-            نظام تقسيم الأسئلة لمجموعات مع وقت محدد لكل مجموعة
-          </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
+        {/* بطاقة الاختبار المجمع */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-6 flex flex-col justify-between"
+        >
+          <div>
+            <h2 className="text-xl font-semibold text-center text-blue-700 mb-4">الأسئلة المجمعة</h2>
+            <p className="text-gray-600 text-center mb-6">
+              نظام تقسيم الأسئلة لمجموعات مع وقت محدد لكل مجموعة.
+            </p>
+          </div>
           <button
             onClick={() => router.push("/exam/exam-settings")}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg transition-colors duration-200"
+            className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-200 w-full font-semibold"
           >
             ابدأ الاختبار المجمع
           </button>
-        </div>
-        <hr className="featurette-divider my-5" />
+        </motion.div>
 
-        {/* بطاقة الأسئلة الفردية */}
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out">
-          <h2 className="text-xl font-semibold mb-4 text-center">الأسئلة الفردية</h2>
-          <p className="text-gray-600 mb-6 text-center">
-            نظام الأسئلة الفردية مع إمكانية التنقل بين الأسئلة بحرية
+        {/* بطاقة الاختبار الفردي */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6"
+        >
+          <h2 className="text-lg font-semibold text-center text-green-700 mb-3">الأسئلة الفردية</h2>
+          <p className="text-gray-600 text-sm text-center mb-5">
+            نظام الأسئلة الفردية مع إمكانية التنقل بين الأسئلة بحرية.
           </p>
           <button
             onClick={() => router.push("/exam/individual-questions")}
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg transition-colors duration-200"
+            className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition w-full font-semibold"
           >
             ابدأ الاختبار الفردي
           </button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

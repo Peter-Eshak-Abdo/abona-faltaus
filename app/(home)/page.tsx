@@ -2,6 +2,12 @@ import "../globals.css";
 import Image from "next/image";
 import Link from "next/link";
 
+export const metadata = {
+  title: "ابونا فلتاؤس السرياني",
+  description: "الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية",
+  keywords: "الحان , عظات , وعظات , ترانيم , مقالات دينية , امتحانات , اسئلة دينية , ابونا فلتاؤس السرياني , الكتاب المقدس , كنيسة , ارثوذكسية",
+};
+
 function Home() {
   return (
     <main className="container">
@@ -125,7 +131,7 @@ function Home() {
               الكتاب المقدس والمقالات
             </p>
             <p className="lead fs-4">في هذا  يوجد الكتاب المقدس</p>
-            <p className="text-secondary fs-3">Thanks to : <p className="text-bold">Androw Akladuos Bekhet</p> for his ideas that hepled me alot</p>
+            <p className="text-secondary fs-3">Thanks to : Androw Akladuos Bekhet <br/> for his ideas that hepled me alot</p>
             <h6 className="text-secondary">عارف انه مش كامل في مشكلة وانا مش فاهمها ف لما افهمها هبقي اشوف</h6>
             <div className="d-grid gap-2 col-6 mx-auto">
               <Link href={"/bible"} className="btn btn-outline-primary fs-5">
