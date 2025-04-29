@@ -27,7 +27,7 @@ function Home() {
         <div className="row g-2 justify-content-center">
           <div className="col-12 col-sm-4 col-md-3 d-flex">
             <Link
-              href={"#sec-ayat-mkalat"}
+              href={"#sec-bible-mkalat"}
               className="btn btn-primary w-100 fs-4 fs-sm-5 py-2"
             >
               الكتاب المقدس والمقالات
@@ -116,8 +116,9 @@ function Home() {
             />
           </div>
         </div>
-        <hr className="featurette-divider" id="sec-ayat-mkalat" />
-<br /><br /><br /><br />
+
+        <hr className="featurette-divider" id="sec-bible-mkalat" />
+        <br /><br /><br /><br />
         <div className="row featurette">
           <div className="col-md-7 order-md-2 text-start">
             <p className="featurette-heading fw-bolder lh-1 fs-2">
@@ -167,9 +168,9 @@ function Home() {
               </ul>
               <p className="lead fs-4">في الامتحانات فردية ومجموعات</p>
               <div className="d-grid gap-2 col-6 mx-auto">
-              <Link href={"/exam"} className="btn btn-outline-primary fs-5">
-                الامتحانات
-              </Link>
+                <Link href={"/exam"} className="btn btn-outline-primary fs-5">
+                  الامتحانات
+                </Link>
               </div>
             </div>
           </div>

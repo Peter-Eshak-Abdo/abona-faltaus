@@ -1,5 +1,9 @@
 import Link from "next/link";
-// import "./not-found.module.css";
+
+export const metadata = {
+  title: "Not Found",
+  description: "Could not find requested resource",
+};
 
 export default function NotFound() {
   return (
@@ -29,8 +33,4 @@ export default function NotFound() {
     </>
   );
 }
-export const metadata = {
-  title: "Not Found",
-  description: "Could not find requested resource",
-};
 // export const dynamic = "force-dynamic"; // Force static generation

@@ -4,8 +4,8 @@ import BabaShenodyPlayer from "./BabaShenodyPlayer";
 import Image from "next/image";
 
 export const metadata = {
-  title: "قسم العظات",
-  description: "قسم العظات الارثوذكسية المسيحية",
+  title: "العظات",
+  description: "العظات الارثوذكسية المسيحية",
   keywords: "العظات, العظات الارثوذكسية, عظات ابونا فلتاؤس, عظات ابونا داؤد لمعي, عظات البابا شنودة",
 }
 function W3zat() {
@@ -13,12 +13,11 @@ function W3zat() {
     <>
       <main className="container pt-4 mt-5">
         <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
-          {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
           <h1 className="display-1 text-center m-5 text-primary fw-bolder">
             صفحة ابونا فلتاؤس
           </h1>
           <p className="fs-2 text-secondry text-center fw-light mt-5">
-             العظات الارثوذكسية المسيحية
+            العظات الارثوذكسية المسيحية
           </p>
           <Image
             src="/images/sec1.jpeg"
@@ -48,7 +47,6 @@ function W3zat() {
                 <div
                   id="collapseOne"
                   className="accordion-collapse collapse visible"
-
                 >
                   <div className="accordion-body">
                     <div className="accordion-item">
@@ -67,7 +65,6 @@ function W3zat() {
                       <div
                         id="collapseAlsla"
                         className="accordion-collapse collapse visible"
-
                       >
                         <div className="accordion-body">
                           <AbDaodLam3yAlslaPlayer />
@@ -117,7 +114,6 @@ function W3zat() {
                 <div
                   id="collapseTwo"
                   className="accordion-collapse collapse visible"
-
                 >
                   <div className="accordion-body">
                     <BabaShenodyPlayer />

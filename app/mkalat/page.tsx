@@ -1,58 +1,17 @@
+
+export const metadata = {
+  title: "المقالات",
+  description: "المقالات الحياتية او الدينية المسيحية",
+  keywords: "مقالات, مقالات حياتية, مقالات دينية, مقالات مسيحية",
+};
+
 function Mkalat() {
   return (
     <>
-      {/* <link href="../css/bootstrap/blog.rtl.css" rel="stylesheet" /> */}
       <br className="mt-5" />
       <main className="container mt-5">
         <div className="row g-5">
           <div className="col-md-8">
-            {/* <article className="blog-post">
-              <h2 className="display-5 link-body-emphasis mb-1">نصائح دينية</h2>
-              <p className="blog-post-meta">
-                1 ديسمبر 2023 بواسطة <a href="#"> Peter </a>
-              </p>
-
-              <hr />
-              <p className="fs-5">
-                مبدا هدم لمح الفكره (اول ما افتكر ماردش عليها امشي و اسبها
-                لصحبها)
-              </p>
-              <ul>
-                <li>انا مش لوحدي بعمل كده كل صحابك بيعملوا كده.</li>
-                <li> انه بيأثر عليك :</li>
-                <ol>
-                  <li> من نحيه نظرتك للبنات</li>
-                  <li> من وقت الي بيضيع</li>
-                  <li> خجولك من صحابك و الخدام</li>
-                  <li> عضلاتك مش بتزيد بالعكس اعصابك بتخف</li>
-                </ol>
-                <li> مش هتبطل لما تكبر بالعكس مش هتخلف</li>
-                <li> ده بيرفع مستوي الفرح عندي جدا ف بكتأب اكتر</li>
-                <li> بيأذي حياتي في وقت مماتي</li>
-                <ol />
-                <p> في مخرج</p>
-                <ul>
-                  <li> ربنا بيحب الخطاه و هو جه و فدي نفسه علشانا</li>
-                  <li>
-                    {" "}
-                    إِنْ قُلْنَا: إِنَّهُ لَيْسَ لَنَا خَطِيَّةٌ نُضِلُّ
-                    أَنْفُسَنَا وَلَيْسَ الْحَقُّ فِينَا
-                  </li>
-                  <li> ده احد قرارات الوصول الي الحريه</li>
-                  <li>
-                    {" "}
-                    ماتعدش ايام ، الحريه مش مكان بنوصله ده قرار يومي بنعيشو
-                  </li>
-                  <li> صلي علي الاقل صلاه واحده في اليوم من الاجبيه</li>
-                  <li> واظب علي قراءه الانجيل</li>
-                  <li> صلي قبل المذاكره</li>
-                  <li> اعترف مره علي الاكثر في ٣ شهور</li>
-                  <li> لازم ابطل العاده ديه</li>
-                  <li> ليه تكذب ؟ انت بني ادم و بتخطئ</li>
-                </ul>
-              </ul>
-            </article>
-            <hr className="border-5 border-black " /> */}
             <article className="blog-post">
               <h2 className="display-5 link-body-emphasis mb-1">
                 مقالة حياتية
@@ -186,18 +145,6 @@ function Mkalat() {
                 <p className="text-secondary">اذكرني في صلاتك. بيتر اسحاق</p>
               </blockquote>
             </article>
-
-            {/* <nav className="blog-pagination" aria-label="Pagination">
-              <a className="btn btn-outline-primary rounded-pill" href="#">
-                تدوينات أقدم
-              </a>
-              <a
-                className="btn btn-outline-secondary rounded-pill disabled"
-                aria-disabled="true"
-              >
-                تدوينات أحدث
-              </a>
-            </nav> */}
           </div>
 
           <div className="col-md-4">
@@ -209,127 +156,6 @@ function Mkalat() {
                 </p>
               </div>
 
-              {/* <div>
-                <h4 className="fst-italic">المشاركات الاخيرة</h4>
-                <ul className="list-unstyled">
-                  <li>
-                    <a
-                      className="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top"
-                      href="#"
-                    >
-                      <svg
-                        className="bd-placeholder-img"
-                        width="100%"
-                        height="96"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                        preserveAspectRatio="xMidYMid slice"
-                        focusable="false"
-                      >
-                        <rect width="100%" height="100%" fill="#777" />
-                      </svg>
-                      <div className="col-lg-8">
-                        <h6 className="mb-0">مثال على عنوان منشور المدونة</h6>
-                        <small className="text-body-secondary">
-                          15 يناير 2024
-                        </small>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top"
-                      href="#"
-                    >
-                      <svg
-                        className="bd-placeholder-img"
-                        width="100%"
-                        height="96"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                        preserveAspectRatio="xMidYMid slice"
-                        focusable="false"
-                      >
-                        <rect width="100%" height="100%" fill="#777" />
-                      </svg>
-                      <div className="col-lg-8">
-                        <h6 className="mb-0">هذا عنوان آخر للمدونة</h6>
-                        <small className="text-body-secondary">
-                          14 يناير 2024
-                        </small>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top"
-                      href="#"
-                    >
-                      <svg
-                        className="bd-placeholder-img"
-                        width="100%"
-                        height="96"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                        preserveAspectRatio="xMidYMid slice"
-                        focusable="false"
-                      >
-                        <rect width="100%" height="100%" fill="#777" />
-                      </svg>
-                      <div className="col-lg-8">
-                        <h6 className="mb-0">
-                          أطول عنوان منشور للمدونة: يحتوي هذا الخط على عدة أسطر!
-                        </h6>
-                        <small className="text-body-secondary">
-                          13 يناير 2024
-                        </small>
-                      </div>
-                    </a>
-                  </li>
-                </ul>
-              </div> */}
-
-              {/* <div className="p-4">
-                <h4 className="fst-italic">الأرشيف</h4>
-                <ol className="list-unstyled mb-0">
-                  <li>
-                    <a href="#">مارس 2021</a>
-                  </li>
-                  <li>
-                    <a href="#">شباط 2021</a>
-                  </li>
-                  <li>
-                    <a href="#">يناير 2021</a>
-                  </li>
-                  <li>
-                    <a href="#">ديسمبر 2020</a>
-                  </li>
-                  <li>
-                    <a href="#">نوفمبر 2020</a>
-                  </li>
-                  <li>
-                    <a href="#">أكتوبر 2020</a>
-                  </li>
-                  <li>
-                    <a href="#">سبتمبر 2020</a>
-                  </li>
-                  <li>
-                    <a href="#">اغسطس 2020</a>
-                  </li>
-                  <li>
-                    <a href="#">يوليو 2020</a>
-                  </li>
-                  <li>
-                    <a href="#">يونيو 2020</a>
-                  </li>
-                  <li>
-                    <a href="#">مايو 2020</a>
-                  </li>
-                  <li>
-                    <a href="#">ابريل 2020</a>
-                  </li>
-                </ol>
-              </div> */}
             </div>
           </div>
         </div>

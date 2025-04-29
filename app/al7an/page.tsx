@@ -296,7 +296,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import al7anData from "@/public/al7an-all.json";
-// import SearchBar from "@/components/SearchBar";
+
 
 export default function Al7anPage() {
   const monasbat = Object.keys(

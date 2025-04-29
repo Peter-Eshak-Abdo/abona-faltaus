@@ -2,12 +2,17 @@ import Image from "next/image";
 import KyamaPlayer from "./KyamaPlayer";
 import MeladPlayer from "./MeladPlayer";
 
+export const metadata = {
+  title: "الترانيم",
+  description: "ترانيم مسيحية ارثوذكسية",
+  keywords: "ترانيم, ترانيم مسيحية, ترانيم ارثوذكسية, ترانيم عيد الميلاد, ترانيم عيد القيامة",
+};
+
 function Tranim() {
   return (
     <>
       <main className="container pt-4 mt-5">
         <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
-          {/* <Image src="../../src/assets/media/images/img.jpg" alt="صورة لابونا فلتاؤس" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" /> */}
           <h1 className="display-1 text-center m-5 text-primary fw-bolder">صفحة ابونا فلتاؤس</h1>
           <p className="fs-2 text-secondry text-center fw-light mt-5"> الترانيم الارثوذكسية المسيحية</p>
           <Image src="/images/sec1.jpeg" alt=" الترانيم" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" />
@@ -25,7 +30,7 @@ function Tranim() {
                     aria-expanded="false"
                     aria-controls="collapseOne"
                   >
-                     ترانيم عيد الميلاد
+                    ترانيم عيد الميلاد
                   </button>
                 </h4>
                 <div id="collapseOne" className="accordion-collapse collapse visible">
@@ -44,7 +49,7 @@ function Tranim() {
                     aria-expanded="false"
                     aria-controls="collapseTwo"
                   >
-                     ترانيم عيد القيامة
+                    ترانيم عيد القيامة
                   </button>
                 </h4>
                 <div id="collapseTwo" className="accordion-collapse collapse visible" >

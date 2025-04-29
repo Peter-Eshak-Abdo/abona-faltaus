@@ -8,6 +8,7 @@ import Script from "next/script";
 import Header from "@/components/Header";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import Footer from "@/components/Footer";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 function serviceWorker() {
   if ("serviceWorker" in navigator) {
@@ -47,12 +48,12 @@ function RootLayout({
         <title>ابونا فلتاؤس السرياني</title>
         <meta
           name="description"
-          content="الحان وترانيم ووعظات او عظات وكتب ومقالات ومواقع مسيحية وكل ما يخص الكنيسة الارثوذكسية"
+          content="الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية"
         />
         <meta name="author" content="بيتر اسحاق عبده" />
         <meta
           name="keywords"
-          content="الحان , عظات , وعظات , ترانيم , مقالات دينية"
+          content="الحان , عظات , وعظات , ترانيم , مقالات دينية , امتحانات , اسئلة دينية , ابونا فلتاؤس السرياني , الكتاب المقدس , كنيسة , ارثوذكسية"
         />
         <link rel="icon" href="./images/icons/favicon.ico" sizes="any" />
         <link
@@ -93,7 +94,8 @@ function RootLayout({
             transition={{ duration: 0.4 }}
             className="container mx-auto px-4"
           >
-          {children}
+            {children}
+            <SpeedInsights />
           </motion.div>
         </AnimatePresence>
         <Footer />
