@@ -11,12 +11,12 @@ export const metadata = {
 function W3zat() {
   return (
     <>
-      <main className="container pt-4 mt-5">
-        <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
+      <main className="container">
+        <div className="d-flex flex-column justify-content-center align-items-center">
           <h1 className="display-1 text-center m-5 text-primary fw-bolder">
             صفحة ابونا فلتاؤس
           </h1>
-          <p className="fs-2 text-secondry text-center fw-light mt-5">
+          <p className="fs-2 text-secondry text-center fw-light mt-2">
             العظات الارثوذكسية المسيحية
           </p>
           <Image

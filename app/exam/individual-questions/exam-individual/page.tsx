@@ -4,6 +4,8 @@ import { useEffect, useState, Suspense, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import html2canvas from "html2canvas";
+import Image from "next/image";
 
 type Question = {
   id: number;
@@ -31,6 +33,8 @@ function QuizContent() {
   const [timeLeft, setTimeLeft] = useState(timeLimit * 60);
   const [timerActive, setTimerActive] = useState(false);
   const [categoriesCount, setCategoriesCount] = useState<{ [key: string]: number }>({});
+
+  const [shareImageURL, setShareImageURL] = useState<string | null>(null);
 
   const [hasLoaded, setHasLoaded] = useState(false);
   useEffect(() => {
@@ -101,10 +105,6 @@ function QuizContent() {
     };
     loadQuestions().then(() => setHasLoaded(true));
   }, [hasLoaded]);
-    // loadQuestions();
-  // }, [totalQuestions, selectedCategories]);
-
-
 
   const changeQuestion = useCallback((newIndex: number) => {
     setTimeout(() => {
@@ -208,6 +208,28 @@ function QuizContent() {
     };
   }, [timeLeft, timerActive, handleFinishQuiz]);
 
+  const generateShareImage = async () => {
+    const element = document.getElementById("result-share-box");
+    if (!element) return;
+
+    const canvas = await html2canvas(element);
+    const dataUrl = canvas.toDataURL("image/png");
+    setShareImageURL(dataUrl);
+
+    // مشاركة عبر Web Share API (للأجهزة التي تدعمه)
+    if (navigator.canShare && navigator.canShare({ files: [] })) {
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const file = new File([blob], "result.png", { type: "image/png" });
+        navigator.share({
+          title: "نتيجتي في الامتحان 🎉",
+          text: "جرب تطبيق الاختبارات هذا!",
+          files: [file],
+        });
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center min-vh-100">
@@ -243,7 +265,7 @@ function QuizContent() {
 
 
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center min-vh-100 p-3 position-relative">
+    <div className="d-flex flex-column align-items-center justify-content-center min-vh-75 p-3 position-relative">
       <div className="position-absolute w-100 top-0 start-0">
         <div className="wave-animation"></div>
       </div>
@@ -258,7 +280,7 @@ function QuizContent() {
           className="bg-white p-4 rounded shadow w-100 w-md-75"
         >
           {quizFinished ? (
-            <div className="text-center">
+            <div id="result-share-box" className="text-center">
               <audio autoPlay>
                 <source src="/exam/success.mp3" type="audio/mpeg" />
               </audio>
@@ -292,8 +314,47 @@ function QuizContent() {
                   transition={{ delay: 0.3 }}
                   className="mt-4"
                 >
-                  <img src="/exam/celebration.gif" alt="احتفال" className="w-50 mx-auto" />
+                  <Image
+                    src="/exam/celebration.gif"
+                    alt="احتفال"
+                    width={125}
+                    height={125}
+                    className="w-50 mx-auto rounded-circle shadow"
+                  />
                 </motion.div>
+
+                {/* <div id="result-share-box" className="bg-white p-4 rounded shadow text-center border max-w-md mx-auto">
+                  <h2 className="text-2xl font-bold text-green-600">🎉 نتيجتي في الامتحان</h2>
+                  <p className="text-lg mt-2">
+                    أحرزت <span className="font-bold text-blue-600">{score}</span> من{" "}
+                    <span className="font-bold">{questions.length}</span> سؤال!
+                  </p>
+
+                  <p className="mt-4 text-gray-600 text-sm">
+                    جرب أنت كمان برنامج الاختبارات الرائع!
+                  </p>
+
+                  <p className="text-xs text-gray-400">powered by YourAppName.com</p>
+                </div> */}
+
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <button
+                    onClick={generateShareImage}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  >
+                    مشاركة نتيجتي
+                  </button>
+
+                  {shareImageURL && (
+                    <a
+                      href={shareImageURL}
+                      download="my_exam_result.png"
+                      className="text-sm text-blue-500 underline"
+                    >
+                      تحميل الصورة
+                    </a>
+                  )}
+                </div>
 
                 <button
                   onClick={() => router.push('/exam')}
@@ -366,8 +427,8 @@ function QuizContent() {
                 >
                   {currentQuestionIndex === questions.length - 1 ? "إنهاء الامتحان" : "التالي"}
                 </button>
-                </div>
-                {renderPagination()}
+              </div>
+              {renderPagination()}
             </>
           ) : null}
         </motion.div>

@@ -11,10 +11,10 @@ export const metadata = {
 function Tranim() {
   return (
     <>
-      <main className="container pt-4 mt-5">
-        <div className="d-flex flex-column justify-content-center align-items-center pt-5 mt-4">
+      <main className="container">
+        <div className="d-flex flex-column justify-content-center align-items-center">
           <h1 className="display-1 text-center m-5 text-primary fw-bolder">صفحة ابونا فلتاؤس</h1>
-          <p className="fs-2 text-secondry text-center fw-light mt-5"> الترانيم الارثوذكسية المسيحية</p>
+          <p className="fs-2 text-secondry text-center fw-light mt-2"> الترانيم الارثوذكسية المسيحية</p>
           <Image src="/images/sec1.jpeg" alt=" الترانيم" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" />
         </div>
         <div className="bd-example-snippet bd-code-snippet">

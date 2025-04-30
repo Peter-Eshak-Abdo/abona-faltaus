@@ -23,26 +23,25 @@ function Header() {
     const main = document.getElementById("main-content");
     if (main) {
       main.classList.remove("fade-in");
-      void main.offsetWidth; // trigger reflow
+      void main.offsetWidth;
       main.classList.add("fade-in");
     }
   }, [pathname]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
+    const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const opacity = Math.max(1 - scrollY / 200, 0.4); // يبدأ بـ 1 ويقل تدريجياً لحد 0.4
+  const opacity = Math.max(1 - scrollY / 200, 0.4);
+
   return (
     <>
       <nav
         className="navbar navbar-expand-lg fixed-top shadow-sm"
         style={{
-          backgroundColor: `rgba(13, 110, 253, ${opacity})`, // Bootstrap primary color مع شفافية
+          backgroundColor: `rgba(13, 110, 253, ${opacity})`,
           transition: "background-color 0.3s ease",
         }}
       >
@@ -56,7 +55,7 @@ function Header() {
               className="rounded me-2"
               style={{
                 transition: "transform 0.5s ease-in-out",
-                transform: `rotate(${scrollY / 5}deg)`, // حركة خفيفة للوجو
+                transform: `rotate(${scrollY / 5}deg)`,
               }}
             />
             <span className="fw-bold text-white">أبونا فلتاؤس</span>
@@ -66,36 +65,42 @@ function Header() {
             type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
             aria-controls="navbarNav"
-            aria-expanded={!isCollapsed ? "true" : "false"}
+            aria-expanded={!isCollapsed}
             aria-label="Toggle navigation"
           >
             <span className="navbar-toggler-icon"></span>
           </button>
+
           <div
-            className={`collapse visible navbar-collapse ${
-              !isCollapsed ? "show" : ""
-            }`}
+            className={`collapse visible navbar-collapse ${!isCollapsed ? "show" : ""}`}
             id="navbarNav"
           >
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              {links.map((link) => (
-                <li className="nav-item" key={link.name}>
-                  <Link
-                    className="nav-link text-white fw-semibold"
-                    href={link.href}
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
+              {links.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <li className="nav-item" key={link.name}>
+                    <Link
+                      href={link.href}
+                      className={`nav-link fw-semibold ${
+                        isActive ? "text-warning active" : "text-white"
+                      }`}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
       </nav>
 
-      {/* Spacer تحت الـNavbar عشان ميغطيش المحتوى */}
+      {/* Spacer عشان يبعد الهيدر عن باقي الصفحة */}
       <div style={{ height: "80px" }} />
     </>
   );
 }
+
 export default Header;

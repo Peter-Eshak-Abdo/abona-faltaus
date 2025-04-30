@@ -310,7 +310,7 @@ export default function Al7anPage() {
   );
 
   return (
-    <div className="container mt-5">
+    <div className="container">
       <h1>المناسبات</h1>
       {/* <SearchBar/> */}
       <input

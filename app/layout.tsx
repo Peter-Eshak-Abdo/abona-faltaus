@@ -5,10 +5,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect } from "react";
 import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+// import Header from "@/components/Header";
+// import Footer from "@/components/Footer";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import LoadingProvider from "./loading-provider";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -50,6 +51,10 @@ function RootLayout({
           content="الحان , عظات , وعظات , ترانيم , مقالات دينية , امتحانات , اسئلة دينية , ابونا فلتاؤس السرياني , الكتاب المقدس , كنيسة , ارثوذكسية"
         /> */}
         <link rel="icon" href="./images/icons/favicon.ico" sizes="any" />
+        {/* iOS splash + PWA support */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <link
           href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"
           rel="stylesheet"
@@ -77,22 +82,24 @@ function RootLayout({
         />
       </head>
       <body className={vazirmatn.className}>
-        <Header />
+        {/* <Header /> */}
         <ServiceWorkerRegister />
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={pathname}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="container mx-auto px-4"
-          >
-            {children}
-            <SpeedInsights />
-          </motion.div>
-        </AnimatePresence>
-        <Footer />
+        <LoadingProvider>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+            // className="container mx-auto px-4"
+            >
+              {children}
+              <SpeedInsights />
+            </motion.div>
+          </AnimatePresence>
+        </LoadingProvider>
+        {/* <Footer /> */}
       </body>
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"

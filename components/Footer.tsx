@@ -1,10 +1,10 @@
-'use client';
+// 'use client';
 import Link from "next/link";
 
 function Footer() {
   return (
     <footer className="container">
-      <hr className="featurette-divider" />
+      {/* <hr className="featurette-divider" /> */}
 
       {/* هذا القسم سيظهر فقط على الشاشات الكبيرة (md فما فوق) */}
       <div className="d-none d-md-block">
@@ -87,7 +87,7 @@ function Footer() {
       </div>
 
       {/* هذا القسم سيظهر على جميع أحجام الشاشات */}
-      <div className="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+      <div className="d-flex flex-column flex-sm-row justify-content-between pt-3 mt-2 border-top">
         <a
           href="https://tofa7a-5e936.web.app/"
           className="link-offset-2 link-underline link-offset-3-hover link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -98,8 +98,8 @@ function Footer() {
           <li className="ms-3">
             <a href="tel:01221331602">
               <i className="bi bi-telephone fs-1"></i>
-            </a>{" "}
-            ||{" "}
+            </a>
+            ||
             <a href="tel:01202224608">
               <i className="bi bi-telephone-fill fs-1"></i>
             </a>
