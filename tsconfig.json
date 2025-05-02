@@ -40,7 +40,7 @@
     "app/al7an/[monasba]/page.jsx",
     "app/al7an/[monasba]/[name]/page.jsx",
     "app/exam/individual-questions/exam-individual/page.tsx"
-  ],
+, "app/exam/group/admin/exams/page.jsx", "app/exam/group/admin/page.tsx"  ],
   "exclude": [
     "node_modules"
   ],

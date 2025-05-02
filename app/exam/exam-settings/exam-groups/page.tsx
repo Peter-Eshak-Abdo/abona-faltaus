@@ -219,6 +219,7 @@ function GroupedQuestionsContent() {
       })}
     </div>
   );
+  
   const handleAnswer = (option: string) => {
     if (!currentQuestion) return;
 

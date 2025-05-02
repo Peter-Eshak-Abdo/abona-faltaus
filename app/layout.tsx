@@ -7,7 +7,7 @@ import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
 // import Header from "@/components/Header";
 // import Footer from "@/components/Footer";
-import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+// import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import LoadingProvider from "./loading-provider";
 
@@ -51,6 +51,7 @@ function RootLayout({
           content="الحان , عظات , وعظات , ترانيم , مقالات دينية , امتحانات , اسئلة دينية , ابونا فلتاؤس السرياني , الكتاب المقدس , كنيسة , ارثوذكسية"
         /> */}
         <link rel="icon" href="./images/icons/favicon.ico" sizes="any" />
+        <meta name="mobile-web-app-capable" content="yes" />
         {/* iOS splash + PWA support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -77,13 +78,12 @@ function RootLayout({
         />
         <link
           rel="manifest"
-          id="manifest-placeholder"
-          href="./manifest.webmanifest"
+          href="/manifest.webmanifest"
         />
       </head>
-      <body className={vazirmatn.className}>
+      <body className={vazirmatn.className} suppressHydrationWarning={true}>
         {/* <Header /> */}
-        <ServiceWorkerRegister />
+        {/* {process.env.NODE_ENV === "production" && <ServiceWorkerRegister />} */}
         <LoadingProvider>
           <AnimatePresence mode="wait">
             <motion.div
@@ -92,7 +92,6 @@ function RootLayout({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4 }}
-            // className="container mx-auto px-4"
             >
               {children}
               <SpeedInsights />
