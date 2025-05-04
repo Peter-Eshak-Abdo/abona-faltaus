@@ -12,7 +12,7 @@ export default function LoadingProvider({ children }: { children: React.ReactNod
     setLoading(true);
     const timeout = setTimeout(() => {
       setLoading(false);
-    }, 1500); // المدة اللي يظهر فيها اللودر
+    }, 1000); // المدة اللي يظهر فيها اللودر
 
     return () => clearTimeout(timeout);
   }, [pathname]);
