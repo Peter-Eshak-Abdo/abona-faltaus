@@ -44,15 +44,12 @@
     {
       "src": "/images/screenshots/homepage-wide.png",
       "type": "image/png",
-      "sizes": "1280x720",
-      "form_factor": "wide"
+      "sizes": "1280x720"
     },
     {
       "src": "/images/screenshots/homepage-mobile.png",
       "type": "image/png",
-      "sizes": "360x640",
-      "form_factor": "narrow"
+      "sizes": "360x640"
     }
   ]
-
 }

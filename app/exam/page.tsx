@@ -47,6 +47,8 @@ export default function ExamPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* كارت الأسئلة المجمعة اونلاين */}
         <motion.div
           className="col"
           initial={{ opacity: 0, y: 30 }}
@@ -63,12 +65,20 @@ export default function ExamPage() {
                   نظام تقسيم الأسئلة لمجموعات مع وقت محدد لكل مجموعة.
                 </p>
               </div>
-              <button
-                className="btn btn-primary w-100 mt-3"
-                onClick={() => router.push("/exam/group/admin")}
-              >
-                ابدأ الاختبار المجمع الاونلاين
-              </button>
+              <div className="d-flex gap-2">
+                <button
+                  className="btn btn-primary w-50 mt-3"
+                  onClick={() => router.push("/exam/group/admin")}
+                >
+                  إنشاء غرفة
+                </button>
+                <button
+                  className="btn btn-secondary w-50 mt-3"
+                  onClick={() => router.push("/exam/group/join")}
+                >
+                  انضم إلى غرفة
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>

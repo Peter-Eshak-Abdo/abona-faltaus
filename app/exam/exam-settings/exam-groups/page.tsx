@@ -23,7 +23,7 @@ type GroupResult = {
 };
 
 function GroupedQuestionsContent() {
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()!;
   const router = useRouter();
 
   const totalQuestions = Number(searchParams.get("questions") || 10);
@@ -42,13 +42,12 @@ function GroupedQuestionsContent() {
   const [quizFinished, setQuizFinished] = useState(false);
   const [questionStatus, setQuestionStatus] = useState<{ [key: number]: boolean }>({});
   const [categoriesCount, setCategoriesCount] = useState<{ [key: string]: number }>({});
+  const [shareImageURL, setShareImageURL] = useState<string | null>(null);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const currentQuestions = questionsPool[currentGroup] || [];
   const currentQuestion = currentQuestions[currentQuestionIndex];
 
-  const [shareImageURL, setShareImageURL] = useState<string | null>(null);
-
-  const [hasLoaded, setHasLoaded] = useState(false);
   useEffect(() => {
     if (hasLoaded) return;
     const loadQuestions = async () => {
@@ -219,7 +218,7 @@ function GroupedQuestionsContent() {
       })}
     </div>
   );
-  
+
   const handleAnswer = (option: string) => {
     if (!currentQuestion) return;
 
@@ -286,7 +285,7 @@ function GroupedQuestionsContent() {
           className="bg-white p-4 rounded shadow w-100 w-md-75"
         >
           {quizFinished ? (
-            <div id = "result-share-box" className="text-center">
+            <div id="result-share-box" className="text-center">
               <audio autoPlay>
                 <source src="/exam/success.mp3" type="audio/mpeg" />
               </audio>

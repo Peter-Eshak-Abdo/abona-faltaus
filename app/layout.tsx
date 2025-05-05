@@ -2,14 +2,11 @@
 import "./globals.css";
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect } from "react";
 import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
-// import Header from "@/components/Header";
-// import Footer from "@/components/Footer";
-// import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import LoadingProvider from "./loading-provider";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -22,19 +19,8 @@ function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", async () => {
-        try {
-          const registration = await navigator.serviceWorker.register("sw.js");
-          console.log("Service worker registered for scope", registration.scope);
-        } catch (err) {
-          console.error(err instanceof Error ? `${err.name}: ${err.message}` : err);
-        }
-      });
-    }
-  }, []);
   const pathname = usePathname();
+
   return (
     <html lang="ar" dir="rtl">
       <head>
@@ -83,7 +69,7 @@ function RootLayout({
       </head>
       <body className={vazirmatn.className} suppressHydrationWarning={true}>
         {/* <Header /> */}
-        {/* {process.env.NODE_ENV === "production" && <ServiceWorkerRegister />} */}
+        {process.env.NODE_ENV === "production" && <ServiceWorkerRegister />}
         <div className="background-blur" />
         <LoadingProvider>
           <AnimatePresence mode="wait">
@@ -94,7 +80,7 @@ function RootLayout({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4 }}
             >
-                {children}
+              {children}
               <SpeedInsights />
             </motion.div>
           </AnimatePresence>

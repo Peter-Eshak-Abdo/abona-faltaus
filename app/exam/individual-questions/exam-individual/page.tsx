@@ -18,7 +18,7 @@ type Question = {
 
 function QuizContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()!;
   const totalQuestions = Number(searchParams.get("questions") || 10);
   const timeLimit = Number(searchParams.get("time") || 30);
   const selectedCategories = searchParams.get("categories")?.split(",") || [];

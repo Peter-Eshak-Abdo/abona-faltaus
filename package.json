@@ -2,6 +2,7 @@
   "name": "abona-faltaus",
   "version": "2.7.2",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

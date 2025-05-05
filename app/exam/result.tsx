@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 
 export default function ResultPage() {
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()!;
   const router = useRouter();
 
   const groupsParam = searchParams.get("groups");
