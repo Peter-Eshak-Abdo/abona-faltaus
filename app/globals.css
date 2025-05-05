@@ -75,6 +75,41 @@ a {
   animation: drawLine 1.5s ease-out forwards;
 }
 
+@keyframes glowPulse {
+  0% {
+    opacity: 0.65;
+    transform: scale(1);
+    filter: blur(2px);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+    filter: blur(3px);
+  }
+
+  100% {
+    opacity: 0.65;
+    transform: scale(1);
+    filter: blur(2px);
+  }
+}
+
+.background-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(rgba(231, 208, 174, 0.5), rgba(231, 208, 174, 0.5)), url('/images/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: lighten;
+  animation: glowPulse 8s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
 /* loading provider */
 .loading-overlay {
   position: fixed;

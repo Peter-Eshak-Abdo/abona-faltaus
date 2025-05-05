@@ -323,6 +323,7 @@ export default function Home() {
             width={200}
             height={200}
             className="rounded-full border-4 border-blue-300"
+            priority
           />
         </motion.button>
       </motion.div>

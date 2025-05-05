@@ -84,6 +84,7 @@ function RootLayout({
       <body className={vazirmatn.className} suppressHydrationWarning={true}>
         {/* <Header /> */}
         {/* {process.env.NODE_ENV === "production" && <ServiceWorkerRegister />} */}
+        <div className="background-blur" />
         <LoadingProvider>
           <AnimatePresence mode="wait">
             <motion.div
@@ -93,7 +94,7 @@ function RootLayout({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4 }}
             >
-              {children}
+                {children}
               <SpeedInsights />
             </motion.div>
           </AnimatePresence>
