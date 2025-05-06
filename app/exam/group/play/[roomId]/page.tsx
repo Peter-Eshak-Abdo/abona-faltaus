@@ -25,7 +25,7 @@ export default function PlayPage() {
     if (!roomId) return;
 
     // Always use the same team id if available
-    let savedTeam = localStorage.getItem("currentTeam");
+    const savedTeam = localStorage.getItem("currentTeam");
     let team;
     if (savedTeam) {
       team = JSON.parse(savedTeam);

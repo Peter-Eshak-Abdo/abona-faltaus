@@ -6,6 +6,7 @@
   --background: rgb(231,208,174);
   /* --background: #ffffff; */
   --foreground: #171717;
+  --font-vazirmatn: #{Vazirmatn.style.fontFamily};
 }
 
 @media (prefers-color-scheme: dark) {

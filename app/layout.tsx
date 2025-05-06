@@ -12,6 +12,7 @@ const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
   display: "swap",
   weight: ["400", "700"],
+  variable: '--font-vazirmatn'
 });
 
 function RootLayout({
@@ -22,7 +23,7 @@ function RootLayout({
   const pathname = usePathname();
 
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" className={vazirmatn.variable}>
       <head>
         <meta name="author" content="بيتر اسحاق عبده" />
         {/* <meta charSet="UTF-8" />
@@ -36,7 +37,7 @@ function RootLayout({
           name="keywords"
           content="الحان , عظات , وعظات , ترانيم , مقالات دينية , امتحانات , اسئلة دينية , ابونا فلتاؤس السرياني , الكتاب المقدس , كنيسة , ارثوذكسية"
         /> */}
-        <link rel="icon" href="./images/icons/favicon.ico" sizes="any" />
+        <link rel="icon" href="/images/icons/favicon.ico" sizes="any" />
         <meta name="mobile-web-app-capable" content="yes" />
         {/* iOS splash + PWA support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -67,9 +68,9 @@ function RootLayout({
           href="/manifest.webmanifest"
         />
       </head>
-      <body className={vazirmatn.className} suppressHydrationWarning={true}>
+      <body suppressHydrationWarning={true}>
         {/* <Header /> */}
-        {process.env.NODE_ENV === "production" && <ServiceWorkerRegister />}
+        <ServiceWorkerRegister />
         <div className="background-blur" />
         <LoadingProvider>
           <AnimatePresence mode="wait">

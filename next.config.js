@@ -29,20 +29,19 @@ const config = withPWA({
       },
     },
   ],
-  experimental: {
-    turbo: {
-      resolveAlias: {},
-    },
-  },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-      };
-    }
-    return config;
-  },
+  exclude: ["/api/v1/auth/login"],
+  // turbo: {
+  //   resolveAlias: {},
+  // },
+  // webpack: (config, { isServer }) => {
+  //   if (!isServer) {
+  //     config.resolve.fallback = {
+  //       ...config.resolve.fallback,
+  //       fs: false,
+  //     };
+  //   }
+  //   return config;
+  // },
 });
 
 export default config;
