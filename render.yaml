@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: abona-faltaus-socket
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /health
+    autoDeploy: true

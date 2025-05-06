@@ -14,7 +14,7 @@ export default function JoinPage() {
 
   useEffect(() => {
     // Force using localhost for development
-    const newSocket = io("http://localhost:3001", {
+    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: 5,

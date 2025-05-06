@@ -11,11 +11,17 @@ const __dirname = dirname(__filename);
 const app = express();
 const httpServer = createServer(app);
 
+// Enable CORS for all routes
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
+});
+
+// Add a health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
 });
 
 // const allowedOrigins = [
@@ -25,7 +31,7 @@ app.use((req, res, next) => {
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://abona-faltaus.vercel.app"],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -196,6 +202,6 @@ io.on("connection", (socket) => {
 // httpServer.listen(3001, () => {console.log("🚀 Socket server running on port 3001");});
 
 const port = process.env.PORT || 3001;
-httpServer.listen(port, () => {
+httpServer.listen(port, "0.0.0.0", () => {
   console.log(`🚀 Socket server running on port ${port}`);
 });
