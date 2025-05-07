@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+// import Image from "next/image";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 
@@ -27,13 +27,7 @@ export default function UserHeader() {
   return (
     <Link href={href} className="relative block text-center">
       <div className="absolute top-1 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full flex flex-col items-center shadow-lg border border-white/20 w-[300px] z-30">
-        <div className="flex items-center gap-3">
-          <Image src="/images/logo.jpg" alt="logo" width={65} height={65} />
-          <span className="text-black text-lg font-semibold">
-            ابونا فلتاؤس السرياني
-          </span>
-        </div>
-        <p className="text-black text-sm">{subText}</p>
+        <p className="text-black text-lg font-semibold fs-3">{subText}</p>
       </div>
       <br /> <br /><br /><br />
     </Link>
