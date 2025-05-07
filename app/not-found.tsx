@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function NotFound() {
   const router = useRouter();
@@ -25,9 +26,11 @@ export default function NotFound() {
         </div>
 
         <div className="d-flex justify-content-center">
-          <img
+          <Image
             src="/images/IMG-20240512-WA0001.jpg"
             alt="404 Image"
+            width={400}
+            height={300}
             className="img-fluid rounded"
             style={{ maxHeight: "40vh", objectFit: "contain" }}
           />

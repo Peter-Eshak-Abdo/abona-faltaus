@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { io, Socket } from "socket.io-client";
-import QrReader from 'react-qr-scanner';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 
 export default function JoinPage() {
   const router = useRouter();
@@ -15,6 +15,7 @@ export default function JoinPage() {
   const [showScanner, setShowScanner] = useState(false);
   const [memberCount, setMemberCount] = useState(1);
   const [members, setMembers] = useState<string[]>([""]);
+  const scannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Force using localhost for development
@@ -55,15 +56,24 @@ export default function JoinPage() {
     }
   }, [socket, roomId, router]);
 
-  const handleScan = (data: { text?: string } | null) => {
-    if (data && data.text) {
-      setRoomId(data.text);
-      setShowScanner(false);
+  const startScanner = () => {
+    if (scannerRef.current) {
+      const scanner = new Html5QrcodeScanner(
+        scannerRef.current.id,
+        { fps: 10, qrbox: 250 },
+        false
+      );
+      scanner.render(
+        (decodedText: string) => {
+          setRoomId(decodedText);
+          scanner.clear();
+          setShowScanner(false);
+        },
+        () => {
+          setError("خطأ في قراءة QR");
+        }
+      );
     }
-  };
-  const handleError = (err: Error | null) => {
-    setError("خطأ في قراءة QR: " + err?.message);
-    setShowScanner(false);
   };
 
   const handleMemberCountChange = (count: number) => {
@@ -126,18 +136,13 @@ export default function JoinPage() {
                 <label htmlFor="roomId" className="form-label mb-0">
                   رقم الغرفة
                 </label>
-                <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setShowScanner(true)}>
+                <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => { setShowScanner(true); setTimeout(startScanner, 100); }}>
                   <span role="img" aria-label="scan">📷</span> QR
                 </button>
               </div>
               {showScanner && (
                 <div className="mb-3">
-                  <QrReader
-                    delay={300}
-                    onError={handleError}
-                    onScan={handleScan}
-                    style={{ width: '100%' }}
-                  />
+                  <div id="qr-reader" ref={scannerRef} style={{ width: '100%' }}></div>
                   <button className="btn btn-danger mt-2" onClick={() => setShowScanner(false)}>إغلاق</button>
                 </div>
               )}
