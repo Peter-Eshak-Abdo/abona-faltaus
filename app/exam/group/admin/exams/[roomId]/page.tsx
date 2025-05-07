@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 
@@ -24,6 +24,8 @@ export default function AdminExamPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [error, setError] = useState("");
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!roomId) return;
@@ -39,14 +41,7 @@ export default function AdminExamPage() {
 
     newSocket.on("connect", () => {
       console.log("[ADMIN] Connected to socket server");
-      // Get exam settings from localStorage
-      const settings = localStorage.getItem("examGroupSettings");
-      if (settings) {
-        const { roomId: savedRoomId } = JSON.parse(settings);
-        if (savedRoomId === roomId) {
-          newSocket.emit("join-room", { roomId, isAdmin: true });
-        }
-      }
+      newSocket.emit("join-room", { roomId, isAdmin: true, adminId: localStorage.getItem("adminId") });
     });
 
     newSocket.on("connect_error", (err) => {
@@ -69,6 +64,20 @@ export default function AdminExamPage() {
     newSocket.on("exam-started", (data) => {
       console.log("[ADMIN] exam-started event received", data);
       setCurrentQuestion(data.question);
+      setTimeLeft(data.timePerQuestion || 30);
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
+      }, 1000);
+    });
+
+    newSocket.on("question", (question) => {
+      setCurrentQuestion(question);
+      setTimeLeft(question.timePerQuestion || 30);
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
+      }, 1000);
     });
 
     newSocket.on("answer-submitted", ({ teamId, isCorrect }) => {
@@ -83,6 +92,7 @@ export default function AdminExamPage() {
     setSocket(newSocket);
 
     return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
       newSocket.close();
     };
   }, [roomId]);
@@ -125,16 +135,11 @@ export default function AdminExamPage() {
               {currentQuestion ? (
                 <div>
                   <h5 className="mb-4">{currentQuestion.text}</h5>
-                  <div className="list-group">
-                    {currentQuestion.options.map((option: string, index: number) => (
-                      <div
-                        key={index}
-                        className={`list-group-item ${index === currentQuestion.correctAnswer ? "list-group-item-success" : ""}`}
-                      >
-                        {option}
-                      </div>
-                    ))}
-                  </div>
+                  {typeof timeLeft === "number" && (
+                    <div className="mb-3 text-center">
+                      <span className="badge bg-warning text-dark fs-5">الوقت المتبقي: {timeLeft} ثانية</span>
+                    </div>
+                  )}
                   <button
                     className="btn btn-primary mt-4 w-100"
                     onClick={handleNextQuestion}

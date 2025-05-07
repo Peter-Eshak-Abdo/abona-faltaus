@@ -24,14 +24,13 @@ app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
 
-// const allowedOrigins = [
-//   "http://localhost:3000",
-//   "https://abona-faltaus.vercel.app",
-// ];
-
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:3000", "https://abona-faltaus.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "https://abona-faltaus.vercel.app",
+      "https://exam-group.glitch.me",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -52,6 +51,7 @@ io.on("connection", (socket) => {
     rooms.set(roomId, {
       teams: [],
       admin: socket.id,
+      adminId: socket.id,
       status: "waiting", // waiting, active, finished
       questions: [], // Store questions for the room
       currentQuestionIndex: 0,
@@ -70,7 +70,7 @@ io.on("connection", (socket) => {
     }
 
     if (isAdmin) {
-      if (room.admin === socket.id) {
+      if (room.admin === socket.id || room.adminId === adminId) {
         socket.join(roomId);
         socket.emit("room-joined", { isAdmin: true });
         // Send current question if exam has started

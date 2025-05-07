@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 
@@ -9,6 +9,7 @@ interface Question {
   text: string;
   options: string[];
   correctAnswer: number;
+  timePerQuestion?: number;
 }
 
 export default function PlayPage() {
@@ -20,6 +21,8 @@ export default function PlayPage() {
   const [score, setScore] = useState(0);
   const [error, setError] = useState("");
   const [teamName, setTeamName] = useState("");
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!roomId) return;
@@ -66,11 +69,20 @@ export default function PlayPage() {
     newSocket.on("exam-started", (data) => {
       console.log("[TEAM] exam-started event received", data);
       setCurrentQuestion(data.question);
+      setTimeLeft(data.timePerQuestion || 30);
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
+      }, 1000);
     });
 
-    newSocket.on("question", (question: Question) => {
+    newSocket.on("question", (question) => {
       setCurrentQuestion(question);
-      setSelectedAnswer(null);
+      setTimeLeft(question.timePerQuestion || 30);
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
+      }, 1000);
     });
 
     newSocket.on("answer-result", (result: { correct: boolean }) => {
@@ -82,6 +94,7 @@ export default function PlayPage() {
     setSocket(newSocket);
 
     return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
       newSocket.close();
     };
   }, [roomId]);
@@ -133,12 +146,16 @@ export default function PlayPage() {
               {currentQuestion ? (
                 <div>
                   <h5 className="mb-4">{currentQuestion.text}</h5>
+                  {typeof timeLeft === "number" && (
+                    <div className="mb-3 text-center">
+                      <span className="badge bg-warning text-dark fs-5">الوقت المتبقي: {timeLeft} ثانية</span>
+                    </div>
+                  )}
                   <div className="list-group">
                     {currentQuestion.options.map((option, index) => (
                       <button
                         key={index}
-                        className={`list-group-item list-group-item-action ${selectedAnswer === index ? "active" : ""
-                          }`}
+                        className={`list-group-item list-group-item-action ${selectedAnswer === index ? "active" : ""}`}
                         onClick={() => setSelectedAnswer(index)}
                       >
                         {option}

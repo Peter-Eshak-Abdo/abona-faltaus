@@ -36,6 +36,7 @@ export default function ExamSettings() {
 
     newSocket.on("connect", () => {
       console.log("Connected to socket server");
+      localStorage.setItem("adminId", newSocket.id || "");
     });
 
     newSocket.on("connect_error", (err) => {
