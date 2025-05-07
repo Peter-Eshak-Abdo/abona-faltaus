@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,7 +29,7 @@ function GroupedQuestionsContent() {
   const totalQuestions = Number(searchParams.get("questions") || 10);
   const totalGroups = Number(searchParams.get("groups") || 1);
   const timePerGroup = Number(searchParams.get("time") || 10);
-  const selectedCategories = searchParams.get("categories")?.split(",") || [];
+  const selectedCategories = useMemo(() => searchParams.get("categories")?.split(",") || [], [searchParams]);
 
   const [questionsPool, setQuestionsPool] = useState<Question[][]>([]);
   const [currentGroup, setCurrentGroup] = useState(0);
@@ -123,28 +123,10 @@ function GroupedQuestionsContent() {
       }
     };
     loadQuestions().then(() => setHasLoaded(true));
-  }, [hasLoaded]);
-
-  // إدارة المؤقت الزمني
-  useEffect(() => {
-    if (!timerActive || quizFinished) return;
-
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          finishCurrentGroup();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [timerActive, quizFinished]);
+  }, [hasLoaded, selectedCategories, totalGroups, totalQuestions]);
 
   // إتمام المجموعة الحالية
-  const finishCurrentGroup = () => {
+  const finishCurrentGroup = useCallback(() => {
     const currentQs = questionsPool[currentGroup];
     let correct = 0;
 
@@ -175,7 +157,25 @@ function GroupedQuestionsContent() {
       setTimeLeft(timePerGroup * 60);
       setTimerActive(true);
     }
-  };
+  }, [questionsPool, currentGroup, selectedAnswers, totalGroups, setQuizFinished, setCurrentGroup, setCurrentQuestionIndex, setSelectedAnswers, setTimeLeft, setTimerActive, setGroupResults, setQuestionStatus, timePerGroup]);
+
+  // إدارة المؤقت الزمني
+  useEffect(() => {
+    if (!timerActive || quizFinished) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          finishCurrentGroup();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timerActive, quizFinished, finishCurrentGroup]);
 
   // التعامل مع الزر التالي/إنهاء
   const handleNextOrFinish = () => {
@@ -201,7 +201,7 @@ function GroupedQuestionsContent() {
         return (
           <button
             key={q.id}
-            className={`btn btn-sm rounded-circle ${currentQuestionIndex === index
+            className={`btn btn-sm rounded-circle pagination-btn ${currentQuestionIndex === index
               ? "btn-primary"
               : answered
                 ? status
@@ -210,7 +210,6 @@ function GroupedQuestionsContent() {
                 : "btn-outline-secondary"
               }`}
             onClick={() => setCurrentQuestionIndex(index)}
-            style={{ width: 36, height: 36 }}
           >
             {index + 1}
           </button>

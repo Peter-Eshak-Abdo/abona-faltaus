@@ -21,7 +21,7 @@ export default function LoginPage() {
     if (user) {
       router.push("/");
     }
-  }, []);
+  }, [router]);
 
   const handleGoogleLogin = async () => {
     try {

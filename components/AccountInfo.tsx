@@ -16,6 +16,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Copy, Share2 } from "lucide-react";
 import LogoHeader from "./LogoHeader";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AccountInfo() {
   interface UserData {
@@ -143,18 +144,16 @@ export default function AccountInfo() {
           </div>
         )}
 
-        <div className="card mx-auto p-4 shadow" style={{ maxWidth: "500px" }}>
+        <div className="card mx-auto p-4 shadow account-card-maxwidth">
           <div className="text-center mb-3">
-            <img
-              // 4) نستخدم key أو نضيف الـ timestamp لخاصية src لكسر الكاش
+            <Image
               key={userData?.photoURL}
-              src={
-                userData?.photoURL ||
-                "https://via.placeholder.com/100x100.png?text=Avatar"
-              }
+              src={userData?.photoURL || "https://via.placeholder.com/100x100.png?text=Avatar"}
               alt="الصورة الشخصية"
+              width={100}
+              height={100}
               className="rounded-circle mb-2"
-              style={{ width: "100px", height: "100px", objectFit: "cover" }}
+              style={{ objectFit: "cover" }}
             />
             <h4 className="mb-1">{userData?.name || "مستخدم"}</h4>
             <small className="text-muted">{firebaseUser.uid}</small>

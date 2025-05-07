@@ -1,6 +1,6 @@
 "use client";
 import "../wave.model.css";
-import { useEffect, useState, Suspense, useCallback } from "react";
+import { useEffect, useState, Suspense, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -21,7 +21,7 @@ function QuizContent() {
   const searchParams = useSearchParams()!;
   const totalQuestions = Number(searchParams.get("questions") || 10);
   const timeLimit = Number(searchParams.get("time") || 30);
-  const selectedCategories = searchParams.get("categories")?.split(",") || [];
+  const selectedCategories = useMemo(() => searchParams.get("categories")?.split(",") || [], [searchParams]);
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -104,7 +104,7 @@ function QuizContent() {
       }
     };
     loadQuestions().then(() => setHasLoaded(true));
-  }, [hasLoaded]);
+  }, [hasLoaded, selectedCategories, totalQuestions]);
 
   const changeQuestion = useCallback((newIndex: number) => {
     setTimeout(() => {
@@ -169,7 +169,7 @@ function QuizContent() {
         return (
           <button
             key={q.id}
-            className={`btn btn-sm rounded-circle ${currentQuestionIndex === index
+            className={`btn btn-sm rounded-circle pagination-btn ${currentQuestionIndex === index
               ? "btn-primary"
               : answered
                 ? status
@@ -178,7 +178,6 @@ function QuizContent() {
                 : "btn-outline-secondary"
               }`}
             onClick={() => setCurrentQuestionIndex(index)}
-            style={{ width: 36, height: 36 }}
           >
             {index + 1}
           </button>

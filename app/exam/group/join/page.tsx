@@ -55,13 +55,13 @@ export default function JoinPage() {
     }
   }, [socket, roomId, router]);
 
-  const handleScan = (data: any) => {
+  const handleScan = (data: { text?: string } | null) => {
     if (data && data.text) {
       setRoomId(data.text);
       setShowScanner(false);
     }
   };
-  const handleError = (err: any) => {
+  const handleError = (err: Error | null) => {
     setError("خطأ في قراءة QR: " + err?.message);
     setShowScanner(false);
   };

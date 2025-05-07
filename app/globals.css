@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: rgb(231,208,174);
+  --background: rgb(231, 208, 174);
   /* --background: #ffffff; */
   --foreground: #171717;
   --font-vazirmatn: #{Vazirmatn.style.fontFamily};
@@ -111,6 +111,7 @@ a {
   z-index: -1;
   pointer-events: none;
 }
+
 /* loading provider */
 .loading-overlay {
   position: fixed;
@@ -155,4 +156,8 @@ a {
 
 .animate-fade-in {
   animation: fade-in 0.5s ease-in-out;
+}
+
+.account-card-maxwidth {
+  max-width: 500px;
 }
