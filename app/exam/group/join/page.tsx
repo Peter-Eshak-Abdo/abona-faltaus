@@ -15,23 +15,31 @@ export default function JoinPage() {
   const [showScanner, setShowScanner] = useState(false);
   const [memberCount, setMemberCount] = useState(1);
   const [members, setMembers] = useState<string[]>([""]);
+  const [isConnecting, setIsConnecting] = useState(true);
   const scannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Force using localhost for development
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
+    setIsConnecting(true);
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
+    console.log("Connecting to socket server:", socketUrl);
+
+    const newSocket = io(socketUrl, {
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: 5,
+      timeout: 10000,
     });
 
     newSocket.on("connect", () => {
       console.log("Connected to socket server");
+      setIsConnecting(false);
+      setError("");
     });
 
     newSocket.on("connect_error", (err) => {
       console.error("Connection error:", err);
-      setError("خطأ في الاتصال بالخادم");
+      setError("خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى");
+      setIsConnecting(false);
     });
 
     setSocket(newSocket);
@@ -127,6 +135,11 @@ export default function JoinPage() {
               <h2 className="h4 mb-0">انضم إلى غرفة الامتحان</h2>
             </div>
             <div className="card-body">
+              {isConnecting && (
+                <div className="alert alert-info" role="alert">
+                  جاري الاتصال بالخادم...
+                </div>
+              )}
               {error && (
                 <div className="alert alert-danger" role="alert">
                   {error}
