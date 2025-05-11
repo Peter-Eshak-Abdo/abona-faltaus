@@ -36,3 +36,9 @@ next-env.d.ts
 # firebase
 .firebase
 lib/firebase.ts
+
+public/sitemap-*.xml
+public/sitemap.xml
+public/robots.txt
+
+public/google3068e8e999fad02d.html

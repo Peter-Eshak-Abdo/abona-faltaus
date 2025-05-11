@@ -37,6 +37,7 @@ function RootLayout({
           name="keywords"
           content="الحان , عظات , وعظات , ترانيم , مقالات دينية , امتحانات , اسئلة دينية , ابونا فلتاؤس السرياني , الكتاب المقدس , كنيسة , ارثوذكسية"
         /> */}
+        <link rel="canonical" href="https://abona-faltaus.vercel.app/" />
         <link rel="icon" href="/images/icons/favicon.ico" sizes="any" />
         <meta name="mobile-web-app-capable" content="yes" />
         {/* iOS splash + PWA support */}
@@ -67,6 +68,9 @@ function RootLayout({
           rel="manifest"
           href="/manifest.webmanifest"
         />
+        <meta name="google-site-verification" content="45CwlQo0Fk1QKL796kCc0ZRO2Kd-n9cq2m1JHmzNjnk" />
+        <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+        <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap-0.xml" />
       </head>
       <body suppressHydrationWarning={true}>
         {/* <Header /> */}
