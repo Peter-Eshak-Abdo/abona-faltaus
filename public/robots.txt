@@ -1,0 +1,12 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /api/*
+Disallow: /admin/*
+Disallow: /private/*
+
+# Host
+Host: https://abona-faltaus.vercel.app
+
+# Sitemaps
+Sitemap: https://abona-faltaus.vercel.app/sitemap.xml

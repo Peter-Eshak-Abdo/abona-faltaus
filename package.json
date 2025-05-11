@@ -11,7 +11,8 @@
     "lint": "next lint",
     "predeploy": "rd /s /q out",
     "deploy": "npm run build && firebase deploy",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@react-pdf/render": "^4.3.0",
@@ -58,6 +59,7 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.1.3",
+    "next-sitemap": "^4.2.3",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.5",
     "typescript": "^5"
