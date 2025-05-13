@@ -26,7 +26,7 @@ export default function UserHeader() {
 
   return (
     <Link href={href} className="relative block text-center">
-      <div className="absolute top-1 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full flex flex-col items-center shadow-lg border border-white/20 w-[300px] z-30">
+      <div className="absolute top-1 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full flex flex-col items-center shadow-lg border border-white/20 w-75 z-30">
         <p className="text-black text-lg font-semibold fs-3">{subText}</p>
       </div>
       <br /> <br /><br /><br />
