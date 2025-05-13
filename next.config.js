@@ -30,6 +30,18 @@ const config = withPWA({
     },
   ],
   exclude: ["/api/v1/auth/login"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+      },
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com", // لو بتستخدم صور من Firebase
+      },
+    ],
+  },
   // turbo: {
   //   resolveAlias: {},
   // },

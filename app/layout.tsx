@@ -1,12 +1,10 @@
-'use client';
-import "./globals.css";
-import { usePathname } from 'next/navigation';
-import { AnimatePresence, motion } from 'framer-motion';
+import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import LoadingProvider from "./loading-provider";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+// import { SpeedInsights } from '@vercel/speed-insights/next';
+import "./globals.css";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -15,30 +13,30 @@ const vazirmatn = Vazirmatn({
   variable: '--font-vazirmatn'
 });
 
-function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const pathname = usePathname();
+export const metadata: Metadata = {
+  title: {
+    template: "%s | ابونا فلتاؤس السرياني",
+    default: "ابونا فلتاؤس السرياني - الحان وترانيم وعظات والكتاب المقدس",
+  },
+  description: "الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية",
+  keywords: ["الحان", "عظات", "وعظات", "ترانيم", "مقالات دينية", "امتحانات", "اسئلة دينية", "ابونا فلتاؤس السرياني", "الكتاب المقدس", "كنيسة", "ارثوذكسية"],
+  icons: {
+    icon: "./images/icons/favicon.ico",
+  },
+};
 
+import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="ar" dir="rtl" className={vazirmatn.variable}>
       <head>
-        <meta name="author" content="بيتر اسحاق عبده" />
-        {/* <meta charSet="UTF-8" />
-        <title>ابونا فلتاؤس السرياني</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta
-          name="description"
-          content="الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية"
-        />
-        <meta
-          name="keywords"
-          content="الحان , عظات , وعظات , ترانيم , مقالات دينية , امتحانات , اسئلة دينية , ابونا فلتاؤس السرياني , الكتاب المقدس , كنيسة , ارثوذكسية"
-        /> */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="canonical" href="https://abona-faltaus.vercel.app/" />
-        <link rel="icon" href="/images/icons/favicon.ico" sizes="any" />
         <meta name="mobile-web-app-capable" content="yes" />
         {/* iOS splash + PWA support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -51,7 +49,7 @@ function RootLayout({
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-        ></link>
+        />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.rtl.min.css"
@@ -71,34 +69,28 @@ function RootLayout({
         <meta name="google-site-verification" content="45CwlQo0Fk1QKL796kCc0ZRO2Kd-n9cq2m1JHmzNjnk" />
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap-0.xml" />
+        <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css"
+          rel="stylesheet"
+        />
       </head>
       <body suppressHydrationWarning={true}>
-        {/* <Header /> */}
         <ServiceWorkerRegister />
         <div className="background-blur" />
         <LoadingProvider>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={pathname}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              {children}
-              <SpeedInsights />
-            </motion.div>
-          </AnimatePresence>
+          <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
         </LoadingProvider>
-        {/* <Footer /> */}
+        <Script
+          src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"
+          strategy="afterInteractive"
+        />
       </body>
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
         integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
         crossOrigin="anonymous"
         referrerPolicy="no-referrer"
-      ></Script>
+      />
     </html>
   );
 }
-export default RootLayout;

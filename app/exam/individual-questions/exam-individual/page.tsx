@@ -22,6 +22,7 @@ function QuizContent() {
   const totalQuestions = Number(searchParams.get("questions") || 10);
   const timeLimit = Number(searchParams.get("time") || 30);
   const selectedCategories = useMemo(() => searchParams.get("categories")?.split(",") || [], [searchParams]);
+  const [userName, setUserName] = useState("");
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -215,14 +216,13 @@ function QuizContent() {
     const dataUrl = canvas.toDataURL("image/png");
     setShareImageURL(dataUrl);
 
-    // مشاركة عبر Web Share API (للأجهزة التي تدعمه)
     if (navigator.canShare && navigator.canShare({ files: [] })) {
       canvas.toBlob((blob) => {
         if (!blob) return;
         const file = new File([blob], "result.png", { type: "image/png" });
         navigator.share({
-          title: "نتيجتي في الامتحان 🎉",
-          text: "جرب تطبيق الاختبارات هذا!",
+          title: `${userName} - نتيجتي في الامتحان 🎉`,
+          text: `أنا ${userName} وحصلت على ${score} من ${questions.length} في الامتحان! جرب أنت كمان!`,
           files: [file],
         });
       });
@@ -290,77 +290,85 @@ function QuizContent() {
                 transition={{ type: "spring", stiffness: 200 }}
                 className="bg-success text-white p-4 rounded shadow-xl border-2 border-success"
               >
-                <h2 className="h4">🎉 مبروك!</h2>
-                <p className="h5 mt-3">
-                  لقد أجبت على <span className="fw-bold">{score}</span> من {" "}
-                  <span className="fw-bold">{questions.length}</span> سؤال بشكل صحيح
-                </p>
-
-                <div className="mt-3">
-                  <h5 className="h6">توزيع الأسئلة:</h5>
-                  <div className="d-flex flex-wrap justify-content-center gap-2">
-                    {Object.entries(categoriesCount).map(([cat]) => (
-                      <span key={cat} className="badge bg-info text-dark">
-                        {cat}: {questions.filter(q => q.category === cat).length}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="mt-4"
-                >
-                  <Image
-                    src="/exam/celebration.gif"
-                    alt="احتفال"
-                    width={125}
-                    height={125}
-                    className="w-50 mx-auto rounded-circle shadow"
-                  />
-                </motion.div>
-
-                {/* <div id="result-share-box" className="bg-white p-4 rounded shadow text-center border max-w-md mx-auto">
-                  <h2 className="text-2xl font-bold text-green-600">🎉 نتيجتي في الامتحان</h2>
-                  <p className="text-lg mt-2">
-                    أحرزت <span className="font-bold text-blue-600">{score}</span> من{" "}
-                    <span className="font-bold">{questions.length}</span> سؤال!
-                  </p>
-
-                  <p className="mt-4 text-gray-600 text-sm">
-                    جرب أنت كمان برنامج الاختبارات الرائع!
-                  </p>
-
-                  <p className="text-xs text-gray-400">powered by YourAppName.com</p>
-                </div> */}
-
-                <div className="mt-4 flex flex-col items-center gap-2">
-                  <button
-                    onClick={generateShareImage}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                  >
-                    مشاركة نتيجتي
-                  </button>
-
-                  {shareImageURL && (
-                    <a
-                      href={shareImageURL}
-                      download="my_exam_result.png"
-                      className="text-sm text-blue-500 underline"
+                {!userName ? (
+                  <div className="mb-4">
+                    <h3 className="h5 mb-3">أدخل اسمك للمشاركة</h3>
+                    <input
+                      type="text"
+                      className="form-control mb-2"
+                      placeholder="اسمك"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                    />
+                    <button
+                      onClick={() => setUserName(userName)}
+                      className="btn btn-light"
+                      disabled={!userName.trim()}
                     >
-                      تحميل الصورة
-                    </a>
-                  )}
-                </div>
+                      متابعة
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="h4">🎉 مبروك {userName}!</h2>
+                    <p className="h5 mt-3">
+                      لقد أجبت على <span className="fw-bold">{score}</span> من {" "}
+                      <span className="fw-bold">{questions.length}</span> سؤال بشكل صحيح
+                    </p>
 
-                <button
-                  onClick={() => router.push('/exam')}
-                  className="btn btn-light mt-3"
-                >
-                  العودة إلى صفحة الامتحانات
-                </button>
+                    <div className="mt-3">
+                      <h5 className="h6">توزيع الأسئلة:</h5>
+                      <div className="d-flex flex-wrap justify-content-center gap-2">
+                        {Object.entries(categoriesCount).map(([cat]) => (
+                          <span key={cat} className="badge bg-info text-dark">
+                            {cat}: {questions.filter(q => q.category === cat).length}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="mt-4"
+                    >
+                      <Image
+                        src="/exam/celebration.gif"
+                        alt="احتفال"
+                        width={125}
+                        height={125}
+                        className="w-50 mx-auto rounded-circle shadow"
+                      />
+                    </motion.div>
+
+                    <div className="mt-4 flex flex-col items-center gap-2">
+                      <button
+                        onClick={generateShareImage}
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                      >
+                        مشاركة نتيجتي
+                      </button>
+
+                      {shareImageURL && (
+                        <a
+                          href={shareImageURL}
+                          download="my_exam_result.png"
+                          className="text-sm text-blue-500 underline"
+                        >
+                          تحميل الصورة
+                        </a>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => router.push('/exam')}
+                      className="btn btn-light mt-3"
+                    >
+                      العودة إلى صفحة الامتحانات
+                    </button>
+                  </>
+                )}
               </motion.div>
             </div>
           ) : currentQuestion ? (
