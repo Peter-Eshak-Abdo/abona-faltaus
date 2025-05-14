@@ -8,6 +8,8 @@ import {
   GithubAuthProvider,
   RecaptchaVerifier,
   signInWithPhoneNumber,
+  signInWithCredential,
+  PhoneAuthProvider,
 } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
@@ -34,7 +36,7 @@ export default function LoginPage() {
   const [verificationId, setVerificationId] = useState("");
   const [isPhoneVerification, setIsPhoneVerification] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [recaptchaVerifier, setRecaptchaVerifier] = useState<any>(null);
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -55,7 +57,7 @@ export default function LoginPage() {
     };
   }, []);
 
-  const handleSocialLogin = async (provider: any) => {
+  const handleSocialLogin = async (provider: GoogleAuthProvider | GithubAuthProvider) => {
     try {
       setIsLoading(true);
       const res = await signInWithPopup(auth, provider);
@@ -97,10 +99,9 @@ export default function LoginPage() {
 
   const verifyCode = async () => {
     try {
-      setIsLoading(true);
-      setError("");
-      const credential = await auth.signInWithCredential(
-        auth.PhoneAuthProvider.credential(verificationId, verificationCode)
+      const credential = await signInWithCredential(
+        auth,
+        PhoneAuthProvider.credential(verificationId, verificationCode)
       );
       await saveUser(credential.user.uid, name || "مستخدم");
       router.push("/");

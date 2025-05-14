@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { motion } from "framer-motion";
 
@@ -8,7 +8,6 @@ export default function VerifyPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const searchParams = useSearchParams();
   const auth = getAuth();
 
   useEffect(() => {
@@ -27,8 +26,12 @@ export default function VerifyPage() {
             router.push("/");
           }
         }
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unexpected error occurred.");
+        }
       } finally {
         setIsLoading(false);
       }

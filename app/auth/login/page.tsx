@@ -1,7 +1,10 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { getAuth, signInWithEmailAndPassword, sendSignInLinkToEmail } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { sendSignInLinkToEmail } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+// import { getAuth, signInWithEmailAndPassword, sendSignInLinkToEmail } from "firebase/auth";
 import { motion } from "framer-motion";
 
 export default function LoginPage() {
@@ -11,7 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isPasswordless, setIsPasswordless] = useState(false);
   const router = useRouter();
-  const auth = getAuth();
+  const authe = auth;
 
   const handleEmailPasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,10 +22,14 @@ export default function LoginPage() {
     setError("");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(authe, email, password);
       router.push("/");
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError("خطأ في تسجيل الدخول. تأكد من صحة البريد الإلكتروني وكلمة المرور." );
+      } else {
+        setError("خطأ غير متوقع في تسجيل الدخول.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -39,11 +46,15 @@ export default function LoginPage() {
     };
 
     try {
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      await sendSignInLinkToEmail(authe, email, actionCodeSettings);
       window.localStorage.setItem("emailForSignIn", email);
       alert("تم إرسال رابط تسجيل الدخول إلى بريدك الإلكتروني");
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
     } finally {
       setIsLoading(false);
     }

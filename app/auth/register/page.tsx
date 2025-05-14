@@ -24,8 +24,12 @@ export default function RegisterPage() {
         displayName: name
       });
       router.push("/");
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError("خطأ في التسجيل. تأكد من صحة البيانات المدخلة.");
+      } else {
+        setError("خطأ غير متوقع في التسجيل.");
+      }
     } finally {
       setIsLoading(false);
     }
