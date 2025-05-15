@@ -1,5 +1,5 @@
 "use client";
-import "../wave.model.css";
+import "../../exam.model.css";
 import { useEffect, useState, Suspense, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";

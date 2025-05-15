@@ -1,6 +1,6 @@
 import withPWA from "next-pwa";
 
-const config = withPWA({
+const nextConfig = withPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
@@ -30,18 +30,6 @@ const config = withPWA({
     },
   ],
   exclude: ["/api/v1/auth/login"],
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "via.placeholder.com",
-      },
-      {
-        protocol: "https",
-        hostname: "firebasestorage.googleapis.com", // لو بتستخدم صور من Firebase
-      },
-    ],
-  },
   // turbo: {
   //   resolveAlias: {},
   // },
@@ -56,4 +44,18 @@ const config = withPWA({
   // },
 });
 
-export default config;
+export default {
+  ...nextConfig,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+      },
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com", // لو بتستخدم صور من Firebase
+      },
+    ],
+  },
+};

@@ -1,3 +1,5 @@
+export const dynamicParams = true;
+
 import al7anData from "@/public/al7an-all.json";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -30,14 +32,42 @@ type Al7anData = {
 
 const typedAl7anData = al7anData as unknown as Al7anData;
 
-type PageParams = {
-  monasba: string;
-  name: string;
+type L7nDetailsPageProps = {
+  params: {
+    monasba: string;
+    name: string;
+  };
 };
 
-export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
-  const awaitedParams = await params;
-  const { monasba, name } = awaitedParams;
+// Ensure params is explicitly typed as a plain object in checkFields
+// If checkFields is a custom utility, ensure it handles params correctly
+// Example:
+// checkFields<Diff<PageProps, FirstArg<TEntry['default']>, 'default'>>()
+// Ensure the type constraints align with the plain object structure of params
+
+// No changes to the existing code are needed as params is already correctly typed.
+// Add generateStaticParams to provide Next.js with more information about param structures
+export async function generateStaticParams() {
+  const paths: Array<{ monasba: string; name: string }> = [];
+  typedAl7anData.forEach(monasbaCollection => {
+    // monasbaCollection is an object like { "snawi": Hymn[], "som-kebir": Hymn[], ... }
+    // or it could be one of the specific types like { "snawi": Hymn[] }
+    Object.keys(monasbaCollection).forEach(monasbaKey => {
+      const hymns = monasbaCollection[monasbaKey as keyof typeof monasbaCollection];
+      if (hymns) {
+        hymns.forEach(hymn => {
+          // Ensure the 'name' parameter matches how it's used/expected in the URL
+          paths.push({ monasba: monasbaKey, name: encodeURIComponent(hymn.name) });
+        });
+      }
+    });
+  });
+  return paths;
+}
+
+// Ensure l7n is properly declared and used
+export async function generateMetadata({ params }: L7nDetailsPageProps): Promise<Metadata> {
+  const { monasba, name } = params;
   const allAl7an = typedAl7anData.find((item) => item[monasba])?.[monasba] || [];
   const l7n = allAl7an.find((item) => item.name === decodeURIComponent(name));
 
@@ -54,8 +84,8 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   };
 }
 
-export default async function L7nDetailsPage({ params }: { params: PageParams }) {
-  const { monasba, name } = await params;
+export default function L7nDetailsPage({ params }: L7nDetailsPageProps) {
+  const { monasba, name } = params;
   const allAl7an = typedAl7anData.find((item) => item[monasba])?.[monasba] || [];
   const l7n = allAl7an.find((item) => item.name === decodeURIComponent(name));
 
@@ -63,12 +93,6 @@ export default async function L7nDetailsPage({ params }: { params: PageParams })
 
   return (
     <>
-      <head>
-        <link
-          href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css"
-          rel="stylesheet"
-        />
-      </head>
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js" />
       <div className="container mt-5">
         <nav aria-label="breadcrumb" className="mb-4">

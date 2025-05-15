@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { db, auth } from "@/lib/firebase";
 import {
   collection,
@@ -85,9 +86,10 @@ export default function MkalatFeed() {
       {mkalat.map(mkal => (
         <div key={mkal.id} className="border p-4 rounded shadow">
           <p><strong>{mkal.userName}</strong></p>
+          {/* <p><strong>{mkal.userName}</strong></p> */}
           <p className="my-2">{mkal.content}</p>
           {mkal.imageUrl && (
-            <img src={mkal.imageUrl} alt="article" className="max-h-60 object-cover rounded" />
+            <Image src={mkal.imageUrl} alt="article" width={500} height={300} className="max-h-60 object-cover rounded" />
           )}
           <div className="flex items-center gap-4 mt-2">
             <button
