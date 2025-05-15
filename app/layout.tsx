@@ -14,15 +14,35 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: {
-    template: "%s | ابونا فلتاؤس السرياني",
-    default: "ابونا فلتاؤس السرياني - الحان وترانيم وعظات والكتاب المقدس",
-  },
+  title: 'Abona Faltaous | أبونا فلتاؤس',
   description: "الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية",
   keywords: ["الحان", "عظات", "وعظات", "ترانيم", "مقالات دينية", "امتحانات", "اسئلة دينية", "ابونا فلتاؤس السرياني", "الكتاب المقدس", "كنيسة", "ارثوذكسية"],
+  authors: [{ name: 'Peter Eshak Abdo', url: 'https://abona-faltaus.vercel.app' }],
+  creator: 'Peter Eshak Abdo',
   icons: {
     icon: "./images/icons/favicon.ico",
   },
+  openGraph: {
+    title: 'أبونا فلتاؤس السرياني',
+    description: 'الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية.',
+    url: 'https://abona-faltaus.vercel.app',
+    siteName: 'Abona Faltaous',
+    images: [
+      {
+        url: '/images/icons/favicon.ico',
+        width: 1200,
+        height: 630,
+        alt: 'أبونا فلتاؤس السرياني',
+      },
+    ],
+    locale: 'ar_EG',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+
 };
 
 import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
@@ -35,7 +55,13 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={vazirmatn.variable}>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:site_name" content="أبونا فلتاؤس السرياني"/>
+        <meta property="og:url" content="https://abona-faltaus.vercel.app/"/>
+        <meta property="og:title" content="أبونا فلتاؤس السرياني"/>
+        <meta property="og:description" content="الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية."/>
+        <meta property="og:image" content="/images/icons/favicon.ico"/>
         <link rel="canonical" href="https://abona-faltaus.vercel.app/" />
         <meta name="mobile-web-app-capable" content="yes" />
         {/* iOS splash + PWA support */}

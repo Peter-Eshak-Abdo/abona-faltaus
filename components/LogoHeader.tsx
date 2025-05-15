@@ -15,9 +15,9 @@ export default function LogoHeader() {
             className="rounded-full border-4 border-blue-300"
             priority
           />
-          <span className="text-black text-lg font-semibold">
+          <h1 className="text-black text-lg font-semibold fs-5">
             ابونا فلتاؤس السرياني
-          </span>
+          </h1>
         </div>
       </div>
       <br /><br /><br /><br />

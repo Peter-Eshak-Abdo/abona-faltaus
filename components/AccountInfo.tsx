@@ -148,7 +148,8 @@ export default function AccountInfo() {
           <div className="text-center mb-3">
             <Image
               key={userData?.photoURL}
-              src={userData?.photoURL || "https://via.placeholder.com/100x100.png?text=Avatar"}
+              src={userData?.photoURL || "/images/logo.jpg"}
+              // src={userData?.photoURL || "https://via.placeholder.com/100x100.png?text=Avatar"}
               alt="الصورة الشخصية"
               width={100}
               height={100}

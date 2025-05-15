@@ -14,7 +14,7 @@ function Tranim() {
       <main className="container">
         <div className="d-flex flex-column justify-content-center align-items-center">
           <h1 className="display-1 text-center m-5 text-primary fw-bolder">صفحة ابونا فلتاؤس</h1>
-          <p className="fs-2 text-secondry text-center fw-light mt-2"> الترانيم الارثوذكسية المسيحية</p>
+          <h2 className="fs-2 text-secondry text-center fw-light mt-2"> الترانيم الارثوذكسية المسيحية</h2>
           <Image src="/images/sec1.jpeg" alt=" الترانيم" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" />
         </div>
         <div className="bd-example-snippet bd-code-snippet">

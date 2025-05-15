@@ -16,9 +16,9 @@ function W3zat() {
           <h1 className="display-1 text-center m-5 text-primary fw-bolder">
             صفحة ابونا فلتاؤس
           </h1>
-          <p className="fs-2 text-secondry text-center fw-light mt-2">
+          <h2 className="fs-2 text-secondry text-center fw-light mt-2">
             العظات الارثوذكسية المسيحية
-          </p>
+          </h2>
           <Image
             src="/images/sec1.jpeg"
             alt="قسم الالحان والترانيم والعظات"

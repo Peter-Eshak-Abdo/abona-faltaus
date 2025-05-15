@@ -9,6 +9,11 @@
   z-index: -1;
 }
 
+.pagination-btn {
+  width: 36px;
+  height: 36px;
+}
+
 @keyframes wave {
   from {
     background-position-x: 0;

@@ -2,6 +2,7 @@ import al7anData from "@/public/al7an-all.json";
 import Link from "next/link";
 import { Metadata } from "next";
 import Script from "next/script";
+import Image from "next/image";
 
 type Hymn = {
   monasba: string;
@@ -95,8 +96,7 @@ export default async function L7nDetailsPage({ params }: { params: PageParams })
             <audio
               controls
               src={l7n.src.replace("./", "/")}
-              className="my-3"
-              style={{ width: "100%" }}
+              className="my-3 w-100"
             >
               متصفحك لا يدعم تشغيل الصوت.
             </audio>
@@ -115,11 +115,14 @@ export default async function L7nDetailsPage({ params }: { params: PageParams })
                   href={l7n[key]}
                   data-lightbox="lahn-gallery"
                   data-title={l7n.name}
+                  title="اضغط للتكبير"
                 >
-                  <img
-                    src={l7n[key]}
+                  <Image
+                    src={l7n[key] as string}
                     className="card-img-top"
                     alt={`Hazat ${idx}`}
+                    width={500}
+                    height={500}
                   />
                 </a>
               </div>

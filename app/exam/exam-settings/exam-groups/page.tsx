@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import "../../individual-questions/wave.model.css";
+import "../../exam.model.css";
 import html2canvas from "html2canvas";
 
 type Question = {

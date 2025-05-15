@@ -28,15 +28,15 @@ export default async function ChapterPage({ params, searchParams }) {
   return (
     <>
       <div className="mb-4 text-sm text-gray-500">
-        {" "}
+
         <Link href="/bible" className="hover:underline">
           الكتاب المقدس
-        </Link>{" "}
-        /{" "}
+        </Link>
+        /
         <Link href={`/bible/${abbrev}`} className="hover:underline">
           {bookName}
-        </Link>{" "}
-        / <span>إصحاح {chapter}</span>{" "}
+        </Link>
+        / <span>إصحاح {chapter}</span>
       </div>
 
       <h1 className="text-xl font-bold mb-4">

@@ -23,8 +23,7 @@ export default async function BookPage({ params }) {
 
   return (
     <>
-      {" "}
-      <h1 className="text-2xl font-bold mb-4">{bookName}</h1>{" "}
+      <h1 className="text-2xl font-bold mb-4">{bookName}</h1>
       <p className="mb-4">عدد الإصحاحات: {book.chapters.length}</p>
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
         {book.chapters.map((_, idx) => (
