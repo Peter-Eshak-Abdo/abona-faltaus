@@ -12,6 +12,7 @@ const SignIn = () => {
   const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
 
   const router = useRouter();
+
   const handleSignIn = async () => {
     try {
       const res = await signInWithEmailAndPassword(email, password);

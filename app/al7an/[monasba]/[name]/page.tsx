@@ -3,7 +3,6 @@ export const dynamicParams = true;
 import al7anData from "@/public/al7an-all.json";
 import Link from "next/link";
 import { Metadata } from "next";
-import Script from "next/script";
 import Image from "next/image";
 
 type Hymn = {
@@ -20,7 +19,7 @@ type Hymn = {
   [key: string]: string | undefined;
 };
 
-type Al7anData = {
+type Al7anDataItem = {
   snawi?: Hymn[];
   "som-kebir"?: Hymn[];
   "asbo3-alam"?: Hymn[];
@@ -28,35 +27,19 @@ type Al7anData = {
   "nhdet-al3dra"?: Hymn[];
   keahk?: Hymn[];
   [key: string]: Hymn[] | undefined;
-}[];
+};
+
+type Al7anData = Al7anDataItem[];
 
 const typedAl7anData = al7anData as unknown as Al7anData;
 
-type L7nDetailsPageProps = {
-  params: {
-    monasba: string;
-    name: string;
-  };
-};
-
-// Ensure params is explicitly typed as a plain object in checkFields
-// If checkFields is a custom utility, ensure it handles params correctly
-// Example:
-// checkFields<Diff<PageProps, FirstArg<TEntry['default']>, 'default'>>()
-// Ensure the type constraints align with the plain object structure of params
-
-// No changes to the existing code are needed as params is already correctly typed.
-// Add generateStaticParams to provide Next.js with more information about param structures
 export async function generateStaticParams() {
   const paths: Array<{ monasba: string; name: string }> = [];
-  typedAl7anData.forEach(monasbaCollection => {
-    // monasbaCollection is an object like { "snawi": Hymn[], "som-kebir": Hymn[], ... }
-    // or it could be one of the specific types like { "snawi": Hymn[] }
-    Object.keys(monasbaCollection).forEach(monasbaKey => {
-      const hymns = monasbaCollection[monasbaKey as keyof typeof monasbaCollection];
+  typedAl7anData.forEach((monasbaCollection) => {
+    Object.keys(monasbaCollection).forEach((monasbaKey) => {
+      const hymns = monasbaCollection[monasbaKey];
       if (hymns) {
-        hymns.forEach(hymn => {
-          // Ensure the 'name' parameter matches how it's used/expected in the URL
+        hymns.forEach((hymn) => {
           paths.push({ monasba: monasbaKey, name: encodeURIComponent(hymn.name) });
         });
       }
@@ -65,9 +48,12 @@ export async function generateStaticParams() {
   return paths;
 }
 
-// Ensure l7n is properly declared and used
-export async function generateMetadata({ params }: L7nDetailsPageProps): Promise<Metadata> {
-  const { monasba, name } = params;
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ monasba: string; name: string }>;
+}): Promise<Metadata> {
+  const {monasba, name } = await params;
   const allAl7an = typedAl7anData.find((item) => item[monasba])?.[monasba] || [];
   const l7n = allAl7an.find((item) => item.name === decodeURIComponent(name));
 
@@ -84,16 +70,18 @@ export async function generateMetadata({ params }: L7nDetailsPageProps): Promise
   };
 }
 
-export default function L7nDetailsPage({ params }: L7nDetailsPageProps) {
-  const { monasba, name } = params;
+export default async function L7nDetailsPage({
+  params,
+}: {
+  params: Promise<{ monasba: string; name: string }>;
+}) {
+  const { monasba, name } = await params;
   const allAl7an = typedAl7anData.find((item) => item[monasba])?.[monasba] || [];
-  const l7n = allAl7an.find((item) => item.name === decodeURIComponent(name));
+  const l7n: Hymn | undefined = allAl7an.find((item: Hymn) => item.name === decodeURIComponent(name));
 
   if (!l7n) return <div className="container mt-5">اللحن غير موجود</div>;
 
   return (
-    <>
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js" />
       <div className="container mt-5">
         <nav aria-label="breadcrumb" className="mb-4">
           <ol className="breadcrumb">
@@ -116,7 +104,7 @@ export default function L7nDetailsPage({ params }: L7nDetailsPageProps) {
         <p>المدة: {l7n.duration}</p>
 
         {l7n.src && (
-          <>
+        <>
             <audio
               controls
               src={l7n.src.replace("./", "/")}
@@ -139,20 +127,20 @@ export default function L7nDetailsPage({ params }: L7nDetailsPageProps) {
                   href={l7n[key]}
                   data-lightbox="lahn-gallery"
                   data-title={l7n.name}
-                  title="اضغط للتكبير"
+                  title="اضغط على الصورة لعرضها بالحجم الكامل"
                 >
                   <Image
                     src={l7n[key] as string}
                     className="card-img-top"
                     alt={`Hazat ${idx}`}
-                    width={500}
-                    height={500}
+                    width={400}
+                    height={300}
+                    style={{ width: "100%", height: "auto" }}
                   />
                 </a>
               </div>
             ))}
         </div>
       </div>
-    </>
   );
 }
