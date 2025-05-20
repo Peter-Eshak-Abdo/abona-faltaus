@@ -10,10 +10,17 @@ import {
   signInWithPhoneNumber,
   signInWithCredential,
   PhoneAuthProvider,
+  RecaptchaVerifier
 } from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
+import { auth, db, getRecaptchaVerifier } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { motion } from "framer-motion";
+
+declare global {
+  interface Window {
+    recaptchaVerifier?: RecaptchaVerifier;
+  }
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -26,10 +33,11 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      router.push("/");
-    }
+    if (typeof window !== "undefined") getRecaptchaVerifier("recaptcha-container");
+  }, []);
+
+  useEffect(() => {
+    if (auth.currentUser) router.push("/");
   }, [router]);
 
   const handleSocialLogin = async (provider: GoogleAuthProvider | GithubAuthProvider) => {
@@ -50,14 +58,25 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       setError("");
-      const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+2${phoneNumber}`;
-      const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone); // يتم إنشاء recaptcha تلقائيًا من Firebase
-      // const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier); // يتم إنشاء recaptcha تلقائيًا من Firebase
+      const formattedPhone = phoneNumber.startsWith("+")
+        ? phoneNumber
+        : `+2${phoneNumber}`;
+
+      // استخدم المثيل اللي خزّنّاه في window
+      const appVerifier = getRecaptchaVerifier("recaptcha-container");
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        formattedPhone,
+        appVerifier
+      );
+
       setVerificationId(confirmationResult.verificationId);
       setIsPhoneVerification(true);
     } catch (err) {
       console.error(err);
       setError("حدث خطأ أثناء إرسال رمز التحقق");
+      // لو فشل، أعد تحميل الـ reCAPTCHA
+      getRecaptchaVerifier("recaptcha-container");
     } finally {
       setIsLoading(false);
     }
@@ -181,6 +200,7 @@ export default function LoginPage() {
             </>
           )}
         </div>
+        <div id="recaptcha-container" />
 
         {error && (
           <div className="alert alert-danger mt-3 text-center py-2">

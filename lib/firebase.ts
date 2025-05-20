@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInAnonymously } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, RecaptchaVerifier } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -13,18 +13,37 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// تكوين reCAPTCHA
-const recaptchaConfig = {
-  siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-  size: "normal",
-};
-
 // Initialize Firebase
 const app =
   getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
-export { app, auth, db, storage, provider, signInAnonymously, recaptchaConfig };
+const recaptchaConfig = {
+  siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
+  size: "invisible" as "invisible" | "normal" | "compact",
+};
+
+function getRecaptchaVerifier(containerId = "recaptcha-container") {
+  if (!window.recaptchaVerifier) {
+    // attach verifier to window so we don't recreate it repeatedly
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      auth,
+      containerId,
+      recaptchaConfig
+    );
+  }
+  return window.recaptchaVerifier as RecaptchaVerifier;
+}
+export {
+  app,
+  auth,
+  db,
+  storage,
+  googleProvider,
+  recaptchaConfig,
+  getRecaptchaVerifier,
+  RecaptchaVerifier,
+};
