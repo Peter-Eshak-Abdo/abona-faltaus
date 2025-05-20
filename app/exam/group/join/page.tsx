@@ -156,8 +156,8 @@ export default function JoinPage() {
               </div>
               {showScanner && (
                 <div className="mb-3">
-                  <div id="qr-reader" ref={scannerRef} style={{ width: '100%' }}></div>
-                  <button className="btn btn-danger mt-2" onClick={() => setShowScanner(false)}>إغلاق</button>
+                  <div id="qr-reader" ref={scannerRef} className="w-100"></div>
+                  <button type="button" className="btn btn-danger mt-2" onClick={() => setShowScanner(false)}>إغلاق</button>
                 </div>
               )}
               <input
