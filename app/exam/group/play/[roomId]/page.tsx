@@ -90,6 +90,12 @@ export default function PlayPage() {
         setScore(prev => prev + 1);
       }
     });
+    newSocket.on("exam-finished", () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      alert(`الامتحان انتهى! نتيجتك: ${score}`);
+      setCurrentQuestion(null);
+      setTimeLeft(null);
+    });
 
     setSocket(newSocket);
 
@@ -97,7 +103,7 @@ export default function PlayPage() {
       if (timerRef.current) clearInterval(timerRef.current);
       newSocket.close();
     };
-  }, [roomId]);
+  }, [roomId, score] );
 
   const handleAnswerSubmit = () => {
     if (selectedAnswer !== null && currentQuestion && socket) {

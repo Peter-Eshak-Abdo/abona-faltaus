@@ -55,6 +55,7 @@ export default function JoinPage() {
         console.log("[JOIN] room-joined event received", data);
         // Save team info to localStorage
         localStorage.setItem("currentTeam", JSON.stringify(data.team));
+        alert(`تم انضمام فريق ${data.team.name} بنجاح!`);
         router.push(`/exam/group/play/${roomId}`);
       });
 

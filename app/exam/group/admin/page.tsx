@@ -27,6 +27,7 @@ export default function ExamSettings() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [maxQuestions, setMaxQuestions] = useState(0);
 
+  
   useEffect(() => {
     const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
       transports: ["websocket", "polling"],

@@ -3,23 +3,36 @@ import path from "path";
 import Link from "next/link";
 import { bookNames } from "@/lib/books";
 
+export async function generateStaticParams() {
+  const filePath = path.join(process.cwd(), "public", "ar_svd.json");
+  const fileData = await fs.readFile(filePath, "utf-8");
+  const bible = JSON.parse(fileData.replace(/^\uFEFF/, ""));
+
+  return bible.map((book) => ({
+    abbrev: book.abbrev,
+  }));
+}
+
+export async function generateMetadata({ params }) {
+  const { abbrev } = params;
+  const bookName = bookNames[abbrev] || `سفر ${abbrev.toUpperCase()}`;
+  return {
+    title: `${bookName} - الكتاب المقدس`,
+    description: `قراءة ${bookName} من الكتاب المقدس مع تقسيم الإصحاحات.`,
+    keywords: [bookName, "الكتاب المقدس", "أسفار", "قراءة الإنجيل"],
+  };
+}
+
 export default async function BookPage({ params }) {
   const { abbrev } = await params;
-
-  // const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ''}/ar_svd.json`);
   const filePath = path.join(process.cwd(), "public", "ar_svd.json");
   const fileContent = await fs.readFile(filePath, "utf-8");
-
-  // const data = JSON.parse(fileContent);
   const bible = JSON.parse(fileContent.replace(/^\uFEFF/, ""));
-  // const bible = await data.json();
-
   const book = bible.find((b) => b.abbrev === abbrev);
-  if (!book) {
-    return <div className="p-6 text-red-600">❌ لم يتم العثور على السفر</div>;
-  }
-
   const bookName = bookNames[abbrev] || `سفر ${abbrev.toUpperCase()}`;
+
+  if (!book)
+    return <div className="p-6 text-red-600">❌ لم يتم العثور على السفر</div>;
 
   return (
     <>

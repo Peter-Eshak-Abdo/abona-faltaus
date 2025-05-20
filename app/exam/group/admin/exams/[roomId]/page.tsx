@@ -27,6 +27,10 @@ export default function AdminExamPage() {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   useEffect(() => {
     if (!roomId) return;
 
@@ -65,6 +69,8 @@ export default function AdminExamPage() {
       console.log("[ADMIN] exam-started event received", data);
       setCurrentQuestion(data.question);
       setTimeLeft(data.timePerQuestion || 30);
+      setTotalQuestions(data.totalQuestions);
+      setCurrentIndex(1); // أول سؤال
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
@@ -73,6 +79,7 @@ export default function AdminExamPage() {
 
     newSocket.on("question", (question) => {
       setCurrentQuestion(question);
+      setCurrentIndex(prev => prev + 1);
       setTimeLeft(question.timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
@@ -88,6 +95,12 @@ export default function AdminExamPage() {
         return team;
       }));
     });
+    newSocket.on("exam-finished", () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      setCurrentQuestion(null);
+      setTimeLeft(null);
+      setTeams([]);
+    });
 
     setSocket(newSocket);
 
@@ -97,11 +110,11 @@ export default function AdminExamPage() {
     };
   }, [roomId]);
 
-  const handleNextQuestion = () => {
-    if (socket) {
-      socket.emit("next-question", { roomId });
-    }
-  };
+  // const handleNextQuestion = () => {
+  //   if (socket) {
+  //     socket.emit("next-question", { roomId });
+  //   }
+  // };
 
   if (!roomId) {
     return (
@@ -132,24 +145,29 @@ export default function AdminExamPage() {
               <h2 className="h4 mb-0">الامتحان</h2>
             </div>
             <div className="card-body">
-              {currentQuestion ? (
-                <div>
-                  <h5 className="mb-4">{currentQuestion.text}</h5>
-                  {typeof timeLeft === "number" && (
-                    <div className="mb-3 text-center">
-                      <span className="badge bg-warning text-dark fs-5">الوقت المتبقي: {timeLeft} ثانية</span>
+              {currentQuestion && (
+                <div className="mt-4 p-3 border rounded">
+                  <h5>السؤال {currentIndex} من {totalQuestions}</h5>
+                  <p className="fw-bold">{currentQuestion.text}</p>
+                  <div className="d-flex flex-column gap-2">
+                    {currentQuestion.options.map((opt, i) => (
+                      <button key={i} className="btn btn-outline-primary" disabled>
+                        {String.fromCharCode(65 + i)}. {opt}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    className="btn btn-secondary mt-3"
+                    onClick={() => socket && socket.emit("next-question", { roomId })}
+                    disabled={currentIndex >= totalQuestions}
+                  >
+                    {currentIndex < totalQuestions ? "السؤال التالي" : "عرض النتائج"}
+                  </button>
+                  {timeLeft !== null && (
+                    <div className="mt-3">
+                      <p className="text-danger">الوقت المتبقي: {timeLeft} ثواني</p>
                     </div>
                   )}
-                  <button
-                    className="btn btn-primary mt-4 w-100"
-                    onClick={handleNextQuestion}
-                  >
-                    السؤال التالي
-                  </button>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <p>في انتظار بدء الامتحان...</p>
                 </div>
               )}
             </div>
