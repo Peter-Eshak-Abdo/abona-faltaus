@@ -1,84 +1,38 @@
-import Link from "next/link";
+import slugify from "slugify";
 import al7anData from "@/public/al7an-all.json";
+import Link from "next/link";
 import { Metadata } from "next";
 
-type Hymn = {
-  monasba: string;
-  name: string;
-  duration: string;
-  src: string;
-  hazatSrc?: string;
-  hazatSrc1?: string;
-  hazatSrc2?: string;
-  hazatSrc3?: string;
-  hazatSrc4?: string;
-  hazatSrc5?: string;
-  [key: string]: string | undefined;
-};
-
-type Al7anData = {
-  snawi?: Hymn[];
-  "som-kebir"?: Hymn[];
-  "asbo3-alam"?: Hymn[];
-  khmacen?: Hymn[];
-  "nhdet-al3dra"?: Hymn[];
-  keahk?: Hymn[];
-  [key: string]: Hymn[] | undefined;
-}[];
-
+type Hymn = { monasba: string; name: string; [key: string]: unknown };
+type Al7anData = { [key: string]: Hymn[] | undefined }[];
 const typedAl7anData = al7anData as unknown as Al7anData;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ monasba: string; name: string }>;
-}): Promise<Metadata> {
-  const awaitedParams = await params;
-  const { monasba } = awaitedParams;
-  const allAl7an = typedAl7anData.find((item) => item[monasba])?.[monasba] || [];
-  const hymnNames = allAl7an.map((hymn: Hymn) => hymn.name);
-
-  return {
-    title: `ألحان ${monasba}`,
-    description: `ألحان وترانيم مناسبة ${monasba}`,
-    keywords: [monasba, ...hymnNames],
-  };
+export async function generateStaticParams() {
+  return typedAl7anData.flatMap((col) =>
+    Object.entries(col).map(([monasba]) => ({ monasba }))
+  );
 }
 
-export default async function MonasbaPage({
-  params,
-}: {
-  params: Promise<{ monasba: string; name: string }>;
-}) {
-  const awaitedParams = await params;
-  const { monasba } = awaitedParams;
-  const allAl7an = typedAl7anData.find((item) => item[monasba])?.[monasba] || [];
+export async function generateMetadata({ params }: { params: Promise<{ monasba: string }> }): Promise<Metadata> {
+  const { monasba } = await params;
+  return { title: `ألحان مناسبة ${monasba}`, description: `ألحان ${monasba}` };
+}
 
+export default async function MonasbaPage({ params }: { params: Promise<{ monasba: string }> }) {
+  const { monasba } = await params;
+  const hymns = typedAl7anData.find((c) => c[monasba])?.[monasba] || [];
   return (
     <div className="container mt-5">
-      <nav aria-label="breadcrumb" className="mb-4">
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item">
-            <Link href="/">الرئيسية</Link>
-          </li>
-          <li className="breadcrumb-item">
-            <Link href="/al7an">الألحان</Link>
-          </li>
-          <li className="breadcrumb-item" aria-current="page">
-            ألحان مناسبة: {monasba}
-          </li>
-        </ol>
-      </nav>
-
-      <h1>ألحان مناسبة: {monasba}</h1>
+      <h1>ألحان مناسبة {monasba}</h1>
       <ul className="list-group">
-        {allAl7an.map((l7n: Hymn, idx: number) => (
-          <li key={idx} className="list-group-item">
-            <Link href={`/al7an/${monasba}/${encodeURIComponent(l7n.name)}`}>
-              {l7n.name}
-            </Link>
-          </li>
-        ))}
+        {hymns.map((h) => {
+          const slug = slugify(h.name, { lower: true, strict: true });
+          return (
+            <li key={slug} className="list-group-item">
+              <Link href={`/al7an/${monasba}/${slug}`}>{h.name}</Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

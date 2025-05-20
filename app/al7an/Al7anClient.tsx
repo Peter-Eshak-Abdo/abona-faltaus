@@ -1,48 +1,37 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
+// import slugify from "slugify";
 import al7anData from "@/public/al7an-all.json";
 
+type Hymn = { monasba: string; name: string; [key: string]: unknown };
+const monasbat = Object.keys(
+  (al7anData as unknown as Hymn[]).reduce((acc, c) => ({ ...acc, ...c }), {})
+);
+
 export default function Al7anClient() {
-  const monasbat = Object.keys(
-    al7anData.reduce((acc, item) => ({ ...acc, ...item }), {})
-  );
-
   const [search, setSearch] = useState("");
-
-  const filteredMonasbat = monasbat.filter((monasba) =>
-    monasba.toLowerCase().includes(search.toLowerCase())
-  );
-
+  const filtered = monasbat.filter((m) => m.includes(search));
   return (
     <div className="container">
       <h1>المناسبات</h1>
       <input
-        type="text"
-        className="form-control mb-4"
-        placeholder="ابحث عن المناسبة..."
+        className="form-control mb-3"
+        placeholder="ابحث..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-
       <div className="row">
-        {filteredMonasbat.length > 0 ? (
-          filteredMonasbat.map((monasba) => (
-            <div key={monasba} className="col-md-4 mb-4">
-              <div className="card h-100">
-                <div className="card-body text-center d-flex flex-column justify-content-center">
-                  <h5 className="card-title">{monasba}</h5>
-                  <Link href={`/al7an/${monasba}`} className="btn btn-primary mt-3">
-                    عرض الألحان
-                  </Link>
-                </div>
-              </div>
+        {filtered.map((m) => (
+          <div key={m} className="col-md-4 mb-3">
+            <div className="card p-3">
+              <h5>{m}</h5>
+              <Link href={`/al7an/${m}`} className="btn btn-primary">
+                عرض
+              </Link>
             </div>
-          ))
-        ) : (
-          <p>لا توجد مناسبات مطابقة للبحث.</p>
-        )}
+          </div>
+        ))}
       </div>
     </div>
   );
