@@ -19,7 +19,7 @@ const app =
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-const googleProvider = new GoogleAuthProvider();
+const provider = new GoogleAuthProvider();
 
 const recaptchaConfig = {
   siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
@@ -42,7 +42,7 @@ export {
   auth,
   db,
   storage,
-  googleProvider,
+  provider,
   recaptchaConfig,
   getRecaptchaVerifier,
   RecaptchaVerifier,
