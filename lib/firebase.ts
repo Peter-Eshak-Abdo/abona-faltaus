@@ -22,21 +22,29 @@ const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
 const recaptchaConfig = {
-  siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
   size: "invisible" as "invisible" | "normal" | "compact",
+  callback: (response: string) => {
+    console.log("reCAPTCHA resolved", response);
+  },
+  "expired-callback": () => {
+    console.warn("reCAPTCHA expired");
+  },
 };
 
 function getRecaptchaVerifier(containerId = "recaptcha-container") {
   if (!window.recaptchaVerifier) {
-    // attach verifier to window so we don't recreate it repeatedly
     window.recaptchaVerifier = new RecaptchaVerifier(
       auth,
       containerId,
       recaptchaConfig
     );
+
+    // مهم جدًا عشان يتم إنشاء عنصر reCAPTCHA بشكل صحيح
+    window.recaptchaVerifier.render();
   }
   return window.recaptchaVerifier as RecaptchaVerifier;
 }
+
 export {
   app,
   auth,

@@ -33,7 +33,10 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") getRecaptchaVerifier("recaptcha-container");
+    if (typeof window !== "undefined")
+      if (!window.recaptchaVerifier) {
+        getRecaptchaVerifier("recaptcha-container");
+      }
   }, []);
 
   useEffect(() => {
@@ -76,7 +79,15 @@ export default function LoginPage() {
       console.error(err);
       setError("حدث خطأ أثناء إرسال رمز التحقق");
       // لو فشل، أعد تحميل الـ reCAPTCHA
+      // getRecaptchaVerifier("recaptcha-container");
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear(); // هذه مهمة
+        } catch { }
+        window.recaptchaVerifier = undefined;
+      }
       getRecaptchaVerifier("recaptcha-container");
+
     } finally {
       setIsLoading(false);
     }
