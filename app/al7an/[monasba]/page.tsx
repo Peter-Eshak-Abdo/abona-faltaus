@@ -28,11 +28,11 @@ type Al7anData = {
 
 const typedAl7anData = al7anData as unknown as Al7anData;
 
-type PageParams = {
-  monasba: string;
-};
-
-export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ monasba: string; name: string }>;
+}): Promise<Metadata> {
   const awaitedParams = await params;
   const { monasba } = awaitedParams;
   const allAl7an = typedAl7anData.find((item) => item[monasba])?.[monasba] || [];
@@ -45,7 +45,11 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   };
 }
 
-export default async function MonasbaPage({ params }: { params: PageParams }) {
+export default async function MonasbaPage({
+  params,
+}: {
+  params: Promise<{ monasba: string; name: string }>;
+}) {
   const awaitedParams = await params;
   const { monasba } = awaitedParams;
   const allAl7an = typedAl7anData.find((item) => item[monasba])?.[monasba] || [];

@@ -1,3 +1,4 @@
+// app/login/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,7 +7,6 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   GithubAuthProvider,
-  RecaptchaVerifier,
   signInWithPhoneNumber,
   signInWithCredential,
   PhoneAuthProvider,
@@ -14,18 +14,6 @@ import {
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { motion } from "framer-motion";
-
-// تكوين reCAPTCHA
-const RECAPTCHA_CONFIG = {
-  sitekey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || 'YOUR_RECAPTCHA_SITE_KEY',
-  size: 'normal',
-  callback: () => {
-    console.log('reCAPTCHA verified');
-  },
-  'expired-callback': () => {
-    console.log('reCAPTCHA expired');
-  }
-};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,7 +24,6 @@ export default function LoginPage() {
   const [verificationId, setVerificationId] = useState("");
   const [isPhoneVerification, setIsPhoneVerification] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -45,25 +32,13 @@ export default function LoginPage() {
     }
   }, [router]);
 
-  useEffect(() => {
-    // إنشاء reCAPTCHA
-    const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', RECAPTCHA_CONFIG);
-    setRecaptchaVerifier(verifier);
-
-    return () => {
-      if (verifier) {
-        verifier.clear();
-      }
-    };
-  }, []);
-
   const handleSocialLogin = async (provider: GoogleAuthProvider | GithubAuthProvider) => {
     try {
       setIsLoading(true);
       const res = await signInWithPopup(auth, provider);
       await saveUser(res.user.uid, res.user.displayName, res.user.photoURL);
       router.push("/");
-    } catch (err: unknown) {
+    } catch (err) {
       console.error(err);
       setError("حدث خطأ أثناء تسجيل الدخول");
     } finally {
@@ -72,26 +47,17 @@ export default function LoginPage() {
   };
 
   const handlePhoneLogin = async () => {
-    if (!recaptchaVerifier) {
-      setError("يرجى إكمال التحقق من reCAPTCHA");
-      return;
-    }
-
     try {
       setIsLoading(true);
       setError("");
       const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+2${phoneNumber}`;
-      const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier);
+      const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone); // يتم إنشاء recaptcha تلقائيًا من Firebase
+      // const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier); // يتم إنشاء recaptcha تلقائيًا من Firebase
       setVerificationId(confirmationResult.verificationId);
       setIsPhoneVerification(true);
-    } catch (err: unknown) {
+    } catch (err) {
       console.error(err);
       setError("حدث خطأ أثناء إرسال رمز التحقق");
-      // إعادة تحميل reCAPTCHA في حالة الخطأ
-      if (recaptchaVerifier) {
-        recaptchaVerifier.clear();
-        recaptchaVerifier.render();
-      }
     } finally {
       setIsLoading(false);
     }
@@ -99,13 +65,12 @@ export default function LoginPage() {
 
   const verifyCode = async () => {
     try {
-      const credential = await signInWithCredential(
-        auth,
-        PhoneAuthProvider.credential(verificationId, verificationCode)
-      );
-      await saveUser(credential.user.uid, name || "مستخدم");
+      setIsLoading(true);
+      const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
+      const res = await signInWithCredential(auth, credential);
+      await saveUser(res.user.uid, name || "مستخدم");
       router.push("/");
-    } catch (err: unknown) {
+    } catch (err) {
       console.error(err);
       setError("رمز التحقق غير صحيح");
     } finally {
@@ -113,11 +78,7 @@ export default function LoginPage() {
     }
   };
 
-  const saveUser = async (
-    uid: string,
-    name?: string | null,
-    photoURL?: string | null
-  ) => {
+  const saveUser = async (uid: string, name?: string | null, photoURL?: string | null) => {
     const ref = doc(db, "users", uid);
     const snap = await getDoc(ref);
     if (!snap.exists()) {
@@ -160,9 +121,7 @@ export default function LoginPage() {
         </div>
 
         <div className="border-top pt-3 mt-3">
-          <p className="text-muted text-center mb-2">
-            أو سجل دخول برقم هاتفك
-          </p>
+          <p className="text-muted text-center mb-2">أو سجل دخول برقم هاتفك</p>
 
           {!isPhoneVerification ? (
             <>
@@ -174,15 +133,7 @@ export default function LoginPage() {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                 />
-                <small className="text-muted">
-                  سيتم إرسال رمز تحقق إلى هذا الرقم
-                </small>
               </div>
-              <div
-                id="recaptcha-container"
-                className="mb-3 d-flex justify-content-center"
-                style={{ minHeight: '78px' }}
-              ></div>
               <button
                 className="btn btn-primary w-100"
                 onClick={handlePhoneLogin}
@@ -201,9 +152,6 @@ export default function LoginPage() {
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
                 />
-                <small className="text-muted">
-                  أدخل الرمز الذي تم إرساله إلى {phoneNumber}
-                </small>
               </div>
               <div className="mb-3">
                 <input
@@ -226,10 +174,6 @@ export default function LoginPage() {
                 onClick={() => {
                   setIsPhoneVerification(false);
                   setVerificationCode("");
-                  if (recaptchaVerifier) {
-                    recaptchaVerifier.clear();
-                    recaptchaVerifier.render();
-                  }
                 }}
               >
                 تغيير رقم الهاتف

@@ -1,6 +1,6 @@
 {
   "name": "abona-faltaus",
-  "version": "2.7.2",
+  "version": "2.7.4",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@react-pdf/render": "^4.3.0",
-    "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/forms": "^0.5.10",
     "@vercel/speed-insights": "^1.2.0",
     "canvas-confetti": "^1.9.3",
