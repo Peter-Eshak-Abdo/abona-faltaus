@@ -33,10 +33,11 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined")
-      if (!window.recaptchaVerifier) {
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
         getRecaptchaVerifier("recaptcha-container");
-      }
+      }, 500); // تأخير بسيط علشان DOM يجهز
+    }
   }, []);
 
   useEffect(() => {
@@ -67,6 +68,11 @@ export default function LoginPage() {
 
       // استخدم المثيل اللي خزّنّاه في window
       const appVerifier = getRecaptchaVerifier("recaptcha-container");
+      if (!appVerifier) {
+        setError("تعذر تهيئة reCAPTCHA. حاول مرة أخرى.");
+        setIsLoading(false);
+        return;
+      }
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         formattedPhone,

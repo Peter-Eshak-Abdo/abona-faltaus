@@ -22,27 +22,26 @@ const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
 const recaptchaConfig = {
-  size: "invisible" as "invisible" | "normal" | "compact",
+  size: "invisible" as const,
   callback: (response: string) => {
-    console.log("reCAPTCHA resolved", response);
+    console.log("reCAPTCHA solved:", response);
   },
   "expired-callback": () => {
-    console.warn("reCAPTCHA expired");
+    console.warn("reCAPTCHA expired. Try again.");
   },
 };
 
 function getRecaptchaVerifier(containerId = "recaptcha-container") {
+  if (typeof window === "undefined") return null;
   if (!window.recaptchaVerifier) {
     window.recaptchaVerifier = new RecaptchaVerifier(
       auth,
       containerId,
       recaptchaConfig
     );
-
-    // مهم جدًا عشان يتم إنشاء عنصر reCAPTCHA بشكل صحيح
     window.recaptchaVerifier.render();
   }
-  return window.recaptchaVerifier as RecaptchaVerifier;
+  return window.recaptchaVerifier;
 }
 
 export {
