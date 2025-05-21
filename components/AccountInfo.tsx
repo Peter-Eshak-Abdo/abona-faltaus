@@ -16,7 +16,6 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Copy, Share2, LogOut } from "lucide-react";
 import LogoHeader from "./LogoHeader";
-// import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -25,7 +24,7 @@ type UserData = {
   name: string;
   email: string;
   photoURL: string;
-  createdAt: import("firebase/firestore").Timestamp; // Firestore Timestamp type
+  createdAt: import("firebase/firestore").Timestamp;
 };
 
 export default function AccountInfo() {
@@ -46,7 +45,8 @@ export default function AccountInfo() {
           setUserData({ ...(snap.data() as UserData), uid: user.uid });
         }
       } else {
-        router.push("/signin");
+        router.push("/auth/login");
+        // router.push("/auth/signin");
       }
       setLoading(false);
     });
@@ -100,7 +100,8 @@ export default function AccountInfo() {
 
   const handleLogout = async () => {
     await signOut(auth);
-    router.push("/signin");
+    router.push("/auth/login");
+    // router.push("/auth/signin");
   };
 
   if (loading)

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import {
@@ -13,7 +12,6 @@ import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -23,7 +21,6 @@ export default function SignUpPage() {
     e.preventDefault();
     setError("");
 
-    // Client-side validation
     if (!email || !password || !name) {
       setError("جميع الحقول مطلوبة.");
       return;
@@ -40,11 +37,7 @@ export default function SignUpPage() {
         password
       );
       const user = userCredential.user;
-
-      // Update display name
       await updateProfile(user, { displayName: name });
-
-      // Save to Firestore
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         email: user.email,
@@ -52,10 +45,9 @@ export default function SignUpPage() {
         createdAt: serverTimestamp(),
       });
 
-      router.push("/profile");
+      router.push("/auth/profile");
     } catch (err: unknown) {
       console.error(err);
-      // Handle specific Firebase auth errors
       if (typeof err === "object" && err !== null && "code" in err) {
         switch ((err as { code: string }).code) {
           case "auth/email-already-in-use":
@@ -131,7 +123,7 @@ export default function SignUpPage() {
 
           <p className="mt-3 text-center">
             لديك حساب بالفعل؟{' '}
-            <Link href="/signin" className="text-decoration-underline">
+            <Link href="/auth/signin" className="text-decoration-underline">
               سجل الدخول
             </Link>
           </p>

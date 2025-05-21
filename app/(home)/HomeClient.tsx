@@ -26,7 +26,6 @@ const sections = [
 export default function HomeClient() {
   const [showMenu, setShowMenu] = useState(false);
   const [logoPos, setLogoPos] = useState("center");
-
   const eagleControls = useAnimation();
 
   useEffect(() => {

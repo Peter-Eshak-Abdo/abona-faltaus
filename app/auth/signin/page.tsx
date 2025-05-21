@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import {
@@ -24,7 +23,7 @@ export default function SignInPage() {
     setError("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/profile");
+      router.push("/auth/profile");
     } catch  {
       setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
     }
@@ -58,7 +57,7 @@ export default function SignInPage() {
       const code = prompt("ادخل كود التحقق المرسل إليك");
       if (code) {
         await confirmation.confirm(code);
-        router.push("/profile");
+        router.push("/auth/profile");
       }
     } catch {
       setError("فشل تسجيل الدخول برقم الهاتف");
@@ -127,7 +126,7 @@ export default function SignInPage() {
 
         <p className="mt-3 text-center">
           ليس لديك حساب؟{" "}
-          <Link href="/signup" className="text-decoration-underline">
+          <Link href="/auth/signup" className="text-decoration-underline">
             أنشئ حساب جديد
           </Link>
         </p>
