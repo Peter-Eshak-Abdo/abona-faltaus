@@ -22,16 +22,29 @@ export default function SignUpPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Client-side validation
+    if (!email || !password || !name) {
+      setError("جميع الحقول مطلوبة.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("كلمة المرور قصيرة جدًا. يجب أن تكون 6 أحرف على الأقل.");
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        email,
+        email.trim(),
         password
       );
       const user = userCredential.user;
 
+      // Update display name
       await updateProfile(user, { displayName: name });
 
+      // Save to Firestore
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         email: user.email,
@@ -40,8 +53,29 @@ export default function SignUpPage() {
       });
 
       router.push("/profile");
-    } catch {
-      setError("حدث خطأ أثناء إنشاء الحساب. تأكد من البيانات.");
+    } catch (err: unknown) {
+      console.error(err);
+      // Handle specific Firebase auth errors
+      if (typeof err === "object" && err !== null && "code" in err) {
+        switch ((err as { code: string }).code) {
+          case "auth/email-already-in-use":
+            setError("هذا البريد الإلكتروني مسجّل بالفعل. حاول تسجيل الدخول.");
+            break;
+          case "auth/invalid-email":
+            setError("تنسيق البريد الإلكتروني غير صالح.");
+            break;
+          case "auth/weak-password":
+            setError("كلمة المرور ضعيفة جدًا. يجب أن تحتوي على 6 أحرف على الأقل.");
+            break;
+          case "auth/operation-not-allowed":
+            setError("تسجيل البريد/كلمة المرور غير مفعل في الإعدادات.");
+            break;
+          default:
+            setError("حدث خطأ أثناء إنشاء الحساب. حاول مرة أخرى.");
+        }
+      } else {
+        setError("حدث خطأ أثناء إنشاء الحساب. حاول مرة أخرى.");
+      }
     }
   };
 
@@ -88,6 +122,7 @@ export default function SignUpPage() {
               required
               placeholder="••••••••"
             />
+            <small className="form-text text-muted">يجب أن تكون كلمة المرور 6 أحرف على الأقل.</small>
           </div>
 
           <button type="submit" className="btn btn-success w-100">
@@ -95,7 +130,7 @@ export default function SignUpPage() {
           </button>
 
           <p className="mt-3 text-center">
-            لديك حساب بالفعل؟{" "}
+            لديك حساب بالفعل؟{' '}
             <Link href="/signin" className="text-decoration-underline">
               سجل الدخول
             </Link>

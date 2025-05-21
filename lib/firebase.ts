@@ -21,28 +21,28 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
-const recaptchaConfig = {
-  size: "invisible" as const,
-  callback: (response: string) => {
-    console.log("reCAPTCHA solved:", response);
-  },
-  "expired-callback": () => {
-    console.warn("reCAPTCHA expired. Try again.");
-  },
-};
+// const recaptchaConfig = {
+//   size: "invisible" as const,
+//   callback: (response: string) => {
+//     console.log("reCAPTCHA solved:", response);
+//   },
+//   "expired-callback": () => {
+//     console.warn("reCAPTCHA expired. Try again.");
+//   },
+// };
 
-function getRecaptchaVerifier(containerId = "recaptcha-container") {
-  if (typeof window === "undefined") return null;
-  if (!window.recaptchaVerifier) {
-    window.recaptchaVerifier = new RecaptchaVerifier(
-      auth,
-      containerId,
-      recaptchaConfig
-    );
-    window.recaptchaVerifier.render();
-  }
-  return window.recaptchaVerifier;
-}
+// function getRecaptchaVerifier(containerId = "recaptcha-container") {
+//   if (typeof window === "undefined") return null;
+//   if (!window.recaptchaVerifier) {
+//     window.recaptchaVerifier = new RecaptchaVerifier(
+//       auth,
+//       containerId,
+//       recaptchaConfig
+//     );
+//     window.recaptchaVerifier.render();
+//   }
+//   return window.recaptchaVerifier;
+// }
 
 export {
   app,
@@ -50,7 +50,7 @@ export {
   db,
   storage,
   provider,
-  recaptchaConfig,
-  getRecaptchaVerifier,
+  // recaptchaConfig,
+  // getRecaptchaVerifier,
   RecaptchaVerifier,
 };
