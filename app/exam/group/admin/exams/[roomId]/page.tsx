@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
-import { io, Socket } from "socket.io-client";
+// import { io, Socket } from "socket.io-client";
+import { socket } from "@/lib/socket";
 
 interface Team {
   id: string;
@@ -19,7 +20,7 @@ interface Question {
 export default function AdminExamPage() {
   const params = useParams();
   const roomId = params?.roomId as string;
-  const [socket, setSocket] = useState<Socket | null>(null);
+  // const [socket, setSocket] = useState<Socket | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [error, setError] = useState("");
@@ -32,48 +33,49 @@ export default function AdminExamPage() {
   useEffect(() => {
     if (!roomId) return;
 
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
-      transports: ["polling"],
-      // transports: ["websocket", "polling"],
-      reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      timeout: 20000,
-    });
+    // const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
+    //   transports: ["polling"],
+    //   // transports: ["websocket", "polling"],
+    //   reconnection: true,
+    //   reconnectionAttempts: 10,
+    //   reconnectionDelay: 1000,
+    //   reconnectionDelayMax: 5000,
+    //   timeout: 20000,
+    // });
+    socket.emit("join-room", { roomId, isAdmin: true });
 
-    newSocket.on("connect", () => {
-      console.log("[ADMIN] Connected to socket server");
-      newSocket.emit("join-room", { roomId, isAdmin: true });
-      // newSocket.emit("join-room", { roomId, isAdmin: true, adminId: localStorage.getItem("adminId") });
-    });
-
-    newSocket.on("connect_error", (err) => {
-      console.error("Connection error:", err);
-      setError("خطأ في الاتصال بالخادم");
-    });
-
-    newSocket.on("room-error", (message) => {
+    socket.on("room-error", (message) => {
       console.error("Room error:", message);
       setError(message);
     });
 
-    newSocket.on("teams-init", (existingTeams) => {
+    // socket.on("connect", () => {
+    //   console.log("[ADMIN] Connected to socket server");
+    //   socket.emit("join-room", { roomId, isAdmin: true });
+    //   // newSocket.emit("join-room", { roomId, isAdmin: true, adminId: localStorage.getItem("adminId") });
+    // });
+
+    socket.on("connect_error", (err) => {
+      console.error("Connection error:", err);
+      setError("خطأ في الاتصال بالخادم");
+    });
+
+    socket.on("teams-init", (existingTeams) => {
       console.log("team-joined payload:", existingTeams);
       setTeams(existingTeams);
     });
 
-    newSocket.on("team-joined", (team) => {
+    socket.on("team-joined", (team) => {
       console.log("team-joined payload:", team);
       setTeams(prev => [...prev, team]);
     });
 
-    newSocket.on("team-left", (teamId) => {
+    socket.on("team-left", (teamId) => {
       console.log("team-left payload:", teamId);
       setTeams(prev => prev.filter(t => t.id !== teamId));
     });
 
-    newSocket.on("exam-started", (data) => {
+    socket.on("exam-started", (data) => {
       console.log("[ADMIN] exam-started event received", data);
       setCurrentIndex(data.index +1);
       setTotalQuestions(data.totalQuestions);
@@ -86,7 +88,7 @@ export default function AdminExamPage() {
       }, 1000);
     });
 
-    newSocket.on("question", (data) => {
+    socket.on("question", (data) => {
       console.log("[ADMIN] question event received", data);
       setCurrentIndex(data.index + 1);
       setTotalQuestions(data.totalQuestions);
@@ -98,7 +100,7 @@ export default function AdminExamPage() {
       }, 1000);
     });
 
-    newSocket.on("answer-submitted", ({ teamId, isCorrect }) => {
+    socket.on("answer-submitted", ({ teamId, isCorrect }) => {
       console.log("[ADMIN] answer-submitted event received", { teamId, isCorrect });
       setTeams(prev => prev.map(team => {
         if (team.id === teamId) {
@@ -107,7 +109,8 @@ export default function AdminExamPage() {
         return team;
       }));
     });
-    newSocket.on("exam-finished", () => {
+
+    socket.on("exam-finished", () => {
       console.log("[ADMIN] exam-finished event received");
       if (timerRef.current) clearInterval(timerRef.current);
       setCurrentQuestion(null);
@@ -115,12 +118,18 @@ export default function AdminExamPage() {
       setTeams([]);
     });
 
-    setSocket(newSocket);
+    // setSocket(socket);
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      newSocket.close();
+      socket.off("room-error");
+      socket.off("teams-init");
+      socket.off("team-joined");
+      socket.off("exam-started");
+      socket.off("question");
+      socket.off("answer-submitted");
+      socket.off("exam-finished");
     };
+
   }, [roomId]);
 
   if (!roomId) {
@@ -164,6 +173,7 @@ export default function AdminExamPage() {
                     ))}
                   </div>
                   <button
+                    type="button"
                     className="btn btn-secondary mt-3"
                     onClick={() => socket && socket.emit("next-question", { roomId })}
                     disabled={currentIndex >= totalQuestions}

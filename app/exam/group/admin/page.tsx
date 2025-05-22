@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
-import { io, Socket } from "socket.io-client";
+// import { io, Socket } from "socket.io-client";
+import { socket } from "@/lib/socket";
 
 type Category = {
   name: string;
@@ -17,7 +18,7 @@ type Team = {
 
 export default function ExamSettings() {
   const router = useRouter();
-  const [socket, setSocket] = useState<Socket | null>(null);
+  // const [socket, setSocket] = useState<Socket | null>(null);
   const [roomId, setRoomId] = useState<string>("");
   const [showQR, setShowQR] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -27,28 +28,28 @@ export default function ExamSettings() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [maxQuestions, setMaxQuestions] = useState(0);
 
-  
+
   useEffect(() => {
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
-      transports: ["websocket", "polling"],
-      reconnection: true,
-      reconnectionAttempts: 5,
-    });
+    // const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
+    //   transports: ["websocket", "polling"],
+    //   reconnection: true,
+    //   reconnectionAttempts: 5,
+    // });
 
-    newSocket.on("connect", () => {
+    socket.on("connect", () => {
       console.log("Connected to socket server");
-      localStorage.setItem("adminId", newSocket.id || "");
+      localStorage.setItem("adminId", socket.id || "");
     });
 
-    newSocket.on("connect_error", (err) => {
+    socket.on("connect_error", (err) => {
       console.error("Connection error:", err);
     });
 
-    setSocket(newSocket);
+    // setSocket(socket);
 
-    return () => {
-      newSocket.close();
-    };
+    // return () => {
+    //   newSocket.close();
+    // };
   }, []);
 
   useEffect(() => {
@@ -61,7 +62,12 @@ export default function ExamSettings() {
         setTeams(prev => prev.filter(team => team.id !== teamId));
       });
     }
-  }, [socket]);
+    // Optionally, you may want to clean up listeners here
+    // return () => {
+    //   socket.off("team-joined");
+    //   socket.off("team-left");
+    // };
+  }, []);
 
   useEffect(() => {
     const loadCategories = async () => {
