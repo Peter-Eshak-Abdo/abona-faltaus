@@ -2,6 +2,7 @@
 export default {
   siteUrl: "https://abona-faltaus.vercel.app",
   generateRobotsTxt: true, // (optional)
+  generateIndexSitemap: false,
   sitemapSize: 7000,
   changefreq: "daily",
   priority: 0.7,
