@@ -27,7 +27,6 @@ export default function PlayPage() {
   useEffect(() => {
     if (!roomId) return;
 
-    // Always use the same team id if available
     const savedTeam = localStorage.getItem("currentTeam");
     let team;
     if (savedTeam) {
@@ -43,7 +42,8 @@ export default function PlayPage() {
     setTeamName(team.name);
 
     const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
-      transports: ["websocket", "polling"],
+      transports: ["polling"],
+      // transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: 10,
       reconnectionDelay: 1000,
@@ -53,7 +53,6 @@ export default function PlayPage() {
 
     newSocket.on("connect", () => {
       console.log("Connected to socket server");
-      // Always re-join room with same team id
       newSocket.emit("join-room", { roomId, team });
     });
 
@@ -63,6 +62,7 @@ export default function PlayPage() {
     });
 
     newSocket.on("room-error", (message) => {
+      console.error("Room error:", message);
       setError(message);
     });
 
@@ -77,7 +77,12 @@ export default function PlayPage() {
     });
 
     newSocket.on("question", (question) => {
-      setCurrentQuestion(question);
+      console.log("[TEAM] question event received", question);
+      // setCurrentQuestion(question);
+      const q: Question = question.question;
+      setCurrentQuestion(q);
+      // setCurrentIndex(question.index + 1);
+
       setTimeLeft(question.timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
@@ -86,11 +91,14 @@ export default function PlayPage() {
     });
 
     newSocket.on("answer-result", (result: { correct: boolean }) => {
+      console.log("[TEAM] answer-result event received", result);
       if (result.correct) {
         setScore(prev => prev + 1);
       }
     });
+
     newSocket.on("exam-finished", () => {
+      console.log("[TEAM] exam-finished event received");
       if (timerRef.current) clearInterval(timerRef.current);
       alert(`الامتحان انتهى! نتيجتك: ${score}`);
       setCurrentQuestion(null);

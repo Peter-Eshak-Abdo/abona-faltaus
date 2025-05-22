@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Peter Eshak Abdo', url: 'https://abona-faltaus.vercel.app' }],
   creator: 'Peter Eshak Abdo',
   icons: {
-    icon: "./images/icons/favicon.ico",
+    icon: "/images/icons/favicon.ico",
   },
   openGraph: {
     title: 'أبونا فلتاؤس السرياني',
@@ -67,7 +67,6 @@ export default function RootLayout({
         {/* iOS splash + PWA support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <link
           href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"
           rel="stylesheet"

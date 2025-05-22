@@ -54,6 +54,7 @@ export default function JoinPage() {
       socket.on("room-joined", (data) => {
         console.log("[JOIN] room-joined event received", data);
         // Save team info to localStorage
+        setTeamName(data.team.name);
         localStorage.setItem("currentTeam", JSON.stringify(data.team));
         alert(`تم انضمام فريق ${data.team.name} بنجاح!`);
         router.push(`/exam/group/play/${roomId}`);
