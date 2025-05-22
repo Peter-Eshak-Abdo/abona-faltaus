@@ -44,8 +44,8 @@ export default function AdminExamPage() {
 
     newSocket.on("connect", () => {
       console.log("[ADMIN] Connected to socket server");
-      newSocket.emit("create-room", { roomId });
-      newSocket.emit("join-room", { roomId, isAdmin: true, adminId: localStorage.getItem("adminId") });
+      newSocket.emit("join-room", { roomId, isAdmin: true });
+      // newSocket.emit("join-room", { roomId, isAdmin: true, adminId: localStorage.getItem("adminId") });
     });
 
     newSocket.on("connect_error", (err) => {
@@ -75,7 +75,7 @@ export default function AdminExamPage() {
 
     newSocket.on("exam-started", (data) => {
       console.log("[ADMIN] exam-started event received", data);
-      setCurrentIndex(1);
+      setCurrentIndex(data.index +1);
       setTotalQuestions(data.totalQuestions);
       setCurrentQuestion(data.question);
       setTimeLeft(data.timePerQuestion || 30);
@@ -86,12 +86,12 @@ export default function AdminExamPage() {
       }, 1000);
     });
 
-    newSocket.on("question", (question) => {
-      console.log("[ADMIN] question event received", question);
-      setCurrentQuestion(question.question);
-      setTotalQuestions(question.totalQuestions);
-      setCurrentIndex(question.index + 1);
-      setTimeLeft(question.timePerQuestion || 30);
+    newSocket.on("question", (data) => {
+      console.log("[ADMIN] question event received", data);
+      setCurrentIndex(data.index + 1);
+      setTotalQuestions(data.totalQuestions);
+      setCurrentQuestion(data.question);
+      setTimeLeft(data.timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
