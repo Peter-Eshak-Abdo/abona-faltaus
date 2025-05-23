@@ -42,28 +42,31 @@ export default function JoinPage() {
       setIsConnecting(false);
     });
 
+    socket.on("room-joined", (data) => {
+      console.log("[JOIN] room-joined event received", data);
+      // Save team info to localStorage
+      setTeamName(data.team.name);
+      localStorage.setItem("currentTeam", JSON.stringify(data.team));
+      alert(`تم انضمام فريق ${data.team.name} بنجاح!`);
+      router.push(`/exam/group/play/${roomId}`);
+    });
+
+    socket.on("room-error", (message: string) => {
+      console.error("Room error:", message);
+      setError(message);
+    });
+
     // setSocket(newSocket);
 
+    // return () => {
+    //   socket.close();
+    // };
     return () => {
-      socket.close();
+      socket.off("connect");
+      socket.off("connect_error");
+      socket.off("room-joined");
+      socket.off("room-error");
     };
-  }, []);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on("room-joined", (data) => {
-        console.log("[JOIN] room-joined event received", data);
-        // Save team info to localStorage
-        setTeamName(data.team.name);
-        localStorage.setItem("currentTeam", JSON.stringify(data.team));
-        alert(`تم انضمام فريق ${data.team.name} بنجاح!`);
-        router.push(`/exam/group/play/${roomId}`);
-      });
-
-      socket.on("room-error", (message: string) => {
-        setError(message);
-      });
-    }
   }, [roomId, router]);
 
   const startScanner = () => {
