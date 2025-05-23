@@ -31,8 +31,6 @@ export default function AdminExamPage() {
   useEffect(() => {
     if (!roomId) return;
 
-    socket.emit("join-room", { roomId, isAdmin: true });
-
     socket.on("room-error", (message) => {
       console.error("Room error:", message);
       setError(message);
@@ -95,10 +93,13 @@ export default function AdminExamPage() {
       setTeams([]);
     });
 
+    socket.emit("join-room", { roomId, isAdmin: true });
+
     return () => {
       socket.off("room-error");
       socket.off("teams-init");
       socket.off("team-joined");
+      socket.off("team-left");
       socket.off("exam-started");
       socket.off("question");
       socket.off("answer-submitted");

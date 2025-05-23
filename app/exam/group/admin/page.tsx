@@ -75,19 +75,15 @@ export default function ExamSettings() {
     const newRoomId = Math.random().toString(36).substring(2, 8);
     setRoomId(newRoomId);
     setShowQR(true);
-    interface CreateRoomAck {
-      success: boolean;
-      error?: string;
-    }
-
-    socket?.emit(
+    socket.emit(
       "create-room",
       { roomId: newRoomId },
-      (ack: CreateRoomAck) => {
+      (ack: { success: boolean; error?: string }) => {
         if (ack.success) {
           router.push(`/exam/group/admin/exams/${newRoomId}`);
         } else {
-          alert(ack.error);
+          alert(ack.error || "فشل إنشاء الغرفة");
+          setShowQR(false);
         }
       }
     );

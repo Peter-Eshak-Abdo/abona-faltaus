@@ -33,8 +33,6 @@ export default function JoinPage() {
     });
 
     return () => {
-      socket.off("connect");
-      socket.off("connect_error");
       socket.off("room-joined");
       socket.off("room-error");
     };

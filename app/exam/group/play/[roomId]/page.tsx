@@ -25,19 +25,6 @@ export default function PlayPage() {
   useEffect(() => {
     if (!roomId) return;
 
-    const savedTeam = localStorage.getItem("currentTeam");
-    let team;
-    if (savedTeam) {
-      team = JSON.parse(savedTeam);
-      if (!team.id) {
-        team.id = Math.random().toString(36).substring(2, 10);
-        localStorage.setItem("currentTeam", JSON.stringify(team));
-      }
-    } else {
-      team = { id: Math.random().toString(36).substring(2, 10), name: "فريق بدون اسم" };
-      localStorage.setItem("currentTeam", JSON.stringify(team));
-    }
-    setTeamName(team.name);
 
     socket.on("room-error", (message) => {
       console.error("Room error:", message);
@@ -81,8 +68,24 @@ export default function PlayPage() {
       setTimeLeft(null);
     });
 
+    const savedTeam = localStorage.getItem("currentTeam");
+    let team;
+    if (savedTeam) {
+      team = JSON.parse(savedTeam);
+      if (!team.id) {
+        team.id = Math.random().toString(36).substring(2, 10);
+        localStorage.setItem("currentTeam", JSON.stringify(team));
+      }
+    } else {
+      team = { id: Math.random().toString(36).substring(2, 10), name: "فريق بدون اسم" };
+      localStorage.setItem("currentTeam", JSON.stringify(team));
+    }
+    setTeamName(team.name);
+
+    socket.emit("join-room", { roomId, team });
+
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      // if (timerRef.current) clearInterval(timerRef.current);
       socket.off("room-error");
       socket.off("exam-started");
       socket.off("question");
