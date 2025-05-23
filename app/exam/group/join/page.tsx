@@ -1,14 +1,14 @@
 "use client";
-
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { io, Socket } from "socket.io-client";
+// import { io, Socket } from "socket.io-client";
+import { socket } from "@/lib/socket";
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 export default function JoinPage() {
   const router = useRouter();
-  const [socket, setSocket] = useState<Socket | null>(null);
+  // const [socket, setSocket] = useState<Socket | null>(null);
   const [roomId, setRoomId] = useState("");
   const [teamName, setTeamName] = useState("");
   const [error, setError] = useState("");
@@ -20,32 +20,32 @@ export default function JoinPage() {
 
   useEffect(() => {
     setIsConnecting(true);
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
-    console.log("Connecting to socket server:", socketUrl);
+    // const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
+    // console.log("Connecting to socket server:", socketUrl);
 
-    const newSocket = io(socketUrl, {
-      transports: ["websocket", "polling"],
-      reconnection: true,
-      reconnectionAttempts: 5,
-      timeout: 10000,
-    });
+    // const newSocket = io(socketUrl, {
+    //   transports: ["websocket", "polling"],
+    //   reconnection: true,
+    //   reconnectionAttempts: 5,
+    //   timeout: 10000,
+    // });
 
-    newSocket.on("connect", () => {
+    socket.on("connect", () => {
       console.log("Connected to socket server");
       setIsConnecting(false);
       setError("");
     });
 
-    newSocket.on("connect_error", (err) => {
+    socket.on("connect_error", (err) => {
       console.error("Connection error:", err);
       setError("خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى");
       setIsConnecting(false);
     });
 
-    setSocket(newSocket);
+    // setSocket(newSocket);
 
     return () => {
-      newSocket.close();
+      socket.close();
     };
   }, []);
 
@@ -64,7 +64,7 @@ export default function JoinPage() {
         setError(message);
       });
     }
-  }, [socket, roomId, router]);
+  }, [roomId, router]);
 
   const startScanner = () => {
     if (scannerRef.current) {
@@ -103,7 +103,6 @@ export default function JoinPage() {
     }
 
     let teamId = undefined;
-    // Try to reuse team id for the same team name
     const savedTeam = localStorage.getItem("currentTeam");
     if (savedTeam) {
       const team = JSON.parse(savedTeam);
@@ -216,6 +215,7 @@ export default function JoinPage() {
                   رجوع
                 </Link>
                 <button
+                  type="button"
                   onClick={handleJoinRoom}
                   className="btn btn-primary"
                   disabled={!roomId || !teamName || !socket}
