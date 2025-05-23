@@ -15,6 +15,13 @@ type Team = {
   name: string;
 };
 
+type Question = {
+  id: string;
+  text: string;
+  options: string[];
+  correctAnswer: number;
+};
+
 export default function ExamSettings() {
   const router = useRouter();
   const [roomId, setRoomId] = useState<string>("");
@@ -25,6 +32,8 @@ export default function ExamSettings() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [maxQuestions, setMaxQuestions] = useState(0);
+
+  const [previewQuestions, setPreviewQuestions] = useState<Question[]>([]);
 
   useEffect(() => {
     if (socket) {
@@ -71,6 +80,23 @@ export default function ExamSettings() {
     };
   }, []);
 
+  useEffect(() => {
+    if (showQR && roomId && selectedCategories.length > 0) {
+      fetch("/exam/simple.json")
+        .then(res => res.json())
+        .then((data: { category: string; questions: Question[] }[]) => {
+          // جمع الأسئلة المختارة
+          const all: Question[] = [];
+          selectedCategories.forEach(cat =>
+            all.push(...data.find(d => d.category === cat)!.questions)
+          );
+          // خلط واقتطاع العدد
+          const shuffled = all.sort(() => Math.random() - 0.5).slice(0, questionCount);
+          setPreviewQuestions(shuffled);
+        });
+    }
+  }, [showQR, selectedCategories, questionCount, roomId]);
+
   const handleCreateRoom = () => {
     const newRoomId = Math.random().toString(36).substring(2, 8);
     setRoomId(newRoomId);
@@ -81,18 +107,6 @@ export default function ExamSettings() {
         setShowQR(false);
       }
     });
-    // socket.emit(
-    //   "create-room",
-    //   { roomId: newRoomId },
-    //   (ack: { success: boolean; error?: string }) => {
-    //     if (ack.success) {
-    //       router.push(`/exam/group/admin/exams/${newRoomId}`);
-    //     } else {
-    //       alert(ack.error || "فشل إنشاء الغرفة");
-    //       setShowQR(false);
-    //     }
-    //   }
-    // );
   };
 
   const handleStartExam = () => {
@@ -158,8 +172,19 @@ export default function ExamSettings() {
                   <p className="text-muted">عدد الفرق المتصلة: {teams.length}</p>
                 </div>
               )}
+              {previewQuestions.length > 0 && (
+                <div className="mt-4">
+                  <h5>معاينة الأسئلة:</h5>
+                  <ul className="list-group">
+                    {previewQuestions.map((q, i) => (
+                      <li key={q.id} className="list-group-item">
+                        {i + 1}. {q.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-              {/* اختيار الفئات */}
               <div className="mb-4">
                 <h5 className="mb-3">اختر الفئات:</h5>
                 <div className="d-flex flex-wrap gap-2">
@@ -179,7 +204,6 @@ export default function ExamSettings() {
                 </div>
               </div>
 
-              {/* عدد الأسئلة */}
               <div className="mb-4">
                 <label className="form-label">
                   عدد الأسئلة (الحد الأقصى: {selectedMax})
@@ -200,7 +224,6 @@ export default function ExamSettings() {
                 </div>
               </div>
 
-              {/* الوقت لكل سؤال */}
               <div className="mb-4">
                 <label className="form-label">الوقت لكل سؤال (بالثواني):</label>
                 <input
@@ -214,7 +237,6 @@ export default function ExamSettings() {
                 />
               </div>
 
-              {/* الأزرار */}
               <div className="d-flex justify-content-between mt-4">
                 <Link href="/exam" className="btn btn-secondary">
                   رجوع

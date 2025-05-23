@@ -24,7 +24,6 @@ export default function AdminExamPage() {
   const [error, setError] = useState("");
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -56,11 +55,7 @@ export default function AdminExamPage() {
       setCurrentIndex(index +1);
       setTotalQuestions(totalQuestions);
       setCurrentQuestion(question);
-      setTimeLeft(timePerQuestion || 30);
-      if (timerRef.current) clearInterval(timerRef.current);
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
-      }, 1000);
+      resetTimer(timePerQuestion);
     });
 
     socket.on("question", ({ question, index, totalQuestions, timePerQuestion }) => {
@@ -68,11 +63,7 @@ export default function AdminExamPage() {
       setCurrentIndex(index + 1);
       setTotalQuestions(totalQuestions);
       setCurrentQuestion(question);
-      setTimeLeft(timePerQuestion || 30);
-      if (timerRef.current) clearInterval(timerRef.current);
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
-      }, 1000);
+      resetTimer(timePerQuestion);
     });
 
     socket.on("answer-submitted", ({ teamId, isCorrect }) => {
@@ -107,6 +98,14 @@ export default function AdminExamPage() {
     };
 
   }, [roomId]);
+
+  function resetTimer(seconds = 30) {
+    setTimeLeft(seconds);
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
+    }, 1000);
+  }
 
   if (!roomId) {
     return (
@@ -143,7 +142,7 @@ export default function AdminExamPage() {
                   <p className="fw-bold">{currentQuestion.text}</p>
                   <div className="d-flex flex-column gap-2">
                     {currentQuestion.options.map((opt, i) => (
-                      <button key={i} className="btn btn-outline-primary" disabled>
+                      <button type="button" key={i} className="btn btn-outline-primary" disabled>
                         {String.fromCharCode(65 + i)}. {opt}
                       </button>
                     ))}
@@ -151,7 +150,7 @@ export default function AdminExamPage() {
                   <button
                     type="button"
                     className="btn btn-secondary mt-3"
-                    onClick={() => socket && socket.emit("next-question", { roomId })}
+                    onClick={() => socket.emit("next-question", { roomId })}
                     disabled={currentIndex >= totalQuestions}
                   >
                     {currentIndex < totalQuestions ? "السؤال التالي" : "عرض النتائج"}

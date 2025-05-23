@@ -148,8 +148,8 @@ export default function PlayPage() {
                   <div className="list-group">
                     {currentQuestion.options.map((option, index) => (
                       <button
-                        key={index}
                         type="button"
+                        key={index}
                         className={`list-group-item list-group-item-action ${selectedAnswer === index ? "active" : ""}`}
                         onClick={() => setSelectedAnswer(index)}
                       >
