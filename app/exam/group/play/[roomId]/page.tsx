@@ -1,8 +1,8 @@
 "use client";
-
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
-import { io, Socket } from "socket.io-client";
+// import { io, Socket } from "socket.io-client";
+import { socket } from "@/lib/socket";
 
 interface Question {
   id: string;
@@ -15,7 +15,7 @@ interface Question {
 export default function PlayPage() {
   const params = useParams();
   const roomId = params?.roomId as string;
-  const [socket, setSocket] = useState<Socket | null>(null);
+  // const [socket, setSocket] = useState<Socket | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -41,63 +41,62 @@ export default function PlayPage() {
     }
     setTeamName(team.name);
 
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
-      transports: ["polling"],
-      // transports: ["websocket", "polling"],
-      reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      timeout: 20000,
-    });
+    // const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
+    //   transports: ["polling"],
+    //   // transports: ["websocket", "polling"],
+    //   reconnection: true,
+    //   reconnectionAttempts: 10,
+    //   reconnectionDelay: 1000,
+    //   reconnectionDelayMax: 5000,
+    //   timeout: 20000,
+    // });
 
-    newSocket.on("connect", () => {
+    socket.on("connect", () => {
       console.log("Connected to socket server");
-      newSocket.emit("join-room", { roomId, team });
+      socket.emit("join-room", { roomId, team });
     });
 
-    newSocket.on("connect_error", (err) => {
+    socket.on("connect_error", (err) => {
       console.error("Connection error:", err);
       setError("خطأ في الاتصال بالخادم");
     });
 
-    newSocket.on("room-error", (message) => {
+    socket.on("room-error", (message) => {
       console.error("Room error:", message);
       setError(message);
     });
 
-    newSocket.on("exam-started", (data) => {
-      console.log("[TEAM] exam-started event received", data);
-      setCurrentQuestion(data.question);
-      setTimeLeft(data.timePerQuestion || 30);
+    socket.on("exam-started", ({ question, index, totalQuestions, timePerQuestion }) => {
+      console.log("[TEAM] exam-started event received", { question, index, totalQuestions, timePerQuestion });
+      setCurrentQuestion(question);
+      setSelectedAnswer(null);
+      setTimeLeft(timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
       }, 1000);
     });
 
-    newSocket.on("question", (question) => {
-      console.log("[TEAM] question event received", question);
-      // setCurrentQuestion(question);
-      const q: Question = question.question;
-      setCurrentQuestion(q);
-      // setCurrentIndex(question.index + 1);
-
-      setTimeLeft(question.timePerQuestion || 30);
+    socket.on("question", ({ question, index, totalQuestions, timePerQuestion }) => {
+      console.log("[TEAM] question event received", { question, index, totalQuestions, timePerQuestion });
+      setCurrentQuestion(question);
+      // setCurrentIndex(index + 1);
+      setSelectedAnswer(null);
+      setTimeLeft(timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
       }, 1000);
     });
 
-    newSocket.on("answer-result", (result: { correct: boolean }) => {
+    socket.on("answer-result", (result: { correct: boolean }) => {
       console.log("[TEAM] answer-result event received", result);
       if (result.correct) {
         setScore(prev => prev + 1);
       }
     });
 
-    newSocket.on("exam-finished", () => {
+    socket.on("exam-finished", () => {
       console.log("[TEAM] exam-finished event received");
       if (timerRef.current) clearInterval(timerRef.current);
       alert(`الامتحان انتهى! نتيجتك: ${score}`);
@@ -105,11 +104,11 @@ export default function PlayPage() {
       setTimeLeft(null);
     });
 
-    setSocket(newSocket);
+    // setSocket(newSocket);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
-      newSocket.close();
+      socket.close();
     };
   }, [roomId, score] );
 
@@ -156,7 +155,6 @@ export default function PlayPage() {
                 <h5 className="text-center">اسم الفريق: {teamName}</h5>
                 <h5 className="text-center">النتيجة: {score}</h5>
               </div>
-
               {currentQuestion ? (
                 <div>
                   <h5 className="mb-4">{currentQuestion.text}</h5>
@@ -169,6 +167,7 @@ export default function PlayPage() {
                     {currentQuestion.options.map((option, index) => (
                       <button
                         key={index}
+                        type="button"
                         className={`list-group-item list-group-item-action ${selectedAnswer === index ? "active" : ""}`}
                         onClick={() => setSelectedAnswer(index)}
                       >
@@ -177,6 +176,7 @@ export default function PlayPage() {
                     ))}
                   </div>
                   <button
+                    type="button"
                     className="btn btn-primary mt-4 w-100"
                     onClick={handleAnswerSubmit}
                     disabled={selectedAnswer === null}

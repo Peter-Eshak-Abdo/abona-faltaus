@@ -75,25 +75,24 @@ export default function AdminExamPage() {
       setTeams(prev => prev.filter(t => t.id !== teamId));
     });
 
-    socket.on("exam-started", (data) => {
-      console.log("[ADMIN] exam-started event received", data);
-      setCurrentIndex(data.index +1);
-      setTotalQuestions(data.totalQuestions);
-      setCurrentQuestion(data.question);
-      setTimeLeft(data.timePerQuestion || 30);
-      setTotalQuestions(data.totalQuestions);
+    socket.on("exam-started", ({ question, index, totalQuestions, timePerQuestion }) => {
+      console.log("[ADMIN] exam-started event received", { question, index, totalQuestions, timePerQuestion });
+      setCurrentIndex(index +1);
+      setTotalQuestions(totalQuestions);
+      setCurrentQuestion(question);
+      setTimeLeft(timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
       }, 1000);
     });
 
-    socket.on("question", (data) => {
-      console.log("[ADMIN] question event received", data);
-      setCurrentIndex(data.index + 1);
-      setTotalQuestions(data.totalQuestions);
-      setCurrentQuestion(data.question);
-      setTimeLeft(data.timePerQuestion || 30);
+    socket.on("question", ({ question, index, totalQuestions, timePerQuestion }) => {
+      console.log("[ADMIN] question event received", { question, index, totalQuestions, timePerQuestion });
+      setCurrentIndex(index + 1);
+      setTotalQuestions(totalQuestions);
+      setCurrentQuestion(question);
+      setTimeLeft(timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
