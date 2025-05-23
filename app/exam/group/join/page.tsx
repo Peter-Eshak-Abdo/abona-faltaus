@@ -2,13 +2,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-// import { io, Socket } from "socket.io-client";
 import { socket } from "@/lib/socket";
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 export default function JoinPage() {
   const router = useRouter();
-  // const [socket, setSocket] = useState<Socket | null>(null);
   const [roomId, setRoomId] = useState("");
   const [teamName, setTeamName] = useState("");
   const [error, setError] = useState("");
@@ -20,31 +18,9 @@ export default function JoinPage() {
 
   useEffect(() => {
     setIsConnecting(true);
-    // const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
-    // console.log("Connecting to socket server:", socketUrl);
-
-    // const newSocket = io(socketUrl, {
-    //   transports: ["websocket", "polling"],
-    //   reconnection: true,
-    //   reconnectionAttempts: 5,
-    //   timeout: 10000,
-    // });
-
-    socket.on("connect", () => {
-      console.log("Connected to socket server");
-      setIsConnecting(false);
-      setError("");
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("Connection error:", err);
-      setError("خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى");
-      setIsConnecting(false);
-    });
 
     socket.on("room-joined", (data) => {
       console.log("[JOIN] room-joined event received", data);
-      // Save team info to localStorage
       setTeamName(data.team.name);
       localStorage.setItem("currentTeam", JSON.stringify(data.team));
       alert(`تم انضمام فريق ${data.team.name} بنجاح!`);
@@ -56,11 +32,6 @@ export default function JoinPage() {
       setError(message);
     });
 
-    // setSocket(newSocket);
-
-    // return () => {
-    //   socket.close();
-    // };
     return () => {
       socket.off("connect");
       socket.off("connect_error");

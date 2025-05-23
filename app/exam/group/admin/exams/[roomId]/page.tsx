@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
-// import { io, Socket } from "socket.io-client";
 import { socket } from "@/lib/socket";
 
 interface Team {
@@ -20,7 +19,6 @@ interface Question {
 export default function AdminExamPage() {
   const params = useParams();
   const roomId = params?.roomId as string;
-  // const [socket, setSocket] = useState<Socket | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [error, setError] = useState("");
@@ -33,31 +31,11 @@ export default function AdminExamPage() {
   useEffect(() => {
     if (!roomId) return;
 
-    // const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
-    //   transports: ["polling"],
-    //   // transports: ["websocket", "polling"],
-    //   reconnection: true,
-    //   reconnectionAttempts: 10,
-    //   reconnectionDelay: 1000,
-    //   reconnectionDelayMax: 5000,
-    //   timeout: 20000,
-    // });
     socket.emit("join-room", { roomId, isAdmin: true });
 
     socket.on("room-error", (message) => {
       console.error("Room error:", message);
       setError(message);
-    });
-
-    // socket.on("connect", () => {
-    //   console.log("[ADMIN] Connected to socket server");
-    //   socket.emit("join-room", { roomId, isAdmin: true });
-    //   // newSocket.emit("join-room", { roomId, isAdmin: true, adminId: localStorage.getItem("adminId") });
-    // });
-
-    socket.on("connect_error", (err) => {
-      console.error("Connection error:", err);
-      setError("خطأ في الاتصال بالخادم");
     });
 
     socket.on("teams-init", (existingTeams) => {
@@ -116,8 +94,6 @@ export default function AdminExamPage() {
       setTimeLeft(null);
       setTeams([]);
     });
-
-    // setSocket(socket);
 
     return () => {
       socket.off("room-error");

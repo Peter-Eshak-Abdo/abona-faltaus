@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
-// import { io, Socket } from "socket.io-client";
 import { socket } from "@/lib/socket";
 
 interface Question {
@@ -15,7 +14,6 @@ interface Question {
 export default function PlayPage() {
   const params = useParams();
   const roomId = params?.roomId as string;
-  // const [socket, setSocket] = useState<Socket | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -41,26 +39,6 @@ export default function PlayPage() {
     }
     setTeamName(team.name);
 
-    // const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
-    //   transports: ["polling"],
-    //   // transports: ["websocket", "polling"],
-    //   reconnection: true,
-    //   reconnectionAttempts: 10,
-    //   reconnectionDelay: 1000,
-    //   reconnectionDelayMax: 5000,
-    //   timeout: 20000,
-    // });
-
-    socket.on("connect", () => {
-      console.log("Connected to socket server");
-      socket.emit("join-room", { roomId, team });
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("Connection error:", err);
-      setError("خطأ في الاتصال بالخادم");
-    });
-
     socket.on("room-error", (message) => {
       console.error("Room error:", message);
       setError(message);
@@ -80,7 +58,6 @@ export default function PlayPage() {
     socket.on("question", ({ question, index, totalQuestions, timePerQuestion }) => {
       console.log("[TEAM] question event received", { question, index, totalQuestions, timePerQuestion });
       setCurrentQuestion(question);
-      // setCurrentIndex(index + 1);
       setSelectedAnswer(null);
       setTimeLeft(timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);
@@ -104,11 +81,13 @@ export default function PlayPage() {
       setTimeLeft(null);
     });
 
-    // setSocket(newSocket);
-
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
-      socket.close();
+      socket.off("room-error");
+      socket.off("exam-started");
+      socket.off("question");
+      socket.off("answer-result");
+      socket.off("exam-finished");
     };
   }, [roomId, score] );
 

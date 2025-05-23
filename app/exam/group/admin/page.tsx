@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
-// import { io, Socket } from "socket.io-client";
 import { socket } from "@/lib/socket";
 
 type Category = {
@@ -18,7 +17,6 @@ type Team = {
 
 export default function ExamSettings() {
   const router = useRouter();
-  // const [socket, setSocket] = useState<Socket | null>(null);
   const [roomId, setRoomId] = useState<string>("");
   const [showQR, setShowQR] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -28,48 +26,24 @@ export default function ExamSettings() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [maxQuestions, setMaxQuestions] = useState(0);
 
-
-  useEffect(() => {
-    // const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001", {
-    //   transports: ["websocket", "polling"],
-    //   reconnection: true,
-    //   reconnectionAttempts: 5,
-    // });
-
-    socket.on("connect", () => {
-      console.log("Connected to socket server");
-      localStorage.setItem("adminId", socket.id || "");
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("Connection error:", err);
-    });
-
-    // setSocket(socket);
-
-    // return () => {
-    //   newSocket.close();
-    // };
-  }, []);
-
   useEffect(() => {
     if (socket) {
+      socket.on("teams-init", setTeams);
       socket.on("team-joined", (team: Team) => {
+        console.log("[JOIN] team-joined event received", team);
         setTeams(prev => [...prev, team]);
       });
 
       socket.on("team-left", (teamId: string) => {
+        console.log("[LEAVE] team-left event received", teamId);
         setTeams(prev => prev.filter(team => team.id !== teamId));
       });
+      socket.on("room-joined", (data: { team: Team }) => {
+        console.log("[JOIN] room-joined event received", data);
+        setTeams(prev => [...prev, data.team]);
+      });
     }
-    // Optionally, you may want to clean up listeners here
-    // return () => {
-    //   socket.off("team-joined");
-    //   socket.off("team-left");
-    // };
-  }, []);
 
-  useEffect(() => {
     const loadCategories = async () => {
       try {
         const res = await fetch("/exam/simple.json");
@@ -90,13 +64,33 @@ export default function ExamSettings() {
     };
 
     loadCategories();
+
+    return () => {
+      socket.off("teams-init", setTeams);
+      socket.off("team-joined");
+    };
   }, []);
 
   const handleCreateRoom = () => {
     const newRoomId = Math.random().toString(36).substring(2, 8);
     setRoomId(newRoomId);
     setShowQR(true);
-    socket?.emit("create-room", { roomId: newRoomId });
+    interface CreateRoomAck {
+      success: boolean;
+      error?: string;
+    }
+
+    socket?.emit(
+      "create-room",
+      { roomId: newRoomId },
+      (ack: CreateRoomAck) => {
+        if (ack.success) {
+          router.push(`/exam/group/admin/exams/${newRoomId}`);
+        } else {
+          alert(ack.error);
+        }
+      }
+    );
   };
 
   const handleStartExam = () => {
@@ -149,6 +143,7 @@ export default function ExamSettings() {
             <div className="card-body">
               {!showQR ? (
                 <button
+                  type="button"
                   onClick={handleCreateRoom}
                   className="btn btn-primary w-100 mb-4"
                 >
@@ -168,8 +163,8 @@ export default function ExamSettings() {
                 <div className="d-flex flex-wrap gap-2">
                   {categories.map((cat) => (
                     <button
-                      key={cat.name}
                       type="button"
+                      key={cat.name}
                       onClick={() => handleCategoryToggle(cat.name)}
                       className={`btn btn-sm ${selectedCategories.includes(cat.name)
                         ? "btn-primary"
@@ -223,6 +218,7 @@ export default function ExamSettings() {
                   رجوع
                 </Link>
                 <button
+                  type="button"
                   onClick={handleStartExam}
                   disabled={!showQR || selectedCategories.length === 0 || questionCount < 1 || teams.length === 0}
                   className="btn btn-primary"
