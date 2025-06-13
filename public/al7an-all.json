@@ -67,28 +67,28 @@
       "asbo3-alam": [
         {
           "monasba": "asbo3-alam",
-          "name": "لحن افلوجيمينوس",
+          "name": "افلوجيمينوس",
           "duration": "6:33",
           "src": "./al7an/لحن افلوجيمينوس.mp3",
           "hazatSrc": "/al7an/hazat/سبت لعازر و احد الشعانين_page-0119.png"
         },
         {
           "monasba": "asbo3-alam",
-          "name": "لحن بيك إثرونوس",
+          "name": " بيك إثرونوس",
           "duration": "18:23",
           "src": "./al7an/لحن بيك إثرونوس.mp3",
           "hazatSrc": "/al7an/hazat/البصخة_page-0084.png"
         },
         {
           "monasba": "asbo3-alam",
-          "name": "لحن_اومونوجنيس",
+          "name": " اومونوجنيس",
           "duration": "11:12",
           "src": "./al7an/لحن_اومونوجنيس.mp3",
           "hazatSrc": "/al7an/hazat/البصخة_page-0067.png"
         },
         {
           "monasba": "asbo3-alam",
-          "name": "لحن_مقدمه_العظه_اوكاتي",
+          "name": "مقدمه العظه اوكاتي",
           "duration": "11:08",
           "src": "./al7an/لحن_مقدمه_العظه_اوكاتي.mp3",
           "hazatSrc": "/al7an/hazat/البصخة_page-0014.png"
@@ -123,19 +123,19 @@
         },
         {
           "monasba": "nhdet-al3dra",
-          "name": "لحن_اوموف_اممو",
+          "name": "لحن اوموف اممو",
           "duration": "7:40",
           "src": "./al7an/لحن_اوموف_اممو.mp3"
         },
         {
           "monasba": "nhdet-al3dra",
-          "name": "لحن_راشي_ني",
+          "name": "لحن راشي ني",
           "duration": "12:52",
           "src": "./al7an/لحن_راشي_ني.mp3"
         },
         {
           "monasba": "nhdet-al3dra",
-          "name": "مديحة_يا_أم_النور_يا_فخر_الأمة",
+          "name": "مديحة يا أم النور يا فخر الأمة",
           "duration": "12:17",
           "src": "./al7an/مديحة_يا_أم_النور_يا_فخر_الأمة.mp3"
         },
@@ -151,6 +151,55 @@
       "keahk": [
         {
           "monasba": "keahk",
+          "name": "الهوس الاول عربى",
+          "duration": "3:34",
+          "src": "./al7an/5  الهوس الاول عربى.mp3",
+          "hazatSrc": null
+        },
+        {
+          "monasba": "keahk",
+          "name": "الهوس الثانى عربى",
+          "duration": "5:53",
+          "src": "./al7an/8 الهوس الثانى عربى.mp3",
+          "hazatSrc": null
+        },
+        {
+          "monasba": "keahk",
+          "name": "الهوس الثالث عربى",
+          "duration": "5:32",
+          "src": "./al7an/11 الهوس الثالث عربى.mp3",
+          "hazatSrc": null
+        },
+        {
+          "monasba": "keahk",
+          "name": "الهوس الرابع عربى",
+          "duration": "7:02",
+          "src": "./al7an/15 الهوس الرابع عربى.mp3",
+          "hazatSrc": null
+        },
+        {
+          "monasba": "keahk",
+          "name": "طلبتك من عمق قلبى",
+          "duration": "7:08",
+          "src": "./al7an/27 طلبتك من عمق قلبى.mp3",
+          "hazatSrc": null
+        },
+        {
+          "monasba": "keahk",
+          "name": "أربسالين عربى",
+          "duration": "6:25",
+          "src": "./al7an/أربسالين عربى.mp3",
+          "hazatSrc": null
+        },
+        {
+          "monasba": "keahk",
+          "name": "قوموا يا بنى النور",
+          "duration": "4:05",
+          "src": "./al7an/قوموا يا بنى النور!s.mp3",
+          "hazatSrc": null
+        },
+        {
+          "monasba": "keahk",
           "name": "التوزيع الكيهكى",
           "duration": "1:40",
           "src": "./al7an/التوزيع الكيهكى.mp3",
@@ -158,7 +207,7 @@
         },
         {
           "monasba": "keahk",
-          "name": "ذكصولوجية شهر كيهك_كى غار",
+          "name": "ذكصولوجية كيهك كى غار",
           "duration": "4:18",
           "src": "./al7an/ذكصولوجية شهر كيهك_كى غار.mp3",
           "hazatSrc": "/al7an/hazat/كيهك و الميلاد_page-0009.jpg",
@@ -174,15 +223,7 @@
         },
         {
           "monasba": "keahk",
-          "name": "لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس",
-          "duration": "7:55",
-          "src": "./al7an/لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس.mp3",
-          "hazatSrc": "/al7an/hazat/التسبحة_page-0038.jpg",
-          "hazatSrc1": "/al7an/hazat/التسبحة_page-0039.jpg"
-        },
-        {
-          "monasba": "keahk",
-          "name": "لحن_تين_اويه_أنسوك",
+          "name": "لحن تين اويه أنسوك",
           "duration": "7:02",
           "src": "./al7an/لحن_تين_اويه_أنسوك.mp3",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0047.jpg",
@@ -191,7 +232,7 @@
         },
         {
           "monasba": "keahk",
-          "name": "لحن_تين_ثينو_الكبير",
+          "name": "لحن تين ثينو الكبير",
           "duration": "11:18",
           "src": "./al7an/لحن_تين_ثينو_الكبير.mp3",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0024.jpg",
@@ -199,7 +240,7 @@
         },
         {
           "monasba": "keahk",
-          "name": "لحن_تينين",
+          "name": "لحن تينين",
           "duration": "7:25",
           "src": "./al7an/لحن_تينين.mp3",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0042.jpg",
@@ -210,7 +251,7 @@
         },
         {
           "monasba": "keahk",
-          "name": "لحن_سيموتى",
+          "name": "لحن سيموتى",
           "duration": "7:45",
           "src": "./al7an/لحن_سيموتى.mp3",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0056.jpg",
@@ -220,7 +261,7 @@
         },
         {
           "monasba": "keahk",
-          "name": "لحن_شيري_نيه_ماريا",
+          "name": "لحن شيري نيه ماريا",
           "duration": "6:50",
           "src": "./al7an/لحن_شيري_نيه_ماريا.mp3",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0053.jpg",
@@ -229,7 +270,15 @@
         },
         {
           "monasba": "keahk",
-          "name": "لحن(الهوس_الثالث)آسمو_ابشويس",
+          "name": "لحن هوس إيروف (الهوس الثالث)",
+          "duration": "7:55",
+          "src": "./al7an/لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس.mp3",
+          "hazatSrc": "/al7an/hazat/التسبحة_page-0038.jpg",
+          "hazatSrc1": "/al7an/hazat/التسبحة_page-0039.jpg"
+        },
+        {
+          "monasba": "keahk",
+          "name": "(الهوس_الثالث) لحنآسمو ابشويس",
           "duration": "20:35",
           "src": "./al7an/لحن(الهوس_الثالث)آسمو_ابشويس.mp3",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0036.jpg",
