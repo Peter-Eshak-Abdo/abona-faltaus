@@ -10,7 +10,7 @@
         },
         {
           "monasba": "snawi",
-          "name": "لحن_البركة_(تين_أوأوشت)",
+          "name": "لحن البركة (تين_أوأوشت)",
           "duration": "2:03",
           "src": "./al7an/لحن_البركة_(تين_أوأوشت).mp3",
           "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0066.jpg"
@@ -35,7 +35,7 @@
         },
         {
           "monasba": "som-kebir",
-          "name": "لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti",
+          "name": "لحن شاري افنوتي",
           "duration": "3:45",
           "src": "./al7an/لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti.mp3",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0036.jpg"
@@ -49,14 +49,14 @@
         },
         {
           "monasba": "som-kebir",
-          "name": "توزيع أيام صوم نينوى وأيام الصوم الكبير _ Distribution for Weekdays of Lent",
+          "name": "توزيع أيام صوم نينوى وأيام الصوم الكبير ",
           "duration": "14:40",
           "src": "./al7an/توزيع أيام صوم نينوى وأيام الصوم الكبير _ Distribution for Weekdays of Lent.mp3",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0047.jpg"
         },
         {
           "monasba": "som-kebir",
-          "name": "سوماتوس ختام أيام الصوم الكبير _ Somatos Concluding Canon for Weekdays of Lent",
+          "name": "سوماتوس ختام أيام الصوم الكبير",
           "duration": "2:45",
           "src": "./al7an/سوماتوس ختام أيام الصوم الكبير _ Somatos Concluding Canon for Weekdays of Lent.mp3",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0059.jpg"
@@ -278,7 +278,7 @@
         },
         {
           "monasba": "keahk",
-          "name": "(الهوس_الثالث) لحنآسمو ابشويس",
+          "name": "(الهوس_الثالث) لحن آسمو ابشويس",
           "duration": "20:35",
           "src": "./al7an/لحن(الهوس_الثالث)آسمو_ابشويس.mp3",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0036.jpg",
