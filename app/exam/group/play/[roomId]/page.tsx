@@ -5,7 +5,7 @@ import { socket } from "@/lib/socket";
 
 interface Question {
   id: string;
-  text: string;
+  question: string;
   options: string[];
   correctAnswer: number;
   timePerQuestion?: number;
@@ -139,7 +139,7 @@ export default function PlayPage() {
               </div>
               {currentQuestion ? (
                 <div>
-                  <h5 className="mb-4">{currentQuestion.text}</h5>
+                  <h5 className="mb-4">{currentQuestion.question}</h5>
                   {typeof timeLeft === "number" && (
                     <div className="mb-3 text-center">
                       <span className="badge bg-warning text-dark fs-5">الوقت المتبقي: {timeLeft} ثانية</span>

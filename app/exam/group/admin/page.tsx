@@ -17,7 +17,7 @@ type Team = {
 
 type Question = {
   id: string;
-  text: string;
+  question: string;
   options: string[];
   correctAnswer: number;
 };
@@ -178,7 +178,7 @@ export default function ExamSettings() {
                   <ul className="list-group">
                     {previewQuestions.map((q, i) => (
                       <li key={q.id} className="list-group-item">
-                        {i + 1}. {q.text}
+                        {i + 1}. {q.question}
                       </li>
                     ))}
                   </ul>

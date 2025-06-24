@@ -11,7 +11,7 @@ interface Team {
 
 interface Question {
   id: string;
-  text: string;
+  question: string;
   options: string[];
   correctAnswer: number;
 }
@@ -52,7 +52,7 @@ export default function AdminExamPage() {
 
     socket.on("exam-started", ({ question, index, totalQuestions, timePerQuestion }) => {
       console.log("[ADMIN] exam-started event received", { question, index, totalQuestions, timePerQuestion });
-      setCurrentIndex(index +1);
+      setCurrentIndex(index + 1);
       setTotalQuestions(totalQuestions);
       setCurrentQuestion(question);
       resetTimer(timePerQuestion);
@@ -139,7 +139,7 @@ export default function AdminExamPage() {
               {currentQuestion && (
                 <div className="mt-4 p-3 border rounded">
                   <h5>السؤال {currentIndex} من {totalQuestions}</h5>
-                  <p className="fw-bold">{currentQuestion.text}</p>
+                  <p className="fw-bold">{currentQuestion.question}</p>
                   <div className="d-flex flex-column gap-2">
                     {currentQuestion.options.map((opt, i) => (
                       <button type="button" key={i} className="btn btn-outline-primary" disabled>
@@ -171,14 +171,16 @@ export default function AdminExamPage() {
               <h2 className="h4 mb-0">الفرق</h2>
             </div>
             <div className="card-body">
-              <div className="list-group">
-                {teams.map(team => (
+              {Array.isArray(teams) && teams.length > 0 ? (
+                teams.map(team => (
                   <div key={team.id} className="list-group-item d-flex justify-content-between align-items-center">
                     <span>{team.name}</span>
                     <span className="badge bg-primary rounded-pill">{team.score}</span>
                   </div>
-                ))}
-              </div>
+                ))
+              ) : (
+                <div className="text-center text-muted">لا يوجد فرق متصلة</div>
+              )}
             </div>
           </div>
         </div>
