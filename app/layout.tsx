@@ -14,7 +14,7 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: 'Abona Faltaous | أبونا فلتاؤس',
+  title: 'Abona Faltaus | أبونا فلتاؤس', 
   description: "الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية",
   keywords: ["الحان", "عظات", "وعظات", "ترانيم", "مقالات دينية", "امتحانات", "اسئلة دينية", "ابونا فلتاؤس السرياني", "الكتاب المقدس", "كنيسة", "ارثوذكسية"],
   authors: [{ name: 'Peter Eshak Abdo', url: 'https://abona-faltaus.vercel.app' }],

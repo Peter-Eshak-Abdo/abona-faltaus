@@ -141,11 +141,15 @@ export default function AdminExamPage() {
                   <h5>السؤال {currentIndex} من {totalQuestions}</h5>
                   <p className="fw-bold">{currentQuestion.question}</p>
                   <div className="d-flex flex-column gap-2">
-                    {currentQuestion.options.map((opt, i) => (
+                    {currentQuestion && Array.isArray(currentQuestion.options) ? (
+                    currentQuestion.options.map((opt, i) => (
                       <button type="button" key={i} className="btn btn-outline-primary" disabled>
                         {String.fromCharCode(65 + i)}. {opt}
                       </button>
-                    ))}
+                    ))
+                      ) : (
+                      <div className="text-center text-muted">لا توجد خيارات متاحة</div>
+                    )}
                   </div>
                   <button
                     type="button"

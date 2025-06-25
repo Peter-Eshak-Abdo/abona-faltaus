@@ -92,7 +92,7 @@ export default function PlayPage() {
       socket.off("answer-result");
       socket.off("exam-finished");
     };
-  }, [roomId, score] );
+  }, [roomId, score]);
 
   const handleAnswerSubmit = () => {
     if (selectedAnswer !== null && currentQuestion && socket) {
@@ -146,16 +146,20 @@ export default function PlayPage() {
                     </div>
                   )}
                   <div className="list-group">
-                    {currentQuestion.options.map((option, index) => (
-                      <button
-                        type="button"
-                        key={index}
-                        className={`list-group-item list-group-item-action ${selectedAnswer === index ? "active" : ""}`}
-                        onClick={() => setSelectedAnswer(index)}
-                      >
-                        {option}
-                      </button>
-                    ))}
+                    {currentQuestion && Array.isArray(currentQuestion.options) ? (
+                      currentQuestion.options.map((option, index) => (
+                        <button
+                          type="button"
+                          key={option + index}
+                          className={`list-group-item list-group-item-action ${selectedAnswer === index ? "active" : ""}`}
+                          onClick={() => setSelectedAnswer(index)}
+                        >
+                          {option}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="text-center text-muted">لا توجد خيارات متاحة</div>
+                    )}
                   </div>
                   <button
                     type="button"
