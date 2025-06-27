@@ -7,7 +7,8 @@ interface Question {
   id: string;
   question: string;
   options: string[];
-  correctAnswer: number;
+  answer: string | true | false;
+  // correctAnswer: number;
   timePerQuestion?: number;
 }
 
@@ -44,7 +45,12 @@ export default function PlayPage() {
 
     socket.on("question", ({ question, index, totalQuestions, timePerQuestion }) => {
       console.log("[TEAM] question event received", { question, index, totalQuestions, timePerQuestion });
-      setCurrentQuestion(question);
+      let opts = question.options;
+      if (!Array.isArray(opts) || opts.length === 0) {
+        opts = ["صح", "خطأ"];
+      }
+      setCurrentQuestion({ ...question, options: opts });
+      // setCurrentQuestion(question);
       setSelectedAnswer(null);
       setTimeLeft(timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);

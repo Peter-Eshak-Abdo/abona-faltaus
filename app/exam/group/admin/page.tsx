@@ -177,7 +177,7 @@ export default function ExamSettings() {
                   <h5>معاينة الأسئلة:</h5>
                   <ul className="list-group">
                     {previewQuestions.map((q, i) => (
-                      <li key={q.id} className="list-group-item">
+                      <li key={q.id? q.id : i } className="list-group-item">
                         {i + 1}. {q.question}
                       </li>
                     ))}

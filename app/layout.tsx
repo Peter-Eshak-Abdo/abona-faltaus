@@ -5,6 +5,7 @@ import LoadingProvider from "./loading-provider";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 // import { SpeedInsights } from '@vercel/speed-insights/next';
 import "./globals.css";
+import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -14,9 +15,9 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: 'Abona Faltaus | أبونا فلتاؤس', 
+  title: 'Abona Faltaus Tofa7a | أبونا فلتاؤس تفاحة',
   description: "الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية",
-  keywords: ["الحان", "عظات", "وعظات", "ترانيم", "مقالات دينية", "امتحانات", "اسئلة دينية", "ابونا فلتاؤس السرياني", "الكتاب المقدس", "كنيسة", "ارثوذكسية"],
+  keywords: ["الحان", "عظات", "وعظات", "ترانيم", "مقالات دينية", "امتحانات", "اسئلة دينية", "ابونا فلتاؤس السرياني", "الكتاب المقدس", "كنيسة", "ارثوذكسية", "تفاحة"],
   authors: [{ name: 'Peter Eshak Abdo', url: 'https://abona-faltaus.vercel.app' }],
   creator: 'Peter Eshak Abdo',
   icons: {
@@ -45,8 +46,6 @@ export const metadata: Metadata = {
 
 };
 
-import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
-
 export default function RootLayout({
   children,
 }: {
@@ -56,12 +55,12 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" className={vazirmatn.variable}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:site_name" content="أبونا فلتاؤس السرياني"/>
-        <meta property="og:url" content="https://abona-faltaus.vercel.app/"/>
-        <meta property="og:title" content="أبونا فلتاؤس السرياني"/>
-        <meta property="og:description" content="الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية."/>
-        <meta property="og:image" content="/images/icons/favicon.ico"/>
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="أبونا فلتاؤس السرياني تفاحة" />
+        <meta property="og:url" content="https://abona-faltaus.vercel.app/" />
+        <meta property="og:title" content="أبونا فلتاؤس السرياني تفاحة" />
+        <meta property="og:description" content="الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية." />
+        <meta property="og:image" content="/images/icons/favicon.ico" />
         <link rel="canonical" href="https://abona-faltaus.vercel.app/" />
         <meta name="mobile-web-app-capable" content="yes" />
         {/* iOS splash + PWA support */}

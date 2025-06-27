@@ -6,6 +6,8 @@ import { socket } from "@/lib/socket";
 interface Team {
   id: string;
   name: string;
+  members?: string[];
+  memberCount?: number;
   score: number;
 }
 
@@ -13,7 +15,8 @@ interface Question {
   id: string;
   question: string;
   options: string[];
-  correctAnswer: number;
+  answer: string | true | false;
+  // correctAnswer: number;
 }
 
 export default function AdminExamPage() {
@@ -62,7 +65,12 @@ export default function AdminExamPage() {
       console.log("[ADMIN] question event received", { question, index, totalQuestions, timePerQuestion });
       setCurrentIndex(index + 1);
       setTotalQuestions(totalQuestions);
-      setCurrentQuestion(question);
+      let opts = question.options;
+      if (!Array.isArray(opts) || opts.length === 0) {
+        opts = ["صح", "خطأ"];
+      }
+      setCurrentQuestion({ ...question, options: opts });
+      // setCurrentQuestion(question);
       resetTimer(timePerQuestion);
     });
 
@@ -177,9 +185,14 @@ export default function AdminExamPage() {
             <div className="card-body">
               {Array.isArray(teams) && teams.length > 0 ? (
                 teams.map(team => (
-                  <div key={team.id} className="list-group-item d-flex justify-content-between align-items-center">
-                    <span>{team.name}</span>
-                    <span className="badge bg-primary rounded-pill">{team.score}</span>
+                  <div key={team.id}>
+                    <div className="list-group-item d-flex justify-content-between align-items-center">
+                      <span>{team.name}</span>
+                      <span className="badge bg-primary rounded-pill">{team.score}</span>
+                    </div>
+                    {team.members && (
+                      <small className="text-muted">{ team.memberCount} أعضاء : {team.members.join(", ")}</small>
+                    )}
                   </div>
                 ))
               ) : (
