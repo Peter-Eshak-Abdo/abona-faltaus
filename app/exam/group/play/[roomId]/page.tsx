@@ -129,6 +129,7 @@ export default function PlayPage() {
       </div>
     );
   }
+  const colors = ["bg-primary", "bg-danger", "bg-success", "bg-warning"];
 
   return (
     <div className="container py-5">
@@ -157,7 +158,7 @@ export default function PlayPage() {
                         <button
                           type="button"
                           key={option + index}
-                          className={`list-group-item list-group-item-action ${selectedAnswer === index ? "active" : ""}`}
+                          className={`list-group-item ${colors[index % colors.length]} my-2 list-group-item-action scale-90 ${selectedAnswer === index ? "active scale-105 fs-5 text-center rounded-full" : ""}`}
                           onClick={() => setSelectedAnswer(index)}
                         >
                           {option}

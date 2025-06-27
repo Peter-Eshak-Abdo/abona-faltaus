@@ -134,6 +134,7 @@ export default function AdminExamPage() {
       </div>
     );
   }
+  const colors = ["bg-primary", "bg-danger", "bg-success", "bg-warning"];
 
   return (
     <div className="container py-5">
@@ -150,12 +151,12 @@ export default function AdminExamPage() {
                   <p className="fw-bold">{currentQuestion.question}</p>
                   <div className="d-flex flex-column gap-2">
                     {currentQuestion && Array.isArray(currentQuestion.options) ? (
-                    currentQuestion.options.map((opt, i) => (
-                      <button type="button" key={i} className="btn btn-outline-primary" disabled>
-                        {String.fromCharCode(65 + i)}. {opt}
-                      </button>
-                    ))
-                      ) : (
+                      currentQuestion.options.map((opt, i) => (
+                        <button type="button" key={i} className={`btn ${colors[i % colors.length]} text-black`} disabled>
+                          {String.fromCharCode(65 + i)}. {opt}
+                        </button>
+                      ))
+                    ) : (
                       <div className="text-center text-muted">لا توجد خيارات متاحة</div>
                     )}
                   </div>
@@ -163,7 +164,7 @@ export default function AdminExamPage() {
                     type="button"
                     className="btn btn-secondary mt-3"
                     onClick={() => socket.emit("next-question", { roomId })}
-                    disabled={currentIndex >= totalQuestions}
+                  // disabled={currentIndex >= totalQuestions}
                   >
                     {currentIndex < totalQuestions ? "السؤال التالي" : "عرض النتائج"}
                   </button>
@@ -191,7 +192,7 @@ export default function AdminExamPage() {
                       <span className="badge bg-primary rounded-pill">{team.score}</span>
                     </div>
                     {team.members && (
-                      <small className="text-muted">{ team.memberCount} أعضاء : {team.members.join(", ")}</small>
+                      <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
                     )}
                   </div>
                 ))
