@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { socket } from "@/lib/socket";
 
 interface Team {
@@ -16,11 +16,11 @@ interface Question {
   question: string;
   options: string[];
   answer: string | true | false;
-  // correctAnswer: number;
 }
 
 export default function AdminExamPage() {
   const params = useParams();
+  const router = useRouter();
   const roomId = params?.roomId as string;
   const [teams, setTeams] = useState<Team[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -70,7 +70,6 @@ export default function AdminExamPage() {
         opts = ["صح", "خطأ"];
       }
       setCurrentQuestion({ ...question, options: opts });
-      // setCurrentQuestion(question);
       resetTimer(timePerQuestion);
     });
 
@@ -83,7 +82,6 @@ export default function AdminExamPage() {
         return team;
       }));
     });
-
     socket.on("exam-finished", () => {
       console.log("[ADMIN] exam-finished event received");
       if (timerRef.current) clearInterval(timerRef.current);
@@ -107,6 +105,18 @@ export default function AdminExamPage() {
 
   }, [roomId]);
 
+  useEffect(() => {
+    if (timeLeft === 0) {
+      console.log("[ADMIN] timeLeft is 0, moving to next question");
+      socket.emit("next-question", { roomId });
+    }
+  }, [timeLeft, roomId]);
+  useEffect(() => {
+    if (currentQuestion && currentQuestion.options.length === 0) {
+      console.log("[ADMIN] currentQuestion has no options, moving to next question");
+      socket.emit("next-question", { roomId });
+    }
+  }, [currentQuestion, roomId]);
   function resetTimer(seconds = 30) {
     setTimeLeft(seconds);
     if (timerRef.current) clearInterval(timerRef.current);
@@ -163,7 +173,14 @@ export default function AdminExamPage() {
                   <button
                     type="button"
                     className="btn btn-secondary mt-3"
-                    onClick={() => socket.emit("next-question", { roomId })}
+                    onClick={() => {
+                      if (currentIndex < totalQuestions) {
+                        socket.emit("next-question", { roomId });
+                      } else {
+                        router.push(`/exam/group/admin/${roomId}/results`);
+                      }
+                    }}
+                    // onClick={() => socket.emit("next-question", { roomId })}
                   // disabled={currentIndex >= totalQuestions}
                   >
                     {currentIndex < totalQuestions ? "السؤال التالي" : "عرض النتائج"}

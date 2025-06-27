@@ -23,6 +23,16 @@ export default function PlayPage() {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const handleAnswerSubmit = () => {
+    if (selectedAnswer !== null && currentQuestion && socket) {
+      socket.emit("submit-answer", {
+        roomId,
+        questionId: currentQuestion.id,
+        answer: selectedAnswer
+      });
+    }
+  };
+
   useEffect(() => {
     if (!roomId) return;
 
@@ -50,7 +60,6 @@ export default function PlayPage() {
         opts = ["صح", "خطأ"];
       }
       setCurrentQuestion({ ...question, options: opts });
-      // setCurrentQuestion(question);
       setSelectedAnswer(null);
       setTimeLeft(timePerQuestion || 30);
       if (timerRef.current) clearInterval(timerRef.current);
@@ -89,7 +98,6 @@ export default function PlayPage() {
     setTeamName(team.name);
 
     socket.emit("join-room", { roomId, team });
-
     return () => {
       // if (timerRef.current) clearInterval(timerRef.current);
       socket.off("room-error");
@@ -98,17 +106,14 @@ export default function PlayPage() {
       socket.off("answer-result");
       socket.off("exam-finished");
     };
-  }, [roomId, score]);
+  }, [roomId, score, timeLeft, teamName, currentQuestion, handleAnswerSubmit]);
 
-  const handleAnswerSubmit = () => {
-    if (selectedAnswer !== null && currentQuestion && socket) {
-      socket.emit("submit-answer", {
-        roomId,
-        questionId: currentQuestion.id,
-        answer: selectedAnswer
-      });
+  useEffect(() => {
+    if (timeLeft === 0) {
+      console.log("[TEAM] timeLeft is 0, submitting answer");
+      handleAnswerSubmit();
     }
-  };
+  }, [timeLeft, handleAnswerSubmit]);
 
   if (!roomId) {
     return (

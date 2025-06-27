@@ -167,21 +167,29 @@ export default function ExamSettings() {
                 </button>
               ) : (
                 <div className="text-center mb-4">
-                  <QRCodeSVG value={roomId} size={200} />
-                  <p className="mt-2">رقم الغرفة: {roomId}</p>
+                  <QRCodeSVG value={roomId} size={750} className="border-4 border-double" />
+                  <p className="mt-2 fs-1 fw-bold">رقم الغرفة: {roomId}</p>
                   <p className="text-muted">عدد الفرق المتصلة: {teams.length}</p>
                 </div>
               )}
               {previewQuestions.length > 0 && (
                 <div className="mt-4">
-                  <h5>معاينة الأسئلة:</h5>
-                  <ul className="list-group">
-                    {previewQuestions.map((q, i) => (
-                      <li key={q.id? q.id : i } className="list-group-item">
-                        {i + 1}. {q.question}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="d-inline-flex gap-1">
+                    <button className="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                      <h5>معاينة الأسئلة:</h5>
+                    </button>
+                  </p>
+                  <div className="collapse" id="collapseExample">
+                    <div className="card card-body visible">
+                      <ul className="list-group">
+                        {previewQuestions.map((q, i) => (
+                          <li key={q.id ? q.id : i} className="list-group-item">
+                            {i + 1}. {q.question}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               )}
 
