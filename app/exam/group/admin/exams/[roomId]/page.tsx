@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { socket } from "@/lib/socket";
 
 interface Team {
@@ -57,7 +58,11 @@ export default function AdminExamPage() {
       console.log("[ADMIN] exam-started event received", { question, index, totalQuestions, timePerQuestion });
       setCurrentIndex(index + 1);
       setTotalQuestions(totalQuestions);
-      setCurrentQuestion(question);
+      let opts = question.options;
+      if (!Array.isArray(opts) || opts.length === 0) {
+        opts = ["صح", "خطأ"];
+      }
+      setCurrentQuestion({ ...question, options: opts });
       resetTimer(timePerQuestion);
     });
 
@@ -145,11 +150,15 @@ export default function AdminExamPage() {
     );
   }
   const colors = ["bg-primary", "bg-danger", "bg-success", "bg-warning"];
+  const getArabicLetter = (index: number) => {
+    const arabicLetters = ['أ', 'ب', 'ج', 'د', 'ه', 'و'];
+    return arabicLetters[index] || '';
+  };
 
   return (
-    <div className="container py-5">
+    <div className="py-5 mx-3">
       <div className="row">
-        <div className="col-md-8">
+        <div className=" col-lg-10 col-md-8">
           <div className="card shadow mb-4">
             <div className="card-header bg-primary text-white text-center">
               <h2 className="h4 mb-0">الامتحان</h2>
@@ -157,13 +166,14 @@ export default function AdminExamPage() {
             <div className="card-body">
               {currentQuestion && (
                 <div className="mt-4 p-3 border rounded">
-                  <h5>السؤال {currentIndex} من {totalQuestions}</h5>
-                  <p className="fw-bold">{currentQuestion.question}</p>
+                  <h3>السؤال {currentIndex} من {totalQuestions}</h3>
+                  <p className="fw-bolder fs-1">{currentQuestion.question}</p>
                   <div className="d-flex flex-column gap-2">
                     {currentQuestion && Array.isArray(currentQuestion.options) ? (
                       currentQuestion.options.map((opt, i) => (
-                        <button type="button" key={i} className={`btn ${colors[i % colors.length]} text-black`} disabled>
-                          {String.fromCharCode(65 + i)}. {opt}
+                        <button type="button" key={i} className={`btn ${colors[i % colors.length]} text-black fs-1 fw-bolder my-2`} disabled>
+                          {getArabicLetter(i)}. {opt}
+                          {/* {String.fromCharCode(65 + i)}. {opt} */}
                         </button>
                       ))
                     ) : (
@@ -172,22 +182,24 @@ export default function AdminExamPage() {
                   </div>
                   <button
                     type="button"
-                    className="btn btn-secondary mt-3"
+                    className="btn btn-secondary mt-3 fs-3 fw-bold"
                     onClick={() => {
                       if (currentIndex < totalQuestions) {
                         socket.emit("next-question", { roomId });
                       } else {
-                        router.push(`/exam/group/admin/${roomId}/results`);
+                        router.push(`/exam/group/admin/exams/${roomId}/results`);
                       }
                     }}
-                    // onClick={() => socket.emit("next-question", { roomId })}
+                  // onClick={() => socket.emit("next-question", { roomId })}
                   // disabled={currentIndex >= totalQuestions}
                   >
                     {currentIndex < totalQuestions ? "السؤال التالي" : "عرض النتائج"}
                   </button>
+                  <button type="button" onClick={() => socket.emit("pause-exam", { roomId })} className="btn btn-warning">⏸️ إيقاف</button>
+                  <button type="button" onClick={() => socket.emit("resume-exam", { roomId })} className="btn btn-success">▶️ استكمال</button>
                   {timeLeft !== null && (
-                    <div className="mt-3">
-                      <p className="text-danger">الوقت المتبقي: {timeLeft} ثواني</p>
+                    <div className="mt-3 justify-content-end d-flex">
+                      <p className="text-danger fw-bolder fs-3">الوقت المتبقي: {timeLeft} ثواني</p>
                     </div>
                   )}
                 </div>
@@ -195,27 +207,39 @@ export default function AdminExamPage() {
             </div>
           </div>
         </div>
-        <div className="col-md-4">
+        <div className="col-lg-2 col-md-4">
           <div className="card shadow">
             <div className="card-header bg-primary text-white text-center">
               <h2 className="h4 mb-0">الفرق</h2>
             </div>
             <div className="card-body">
-              {Array.isArray(teams) && teams.length > 0 ? (
-                teams.map(team => (
-                  <div key={team.id}>
-                    <div className="list-group-item d-flex justify-content-between align-items-center">
-                      <span>{team.name}</span>
-                      <span className="badge bg-primary rounded-pill">{team.score}</span>
-                    </div>
-                    {team.members && (
-                      <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div className="text-center text-muted">لا يوجد فرق متصلة</div>
-              )}
+              {teams.sort((a, b) => b.score - a.score).map(team => (
+                <motion.div
+                  key={team.id}
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="list-group-item"
+                >
+                  {Array.isArray(teams) && teams.length > 0 ? (
+                    teams.map(team => (
+                      <div key={team.id}>
+                        <div className="list-group-item d-flex justify-content-between align-items-center">
+                          <span>{team.name}</span>
+                          <span className="badge bg-primary rounded-pill">{team.score}</span>
+                        </div>
+                        {team.members && (
+                          <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center text-muted">لا يوجد فرق متصلة</div>
+                  )}
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>

@@ -73,6 +73,8 @@ export default function JoinPage() {
       setError("الرجاء إدخال رقم الغرفة واسم الفريق");
       return;
     }
+    if (!teamName.trim()) return setError("من فضلك أدخل اسم الفريق");
+    if (members.some(name => !name.trim())) return setError("يجب ملء أسماء جميع الأعضاء");
 
     let teamId = undefined;
     const savedTeam = localStorage.getItem("currentTeam");

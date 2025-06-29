@@ -150,7 +150,7 @@ export default function ExamSettings() {
   return (
     <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-md-8">
+        <div className="col-lg-11 col-md-8">
           <div className="card shadow">
             <div className="card-header bg-primary text-white text-center">
               <h2 className="h4 mb-0">إعدادات الامتحان</h2>

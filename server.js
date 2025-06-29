@@ -1,4 +1,3 @@
-// server.ts أو index.js حسب بيئة Glitch
 import { createServer } from "http";
 import { Server } from "socket.io";
 import path from "path";
@@ -53,13 +52,14 @@ io.on("connection", (socket) => {
   console.log("🔌 Client connected:", socket.id);
 
   // === Create Room ===
-  socket.on("create-room", ({ roomId }) => {
+  socket.on("create-room", ({ roomId }, cb) => {
     if (rooms.has(roomId)) {
       socket.emit("room-error", "الغرفة موجودة بالفعل");
-      return;
+      return cb({ success: false, error: "غرفة موجودة" });
     }
 
     rooms.set(roomId, {
+      adminId: socket.id,
       teams: [],
       admin: socket.id,
       status: "waiting",
@@ -69,6 +69,7 @@ io.on("connection", (socket) => {
 
     socket.join(roomId);
     console.log(`✅ [ROOM CREATED] ${roomId} by ${socket.id}`);
+    return cb({ success: true });
   });
 
   // === Join Room ===
@@ -81,17 +82,21 @@ io.on("connection", (socket) => {
     }
 
     if (isAdmin) {
-      if (room.admin === socket.id) {
+      if (room.adminId === socket.id) {
+        room.adminSocketId = socket.id;
         socket.join(roomId);
+        socket.emit("teams-init", room.teams);
         socket.emit("room-joined", { isAdmin: true });
-
         if (room.status === "active" && room.questions.length > 0) {
           socket.emit("exam-started", {
             question: room.questions[room.currentQuestionIndex],
             timePerQuestion: room.timePerQuestion,
             totalQuestions: room.questions.length,
+            index: 0,
           });
         }
+      } else {
+        socket.emit("room-error", "ليس لديك صلاحية المشرف");
       }
       return;
     }
@@ -164,11 +169,13 @@ io.on("connection", (socket) => {
     room.currentQuestionIndex = 0;
     room.timePerQuestion = settings.timePerQuestion;
     room.status = "active";
+    io.to(room.admin).emit("teams-init", room.teams);
 
     io.to(roomId).emit("exam-started", {
       question: shuffled[0],
-      timePerQuestion: settings.timePerQuestion,
+      index: 0,
       totalQuestions: settings.questionCount,
+      timePerQuestion: settings.timePerQuestion,
     });
 
     console.log(`🚀 [START] Exam started in room ${roomId}`);
@@ -184,7 +191,9 @@ io.on("connection", (socket) => {
 
     if (!question || !team) return;
 
-    const isCorrect = answer === question.correctAnswer;
+    const submittedAnswerText = question.options?.[answer];
+    // const isCorrect = answer === question.correctAnswer;
+    const isCorrect = submittedAnswerText === question.answer;
     if (isCorrect) {
       team.score += 1;
     }
@@ -213,7 +222,8 @@ io.on("connection", (socket) => {
       io.to(roomId).emit("question", {
         question,
         index: room.currentQuestionIndex,
-        total: room.questions.length,
+        totalQuestions: room.questions.length,
+        timePerQuestion: room.timePerQuestion,
       });
     } else {
       room.status = "finished";
@@ -222,6 +232,13 @@ io.on("connection", (socket) => {
       });
       console.log(`✅ [FINISH] Exam in room ${roomId}`);
     }
+  });
+
+  socket.on("pause-exam", ({ roomId }) => {
+    io.to(roomId).emit("exam-paused");
+  });
+  socket.on("resume-exam", ({ roomId }) => {
+    io.to(roomId).emit("exam-resumed");
   });
 
   // === Handle Disconnect ===
