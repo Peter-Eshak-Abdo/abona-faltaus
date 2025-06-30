@@ -139,12 +139,12 @@ export default function PlayPage() {
     }
   }, [timeLeft, handleAnswerSubmit]);
 
-  useEffect(() => {
-    if (timeLeft === 0) {
-      setSubmitted(true);
-      setError("انتهى وقت السؤال");
-    }
-  }, [timeLeft]);
+  // useEffect(() => {
+  //   if (timeLeft === 0) {
+  //     setSubmitted(true);
+  //     setError("انتهى وقت السؤال");
+  //   }
+  // }, [timeLeft]);
 
   if (!roomId) {
     return (

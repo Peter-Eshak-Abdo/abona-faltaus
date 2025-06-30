@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
+    "start": "node server.js",
     "build": "next build",
     "export": "next export",
-    "start": "next start",
     "lint": "next lint",
     "predeploy": "rd /s /q out",
     "deploy": "npm run build && firebase deploy",
