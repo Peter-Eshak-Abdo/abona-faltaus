@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { socket } from "@/lib/socket";
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 export default function JoinPage() {
-  const searchParams = useSearchParams();
-  const prefilledRoomId = searchParams.get("room");
+  // const searchParams = useSearchParams();
+  // const prefilledRoomId = searchParams.get("room");
   const router = useRouter();
   const [roomId, setRoomId] = useState("");
   const [teamName, setTeamName] = useState("");
@@ -41,10 +41,12 @@ export default function JoinPage() {
   }, [roomId, router]);
 
   useEffect(() => {
-    if (prefilledRoomId) {
-      setRoomId(prefilledRoomId);
+    const params = new URLSearchParams(window.location.search);
+    const room = params.get("room");
+    if (room) {
+      setRoomId(room);
     }
-  }, [prefilledRoomId]);
+  }, []);
   const startScanner = () => {
     if (scannerRef.current) {
       const scanner = new Html5QrcodeScanner(
