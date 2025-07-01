@@ -26,6 +26,7 @@ export default function ExamSettings() {
   const router = useRouter();
   const [roomId, setRoomId] = useState<string>("");
   const [showQR, setShowQR] = useState(false);
+  const [qrSize, setQrSize] = useState(200);
   const [teams, setTeams] = useState<Team[]>([]);
   const [questionCount, setQuestionCount] = useState(10);
   const [timePerQuestion, setTimePerQuestion] = useState(30);
@@ -146,6 +147,7 @@ export default function ExamSettings() {
   };
 
   const selectedMax = calculateMaxForSelected();
+  const joinUrl = `${typeof window !== "undefined" ? window.location.origin : "https://abona-faltaus.vercel.app"}/exam/group/join?room=${roomId}`;
 
   return (
     <div className="container py-5">
@@ -166,8 +168,25 @@ export default function ExamSettings() {
                   إنشاء غرفة الامتحان
                 </button>
               ) : (
-                <div className="text-center mb-4">
-                  <QRCodeSVG value={roomId} size={750} className="border-4 border-double" />
+                  <div className="text-center mb-4">
+                    <div className="mb-4">
+                      <label className="block mb-1">حجم QR (px): {qrSize}</label>
+                      <input
+                        title="حجم QR"
+                        type="range"
+                        min={200}
+                        max={800}
+                        step={50}
+                        value={qrSize}
+                        onChange={(e) => setQrSize(+e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+                    <QRCodeSVG value={joinUrl} size={qrSize} className="border-4 border-double" />
+                    <p className="mt-2 text-sm text-gray-600">
+                      لو ماسحوا الـ QR بأي تطبيق سيحولهم مباشرة لـ:
+                      <code className="bg-gray-100 px-1 rounded">{joinUrl}</code>
+                    </p>
                   <p className="mt-2 fs-1 fw-bold">رقم الغرفة: {roomId}</p>
                   <p className="text-muted">عدد الفرق المتصلة: {teams.length}</p>
                 </div>

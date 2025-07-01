@@ -8,7 +8,7 @@ import {
   updateDoc,
   doc,
   arrayUnion,
-  getDoc
+  // getDoc
   // DocumentData,
   // DocumentReference
 } from "firebase/firestore";
@@ -45,22 +45,22 @@ export default function MkalatFeed() {
     return () => unsub();
   }, []);
 
-  const handleLike = async (mkalId: string) => {
-    const user = auth.currentUser;
-    if (!user) return;
+  // const handleLike = async (mkalId: string) => {
+  //   const user = auth.currentUser;
+  //   if (!user) return;
 
-    const ref = doc(db, "mkalat", mkalId);
-    const snapshot = await getDoc(ref);
-    const data = snapshot.data();
+  //   const ref = doc(db, "mkalat", mkalId);
+  //   const snapshot = await getDoc(ref);
+  //   const data = snapshot.data();
 
-    if (!data) return;
-    if ((data.likedBy || []).includes(user.uid)) return; // 🛑 بالفعل عمل لايك
+  //   if (!data) return;
+  //   if ((data.likedBy || []).includes(user.uid)) return; // 🛑 بالفعل عمل لايك
 
-    await updateDoc(ref, {
-      likedBy: arrayUnion(user.uid),
-      likes: (data.likes || 0) + 1,
-    });
-  };
+  //   await updateDoc(ref, {
+  //     likedBy: arrayUnion(user.uid),
+  //     likes: (data.likes || 0) + 1,
+  //   });
+  // };
 
   // const handleLike = async (id: string) => {
   //   const ref = doc(db, "mkalat", id);
@@ -93,7 +93,7 @@ export default function MkalatFeed() {
           )}
           <div className="flex items-center gap-4 mt-2">
             <button
-              onClick={() => handleLike(mkal.id)}
+              // onClick={() => handleLike(mkal.id)}
               className="text-blue-600"
             >
               👍 موافق ({mkal.likes || 0})

@@ -34,7 +34,7 @@ const io = new Server(httpServer, {
     origin: [
       "http://localhost:3000",
       "https://abona-faltaus.vercel.app",
-      "https://exam-group.glitch.me",
+      "https://exam-group.glitch.me"
     ],
     methods: ["GET", "POST"],
     credentials: true,
@@ -69,7 +69,7 @@ io.on("connection", (socket) => {
 
     socket.join(roomId);
     console.log(`✅ [ROOM CREATED] ${roomId} by ${socket.id}`);
-    return cb({ success: true });
+    return cb({success: true});
   });
 
   // === Join Room ===
@@ -92,11 +92,12 @@ io.on("connection", (socket) => {
             question: room.questions[room.currentQuestionIndex],
             timePerQuestion: room.timePerQuestion,
             totalQuestions: room.questions.length,
-            index: 0,
+            index : 0,
           });
         }
+
       } else {
-        socket.emit("room-error", "ليس لديك صلاحية المشرف");
+         socket.emit("room-error", "ليس لديك صلاحية المشرف");
       }
       return;
     }
@@ -121,9 +122,7 @@ io.on("connection", (socket) => {
       existingTeam.socketId = socket.id;
       socket.join(roomId);
       socket.emit("room-joined", { team: existingTeam });
-      console.log(
-        `🔁 [REJOIN] Team ${existingTeam.name} reconnected to room ${roomId}`
-      );
+      console.log(`🔁 [REJOIN] Team ${existingTeam.name} reconnected to room ${roomId}`);
     }
   });
 
@@ -140,12 +139,7 @@ io.on("connection", (socket) => {
 
     let questionsData = [];
     try {
-      const questionsPath = path.join(
-        __dirname,
-        "public",
-        "exam",
-        "simple.json"
-      );
+      const questionsPath = path.join(__dirname, "public", "exam", "simple.json");
       questionsData = JSON.parse(fs.readFileSync(questionsPath, "utf8"));
     } catch (err) {
       console.error("❌ Failed to load questions:", err);
@@ -161,11 +155,9 @@ io.on("connection", (socket) => {
       }
     });
 
-    const shuffled = allQuestions
-      .sort(() => Math.random() - 0.5)
-      .slice(0, settings.questionCount);
+    const shuffled = allQuestions.sort(() => Math.random() - 0.5).slice(0, settings.questionCount);
 
-    room.questions = shuffled;
+    room.questions = shuffled.map((q, index) => ({ ...q, id: index }));
     room.currentQuestionIndex = 0;
     room.timePerQuestion = settings.timePerQuestion;
     room.status = "active";
@@ -191,9 +183,7 @@ io.on("connection", (socket) => {
 
     if (!question || !team) return;
 
-    const submittedAnswerText = question.options?.[answer];
-    // const isCorrect = answer === question.correctAnswer;
-    const isCorrect = submittedAnswerText === question.answer;
+    const isCorrect = answer === question.correctAnswer;
     if (isCorrect) {
       team.score += 1;
     }
@@ -204,9 +194,7 @@ io.on("connection", (socket) => {
       isCorrect,
     });
 
-    console.log(
-      `📩 [ANSWER] Team ${team.name} submitted: ${isCorrect ? "✅" : "❌"}`
-    );
+    console.log(`📩 [ANSWER] Team ${team.name} submitted: ${isCorrect ? "✅" : "❌"}`);
   });
 
   // === Next Question ===
@@ -223,7 +211,7 @@ io.on("connection", (socket) => {
         question,
         index: room.currentQuestionIndex,
         totalQuestions: room.questions.length,
-        timePerQuestion: room.timePerQuestion,
+        timePerQuestion: room.timePerQuestion
       });
     } else {
       room.status = "finished";
