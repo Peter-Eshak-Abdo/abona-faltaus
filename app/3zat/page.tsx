@@ -4,7 +4,8 @@ import BabaShenodyPlayer from "./BabaShenodyPlayer";
 import Image from "next/image";
 
 export const metadata = {
-  title: "العظات",
+  metadataBase: new URL("https://abona-faltaus.vercel.app"),
+  title: "العظات تفاحة",
   description: "العظات الارثوذكسية المسيحية",
   keywords: "العظات, العظات الارثوذكسية, عظات ابونا فلتاؤس, عظات ابونا داؤد لمعي, عظات البابا شنودة",
 }

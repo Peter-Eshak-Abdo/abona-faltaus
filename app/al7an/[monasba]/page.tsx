@@ -15,7 +15,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ monasba: string }> }): Promise<Metadata> {
   const { monasba } = await params;
-  return { title: `ألحان مناسبة ${monasba}`, description: `ألحان ${monasba}` };
+
+  return {
+    metadataBase: new URL("https://abona-faltaus.vercel.app"),
+    title: `ألحان مناسبة ${monasba}`, description: `ألحان ${monasba}` };
 }
 
 export default async function MonasbaPage({ params }: { params: Promise<{ monasba: string }> }) {

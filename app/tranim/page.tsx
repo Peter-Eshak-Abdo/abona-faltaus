@@ -3,7 +3,8 @@ import KyamaPlayer from "./KyamaPlayer";
 import MeladPlayer from "./MeladPlayer";
 
 export const metadata = {
-  title: "الترانيم",
+  metadataBase: new URL("https://abona-faltaus.vercel.app"),
+  title: "الترانيم تفاحة",
   description: "ترانيم مسيحية ارثوذكسية",
   keywords: "ترانيم, ترانيم مسيحية, ترانيم ارثوذكسية, ترانيم عيد الميلاد, ترانيم عيد القيامة",
 };

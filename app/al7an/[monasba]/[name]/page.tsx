@@ -43,6 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ monasba: 
   const hymn = hymns.find((h) => slugify(h.name, { lower: true, strict: true }) === slug);
   if (!hymn) return { title: "اللحن غير موجود" };
   return {
+    metadataBase: new URL("https://abona-faltaus.vercel.app"),
     title: hymn.name,
     description: `استماع وتحميل لحن ${hymn.name} من مناسبة ${monasba}`,
     keywords: [hymn.name, monasba, "الحان", "ترانيم"],
