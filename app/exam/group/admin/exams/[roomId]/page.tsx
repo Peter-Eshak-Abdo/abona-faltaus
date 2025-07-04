@@ -6,12 +6,9 @@ import { socket } from "@/lib/socket";
 
 interface Team {
   id: string;
-  name: {
-    id: string;
-    name: string;
-    memberCount?: number;
-    members?: string[];
-  };
+  name: string;
+  memberCount?: number;
+  members?: string[];
   socketId: string;
   score: number;
 }
@@ -244,13 +241,13 @@ export default function AdminExamPage() {
                   ) : (
                     <div className="text-center text-muted">لا يوجد فرق متصلة</div>
                   )} */}
-                    <div className="list-group-item d-flex justify-content-between align-items-center">
-                      <span>{team.name.name}</span>
-                      <span className="badge bg-primary rounded-pill">{team.score}</span>
-                    </div>
-                    {team.name.members && (
-                      <small className="text-muted">{team.name.memberCount} أعضاء : {team.name.members.join(", ")}</small>
-                    )}
+                  <div className="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{team.name}</span>
+                    <span className="badge bg-primary rounded-pill">{team.score}</span>
+                  </div>
+                  {team.members && (
+                    <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
+                  )}
                 </motion.div>
               ))}
             </div>
