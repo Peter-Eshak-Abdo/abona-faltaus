@@ -322,52 +322,92 @@
       {
         "type": "tf",
         "question": "الغطاس عيد من أعياد سيدية كبرى.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "الروح القدس ظهر كشعلة نار في الغطاس.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "نهر الأردن يجف كل عيد غطاس.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "المعمودية بالماء ترمز للتوبة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "معمودية السيد المسيح كانت للتوبة عن خطاياه.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "في عيد الغطاس نصلي بالطقس السنوي.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "يقام قداس العيد مساء ليلة العيد.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "سر المعمودية يتم في المعمودية وليس أمام الهيكل.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "في طقس الغطاس يستخدم ماء مقدس لرش الشعب.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "عيد الغطاس يأتي بعد 40 يوم من عيد الميلاد.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       }
     ]
   },
@@ -488,52 +528,92 @@
       {
         "type": "tf",
         "question": "صام يونان ثلاث ليالٍ في بطن الحوت.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "يونان هو أحد أنبياء العهد الجديد.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "أهل نينوى لم يهتموا بدعوة يونان.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "صوم يونان يتميز بأنه صوم توبة شديد.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "يونان اختار الذهاب لنينوى بمحض إرادته.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "الله لم يغفر لأهل نينوى بعد توبتهم.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "يونان فرح بخلاص نينوى من الهلاك.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "الله أرسل الحوت ليعاقب يونان.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "صوم يونان يسمى أيضاً \"صوم الخلاص\".",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم يونان يسبق الصوم الكبير مباشرة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       }
     ]
   },
@@ -654,52 +734,92 @@
       {
         "type": "tf",
         "question": "الصوم الكبير يقتصر فقط على الامتناع عن الطعام.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "الصوم الكبير يهدف إلى زيادة التقوى والتوبة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "المسيح صام في البرية لمدة 40 يومًا و40 ليلة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "في الصوم الكبير، يُسمح بالأكل من اللحوم.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "الصوم الكبير هو أحد الصوميات الرسمية التي تطلب من المسيحيين الالتزام بها.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "يبدأ الصوم الكبير في يوم الجمعة.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "في الصوم الكبير، لا يسمح بالصلاة أو التوبة.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "الصوم الكبير يُعتبر فترة تهدئة روحية للمؤمنين.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "في الصوم الكبير، يُحتفل بعيد الفصح في اليوم الأخير.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "الصوم الكبير لا يشمل أي نوع من الطقوس الدينية.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       }
     ]
   },
@@ -820,52 +940,92 @@
       {
         "type": "tf",
         "question": "صوم نينوي يستمر لمدة 40 يومًا.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "أهل نينوى صاموا توبة بعد تحذير يونان.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم نينوي يعتبر من الأصوام القوية في الكنيسة القبطية.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم نينوي يقتصر على توبة فردية فقط.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "في صوم نينوي، يُسمح بتناول جميع أنواع الطعام.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "في صوم نينوي، يُحتفل بتوبة أهل نينوى.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم نينوي يبدأ في بداية شهر فبراير.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "يونان هو الذي بشر أهل نينوى بالتوبة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "أهل نينوى صاموا لأجل المطر.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "صوم نينوي يُعتبر فترة استجابة لنداء التوبة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       }
     ]
   },
@@ -986,52 +1146,92 @@
       {
         "type": "tf",
         "question": "عيد القيامة يُحتفل به في يوم الجمعة.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "المسيح قام من الأموات في اليوم الثالث بعد موته.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "المسيح ظهر لتلاميذه في جسده بعد القيامة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "عيد القيامة هو أهم الأعياد في الكنيسة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "في يوم القيامة، اكتشف التلاميذ القبر الفارغ.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "قيامة المسيح كانت هي نقطة تحول في التاريخ المسيحي.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "عيد القيامة هو احتفال بموت المسيح فقط.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "المسيح بعد القيامة ظهر فقط لمريم المجدلية.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "القيامة تعني انتصار الحياة على الموت.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "المسيح قام ليفتح لنا باب الجنة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       }
     ]
   },
@@ -1152,52 +1352,92 @@
       {
         "type": "tf",
         "question": "نهضة العذراء تبدأ في 1 سبتمبر.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "النهضة تستمر من 1 أغسطس حتى 15 أغسطس.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صعود العذراء إلى السماء هو موضوع نهضة العذراء.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "في فترة نهضة العذراء، الكنيسة تحتفل بميلاد العذراء.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "نهضة العذراء هي احتفال بشفاعة العذراء.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "في نهضة العذراء، يُحتفل بها في شهر ديسمبر.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "العذراء مريم هي الأم البتول المكرمة في الكنيسة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "يتم التركيز في فترة النهضة على التوبة والصلاة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "نهضة العذراء تمتد لمدة 30 يومًا.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "العذراء مريم هي مثال للقداسة والتواضع.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       }
     ]
   },
@@ -1307,52 +1547,92 @@
       {
         "type": "tf",
         "question": "صوم الميلاد يبدأ في 1 ديسمبر.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "يُحتفل به استعدادًا لعيد القيامة.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "صوم الميلاد يمتد لمدة 40 يومًا.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "يهدف صوم الميلاد إلى الاحتفال بميلاد المسيح.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم الميلاد يرتبط بالصلاة والتوبة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم الميلاد يُحتفل به قبل عيد الفصح.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "يُسمح بتناول اللحوم في صوم الميلاد.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "صوم الميلاد هو أصوم الفرح فقط.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "صوم الميلاد يركز على الصلاة والتوبة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "الكنيسة تحتفل بعيد الميلاد فقط في 25 ديسمبر.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       }
     ]
   },
@@ -1473,52 +1753,92 @@
       {
         "type": "tf",
         "question": "الخماسين يستمر لمدة 40 يومًا.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "في فترة الخماسين، الكنيسة تحتفل بقيامة المسيح.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "الخماسين ينتهي في عيد الصعود.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "الخماسين هو عيد يحتفل به فقط في القاهرة.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "الخماسين يشمل الخمسين يومًا من عيد القيامة حتى عيد العنصرة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "عيد العنصرة هو نهاية فترة الخماسين.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "المسيح صعد إلى السماء بعد 30 يومًا من القيامة.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "الخماسين يُحتفل به لمدة أسبوعين فقط.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "يُسمى الخماسين بهذا الاسم لأن مدته 50 يومًا.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "في الخماسين، تحتفل الكنيسة بصوم الرسل.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       }
     ]
   },
@@ -1639,52 +1959,92 @@
       {
         "type": "tf",
         "question": "صوم الرسل يمتد لمدة 40 يومًا.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "صوم الرسل يتزامن مع فترة عيد القيامة.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "الهدف الرئيسي من صوم الرسل هو توبة الرسل.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم الرسل يُحتفل به بعد عيد العنصرة.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم الرسل يستمر لمدة 15 يومًا.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "يتم الامتناع عن اللحوم والمنتجات الحيوانية في صوم الرسل.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم الرسل يهدف إلى توبة الكنيسة ككل.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "يبدأ صوم الرسل في شهر يونيو.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "صوم الرسل هو فترة عيد الفصح.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "صوم الرسل يُحتفل به فقط في أيام العيد.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       }
     ]
   },
@@ -1750,27 +2110,47 @@
       {
         "type": "tf",
         "question": "سر الميرون يتم في المعمودية.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "سر التناول يتم فيه تناول جسد المسيح ودمه.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "في سر الاعتراف، يُمنح الشخص التوبة.",
-        "answer": true
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 0
       },
       {
         "type": "tf",
         "question": "سر الاعتراف يُجرى فقط في الأيام المقدسة.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       },
       {
         "type": "tf",
         "question": "في سر المعمودية، يتم غسل الأقدام.",
-        "answer": false
+        "options": [
+          "صح",
+          "خطأ"
+        ],
+        "answer": 1
       }
     ]
   },
