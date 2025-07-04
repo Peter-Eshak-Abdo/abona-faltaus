@@ -10,10 +10,17 @@ type Category = {
   count: number;
 };
 
-type Team = {
+interface Team {
   id: string;
-  name: string;
-};
+  name: {
+    id: string;
+    name: string;
+    memberCount?: number;
+    members?: string[];
+  };
+  socketId: string;
+  score: number;
+}
 
 type Question = {
   id: string;

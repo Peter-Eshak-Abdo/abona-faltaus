@@ -1,12 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
-// import Image from "next/image";
 import confetti from "canvas-confetti";
 
 interface Team {
   id: string;
-  name: string;
-  members: string[];
+  name: {
+    id: string;
+    name: string;
+    memberCount?: number;
+    members?: string[];
+  };
+  socketId: string;
   score: number;
 }
 
@@ -46,12 +50,13 @@ export default function ResultPage() {
           <div key={team.id} className="col-md-4 text-center">
             <div className={`p-3 shadow rounded bg-${i === 0 ? "warning" : i === 1 ? "secondary" : "info"} text-white`}>
               <h4>{getPlaceText(i)}</h4>
-              <h5 className="fw-bold">{team.name}</h5>
+              <h5 className="fw-bold">{team.name.name}</h5>
               <p>النقاط: {team.score}</p>
               <ul className="list-unstyled">
-                {team.members.map((member, j) => (
-                  <li key={j}>👤 {member}</li>
-                ))}
+                {team.name.members &&
+                  team.name.members.map((member, j) => (
+                    <li key={j}>👤 {member}</li>
+                  ))}
               </ul>
             </div>
           </div>
@@ -65,11 +70,12 @@ export default function ResultPage() {
             {rest.map((team, i) => (
               <div key={team.id} className="d-flex justify-content-between border-bottom py-2">
                 <div>
-                  {getPlaceText(i + 3)} - <strong>{team.name}</strong>
+                  {getPlaceText(i + 3)} - <strong>{team.name.name}</strong>
                   <ul className="list-inline mb-0">
-                    {team.members.map((m, idx) => (
-                      <li className="list-inline-item small" key={idx}>👤 {m}</li>
-                    ))}
+                    {team.name.members &&
+                      team.name.members.map((m, idx) => (
+                        <li className="list-inline-item small" key={idx}>👤 {m}</li>
+                      ))}
                   </ul>
                 </div>
                 <div><span className="badge bg-primary">{team.score} نقطة</span></div>

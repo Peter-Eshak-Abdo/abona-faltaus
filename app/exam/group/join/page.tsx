@@ -24,7 +24,12 @@ export default function JoinPage() {
     socket.on("room-joined", (data) => {
       console.log("[JOIN] room-joined event received", data);
       setTeamName(data.team.name);
-      localStorage.setItem("currentTeam", JSON.stringify(data.team));
+      localStorage.setItem("currentTeam", JSON.stringify({
+        id: data.team.id,
+        name: data.team.name,
+        memberCount: data.team.memberCount,
+        members: data.team.members
+      }));
       alert(`تم انضمام فريق ${data.team.name} بنجاح!`);
       router.push(`/exam/group/play/${roomId}`);
     });
@@ -99,6 +104,7 @@ export default function JoinPage() {
 
     if (socket) {
       socket.emit("join-room", {
+
         roomId,
         team: {
           id: teamId,
@@ -107,6 +113,10 @@ export default function JoinPage() {
           members
         }
       });
+      // if (room.teams.some(t => t.name === teamName)) {
+      //     setError("اسم الفريق موجود بالفعل في هذه الغرفة");
+      //     return;
+      // }
     }
   };
 

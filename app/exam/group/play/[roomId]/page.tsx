@@ -29,8 +29,8 @@ export default function PlayPage() {
       socket.emit("submit-answer", {
         roomId,
         questionId: currentQuestion.id,
-        answer: currentQuestion.options[selectedAnswer]
-        // answer: selectedAnswer
+        // answer: currentQuestion.options[selectedAnswer]
+        answer: selectedAnswer
       });
       setSubmitted(true); // تمنع أي تعديل بعد الإرسال
     }

@@ -6,9 +6,13 @@ import { socket } from "@/lib/socket";
 
 interface Team {
   id: string;
-  name: string;
-  members?: string[];
-  memberCount?: number;
+  name: {
+    id: string;
+    name: string;
+    memberCount?: number;
+    members?: string[];
+  };
+  socketId: string;
   score: number;
 }
 
@@ -90,9 +94,11 @@ export default function AdminExamPage() {
     socket.on("exam-finished", () => {
       console.log("[ADMIN] exam-finished event received");
       if (timerRef.current) clearInterval(timerRef.current);
+      localStorage.setItem("examResults", JSON.stringify(teams));
       setCurrentQuestion(null);
       setTimeLeft(null);
-      setTeams([]);
+      // setTeams([]);
+      router.push(`/exam/group/admin/exams/${roomId}/results`);
     });
 
     socket.emit("join-room", { roomId, isAdmin: true });
@@ -108,7 +114,7 @@ export default function AdminExamPage() {
       socket.off("exam-finished");
     };
 
-  }, [roomId]);
+  }, [roomId, router, teams]);
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -187,7 +193,7 @@ export default function AdminExamPage() {
                       if (currentIndex < totalQuestions) {
                         socket.emit("next-question", { roomId });
                       } else {
-                        router.push(`/exam/group/admin/exams/${roomId}/results`);
+                        // router.push(`/exam/group/admin/exams/${roomId}/results`);
                       }
                     }}
                   // onClick={() => socket.emit("next-question", { roomId })}
@@ -223,21 +229,28 @@ export default function AdminExamPage() {
                   transition={{ duration: 0.5 }}
                   className="list-group-item"
                 >
-                  {Array.isArray(teams) && teams.length > 0 ? (
+                  {/* {Array.isArray(teams) && teams.length > 0 ? (
                     teams.map(team => (
                       <div key={team.id}>
                         <div className="list-group-item d-flex justify-content-between align-items-center">
-                          <span>{team.name}</span>
+                          <span>{team.name.name}</span>
                           <span className="badge bg-primary rounded-pill">{team.score}</span>
                         </div>
-                        {team.members && (
-                          <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
+                        {team.name.members && (
+                          <small className="text-muted">{team.name.memberCount} أعضاء : {team.name.members.join(", ")}</small>
                         )}
                       </div>
                     ))
                   ) : (
                     <div className="text-center text-muted">لا يوجد فرق متصلة</div>
-                  )}
+                  )} */}
+                    <div className="list-group-item d-flex justify-content-between align-items-center">
+                      <span>{team.name.name}</span>
+                      <span className="badge bg-primary rounded-pill">{team.score}</span>
+                    </div>
+                    {team.name.members && (
+                      <small className="text-muted">{team.name.memberCount} أعضاء : {team.name.members.join(", ")}</small>
+                    )}
                 </motion.div>
               ))}
             </div>
