@@ -32,52 +32,77 @@ export default function AdminExamPage() {
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const hasJointed = useRef(false);
+
   useEffect(() => {
     if (!roomId) return;
+
+    if (hasJointed.current) return;
+    hasJointed.current = true;
+    const handleTeamsInit = (existingTeams: Team[]) => {
+      console.log("🔔 teams-init payload:", existingTeams);
+      setTeams(existingTeams);
+    };
+    const handleTeamJoined = (team: Team) => {
+      console.log("🔔 team-joined payload:", team);
+      setTeams(prev => [...prev, team]);
+    };
+
+    const onExamStarted = (payload: {
+      question: Question;
+      index: number;
+      totalQuestions: number;
+      timePerQuestion: number;
+    }) => {
+      if (!payload.question || !Array.isArray(payload.question.options)) return;
+      setCurrentQuestion(payload.question);
+      setCurrentIndex(payload.index + 1);
+      setTotalQuestions(payload.totalQuestions);
+      resetTimer(payload.timePerQuestion);
+    };
+
+    const onQuestion = onExamStarted; // نفس المعالجة
 
     socket.on("room-error", (message) => {
       console.error("Room error:", message);
       setError(message);
     });
 
-    socket.on("teams-init", (existingTeams) => {
-      console.log("team-joined payload:", existingTeams);
-      setTeams(existingTeams);
-    });
-
-    socket.on("team-joined", (team) => {
-      console.log("team-joined payload:", team);
-      setTeams(prev => [...prev, team]);
-    });
+    socket.on("teams-init", handleTeamsInit);
+    socket.on("team-joined", handleTeamJoined);
+    socket.emit("join-room", { roomId, isAdmin: true });
 
     socket.on("team-left", (teamId) => {
       console.log("team-left payload:", teamId);
       setTeams(prev => prev.filter(t => t.id !== teamId));
     });
 
-    socket.on("exam-started", ({ question, index, totalQuestions, timePerQuestion }) => {
-      console.log("[ADMIN] exam-started event received", { question, index, totalQuestions, timePerQuestion });
-      setCurrentIndex(index + 1);
-      setTotalQuestions(totalQuestions);
-      let opts = question.options;
-      if (!Array.isArray(opts) || opts.length === 0) {
-        opts = ["صح", "خطأ"];
-      }
-      setCurrentQuestion({ ...question, options: opts });
-      resetTimer(timePerQuestion);
-    });
+    socket.on("exam-started", onExamStarted);
+    socket.on("question", onQuestion);
 
-    socket.on("question", ({ question, index, totalQuestions, timePerQuestion }) => {
-      console.log("[ADMIN] question event received", { question, index, totalQuestions, timePerQuestion });
-      setCurrentIndex(index + 1);
-      setTotalQuestions(totalQuestions);
-      let opts = question.options;
-      if (!Array.isArray(opts) || opts.length === 0) {
-        opts = ["صح", "خطأ"];
-      }
-      setCurrentQuestion({ ...question, options: opts });
-      resetTimer(timePerQuestion);
-    });
+    // socket.on("exam-started", ({ question, index, totalQuestions, timePerQuestion }) => {
+    //   console.log("[ADMIN] exam-started event received", { question, index, totalQuestions, timePerQuestion });
+    //   setCurrentIndex(index + 1);
+    //   setTotalQuestions(totalQuestions);
+    //   let opts = question.options;
+    //   if (!Array.isArray(opts) || opts.length === 0) {
+    //     opts = ["صح", "خطأ"];
+    //   }
+    //   setCurrentQuestion({ ...question, options: opts });
+    //   resetTimer(timePerQuestion);
+    // });
+
+    // socket.on("question", ({ question, index, totalQuestions, timePerQuestion }) => {
+    //   console.log("[ADMIN] question event received", { question, index, totalQuestions, timePerQuestion });
+    //   setCurrentIndex(index + 1);
+    //   setTotalQuestions(totalQuestions);
+    //   let opts = question.options;
+    //   if (!Array.isArray(opts) || opts.length === 0) {
+    //     opts = ["صح", "خطأ"];
+    //   }
+    //   setCurrentQuestion({ ...question, options: opts });
+    //   resetTimer(timePerQuestion);
+    // });
 
     socket.on("answer-submitted", ({ teamId, isCorrect }) => {
       console.log("[ADMIN] answer-submitted event received", { teamId, isCorrect });
@@ -88,6 +113,7 @@ export default function AdminExamPage() {
         return team;
       }));
     });
+
     socket.on("exam-finished", () => {
       console.log("[ADMIN] exam-finished event received");
       if (timerRef.current) clearInterval(timerRef.current);
@@ -98,15 +124,13 @@ export default function AdminExamPage() {
       router.push(`/exam/group/admin/exams/${roomId}/results`);
     });
 
-    socket.emit("join-room", { roomId, isAdmin: true });
-
     return () => {
       socket.off("room-error");
-      socket.off("teams-init");
-      socket.off("team-joined");
+      socket.off("teams-init", handleTeamsInit);
+      socket.off("team-joined", handleTeamJoined);
       socket.off("team-left");
-      socket.off("exam-started");
-      socket.off("question");
+      socket.off("exam-started", onExamStarted);
+      socket.off("question", onQuestion);
       socket.off("answer-submitted");
       socket.off("exam-finished");
     };
@@ -216,7 +240,7 @@ export default function AdminExamPage() {
               <h2 className="h4 mb-0">الفرق</h2>
             </div>
             <div className="card-body">
-              {teams.sort((a, b) => b.score - a.score).map(team => (
+              {/* {teams.sort((a, b) => b.score - a.score).map(team => (
                 <motion.div
                   key={team.id}
                   layout
@@ -226,30 +250,55 @@ export default function AdminExamPage() {
                   transition={{ duration: 0.5 }}
                   className="list-group-item"
                 >
-                  {/* {Array.isArray(teams) && teams.length > 0 ? (
+                  {Array.isArray(teams) && teams.length > 0 ? (
                     teams.map(team => (
                       <div key={team.id}>
                         <div className="list-group-item d-flex justify-content-between align-items-center">
-                          <span>{team.name.name}</span>
+                          <span>{team.name}</span>
                           <span className="badge bg-primary rounded-pill">{team.score}</span>
                         </div>
-                        {team.name.members && (
-                          <small className="text-muted">{team.name.memberCount} أعضاء : {team.name.members.join(", ")}</small>
+                        {team.members && (
+                          <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
                         )}
                       </div>
                     ))
                   ) : (
                     <div className="text-center text-muted">لا يوجد فرق متصلة</div>
                   )} */}
-                  <div className="list-group-item d-flex justify-content-between align-items-center">
+              {/* <div className="list-group-item d-flex justify-content-between align-items-center">
                     <span>{team.name}</span>
                     <span className="badge bg-primary rounded-pill">{team.score}</span>
-                  </div>
-                  {team.members && (
-                    <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
-                  )}
-                </motion.div>
-              ))}
+                    </div>
+                    {team.members && (
+                      <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
+                      )}
+                      </motion.div>
+                      ))}*/}
+              {teams.length > 0 ? (
+                teams.sort((a, b) => b.score - a.score).map(team => (
+                  <motion.div
+                    key={team.id}
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="list-group-item"
+                  >
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span>{team.name}</span>
+                      <span className="badge bg-primary rounded-pill">{team.score}</span>
+                    </div>
+                    {team.members && team.members.length > 0 && (
+                      <small className="text-muted">
+                        {team.memberCount} أعضاء: {team.members.join(", ")}
+                      </small>
+                    )}
+                  </motion.div>
+                ))
+              ) : (
+                <div className="text-center text-muted">لا يوجد فرق متصلة</div>
+              )}
             </div>
           </div>
         </div>

@@ -39,41 +39,57 @@ export default function PlayPage() {
   useEffect(() => {
     if (!roomId) return;
 
+    const handleExamStarted = (payload: {
+      question?: Question;
+      index: number;
+      totalQuestions: number;
+      timePerQuestion?: number;
+    }) => {
+      if (!payload.question || !Array.isArray(payload.question.options)) {
+        console.warn("Exam started with invalid question data", payload);
+        return;
+      }
+      setCurrentQuestion(payload.question);
+      // resetTimer(payload.timePerQuestion);
+    };
     socket.on("room-error", (message) => {
       console.error("Room error:", message);
       setError(message);
     });
 
-    socket.on("exam-started", ({ question, index, totalQuestions, timePerQuestion }) => {
-      console.log("[TEAM] exam-started event received", { question, index, totalQuestions, timePerQuestion });
-      let opts = question.options;
-      if (!Array.isArray(opts) || opts.length === 0) {
-        opts = ["صح", "خطأ"];
-      }
-      setCurrentQuestion({ ...question, options: opts });
-      setSelectedAnswer(null);
-      setTimeLeft(timePerQuestion || 30);
-      if (timerRef.current) clearInterval(timerRef.current);
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
-      }, 1000);
-    });
+    socket.on("exam-started", handleExamStarted);
+    socket.on("question", handleExamStarted);
 
-    socket.on("question", ({ question, index, totalQuestions, timePerQuestion }) => {
-      console.log("[TEAM] question event received", { question, index, totalQuestions, timePerQuestion });
-      setSubmitted(false);
-      let opts = question.options;
-      if (!Array.isArray(opts) || opts.length === 0) {
-        opts = ["صح", "خطأ"];
-      }
-      setCurrentQuestion({ ...question, options: opts });
-      setSelectedAnswer(null);
-      setTimeLeft(timePerQuestion || 30);
-      if (timerRef.current) clearInterval(timerRef.current);
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
-      }, 1000);
-    });
+    // socket.on("exam-started", ({ question, index, totalQuestions, timePerQuestion }) => {
+    //   console.log("[TEAM] exam-started event received", { question, index, totalQuestions, timePerQuestion });
+    //   let opts = question.options;
+    //   if (!Array.isArray(opts) || opts.length === 0) {
+    //     opts = ["صح", "خطأ"];
+    //   }
+    //   setCurrentQuestion({ ...question, opts: opts });
+    //   setSelectedAnswer(null);
+    //   setTimeLeft(timePerQuestion || 30);
+    //   if (timerRef.current) clearInterval(timerRef.current);
+    //   timerRef.current = setInterval(() => {
+    //     setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
+    //   }, 1000);
+    // });
+
+    // socket.on("question", ({ question, index, totalQuestions, timePerQuestion }) => {
+    //   console.log("[TEAM] question event received", { question, index, totalQuestions, timePerQuestion });
+    //   setSubmitted(false);
+    //   let opts = question.options;
+    //   if (!Array.isArray(opts) || opts.length === 0) {
+    //     opts = ["صح", "خطأ"];
+    //   }
+    //   setCurrentQuestion({ ...question, opts: opts });
+    //   setSelectedAnswer(null);
+    //   setTimeLeft(timePerQuestion || 30);
+    //   if (timerRef.current) clearInterval(timerRef.current);
+    //   timerRef.current = setInterval(() => {
+    //     setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
+    //   }, 1000);
+    // });
 
     socket.on("answer-result", (result: { isCorrect: boolean }) => {
       console.log("[TEAM] answer-result event received", result);
@@ -124,9 +140,9 @@ export default function PlayPage() {
 
     socket.emit("join-room", { roomId, team });
     return () => {
+      socket.off("exam-started", handleExamStarted);
+      socket.off("question", handleExamStarted);
       socket.off("room-error");
-      socket.off("exam-started");
-      socket.off("question");
       socket.off("answer-result");
       socket.off("exam-finished");
     };
