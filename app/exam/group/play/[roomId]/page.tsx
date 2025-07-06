@@ -49,8 +49,17 @@ export default function PlayPage() {
         console.warn("Exam started with invalid question data", payload);
         return;
       }
+      setSelectedAnswer(null);
+      setSubmitted(false);
+
       setCurrentQuestion(payload.question);
-      // resetTimer(payload.timePerQuestion);
+
+      const t = payload.timePerQuestion || 30;
+      setTimeLeft(t);
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => (prev && prev > 0 ? prev - 1 : 0));
+      }, 1000);
     };
     socket.on("room-error", (message) => {
       console.error("Room error:", message);
