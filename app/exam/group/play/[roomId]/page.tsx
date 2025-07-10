@@ -157,12 +157,12 @@ export default function PlayPage() {
     };
   }, [roomId, score, timeLeft, teamName, currentQuestion, handleAnswerSubmit]);
 
-  useEffect(() => {
-    if (timeLeft === 0) {
-      console.log("[TEAM] timeLeft is 0, submitting answer");
-      handleAnswerSubmit();
-    }
-  }, [timeLeft, handleAnswerSubmit]);
+  // useEffect(() => {
+  //   if (timeLeft === 0) {
+  //     console.log("[TEAM] timeLeft is 0, submitting answer");
+  //     handleAnswerSubmit();
+  //   }
+  // }, [timeLeft, handleAnswerSubmit]);
 
   // useEffect(() => {
   //   if (timeLeft === 0) {

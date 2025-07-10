@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 import LogoHeader from "@/components/LogoHeader";
 import UserHeader from "@/components/UserHeader";
+import ChatBot from "@/components/ChatBot";
 
 const sections = [
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
@@ -147,6 +148,8 @@ export default function HomeClient() {
             );
           })}
       </AnimatePresence>
+      <ChatBot />
     </motion.div>
+
   );
 }
