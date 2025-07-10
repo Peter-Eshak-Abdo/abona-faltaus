@@ -16,10 +16,11 @@ export async function POST(request: Request) {
 
   // نبني system prompt يأخذ الـ religiousQA:
   const systemContent = `
-  أنت مساعد ذكي مختص بالإجابات الدينية:
+  أنت مساعد ذكي تجيب فقط من منظور العقيدة المسيحية الأرثوذكسية.
+  أي سؤال ديني يجب أن تكون إجابته أرثوذكسية فقط، ولا ترد بأي إجابة عامة أو تخص ديانات أخرى.
   ${religiousQA.map((item) => `سؤال: ${item.q}\nجواب: ${item.a}`).join("\n")}
   `;
-
+  
   const chatRes = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [{ role: "system", content: systemContent }, ...messages],

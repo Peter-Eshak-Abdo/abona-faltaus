@@ -6,6 +6,7 @@ import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 // import { SpeedInsights } from '@vercel/speed-insights/next';
 import "./globals.css";
 import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
+import ChatFab from "@/components/ChatFab";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -109,6 +110,7 @@ export default function RootLayout({
           src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"
           strategy="afterInteractive"
         />
+        <ChatFab />
       </body>
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
