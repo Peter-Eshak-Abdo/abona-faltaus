@@ -65,7 +65,6 @@ export default function RootLayout({
         <meta property="og:image" content="/images/icons/favicon.ico" />
         <link rel="canonical" href="https://abona-faltaus.vercel.app/" />
         <meta name="mobile-web-app-capable" content="yes" />
-        {/* iOS splash + PWA support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link
@@ -104,13 +103,13 @@ export default function RootLayout({
         <ServiceWorkerRegister />
         <div className="background-blur" />
         <LoadingProvider>
+        <ChatFab />
           <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
         </LoadingProvider>
         <Script
           src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"
           strategy="afterInteractive"
         />
-        <ChatFab />
       </body>
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -14,7 +14,6 @@ import {
 } from "react-icons/fa";
 import LogoHeader from "@/components/LogoHeader";
 import UserHeader from "@/components/UserHeader";
-// import ChatBot from "@/components/ChatBot";
 
 const sections = [
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
@@ -26,7 +25,7 @@ const sections = [
 ];
 
 export default function HomeClient() {
-  const router = useRouter();
+  // const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
   const [logoPos, setLogoPos] = useState("center");
   const eagleControls = useAnimation();
@@ -68,10 +67,10 @@ export default function HomeClient() {
               left: "50%",
               translateX: "-50%",
               translateY: "-50%",
-              scale: 0.35,
+              scale: 0.10,
             }
         }
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
       >
         <motion.button
           onClick={toggleMenu}
@@ -129,7 +128,6 @@ export default function HomeClient() {
             const angle = (index / sections.length) * 2 * Math.PI;
             const x = Math.cos(angle) * 150 - 35;
             const y = Math.sin(angle) * 150 - 10;
-
             return (
               <motion.div
                 key={section.name}
@@ -150,8 +148,7 @@ export default function HomeClient() {
             );
           })}
       </AnimatePresence>
-      {/* <ChatBot /> */}
-      <button
+      {/* <button
         onClick={() => router.push("/chat")}
         className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg transition-all"
         aria-label="افتح الشات"
@@ -159,7 +156,7 @@ export default function HomeClient() {
         type="button"
       >
         <svg width="32" height="32" fill="currentColor"><circle cx="16" cy="16" r="16" /></svg>
-      </button>
+      </button> */}
     </motion.div>
 
   );
