@@ -1,12 +1,13 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
 import LoadingProvider from "./loading-provider";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-// import { SpeedInsights } from '@vercel/speed-insights/next';
-import "./globals.css";
 import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
 import ChatFab from "@/components/ChatFab";
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from "@vercel/analytics/next"
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -106,6 +107,8 @@ export default function RootLayout({
         <ChatFab />
           <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
         </LoadingProvider>
+        <Analytics />
+        <SpeedInsights />
         <Script
           src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"
           strategy="afterInteractive"

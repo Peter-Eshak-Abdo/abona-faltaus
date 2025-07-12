@@ -22,12 +22,82 @@ interface Quote {
   topic: string;
 }
 
-function searchBibleVerses(
-  bible: BibleBook[]
-  // query: string
-): BibleVerseResult[] {
-  // بحث أكثر دقة: فقط كلمات مفتاحية قوية مثل "غضب" أو "محبة" أو "إيمان" أو "صلاة" أو "عقيدة"
-  const strongKeywords = [
+const keywordMap = {
+  محبة: [
+    "محبة",
+    "محب",
+    "محبتي",
+    "محبتك",
+    "محبتهم",
+    "محبتنا",
+    "محبتكم",
+    "محبة الله",
+    "محبة الرب",
+    "محبة المسيح",
+    "المحبة",
+  ],
+  إيمان: [
+    "ايمان",
+    "إيماني",
+    "إيمانك",
+    "إيمانهم",
+    "إيماننا",
+    "إيمانكم",
+    "إيمان الله",
+    "إيمان الرب",
+    "إيمان المسيح",
+    "الايمان",
+  ],
+  صلاة: [
+    "صلاة",
+    "صلات",
+    "صلاتي",
+    "صلاتك",
+    "صلاتهم",
+    "صلاتنا",
+    "صلاتكم",
+    "صلاة الله",
+    "صلاة الرب",
+    "صلاة المسيح",
+    "الصلاة",
+  ],
+  صبر: [
+    "صبر",
+    "صبري",
+    "صبرك",
+    "صبرهم",
+    "صبرنا",
+    "صبركم",
+    "صبر الله",
+    "صبر الرب",
+    "صبر المسيح",
+    "الصبر",
+  ],
+  عقيدة: [
+    "عقيدة",
+    "عقيدتي",
+    "عقيدتك",
+    "عقيدتهم",
+    "عقيدتنا",
+    "عقيدتكم",
+    "عقيدة الله",
+    "عقيدة الرب",
+    "عقيدة المسيح",
+    "العقيدة",
+  ],
+  رجاء: [
+    "رجاء",
+    "رجائي",
+    "رجاؤك",
+    "رجاؤهم",
+    "رجاؤنا",
+    "رجاؤكم",
+    "رجاء الله",
+    "رجاء الرب",
+    "رجاء المسيح",
+    "الرجاء",
+  ],
+  غضب: [
     "غضب",
     "غاضب",
     "غضبك",
@@ -37,23 +107,53 @@ function searchBibleVerses(
     "غضبكم",
     "غضب الله",
     "غضب الرب",
-  ];
-  const results: BibleVerseResult[] = [];
-  for (const book of bible) {
-    book.chapters.forEach((chapter: string[], chapterIdx: number) => {
-      chapter.forEach((verse: string, verseIdx: number) => {
-        if (strongKeywords.some((k: string) => verse.includes(k))) {
-          results.push({
-            verse,
-            ref: `${book.name} ${chapterIdx + 1}:${verseIdx + 1}`,
-          });
-        }
+    "الغضب",
+  ],
+  // Add more keywords and their corresponding search results here
+};
+
+async function searchBibleVerses(
+  bible: BibleBook[],
+  query: string,
+  searchType: "keyword" | "concept",
+  limit: number = 10
+): Promise<BibleVerseResult[]> {
+  console.log("bible array:", bible);
+  let results: BibleVerseResult[] = [];
+
+  if (searchType === "keyword") {
+    // Search for verses that contain the keyword
+    for (const book of bible) {
+      console.log("processing book:", book);
+      book.chapters.forEach((chapter: string[], chapterIdx: number) => {
+        console.log("processing chapter:", chapter);
+        chapter.forEach((verse: string, verseIdx: number) => {
+          const keywords = (keywordMap as Record<string, string[]>)[query];
+          if (keywords && keywords.some((keyword) => verse.includes(keyword))) {
+            results.push({
+              verse,
+              ref: `${book.name} ${chapterIdx + 1}:${verseIdx + 1}`,
+            });
+          }
+        });
       });
-    });
+    }
+  } else if (searchType === "concept") {
+    // Search for verses that explain the concept
+    const conceptVerses = JSON.parse(
+      await fs.readFile(
+        path.join(process.cwd(), "public", "verses_topics.json"),
+        "utf8"
+      )
+    );
+    results = conceptVerses
+      .filter((verse: { topic: string }) => verse.topic === query)
+      .slice(0, limit);
   }
+
+  console.log("search results:", results);
   return results;
 }
-
 function searchQuotes(quotes: Quote[], query: string): Quote[] {
   const keywords = query.split(/\s+/).filter((w: string) => w.length > 2);
   return quotes.filter((q: Quote) =>
@@ -62,7 +162,6 @@ function searchQuotes(quotes: Quote[], query: string): Quote[] {
 }
 
 export async function POST(request: Request) {
-  // استيراد أسماء الأسفار بالعربي
   const booksModule = await import("@/lib/books.js");
   const bookNames = booksModule.bookNames;
   const { messages } = await request.json();
@@ -72,8 +171,9 @@ export async function POST(request: Request) {
   }
 
   const userMsg: string =
-    (messages as ChatMessage[]).find((m: ChatMessage) => m.role === "user")
-      ?.content || "";
+    (messages as ChatMessage[])
+      .find((m: ChatMessage) => m.role === "user")
+      ?.content.toLowerCase() || "";
 
   // قراءة ملفات البيانات
   const biblePath = path.join(process.cwd(), "public", "ar_svd.json");
@@ -104,10 +204,22 @@ export async function POST(request: Request) {
     ref: string;
   }
 
+  const userMsgLimit = userMsg.match(/\d+/)?.[0];
+  const searchType =
+    userMsg.includes("concept") || userMsg.includes("مفهوم")
+      ? ("concept" as const)
+      : ("keyword" as const);
+  const limit = userMsgLimit ? parseInt(userMsgLimit) : 15;
+  const searchTerm = userMsg.replace(/[ًٌٍَُِْ]/g, "").toLowerCase();
+  console.log("Search term:", searchTerm);
+  console.log("Search type:", searchType);
+  console.log("Limit:", limit);
+
   const topicVerses: VerseTopic[] = (versesTopics as VerseTopic[]).filter(
-    (v: VerseTopic) => userMsg.includes("غضب") && v.topic === "الغضب"
+    (v: VerseTopic) => v.topic.toLowerCase().includes(searchTerm)
   );
-  const verses = searchBibleVerses(bible);
+  console.log("Topic verses:", topicVerses);
+  const verses = await searchBibleVerses(bible, userMsg, searchType, limit);
   const foundQuotes = searchQuotes(quotes, userMsg);
 
   // تجهيز نص الآيات

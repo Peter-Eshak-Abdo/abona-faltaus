@@ -17,6 +17,7 @@
   "dependencies": {
     "@react-pdf/render": "^4.3.0",
     "@tailwindcss/forms": "^0.5.10",
+    "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.1",
