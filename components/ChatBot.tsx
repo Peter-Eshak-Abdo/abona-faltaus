@@ -37,17 +37,22 @@ export default function ChatBot() {
     <Card className="p-4 flex flex-col h-full">
       <div className="flex-1 overflow-auto space-y-2">
         {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`max-w-xs md:max-w-md p-3 my-2 rounded-2xl shadow
-      ${m.role === "user"
-                ? "bg-blue-100 self-end rounded-br-none text-right ml-auto"
-                : "bg-gray-100 self-start rounded-bl-none text-left mr-auto"
-              }`}
-            style={{ wordBreak: "break-word" }}
-          >
-            {m.content}
-          </div>
+          m.role === "assistant" ? (
+            <div
+              key={i}
+              className={`max-w-xs md:max-w-md p-3 my-2 rounded-2xl shadow bg-gray-100 self-start rounded-bl-none mr-auto`}
+              style={{ wordBreak: "break-word" }}
+              dangerouslySetInnerHTML={{ __html: m.content }}
+            />
+          ) : (
+            <div
+              key={i}
+              className={`max-w-xs md:max-w-md p-3 my-2 rounded-2xl shadow bg-blue-100 self-end rounded-br-none text-right ml-auto`}
+              style={{ wordBreak: "break-word" }}
+            >
+              {m.content}
+            </div>
+          )
         ))}
         {loading && (
           <div className="flex justify-end">
