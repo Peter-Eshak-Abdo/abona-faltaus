@@ -22,95 +22,121 @@ interface Quote {
   topic: string;
 }
 
-const keywordMap = {
-  محبة: [
-    "محبة",
-    "محب",
-    "محبتي",
-    "محبتك",
-    "محبتهم",
-    "محبتنا",
-    "محبتكم",
-    "محبة الله",
-    "محبة الرب",
-    "محبة المسيح",
-    "المحبة",
-  ],
-  إيمان: [
-    "ايمان",
-    "إيماني",
-    "إيمانك",
-    "إيمانهم",
-    "إيماننا",
-    "إيمانكم",
-    "إيمان الله",
-    "إيمان الرب",
-    "إيمان المسيح",
-    "الايمان",
-  ],
-  صلاة: [
-    "صلاة",
-    "صلات",
-    "صلاتي",
-    "صلاتك",
-    "صلاتهم",
-    "صلاتنا",
-    "صلاتكم",
-    "صلاة الله",
-    "صلاة الرب",
-    "صلاة المسيح",
-    "الصلاة",
-  ],
-  صبر: [
-    "صبر",
-    "صبري",
-    "صبرك",
-    "صبرهم",
-    "صبرنا",
-    "صبركم",
-    "صبر الله",
-    "صبر الرب",
-    "صبر المسيح",
-    "الصبر",
-  ],
-  عقيدة: [
-    "عقيدة",
-    "عقيدتي",
-    "عقيدتك",
-    "عقيدتهم",
-    "عقيدتنا",
-    "عقيدتكم",
-    "عقيدة الله",
-    "عقيدة الرب",
-    "عقيدة المسيح",
-    "العقيدة",
-  ],
-  رجاء: [
-    "رجاء",
-    "رجائي",
-    "رجاؤك",
-    "رجاؤهم",
-    "رجاؤنا",
-    "رجاؤكم",
-    "رجاء الله",
-    "رجاء الرب",
-    "رجاء المسيح",
-    "الرجاء",
-  ],
-  غضب: [
-    "غضب",
-    "غاضب",
-    "غضبك",
-    "غضبي",
-    "غضبهم",
-    "غضبنا",
-    "غضبكم",
-    "غضب الله",
-    "غضب الرب",
-    "الغضب",
-  ],
-  // Add more keywords and their corresponding search results here
+// const keywordMap = {
+//   محبة: [
+//     "محبة",
+//     "محب",
+//     "محبتي",
+//     "محبتك",
+//     "محبتهم",
+//     "محبتنا",
+//     "محبتكم",
+//     "محبة الله",
+//     "محبة الرب",
+//     "محبة المسيح",
+//     "المحبة",
+//   ],
+//   إيمان: [
+//     "ايمان",
+//     "إيماني",
+//     "إيمانك",
+//     "إيمانهم",
+//     "إيماننا",
+//     "إيمانكم",
+//     "إيمان الله",
+//     "إيمان الرب",
+//     "إيمان المسيح",
+//     "الايمان",
+//   ],
+//   صلاة: [
+//     "صلاة",
+//     "صلات",
+//     "صلاتي",
+//     "صلاتك",
+//     "صلاتهم",
+//     "صلاتنا",
+//     "صلاتكم",
+//     "صلاة الله",
+//     "صلاة الرب",
+//     "صلاة المسيح",
+//     "الصلاة",
+//   ],
+//   صبر: [
+//     "صبر",
+//     "صبري",
+//     "صبرك",
+//     "صبرهم",
+//     "صبرنا",
+//     "صبركم",
+//     "صبر الله",
+//     "صبر الرب",
+//     "صبر المسيح",
+//     "الصبر",
+//   ],
+//   عقيدة: [
+//     "عقيدة",
+//     "عقيدتي",
+//     "عقيدتك",
+//     "عقيدتهم",
+//     "عقيدتنا",
+//     "عقيدتكم",
+//     "عقيدة الله",
+//     "عقيدة الرب",
+//     "عقيدة المسيح",
+//     "العقيدة",
+//   ],
+//   رجاء: [
+//     "رجاء",
+//     "رجائي",
+//     "رجاؤك",
+//     "رجاؤهم",
+//     "رجاؤنا",
+//     "رجاؤكم",
+//     "رجاء الله",
+//     "رجاء الرب",
+//     "رجاء المسيح",
+//     "الرجاء",
+//   ],
+//   غضب: [
+//     "غضب",
+//     "غاضب",
+//     "غضبك",
+//     "غضبي",
+//     "غضبهم",
+//     "غضبنا",
+//     "غضبكم",
+//     "غضب الله",
+//     "غضب الرب",
+//     "الغضب",
+//   ],
+//   // Add more keywords and their corresponding search results here
+// };
+
+const synonymMap: Record<string, string> = {
+  الايمان: "إيمان",
+  ايمان: "إيمان",
+  الإيمان: "إيمان",
+  محبة: "محبة",
+  حب: "محبة",
+  الحب: "محبة",
+  صلاة: "صلاة",
+  صلوات: "صلاة",
+  الصلاة: "صلاة",
+  صبر: "صبر",
+  الصبر: "صبر",
+  عقيدة: "عقيدة",
+  عقائد: "عقيدة",
+  العقيدة: "عقيدة",
+  رجاء: "رجاء",
+  الرجاء: "رجاء",
+  غضب: "غضب",
+  غاضب: "غاضب",
+  الغضب: "غضب",
 };
+function normalize(term: string) {
+  const t = term.replace(/[ًٌٍَُِْ]/g, "").toLowerCase();
+  return synonymMap[t] || t;
+}
 
 async function searchBibleVerses(
   bible: BibleBook[],
@@ -120,7 +146,6 @@ async function searchBibleVerses(
 ): Promise<BibleVerseResult[]> {
   console.log("bible array:", bible);
   let results: BibleVerseResult[] = [];
-
   if (searchType === "keyword") {
     // Search for verses that contain the keyword
     for (const book of bible) {
@@ -128,7 +153,7 @@ async function searchBibleVerses(
       book.chapters.forEach((chapter: string[], chapterIdx: number) => {
         console.log("processing chapter:", chapter);
         chapter.forEach((verse: string, verseIdx: number) => {
-          const keywords = (keywordMap as Record<string, string[]>)[query];
+          const keywords = (synonymMap as unknown as Record<string, string[]>)[query];
           if (keywords && keywords.some((keyword) => verse.includes(keyword))) {
             results.push({
               verse,
@@ -162,18 +187,23 @@ function searchQuotes(quotes: Quote[], query: string): Quote[] {
 }
 
 export async function POST(request: Request) {
+  const { messages, mode } = await request.json();
+  const searchType = mode; // "keyword" أو "concept"
   const booksModule = await import("@/lib/books.js");
   const bookNames = booksModule.bookNames;
-  const { messages } = await request.json();
+  // const { messages } = await request.json();
   interface ChatMessage {
     role: "user" | "assistant";
     content: string;
   }
+ const raw =
+   (messages as ChatMessage[]).find((m) => m.role === "user")?.content || "";
+  const userMsg = normalize(raw);
 
-  const userMsg: string =
-    (messages as ChatMessage[])
-      .find((m: ChatMessage) => m.role === "user")
-      ?.content.toLowerCase() || "";
+  // const userMsg: string =
+  //   (messages as ChatMessage[])
+  //     .find((m: ChatMessage) => m.role === "user")
+  //     ?.content.toLowerCase() || "";
 
   // قراءة ملفات البيانات
   const biblePath = path.join(process.cwd(), "public", "ar_svd.json");
@@ -205,10 +235,10 @@ export async function POST(request: Request) {
   }
 
   const userMsgLimit = userMsg.match(/\d+/)?.[0];
-  const searchType =
-    userMsg.includes("concept") || userMsg.includes("مفهوم")
-      ? ("concept" as const)
-      : ("keyword" as const);
+  // const searchType =
+  //   userMsg.includes("concept") || userMsg.includes("مفهوم")
+  //     ? ("concept" as const)
+  //     : ("keyword" as const);
   const limit = userMsgLimit ? parseInt(userMsgLimit) : 15;
   const searchTerm = userMsg.replace(/[ًٌٍَُِْ]/g, "").toLowerCase();
   console.log("Search term:", searchTerm);
@@ -219,13 +249,23 @@ export async function POST(request: Request) {
     (v: VerseTopic) => v.topic.toLowerCase().includes(searchTerm)
   );
   console.log("Topic verses:", topicVerses);
-  const verses = await searchBibleVerses(bible, userMsg, searchType, limit);
-  const foundQuotes = searchQuotes(quotes, userMsg);
+  let allVerses: { verse: string; ref: string }[] = []; // Declare allVerses here
+  if (mode === "keyword") {
+    // بحث نصّي: ابحث في JSON الكامل
+    const verses = await searchBibleVerses(bible, userMsg, "keyword", limit);
+    allVerses = verses; // Assign to allVerses
+  } else {
+    // بحث مفهوم: من ملف verses_topics.json فقط
+    const topicVerses: VerseTopic[] = versesTopics
+      .filter((v: { topic: string; }) => normalize(v.topic) === userMsg)
+      .slice(0, limit);
+    allVerses = topicVerses.map((v) => ({ verse: v.verse, ref: v.ref })); // Assign to allVerses
+  }
 
+  const foundQuotes = searchQuotes(quotes, userMsg);
   // تجهيز نص الآيات
-  let allVerses: { verse: string; ref: string }[] = [];
   if (topicVerses.length) allVerses = [...topicVerses];
-  if (verses.length) allVerses = [...allVerses, ...verses].slice(0, 10);
+  // if (verses.length) allVerses = [...allVerses, ...verses].slice(0, 10);
 
   let versesText = "لا توجد آيات مطابقة في الكتاب المقدس حول هذا الموضوع.";
   if (allVerses.length) {
