@@ -3,6 +3,7 @@ import { useState, useRef, useEffect, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import DOMPurify from "dompurify";
 
 interface ChatMessage { role: "user" | "assistant"; content: string; }
 
@@ -42,7 +43,7 @@ export default function ChatBot() {
               key={i}
               className={`max-w-xs md:max-w-md p-3 my-2 rounded-2xl shadow bg-gray-100 self-start rounded-bl-none mr-auto`}
               style={{ wordBreak: "break-word" }}
-              dangerouslySetInnerHTML={{ __html: m.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }}
             />
           ) : (
             <div
