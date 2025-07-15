@@ -41,7 +41,7 @@
     "react-firebase-hooks": "^5.1.1",
     "react-howler": "^5.2.0",
     "react-icons": "^5.5.0",
-    "react-pdf": "^9.2.1",
+    "react-pdf": "^10.0.1",
     "slugify": "^1.6.6",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
