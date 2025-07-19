@@ -34,7 +34,8 @@ const io = new Server(httpServer, {
     origin: [
       "http://localhost:3000",
       "https://abona-faltaus.vercel.app",
-      "https://exam-group.glitch.me"
+      "https://abona-faltaus.onrender.com"
+      // "https://exam-group.glitch.me"
     ],
     methods: ["GET", "POST"],
     credentials: true,
