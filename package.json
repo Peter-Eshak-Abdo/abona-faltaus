@@ -12,7 +12,8 @@
     "predeploy": "rd /s /q out",
     "deploy": "npm run build && firebase deploy",
     "server": "nodemon server.js",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@react-pdf/render": "^4.3.0",
@@ -47,8 +48,7 @@
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.3.1",
     "uuid": "^11.1.0",
-    "web-push": "^3.6.7",
-    "dompurify": "^3.2.6"
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
