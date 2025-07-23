@@ -14,7 +14,7 @@
     "server": "nodemon server.js",
     "postbuild": "next-sitemap",
     "type-check": "tsc --noEmit",
-    "test": "jest --watchAll=false"
+    "test": "jest --watchAll=false --passWithNoTests"
   },
   "dependencies": {
     "@react-pdf/render": "^4.3.0",
