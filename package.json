@@ -13,7 +13,8 @@
     "deploy": "npm run build && firebase deploy",
     "server": "nodemon server.js",
     "postbuild": "next-sitemap",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "jest --watchAll=false"
   },
   "dependencies": {
     "@react-pdf/render": "^4.3.0",
@@ -66,6 +67,7 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
+    "jest": "^30.0.5",
     "next-sitemap": "^4.2.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.5",
