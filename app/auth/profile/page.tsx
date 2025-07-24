@@ -1,3 +1,4 @@
+"use client";
 import AccountInfo from "@/components/AccountInfo";
 
 export default function ProfilePage() {
