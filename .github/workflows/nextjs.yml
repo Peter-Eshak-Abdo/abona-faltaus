@@ -71,6 +71,8 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - name: Build
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: npm run build
 
   # 5. نشر على Vercel
