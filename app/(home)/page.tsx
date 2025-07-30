@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+export const dynamic = "force-dynamic";
 import HomeClient from "./HomeClient";
 
 export const metadata: Metadata = {
