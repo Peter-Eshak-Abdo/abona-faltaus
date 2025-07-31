@@ -35,7 +35,7 @@
     "next": "^15.4.2",
     "next-pwa": "^5.6.0",
     "nodemon": "^3.1.10",
-    "openai": "^5.10.1",
+    "openai": "^5.11.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-audio-player": "^0.17.0",
