@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
   const { abbrev } = params;
   const bookName = bookNames[abbrev] || `سفر ${abbrev.toUpperCase()}`;
   return {
-    title: `${bookName} - الكتاب المقدس`,
+    title: `${bookName} - الكتاب المقدس تفاحة`,
     description: `قراءة ${bookName} من الكتاب المقدس مع تقسيم الإصحاحات.`,
     keywords: [bookName, "الكتاب المقدس", "أسفار", "قراءة الإنجيل"],
   };

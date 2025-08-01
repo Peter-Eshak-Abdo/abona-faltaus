@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
   const { abbrev, chapter } = params;
   const bookName = bookNames[abbrev] || `سفر ${abbrev.toUpperCase()}`;
   return {
-    title: `${bookName} - إصحاح ${chapter} | الكتاب المقدس`,
+    title: `${bookName} - إصحاح ${chapter} | الكتاب المقدس تفاحة`,
     description: `قراءة ${bookName} - إصحاح ${chapter} من الكتاب المقدس مع إمكانية تكبير الخط.`,
     keywords: [bookName, `إصحاح ${chapter}`, "الكتاب المقدس", "قراءة الإنجيل"],
   };
@@ -54,7 +54,7 @@ export default async function ChapterPage({ params, searchParams }) {
   // const fontSizeClass = { sm: "text-sm", base: "text-base", lg: "text-lg" }[font] || "text-base";
   return (
     <>
-      <div className="mb-4 text-sm text-gray-500">
+      <div className="mb-4 text-sm text-gray-500 m-3">
 
         <Link href="/bible" className="hover:underline">
           الكتاب المقدس
