@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+// /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import { useState, useEffect } from "react"
@@ -26,6 +26,19 @@ export default function JoinQuizPage() {
   const [error, setError] = useState("")
   const [hasJoined, setHasJoined] = useState(false)
   const quizId = params.quizId as string
+  const loadQuiz = async () => {
+    try {
+      const quizData = await getQuiz(quizId)
+      if (!quizData) {
+        setError("Quiz not found")
+        return
+      }
+      setQuiz(quizData)
+    } catch (error) {
+      console.error("Error loading quiz:", error)
+      setError("Failed to load quiz")
+    }
+  }
 
   useEffect(() => {
     if (quizId) {
@@ -41,7 +54,7 @@ export default function JoinQuizPage() {
 
       return unsubscribe
     }
-  }, [quizId, hasJoined])
+  }, [quizId, hasJoined, router, loadQuiz])
 
   useEffect(() => {
     // Update member names array when count changes
@@ -56,21 +69,8 @@ export default function JoinQuizPage() {
       newNames.splice(memberCount)
     }
     setMemberNames(newNames)
-  }, [memberCount])
+  }, [memberCount , memberNames])
 
-  const loadQuiz = async () => {
-    try {
-      const quizData = await getQuiz(quizId)
-      if (!quizData) {
-        setError("Quiz not found")
-        return
-      }
-      setQuiz(quizData)
-    } catch (error) {
-      console.error("Error loading quiz:", error)
-      setError("Failed to load quiz")
-    }
-  }
 
   const updateMemberName = (index: number, name: string) => {
     const newNames = [...memberNames]
@@ -238,12 +238,18 @@ export default function JoinQuizPage() {
               <Label>Member Names</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
                 {memberNames.map((name, index) => (
-                  <Input
-                    key={index}
+                  <input
+                  key={index}
                     value={name}
                     onChange={(e) => updateMemberName(index, e.target.value)}
                     placeholder={`Member ${index + 1} name`}
-                  />
+                />
+                //   <Input
+                //     key={index}
+                //     value={name}
+                //     onChange={(e) => updateMemberName(index, e.target.value)}
+                //     placeholder={`Member ${index + 1} name`}
+                //   />
                 ))}
               </div>
             </div>

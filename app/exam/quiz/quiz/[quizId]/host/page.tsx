@@ -97,7 +97,7 @@ export default function HostQuizPage() {
     return <QuizHostGame quiz={quiz} groups={groups} gameState={gameState} />
   }
 
-  const joinUrl = `${window.location.origin}exam/quiz/quiz/${quizId}/join`
+  const joinUrl = `${window.location.origin}/exam/quiz/quiz/${quizId}/join`
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">

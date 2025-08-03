@@ -109,6 +109,33 @@ export default function ExamPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* كارت الأسئلة كاهوت */}
+        <motion.div
+          className="col"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="card shadow border-0 h-100">
+            <div className="card-body d-flex flex-column justify-content-between">
+              <div>
+                <h5 className="card-title text-center text-success fw-bold">
+                  الأسئلة الكاهوتية
+                </h5>
+                <p className="card-text text-center text-muted">
+                  نظام الأسئلة الكاهوتية مع إمكانية التنقل بين الأسئلة بحرية.
+                </p>
+              </div>
+              <button
+                className="btn btn-success w-100 mt-3"
+                onClick={() => router.push("/exam/quiz/dashboard")}
+              >
+                ابدأ الاختبار الكاهوتي
+              </button>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </motion.div>
   );
