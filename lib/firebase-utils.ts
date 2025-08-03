@@ -210,7 +210,6 @@ export const startQuiz = async (quizId: string) => {
   } catch (error: any) {
     // If document doesn't exist, create it
     if (error.code === "not-found") {
-      const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current")
       await addDoc(collection(db, "quizzes", quizId, "gameState"), {
         currentQuestionIndex: 0,
         isActive: true,
