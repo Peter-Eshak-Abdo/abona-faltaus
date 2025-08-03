@@ -54,7 +54,7 @@ export default async function ChapterPage({ params, searchParams }) {
   // const fontSizeClass = { sm: "text-sm", base: "text-base", lg: "text-lg" }[font] || "text-base";
   return (
     <>
-      <div className="mb-4 text-sm text-gray-500 m-3">
+      <div className="mb-4 text-sm text-gray-500 mx-3 my-3">
 
         <Link href="/bible" className="hover:underline">
           الكتاب المقدس

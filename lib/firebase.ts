@@ -1,4 +1,4 @@
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp , getApps } from "firebase/app";
 import { getAuth, GoogleAuthProvider, RecaptchaVerifier } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -13,9 +13,33 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+// const requiredEnvVars = [
+//   "NEXT_PUBLIC_FIREBASE_API_KEY",
+//   "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
+//   "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
+//   "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET",
+//   "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
+//   "NEXT_PUBLIC_FIREBASE_APP_ID",
+// ]
+
 // Initialize Firebase
-const app =
-  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+// const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar])
+
+// if (missingEnvVars.length > 0) {
+//   console.error("Missing Firebase environment variables:", missingEnvVars)
+//   throw new Error(`Missing required Firebase environment variables: ${missingEnvVars.join(", ")}`)
+// }
+
+// let app
+// try {
+//   app = initializeApp(firebaseConfig)
+//   console.log("Firebase initialized successfully")
+// } catch (error) {
+//   console.error("Firebase initialization error:", error)
+//   throw error
+// }
+
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
