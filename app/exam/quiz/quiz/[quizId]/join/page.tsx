@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Users, Plus, Minus } from "lucide-react"
-import { Play } from "lucide-react" // Import Play component
+import { Play } from "lucide-react"
 import type { Quiz, GameState } from "@/types/quiz"
 import { motion } from "framer-motion"
 
