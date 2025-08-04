@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import { useState, useEffect } from "react"
-import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponses } from "@/lib/firebase-utils"
+import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponsesOnce } from "@/lib/firebase-utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Trophy, Clock, Users, ArrowRight } from "lucide-react"
+import { Trophy, Clock, Users, ArrowRight, AlertCircle } from "lucide-react"
 import type { Quiz, Group, GameState, QuizResponse, LeaderboardEntry } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
+import { Alert, AlertDescription } from "../ui/alert"
 
 interface QuizHostGameProps {
   quiz: Quiz
@@ -22,6 +24,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [timeLeft, setTimeLeft] = useState(5)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [showingResults, setShowingResults] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const currentQuestion = quiz.questions[gameState.currentQuestionIndex]
   const isLastQuestion = gameState.currentQuestionIndex >= quiz.questions.length - 1
@@ -43,12 +47,26 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     return () => clearInterval(timer)
   }, [gameState.questionStartTime, gameState.showResults])
 
+  // استخدام polling بدلاً من الاستماع المباشر لتجنب مشكلة الفهارس
   useEffect(() => {
     if (!gameState.isActive) return
 
-    const unsubscribe = getQuestionResponses(gameState.quizId, gameState.currentQuestionIndex, setResponses)
+    const pollResponses = async () => {
+      try {
+        const questionResponses = await getQuestionResponsesOnce(gameState.quizId, gameState.currentQuestionIndex)
+        setResponses(questionResponses)
+      } catch (error) {
+        console.error("Error polling responses:", error)
+      }
+    }
 
-    return unsubscribe
+    // استطلاع الردود كل ثانية
+    const pollInterval = setInterval(pollResponses, 1000)
+
+    // استطلاع فوري
+    pollResponses()
+
+    return () => clearInterval(pollInterval)
   }, [gameState.quizId, gameState.currentQuestionIndex, gameState.isActive])
 
   useEffect(() => {
@@ -64,9 +82,13 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     if (gameState.showResults) return
 
     try {
+      setIsLoading(true)
       await showQuestionResults(gameState.quizId)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error showing results:", error)
+      setError(error.message || "Failed to show results")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -102,16 +124,28 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
   const handleNextQuestion = async () => {
     if (isLastQuestion) {
-      await endQuiz(gameState.quizId)
+      try {
+        setIsLoading(true)
+        await endQuiz(gameState.quizId)
+      } catch (error: any) {
+        setError(error.message || "Failed to end quiz")
+      } finally {
+        setIsLoading(false)
+      }
       return
     }
 
     try {
+      setIsLoading(true)
+      setError(null)
       await nextQuestion(gameState.quizId, gameState.currentQuestionIndex + 1)
       setResponses([])
       setTimeLeft(5)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error moving to next question:", error)
+      setError(error.message || "Failed to move to next question")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -192,6 +226,14 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
             )}
           </div>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <Alert className="mb-6" variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
         {/* Progress */}
         <Progress value={(gameState.currentQuestionIndex / quiz.questions.length) * 100} className="mb-6" />
@@ -311,8 +353,10 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
         {/* Controls */}
         {gameState.showResults && (
           <div className="mt-6 text-center">
-            <Button onClick={handleNextQuestion} size="lg" className="px-8">
-              {isLastQuestion ? (
+            <Button onClick={handleNextQuestion} size="lg" className="px-8" disabled={isLoading}>
+              {isLoading ? (
+                "Loading..."
+              ) : isLastQuestion ? (
                 <>
                   <Trophy className="w-5 h-5 mr-2" />
                   End Quiz

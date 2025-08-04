@@ -98,7 +98,7 @@ export default function DashboardPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             Authentication error: {authError.message}
-            <Button onClick={() => router.push("/auth")} className="mt-2 w-full">
+            <Button onClick={() => router.push("/auth/login")} className="mt-2 w-full">
               Try Again
             </Button>
           </AlertDescription>

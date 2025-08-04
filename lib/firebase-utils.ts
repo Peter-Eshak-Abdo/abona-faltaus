@@ -12,8 +12,9 @@ import {
   onSnapshot,
   serverTimestamp,
   writeBatch,
+  setDoc,
 } from "firebase/firestore"
-import { db } from "@/lib/firebase" // Use your existing Firebase config
+import { db } from "@/lib/firebase"
 import type { Quiz, Group, GameState, QuizResponse } from "@/types/quiz"
 
 // Quiz operations
@@ -168,6 +169,9 @@ export const getQuizGroups = (quizId: string, callback: (groups: Group[]) => voi
         ...doc.data(),
         joinedAt: doc.data().joinedAt?.toDate() || new Date(),
       })) as Group[]
+
+      // Sort client-side by joinedAt
+      groups.sort((a, b) => a.joinedAt.getTime() - b.joinedAt.getTime())
       callback(groups)
     },
     (error) => {
@@ -197,41 +201,53 @@ export const getQuizGroups = (quizId: string, callback: (groups: Group[]) => voi
 // Game state operations
 export const startQuiz = async (quizId: string) => {
   try {
-    const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current")
+    console.log("Starting quiz:", quizId);
 
-    // Try to update first, if it doesn't exist, it will create it
-    await updateDoc(gameStateRef, {
-      currentQuestionIndex: 0,
-      isActive: true,
-      startedAt: serverTimestamp(),
-      questionStartTime: serverTimestamp(),
-      showResults: false,
-    })
-  } catch (error: any) {
-    // If document doesn't exist, create it
-    if (error.code === "not-found") {
-      await addDoc(collection(db, "quizzes", quizId, "gameState"), {
+    const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+
+    // استخدام setDoc بدلاً من updateDoc لضمان إنشاء الوثيقة
+    await setDoc(
+      gameStateRef,
+      {
         currentQuestionIndex: 0,
         isActive: true,
         startedAt: serverTimestamp(),
         questionStartTime: serverTimestamp(),
         showResults: false,
-      })
+      },
+      { merge: true }
+    );
+
+    console.log("Quiz started successfully");
+
+    // التحقق من أن الوثيقة تم إنشاؤها
+    const docSnap = await getDoc(gameStateRef);
+    if (docSnap.exists()) {
+      console.log("Game state created:", docSnap.data());
     } else {
-      console.error("Error starting quiz:", error)
-      throw error
+      console.error("Failed to create game state document");
+      throw new Error("Failed to create game state");
     }
+  } catch (error: any) {
+    console.error("Error starting quiz:", error);
+    throw new Error(`Failed to start quiz: ${error.message}`);
   }
 }
 
 export const nextQuestion = async (quizId: string, questionIndex: number) => {
   try {
+    console.log("Moving to next question:", questionIndex);
     const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current")
-    await updateDoc(gameStateRef, {
-      currentQuestionIndex: questionIndex,
-      questionStartTime: serverTimestamp(),
-      showResults: false,
-    })
+    await setDoc(
+      gameStateRef,
+      {
+        currentQuestionIndex: questionIndex,
+        questionStartTime: serverTimestamp(),
+        showResults: false,
+      },
+      { merge: true }
+    );
+    console.log("Moved to question", questionIndex);
   } catch (error) {
     console.error("Error moving to next question:", error)
     throw error
@@ -240,94 +256,138 @@ export const nextQuestion = async (quizId: string, questionIndex: number) => {
 
 export const showQuestionResults = async (quizId: string) => {
   try {
-    const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current")
-    await updateDoc(gameStateRef, {
-      showResults: true,
-    })
+    console.log("Showing question results for quiz:", quizId);
+    const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+
+    await setDoc(
+      gameStateRef,
+      {
+        showResults: true,
+      },
+      { merge: true }
+    );
+
+    console.log("Question results shown");
   } catch (error) {
-    console.error("Error showing results:", error)
-    throw error
+    console.error("Error showing results:", error);
+    throw error;
   }
-}
+};
 
 export const endQuiz = async (quizId: string) => {
   try {
-    const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current")
-    await updateDoc(gameStateRef, {
-      isActive: false,
-    })
-  } catch (error) {
-    console.error("Error ending quiz:", error)
-    throw error
-  }
-}
+    console.log("Ending quiz:", quizId);
+    const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
 
-// Response operations
-export const submitResponse = async (quizId: string, response: Omit<QuizResponse, "id" | "timestamp">) => {
+    await setDoc(
+      gameStateRef,
+      {
+        isActive: false,
+      },
+      { merge: true }
+    );
+
+    console.log("Quiz ended");
+  } catch (error) {
+    console.error("Error ending quiz:", error);
+    throw error;
+  }
+};
+
+// Response operations - محسن مع معالجة أفضل للفهارس
+export const submitResponse = async (
+  quizId: string,
+  response: Omit<QuizResponse, "id" | "timestamp">
+) => {
   try {
-    const responsesRef = collection(db, "quizzes", quizId, "responses")
+    const responsesRef = collection(db, "quizzes", quizId, "responses");
     await addDoc(responsesRef, {
       ...response,
       timestamp: serverTimestamp(),
-    })
+    });
+    console.log("Response submitted successfully");
   } catch (error) {
-    console.error("Error submitting response:", error)
-    throw error
+    console.error("Error submitting response:", error);
+    throw error;
   }
-}
+};
 
+// محسن - معالجة أفضل لمشكلة الفهارس
 export const getQuestionResponses = (
   quizId: string,
   questionIndex: number,
-  callback: (responses: QuizResponse[]) => void,
+  callback: (responses: QuizResponse[]) => void
 ) => {
-  const responsesRef = collection(db, "quizzes", quizId, "responses")
+  console.log("Setting up responses listener for question:", questionIndex);
+  const responsesRef = collection(db, "quizzes", quizId, "responses");
 
-  // Try with ordering first
-  const q = query(responsesRef, where("questionIndex", "==", questionIndex), orderBy("timestamp", "asc"))
+  // استخدام استعلام بسيط بدون ترتيب لتجنب مشكلة الفهارس
+  const simpleQuery = query(
+    responsesRef,
+    where("questionIndex", "==", questionIndex)
+  );
 
   return onSnapshot(
-    q,
+    simpleQuery,
     (snapshot) => {
-      const responses = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        timestamp: doc.data().timestamp?.toDate() || new Date(),
-      })) as QuizResponse[]
-      callback(responses)
+      console.log(
+        "Responses update received:",
+        snapshot.docs.length,
+        "responses"
+      );
+
+      const responses = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          timestamp: data.timestamp?.toDate() || new Date(),
+        };
+      }) as QuizResponse[];
+
+      // ترتيب من جانب العميل حسب الوقت
+      responses.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+
+      console.log("Processed responses:", responses.length);
+      callback(responses);
     },
     (error) => {
-      console.error("Error listening to responses:", error)
+      console.error("Error listening to responses:", error);
 
-      // Fallback to simple query
-      if (error.code === "failed-precondition") {
-        const simpleQuery = query(responsesRef, where("questionIndex", "==", questionIndex))
+      // في حالة الخطأ، إرجاع مصفوفة فارغة
+      callback([]);
 
-        return onSnapshot(simpleQuery, (snapshot) => {
-          const responses = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-            timestamp: doc.data().timestamp?.toDate() || new Date(),
-          })) as QuizResponse[]
+      // إذا كان الخطأ متعلق بالفهرس، اعرض رسالة مفيدة
+      if (
+        error.code === "failed-precondition" ||
+        error.message.includes("index")
+      ) {
+        console.warn(
+          "Index required for responses query. Using fallback method."
+        );
 
-          // Sort client-side
-          responses.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
-          callback(responses)
-        })
+        // يمكن إضافة آلية بديلة هنا إذا لزم الأمر
+        // مثل استعلام دوري بدلاً من الاستماع المباشر
       }
-    },
-  )
-}
+    }
+  );
+};
 
-// Game state listener
-export const subscribeToGameState = (quizId: string, callback: (gameState: GameState | null) => void) => {
-  const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current")
+// Game state listener - مُحسَّن
+export const subscribeToGameState = (
+  quizId: string,
+  callback: (gameState: GameState | null) => void
+) => {
+  console.log("Subscribing to game state for quiz:", quizId);
+  const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
 
   return onSnapshot(
     gameStateRef,
     (doc) => {
+      console.log("Game state update received:", doc.exists(), doc.data());
+
       if (doc.exists()) {
-        const data = doc.data()
+        const data = doc.data();
         const gameState: GameState = {
           quizId,
           currentQuestionIndex: data.currentQuestionIndex || 0,
@@ -335,32 +395,67 @@ export const subscribeToGameState = (quizId: string, callback: (gameState: GameS
           startedAt: data.startedAt?.toDate() || null,
           questionStartTime: data.questionStartTime?.toDate() || null,
           showResults: data.showResults || false,
-        }
-        callback(gameState)
+        };
+        console.log("Parsed game state:", gameState);
+        callback(gameState);
       } else {
-        callback(null)
+        console.log("Game state document does not exist");
+        callback(null);
       }
     },
     (error) => {
-      console.error("Error listening to game state:", error)
-      callback(null)
-    },
-  )
-}
+      console.error("Error listening to game state:", error);
+      callback(null);
+    }
+  );
+};
 
 // Update group scores (called after each question)
-export const updateGroupScores = async (quizId: string, scores: { groupId: string; score: number }[]) => {
+export const updateGroupScores = async (
+  quizId: string,
+  scores: { groupId: string; score: number }[]
+) => {
   try {
-    const batch = writeBatch(db)
+    const batch = writeBatch(db);
 
     scores.forEach(({ groupId, score }) => {
-      const groupRef = doc(db, "quizzes", quizId, "groups", groupId)
-      batch.update(groupRef, { score })
-    })
+      const groupRef = doc(db, "quizzes", quizId, "groups", groupId);
+      batch.update(groupRef, { score });
+    });
 
-    await batch.commit()
+    await batch.commit();
+    console.log("Group scores updated successfully");
   } catch (error) {
-    console.error("Error updating group scores:", error)
-    throw error
+    console.error("Error updating group scores:", error);
+    throw error;
   }
-}
+};
+
+// دالة مساعدة للحصول على الردود بطريقة بديلة (بدون استماع مباشر)
+export const getQuestionResponsesOnce = async (
+  quizId: string,
+  questionIndex: number
+): Promise<QuizResponse[]> => {
+  try {
+    const responsesRef = collection(db, "quizzes", quizId, "responses");
+    const q = query(responsesRef, where("questionIndex", "==", questionIndex));
+
+    const snapshot = await getDocs(q);
+    const responses = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        timestamp: data.timestamp?.toDate() || new Date(),
+      };
+    }) as QuizResponse[];
+
+    // ترتيب حسب الوقت
+    responses.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+
+    return responses;
+  } catch (error) {
+    console.error("Error getting responses once:", error);
+    return [];
+  }
+};
