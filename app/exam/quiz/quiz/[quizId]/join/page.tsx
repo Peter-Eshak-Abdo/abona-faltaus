@@ -27,22 +27,22 @@ export default function JoinQuizPage() {
   const [hasJoined, setHasJoined] = useState(false)
   const quizId = params.quizId as string
 
-  const loadQuiz = async () => {
-    try {
-      const quizData = await getQuiz(quizId)
-      if (!quizData) {
-        setError("الامتحان غير موجود")
-        return
-      }
-      setQuiz(quizData)
-    } catch (error) {
-      console.error("Error loading quiz:", error)
-      setError("فشل في تحميل الامتحان")
-    }
-  }
 
   useEffect(() => {
     if (quizId) {
+      const loadQuiz = async () => {
+        try {
+          const quizData = await getQuiz(quizId)
+          if (!quizData) {
+            setError("الامتحان غير موجود")
+            return
+          }
+          setQuiz(quizData)
+        } catch (error) {
+          console.error("Error loading quiz:", error)
+          setError("فشل في تحميل الامتحان")
+        }
+      }
       loadQuiz()
 
       // Subscribe to game state
@@ -55,7 +55,7 @@ export default function JoinQuizPage() {
 
       return unsubscribe
     }
-  }, [quizId, hasJoined, router, loadQuiz])
+  }, [quizId, hasJoined, router])
 
   useEffect(() => {
     // Update member names array when count changes

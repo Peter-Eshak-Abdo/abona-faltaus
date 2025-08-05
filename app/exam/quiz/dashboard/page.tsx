@@ -93,7 +93,7 @@ export default function DashboardPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             خطأ في المصادقة: {authError.message}
-            <Button onClick={() => router.push("/auth")} className="mt-2 w-full">
+            <Button onClick={() => router.push("/auth/login")} className="mt-2 w-full">
               حاول مرة أخرى
             </Button>
           </AlertDescription>
@@ -210,7 +210,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <Button
-                      onClick={() => router.push(`/quiz/${quiz.id}/host`)}
+                      onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
                       className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 text-lg font-semibold"
                     >
                       <Play className="w-5 h-5" />

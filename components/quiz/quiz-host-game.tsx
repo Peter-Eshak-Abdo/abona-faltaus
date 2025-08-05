@@ -138,7 +138,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     try {
       setIsLoading(true)
       setError(null)
-      await nextQuestion(gameState.quizId, gameState.currentQuestionIndex + 1)
+      await nextQuestion(gameState.quizId, gameState.currentQuestionIndex + 1, Date.now())
       setResponses([])
       setTimeLeft(5)
     } catch (error: any) {
