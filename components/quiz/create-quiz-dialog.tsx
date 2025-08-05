@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, Trash2, Check } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Plus, Trash2, Check, Shuffle, Clock } from "lucide-react"
 import type { Question } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -26,6 +27,8 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [questions, setQuestions] = useState<Question[]>([])
+  const [shuffleQuestions, setShuffleQuestions] = useState(false)
+  const [shuffleChoices, setShuffleChoices] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const addQuestion = () => {
@@ -35,7 +38,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
       text: "",
       choices: ["", "", "", ""],
       correctAnswer: 0,
-      timeLimit: 5,
+      timeLimit: 30, // مؤقت افتراضي 30 ثانية
     }
     setQuestions([...questions, newQuestion])
   }
@@ -67,12 +70,16 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
         createdBy: user.uid,
         questions,
         isActive: false,
+        shuffleQuestions,
+        shuffleChoices,
       })
 
       // Reset form
       setTitle("")
       setDescription("")
       setQuestions([])
+      setShuffleQuestions(false)
+      setShuffleChoices(false)
       onQuizCreated()
     } catch (error) {
       console.error("Error creating quiz:", error)
@@ -118,6 +125,32 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
             </div>
           </div>
 
+          {/* خيارات الخلط */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="shuffleQuestions"
+                checked={shuffleQuestions}
+                onCheckedChange={(checked) => setShuffleQuestions(checked as boolean)}
+              />
+              <Label htmlFor="shuffleQuestions" className="flex items-center gap-2">
+                <Shuffle className="w-4 h-4" />
+                Shuffle Questions
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="shuffleChoices"
+                checked={shuffleChoices}
+                onCheckedChange={(checked) => setShuffleChoices(checked as boolean)}
+              />
+              <Label htmlFor="shuffleChoices" className="flex items-center gap-2">
+                <Shuffle className="w-4 h-4" />
+                Shuffle Answer Choices
+              </Label>
+            </div>
+          </div>
+
           <div>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Questions ({questions.length})</h3>
@@ -151,7 +184,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                           <Label>Question Type</Label>
                           <Select
@@ -173,6 +206,22 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                             </SelectContent>
                           </Select>
                         </div>
+                        <div>
+                          <Label className="flex items-center gap-2">
+                            <Clock className="w-4 h-4" />
+                            Time Limit (seconds)
+                          </Label>
+                          <Input
+                            type="number"
+                            min="10"
+                            max="300"
+                            value={question.timeLimit}
+                            onChange={(e) =>
+                              updateQuestion(index, { timeLimit: Number.parseInt(e.target.value) || 30 })
+                            }
+                            className="mt-1"
+                          />
+                        </div>
                       </div>
 
                       <div>
@@ -192,15 +241,14 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                           {question.choices.map((choice, choiceIndex) => (
                             <div key={choiceIndex} className="flex items-center gap-2">
                               <div
-                                className={`w-4 h-4 rounded-full ${
-                                  choiceIndex === 0
+                                className={`w-4 h-4 rounded-full ${choiceIndex === 0
                                     ? "bg-red-500"
                                     : choiceIndex === 1
                                       ? "bg-green-500"
                                       : choiceIndex === 2
                                         ? "bg-blue-500"
                                         : "bg-yellow-500"
-                                }`}
+                                  }`}
                               />
                               <Input
                                 value={choice}

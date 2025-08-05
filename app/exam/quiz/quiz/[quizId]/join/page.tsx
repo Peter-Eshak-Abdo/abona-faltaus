@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
@@ -9,8 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Users, Plus, Minus } from "lucide-react"
-import { Play } from "lucide-react"
+import { Users, Plus, Minus, Play, AlertCircle } from "lucide-react"
 import type { Quiz, GameState } from "@/types/quiz"
 import { motion } from "framer-motion"
 
@@ -26,17 +26,18 @@ export default function JoinQuizPage() {
   const [error, setError] = useState("")
   const [hasJoined, setHasJoined] = useState(false)
   const quizId = params.quizId as string
+
   const loadQuiz = async () => {
     try {
       const quizData = await getQuiz(quizId)
       if (!quizData) {
-        setError("Quiz not found")
+        setError("الامتحان غير موجود")
         return
       }
       setQuiz(quizData)
     } catch (error) {
       console.error("Error loading quiz:", error)
-      setError("Failed to load quiz")
+      setError("فشل في تحميل الامتحان")
     }
   }
 
@@ -80,20 +81,19 @@ export default function JoinQuizPage() {
 
   const handleJoin = async () => {
     if (!groupName.trim()) {
-      setError("Please enter a group name")
+      setError("يرجى إدخال اسم المجموعة")
       return
     }
 
     const validNames = memberNames.filter((name) => name.trim())
     if (validNames.length !== memberCount) {
-      setError("Please fill in all member names")
+      setError("يرجى ملء جميع أسماء الأعضاء")
       return
     }
 
-    // Check for duplicate names within the group
     const uniqueNames = new Set(validNames.map((name) => name.trim().toLowerCase()))
     if (uniqueNames.size !== validNames.length) {
-      setError("All member names must be unique within your group")
+      setError("يجب أن تكون جميع أسماء الأعضاء مختلفة داخل مجموعتكم")
       return
     }
 
@@ -106,7 +106,6 @@ export default function JoinQuizPage() {
         members: validNames.map((name) => name.trim()),
       })
 
-      // Store group info in localStorage for the play page
       localStorage.setItem(
         "currentGroup",
         JSON.stringify({
@@ -117,12 +116,8 @@ export default function JoinQuizPage() {
       )
 
       setHasJoined(true)
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message || "Failed to join quiz")
-      } else {
-        setError("Failed to join quiz")
-      }
+    } catch (error: any) {
+      setError(error.message || "فشل في الانضمام للامتحان")
     } finally {
       setIsJoining(false)
     }
@@ -130,24 +125,24 @@ export default function JoinQuizPage() {
 
   if (!quiz) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
       </div>
     )
   }
 
   if (gameState?.isActive) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <Card className="w-full max-w-md text-center">
-          <CardContent className="pt-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Play className="w-8 h-8 text-blue-600" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <Card className="w-full max-w-md text-center shadow-xl border-0">
+          <CardContent className="pt-8 pb-8">
+            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Play className="w-10 h-10 text-blue-600" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">Quiz Already Started</h2>
-            <p className="text-gray-600 mb-4">This quiz has already begun. You cannot join at this time.</p>
-            <Button onClick={() => router.push("/")} variant="outline">
-              Go Home
+            <h2 className="text-2xl font-semibold mb-4 text-gray-900">بدأ الامتحان بالفعل</h2>
+            <p className="text-gray-600 mb-6 text-lg">هذا الامتحان بدأ بالفعل. لا يمكنك الانضمام الآن.</p>
+            <Button onClick={() => router.push("/")} variant="outline" className="w-full py-3 text-lg">
+              العودة للرئيسية
             </Button>
           </CardContent>
         </Card>
@@ -157,19 +152,17 @@ export default function JoinQuizPage() {
 
   if (hasJoined) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-green-600" />
+          <Card className="text-center shadow-xl border-0">
+            <CardContent className="pt-8 pb-8">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="w-10 h-10 text-green-600" />
               </div>
-              <h2 className="text-xl font-semibold mb-2">Successfully Joined!</h2>
-              <p className="text-gray-600 mb-4">
-                Group &quot;{groupName}&quot; has joined the quiz. Waiting for the host to start...
-              </p>
+              <h2 className="text-2xl font-semibold mb-4 text-gray-900">تم الانضمام بنجاح!</h2>
+              <p className="text-gray-600 mb-6 text-lg">مجموعة &quot;{groupName}&quot; انضمت للامتحان. في انتظار بدء المشرف...</p>
               <div className="animate-pulse">
-                <div className="h-2 bg-blue-200 rounded-full"></div>
+                <div className="h-3 bg-green-200 rounded-full"></div>
               </div>
             </CardContent>
           </Card>
@@ -179,83 +172,102 @@ export default function JoinQuizPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-2xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{quiz.title}</h1>
-          <p className="text-gray-600">{quiz.description}</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">{quiz.title}</h1>
+          <p className="text-gray-600 text-lg">{quiz.description}</p>
         </motion.div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              Join as Group
+        <Card className="shadow-xl border-0">
+          <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
+            <CardTitle className="flex items-center gap-3 text-center justify-center text-2xl">
+              <Users className="w-6 h-6" />
+              الانضمام كمجموعة
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-8 p-8">
             {error && (
               <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="text-lg">{error}</AlertDescription>
               </Alert>
             )}
 
             <div>
-              <Label htmlFor="groupName">Group Name</Label>
+              <Label htmlFor="groupName" className="text-lg font-medium text-gray-700 mb-3 block">
+                اسم المجموعة
+              </Label>
               <Input
                 id="groupName"
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
-                placeholder="Enter your group name..."
-                className="mt-1"
+                placeholder="أدخل اسم مجموعتكم..."
+                className="text-lg p-4 border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-xl"
               />
             </div>
 
             <div>
-              <Label>Number of Members</Label>
-              <div className="flex items-center gap-3 mt-2">
+              <Label className="text-lg font-medium text-gray-700 mb-4 block">عدد الأعضاء</Label>
+              <div className="flex items-center justify-center gap-6">
                 <Button
                   onClick={() => setMemberCount(Math.max(1, memberCount - 1))}
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   disabled={memberCount <= 1}
+                  className="w-14 h-14 rounded-full border-2"
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus className="w-6 h-6" />
                 </Button>
-                <span className="text-lg font-semibold w-8 text-center">{memberCount}</span>
+                <div className="text-4xl font-bold text-blue-600 w-16 text-center">{memberCount}</div>
                 <Button
                   onClick={() => setMemberCount(Math.min(10, memberCount + 1))}
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   disabled={memberCount >= 10}
+                  className="w-14 h-14 rounded-full border-2"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-6 h-6" />
                 </Button>
               </div>
             </div>
 
             <div>
-              <Label>Member Names</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+              <Label className="text-lg font-medium text-gray-700 mb-4 block">أسماء الأعضاء</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {memberNames.map((name, index) => (
-                  <input
-                  key={index}
-                    value={name}
-                    onChange={(e) => updateMemberName(index, e.target.value)}
-                    placeholder={`Member ${index + 1} name`}
-                />
-                //   <Input
-                //     key={index}
-                //     value={name}
-                //     onChange={(e) => updateMemberName(index, e.target.value)}
-                //     placeholder={`Member ${index + 1} name`}
-                //   />
+                  <div key={index} className="relative">
+                    <Input
+                      value={name}
+                      onChange={(e) => updateMemberName(index, e.target.value)}
+                      placeholder={`اسم العضو ${index + 1}`}
+                      className="text-lg p-4 pr-12 border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-xl"
+                    />
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">{index + 1}</span>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
 
-            <Button onClick={handleJoin} disabled={isJoining} className="w-full" size="lg">
-              {isJoining ? "Joining..." : "Join Quiz"}
+            <Button
+              onClick={handleJoin}
+              disabled={isJoining}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-4 rounded-xl transition-all duration-200 text-xl"
+              size="lg"
+            >
+              {isJoining ? (
+                <>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white ml-3"></div>
+                  جاري الانضمام...
+                </>
+              ) : (
+                <>
+                  <Users className="w-6 h-6 ml-3" />
+                  الانضمام للامتحان
+                </>
+              )}
             </Button>
           </CardContent>
         </Card>

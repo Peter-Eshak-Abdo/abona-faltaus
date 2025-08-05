@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
@@ -47,22 +48,16 @@ export default function DashboardPage() {
       const userQuizzes = await getUserQuizzes(user.uid)
       console.log("Loaded quizzes:", userQuizzes)
       setQuizzes(userQuizzes)
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error("Error loading quizzes:", error)
 
-      // Extract index URL if present
-      let message = "Failed to load quizzes"
-      if (error instanceof Error) {
-        message = error.message
-        const urlMatch = error.message.match(/(https:\/\/console\.firebase\.google\.com[^\s]+)/)
-        if (urlMatch) {
-          setIndexUrl(urlMatch[1])
-          setError("Database index required. Click the button below to create it automatically.")
-          setLoadingQuizzes(false)
-          return
-        }
+      const urlMatch = error.message.match(/(https:\/\/console\.firebase\.google\.com[^\s]+)/)
+      if (urlMatch) {
+        setIndexUrl(urlMatch[1])
+        setError("مطلوب فهرس قاعدة البيانات. انقر على الزر أدناه لإنشائه تلقائياً.")
+      } else {
+        setError(error.message || "فشل في تحميل الامتحانات")
       }
-      setError(message)
     } finally {
       setLoadingQuizzes(false)
     }
@@ -85,8 +80,8 @@ export default function DashboardPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
       </div>
     )
   }
@@ -97,9 +92,9 @@ export default function DashboardPage() {
         <Alert className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Authentication error: {authError.message}
-            <Button onClick={() => router.push("/auth/login")} className="mt-2 w-full">
-              Try Again
+            خطأ في المصادقة: {authError.message}
+            <Button onClick={() => router.push("/auth")} className="mt-2 w-full">
+              حاول مرة أخرى
             </Button>
           </AlertDescription>
         </Alert>
@@ -108,17 +103,21 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Quiz Dashboard</h1>
-            <p className="text-gray-600 mt-2">Create and manage your interactive quizzes</p>
-            <p className="text-sm text-gray-500">Welcome, {user.displayName || user.email}</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">لوحة تحكم الامتحانات</h1>
+            <p className="text-gray-600 text-lg">إنشاء وإدارة امتحاناتك التفاعلية</p>
+            <p className="text-sm text-gray-500 mt-1">أهلاً بك، {user.displayName || user.email}</p>
           </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)} className="flex items-center gap-2" size="lg">
-            <Plus className="w-5 h-5" />
-            Create New Quiz
+          <Button
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 text-lg font-semibold shadow-lg"
+            size="lg"
+          >
+            <Plus className="w-6 h-6" />
+            إنشاء امتحان جديد
           </Button>
         </div>
 
@@ -137,21 +136,21 @@ export default function DashboardPage() {
                       className="flex items-center gap-1 bg-transparent"
                     >
                       <ExternalLink className="w-4 h-4" />
-                      Create Index
+                      إنشاء الفهرس
                     </Button>
                   )}
                   <Button onClick={handleRetry} variant="outline" size="sm">
-                    Retry
+                    إعادة المحاولة
                   </Button>
                 </div>
                 {indexUrl && (
-                  <div className="text-xs text-gray-600 mt-2 p-2 bg-gray-50 rounded">
-                    <strong>Instructions:</strong>
+                  <div className="text-xs text-gray-600 mt-2 p-3 bg-gray-50 rounded">
+                    <strong>التعليمات:</strong>
                     <ol className="list-decimal list-inside mt-1 space-y-1">
-                      <li>Click &quot;Create Index&quot; to open Firebase Console</li>
-                      <li>Click &quot;Create Index&quot; in the Firebase Console</li>
-                      <li>Wait for the index to build (usually 1-2 minutes)</li>
-                      <li>Come back and click &quot;Retry&quot;</li>
+                      <li>انقر على &quot;إنشاء الفهرس&quot; لفتح وحدة تحكم Firebase</li>
+                      <li>انقر على &quot;Create Index&quot; في وحدة تحكم Firebase</li>
+                      <li>انتظر حتى يتم بناء الفهرس (عادة 1-2 دقيقة)</li>
+                      <li>ارجع وانقر على &quot;إعادة المحاولة&quot;</li>
                     </ol>
                   </div>
                 )}
@@ -163,7 +162,7 @@ export default function DashboardPage() {
         {loadingQuizzes ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
+              <Card key={i} className="animate-pulse shadow-lg">
                 <CardHeader>
                   <div className="h-6 bg-gray-200 rounded w-3/4"></div>
                   <div className="h-4 bg-gray-200 rounded w-full"></div>
@@ -175,14 +174,14 @@ export default function DashboardPage() {
             ))}
           </div>
         ) : quizzes.length === 0 && !error ? (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-12">
-            <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Plus className="w-12 h-12 text-blue-600" />
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-16">
+            <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Plus className="w-16 h-16 text-blue-600" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No quizzes yet</h3>
-            <p className="text-gray-600 mb-6">Create your first quiz to get started</p>
-            <Button onClick={() => setIsCreateDialogOpen(true)} size="lg">
-              Create Your First Quiz
+            <h3 className="text-2xl font-semibold text-gray-900 mb-3">لا توجد امتحانات بعد</h3>
+            <p className="text-gray-600 mb-8 text-lg">أنشئ امتحانك الأول للبدء</p>
+            <Button onClick={() => setIsCreateDialogOpen(true)} size="lg" className="px-8 py-3 text-lg">
+              إنشاء امتحانك الأول
             </Button>
           </motion.div>
         ) : (
@@ -194,28 +193,28 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="text-lg">{quiz.title}</CardTitle>
-                    <CardDescription className="line-clamp-2">{quiz.description}</CardDescription>
+                <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-xl font-bold text-gray-900">{quiz.title}</CardTitle>
+                    <CardDescription className="line-clamp-2 text-gray-600">{quiz.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
-                      <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {quiz.questions.length} questions
+                    <div className="flex items-center justify-between text-sm text-gray-600 mb-6">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-5 h-5" />
+                        <span className="font-medium">{quiz.questions.length} سؤال</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {quiz.createdAt.toLocaleDateString()}
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-5 h-5" />
+                        <span>{quiz.createdAt.toLocaleDateString("ar-EG")}</span>
                       </div>
                     </div>
                     <Button
-                      onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
-                      className="w-full flex items-center justify-center gap-2"
+                      onClick={() => router.push(`/quiz/${quiz.id}/host`)}
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 text-lg font-semibold"
                     >
-                      <Play className="w-4 h-4" />
-                      Host Quiz
+                      <Play className="w-5 h-5" />
+                      بدء الامتحان
                     </Button>
                   </CardContent>
                 </Card>

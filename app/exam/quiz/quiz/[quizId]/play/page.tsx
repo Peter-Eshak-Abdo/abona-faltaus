@@ -129,6 +129,11 @@ export default function PlayQuizPage() {
     return colors[index] || "hover:bg-gray-600"
   }
 
+  const getChoiceLabel = (index: number) => {
+    const labels = ["أ", "ب", "ج", "د"]
+    return labels[index] || (index + 1).toString()
+  }
+
   if (!quiz || !gameState || !currentGroup) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -139,16 +144,16 @@ export default function PlayQuizPage() {
 
   if (!gameState.isActive) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Quiz Complete!</h2>
-              <p className="text-gray-600 mb-4">Thanks for playing, {currentGroup.groupName}!</p>
-              <p className="text-sm text-gray-500 mb-6">Check with your host for final results.</p>
-              <Button onClick={() => router.push("/")} className="w-full">
-                Done
+          <Card className="text-center shadow-xl border-0">
+            <CardContent className="pt-8 pb-8">
+              <Trophy className="w-20 h-20 text-yellow-500 mx-auto mb-6" />
+              <h2 className="text-3xl font-bold mb-4 text-gray-900">انتهى الامتحان!</h2>
+              <p className="text-gray-600 mb-4 text-lg">شكراً لمشاركتكم، {currentGroup.groupName}!</p>
+              <p className="text-sm text-gray-500 mb-8">تحققوا من النتائج النهائية مع المشرف.</p>
+              <Button onClick={() => router.push("/")} className="w-full py-3 text-lg">
+                تم
               </Button>
             </CardContent>
           </Card>
@@ -163,62 +168,61 @@ export default function PlayQuizPage() {
     const isCorrect = selectedAnswer === currentQuestion.correctAnswer
 
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="max-w-2xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-6">
-            <Badge variant="secondary" className="mb-2">
-              Question {gameState.currentQuestionIndex + 1} of {quiz.questions.length}
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-4xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+            <Badge variant="secondary" className="mb-4 text-lg px-4 py-2">
+              السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
             </Badge>
-            <h1 className="text-2xl font-bold">{currentGroup.groupName}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{currentGroup.groupName}</h1>
           </motion.div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-center">
-                {isCorrect ? (
-                  <span className="text-green-600">Correct! 🎉</span>
-                ) : (
-                  <span className="text-red-600">Incorrect 😔</span>
-                )}
+          <Card className="shadow-xl border-0">
+            <CardHeader className={`text-center ${isCorrect ? "bg-green-500" : "bg-red-500"} text-white rounded-t-lg`}>
+              <CardTitle className="text-2xl">
+                {isCorrect ? <span>إجابة صحيحة! 🎉</span> : <span>إجابة خاطئة 😔</span>}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="p-8">
+              <div className="space-y-6">
                 <div className="text-center">
-                  <h3 className="font-semibold mb-4">{currentQuestion.text}</h3>
+                  <h3 className="font-bold mb-6 text-xl text-gray-900">{currentQuestion.text}</h3>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-4">
                   {currentQuestion.choices.map((choice, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className={`p-4 rounded-lg flex items-center gap-3 ${
-                        index === currentQuestion.correctAnswer
-                          ? "bg-green-100 border-2 border-green-500"
+                      className={`p-6 rounded-xl flex items-center gap-4 text-lg ${index === currentQuestion.correctAnswer
+                          ? "bg-green-100 border-4 border-green-500"
                           : index === selectedAnswer
-                            ? "bg-red-100 border-2 border-red-500"
-                            : "bg-gray-50"
-                      }`}
+                            ? "bg-red-100 border-4 border-red-500"
+                            : "bg-gray-50 border-2 border-gray-200"
+                        }`}
                     >
-                      <div className={`w-6 h-6 rounded-full ${getChoiceColor(index)}`} />
-                      <span className="font-medium">{choice}</span>
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl ${getChoiceColor(index)}`}
+                      >
+                        {getChoiceLabel(index)}
+                      </div>
+                      <span className="font-medium flex-1">{choice}</span>
                       {index === currentQuestion.correctAnswer && (
-                        <Badge className="ml-auto bg-green-500">Correct</Badge>
+                        <Badge className="bg-green-500 text-white">الإجابة الصحيحة</Badge>
                       )}
                       {index === selectedAnswer && index !== currentQuestion.correctAnswer && (
-                        <Badge className="ml-auto bg-red-500">Your Answer</Badge>
+                        <Badge className="bg-red-500 text-white">إجابتكم</Badge>
                       )}
                     </motion.div>
                   ))}
                 </div>
 
-                <div className="text-center pt-4">
-                  <p className="text-gray-600">Waiting for next question...</p>
-                  <div className="animate-pulse mt-2">
-                    <div className="h-2 bg-blue-200 rounded-full"></div>
+                <div className="text-center pt-6">
+                  <p className="text-gray-600 text-lg">في انتظار السؤال التالي...</p>
+                  <div className="animate-pulse mt-4">
+                    <div className="h-3 bg-blue-200 rounded-full"></div>
                   </div>
                 </div>
               </div>
@@ -230,37 +234,44 @@ export default function PlayQuizPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <Badge variant="secondary">
-              Question {gameState.currentQuestionIndex + 1} of {quiz.questions.length}
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <Badge variant="secondary" className="text-lg px-4 py-2">
+              السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
             </Badge>
-            <Badge variant="outline" className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              {Math.ceil(timeLeft)}s
+            <Badge variant="outline" className="flex items-center gap-2 text-lg px-4 py-2 bg-white">
+              <Clock className="w-5 h-5" />
+              {Math.ceil(timeLeft)} ثانية
             </Badge>
           </div>
-          <h1 className="text-xl font-bold flex items-center justify-center gap-2">
-            <Users className="w-5 h-5" />
+          <h1 className="text-2xl font-bold flex items-center justify-center gap-3 text-gray-900">
+            <Users className="w-6 h-6" />
             {currentGroup.groupName}
           </h1>
-          <p className="text-sm text-gray-600">{currentGroup.members.join(", ")}</p>
+          <p className="text-gray-600 mt-2">{currentGroup.members.join(" • ")}</p>
         </motion.div>
 
         {/* Progress */}
-        <Progress value={hasAnswered ? 100 : ((5 - timeLeft) / 5) * 100} className="mb-6" />
+        <Progress
+          value={
+            hasAnswered
+              ? 100
+              : ((gameState.currentQuestionTimeLimit - timeLeft) / gameState.currentQuestionTimeLimit) * 100
+          }
+          className="mb-8 h-3"
+        />
 
         {/* Question */}
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-center text-lg">{currentQuestion.text}</CardTitle>
+          <Card className="shadow-xl border-0">
+            <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
+              <CardTitle className="text-center text-2xl font-bold">{currentQuestion.text}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-4">
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 gap-6">
                 <AnimatePresence>
                   {currentQuestion.choices.map((choice, index) => (
                     <motion.button
@@ -270,18 +281,16 @@ export default function PlayQuizPage() {
                       transition={{ delay: index * 0.1 }}
                       onClick={() => handleAnswerSelect(index)}
                       disabled={hasAnswered || timeLeft === 0}
-                      className={`p-4 rounded-lg flex items-center gap-4 text-left transition-all duration-200 ${
-                        hasAnswered || timeLeft === 0
+                      className={`p-6 rounded-xl flex items-center gap-4 text-right transition-all duration-200 ${hasAnswered || timeLeft === 0
                           ? "cursor-not-allowed opacity-60"
-                          : `cursor-pointer ${getChoiceColorHover(index)} transform hover:scale-105`
-                      } ${
-                        selectedAnswer === index ? "ring-2 ring-white shadow-lg" : ""
-                      } ${getChoiceColor(index)} text-white font-semibold`}
+                          : `cursor-pointer ${getChoiceColorHover(index)} transform hover:scale-105 active:scale-95`
+                        } ${selectedAnswer === index ? "ring-4 ring-white shadow-2xl" : ""
+                        } ${getChoiceColor(index)} text-white font-semibold text-lg shadow-lg`}
                     >
-                      <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-lg font-bold">
-                        {String.fromCharCode(65 + index)}
+                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-2xl font-bold">
+                        {getChoiceLabel(index)}
                       </div>
-                      <span className="flex-1">{choice}</span>
+                      <span className="flex-1 text-right">{choice}</span>
                     </motion.button>
                   ))}
                 </AnimatePresence>
@@ -291,10 +300,10 @@ export default function PlayQuizPage() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-center mt-6 p-4 bg-blue-50 rounded-lg"
+                  className="text-center mt-8 p-6 bg-blue-50 rounded-xl border-2 border-blue-200"
                 >
-                  <p className="text-blue-800 font-semibold">Answer submitted!</p>
-                  <p className="text-blue-600 text-sm">Waiting for results...</p>
+                  <p className="text-blue-800 font-bold text-lg mb-2">تم إرسال الإجابة!</p>
+                  <p className="text-blue-600">في انتظار النتائج...</p>
                 </motion.div>
               )}
             </CardContent>
