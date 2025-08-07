@@ -182,7 +182,7 @@ export default function HostQuizPage() {
     return <QuizHostGame quiz={quiz} groups={groups} gameState={gameState} />
   }
 
-  const joinUrl = typeof window !== "undefined" ? `${window.location.origin}exam/quiz/quiz/${quizId}/join` : `abona-faltaus.vercel.app/exam/quiz/quiz/${quizId}/join`
+  const joinUrl = typeof window !== "undefined" ? `${window.location.origin}/exam/quiz/quiz/${quizId}/join` : `abona-faltaus.vercel.app/exam/quiz/quiz/${quizId}/join`
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
