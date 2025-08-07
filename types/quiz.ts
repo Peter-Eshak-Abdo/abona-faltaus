@@ -4,7 +4,7 @@ export interface Question {
   text: string;
   choices: string[];
   correctAnswer: number;
-  timeLimit: number; // مؤقت مخصص لكل سؤال
+  timeLimit: number;
 }
 
 export interface Quiz {
@@ -15,8 +15,8 @@ export interface Quiz {
   createdAt: Date;
   questions: Question[];
   isActive: boolean;
-  shuffleQuestions: boolean; // خلط الأسئلة
-  shuffleChoices: boolean; // خلط الاختيارات
+  shuffleQuestions: boolean;
+  shuffleChoices: boolean;
 }
 
 export interface Group {
@@ -25,7 +25,9 @@ export interface Group {
   members: string[];
   joinedAt: Date;
   score: number;
-  lastActivity: Date; // آخر نشاط للمجموعة
+  lastActivity: Date;
+  saintName?: string; // اسم القديس المختار
+  saintImage?: string; // صورة القديس
 }
 
 export interface GameState {
@@ -35,7 +37,8 @@ export interface GameState {
   startedAt: Date | null;
   questionStartTime: Date | null;
   showResults: boolean;
-  currentQuestionTimeLimit: number; // مؤقت السؤال الحالي
+  showQuestionOnly: boolean; // إظهار السؤال فقط لمدة 5 ثوان
+  currentQuestionTimeLimit: number;
 }
 
 export interface QuizResponse {
@@ -53,4 +56,12 @@ export interface LeaderboardEntry {
   groupName: string;
   score: number;
   members: string[];
+  saintName?: string;
+  saintImage?: string;
+}
+
+export interface Saint {
+  name: string;
+  image: string;
+  feast: string;
 }

@@ -154,33 +154,35 @@ export const joinQuizAsGroup = async (
   }
 }
 
-// حذف مجموعة
+// حذف مجموعة - محسن
 export const deleteGroup = async (quizId: string, groupId: string) => {
   try {
+    console.log("Deleting group:", groupId, "from quiz:", quizId)
     const groupRef = doc(db, "quizzes", quizId, "groups", groupId)
     await deleteDoc(groupRef)
     console.log("Group deleted successfully")
-  } catch (error) {
+    return true
+  } catch (error: any) {
     console.error("Error deleting group:", error)
-    throw error
+    throw new Error(`فشل في حذف المجموعة: ${error.message || "حدث خطأ غير معروف"}`)
   }
 }
 
-// تنظيف المجموعات القديمة (أكثر من 30 دقيقة)
+// تنظيف المجموعات القديمة (أكثر من ساعة)
 export const cleanupOldGroups = async (quizId: string) => {
   try {
     const groupsRef = collection(db, "quizzes", quizId, "groups")
     const snapshot = await getDocs(groupsRef)
-    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000)
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000) // ساعة واحدة
 
     const batch = writeBatch(db)
     let deletedCount = 0
 
     snapshot.docs.forEach((doc) => {
       const group = doc.data() as Group
-      const lastActivity = (group.lastActivity as any)?.toDate() || (group.joinedAt as any)?.toDate()
+      const lastActivity = group.lastActivity instanceof Date ? group.lastActivity : (group.lastActivity as any)?.toDate() || group.joinedAt instanceof Date ? group.joinedAt : (group.joinedAt as any)?.toDate()
 
-      if (lastActivity && lastActivity < thirtyMinutesAgo) {
+      if (lastActivity && lastActivity < oneHourAgo) {
         batch.delete(doc.ref)
         deletedCount++
       }
@@ -256,23 +258,28 @@ export const startQuiz = async (quizId: string, quiz: Quiz) => {
         currentQuestionIndex: 0,
         isActive: true,
         startedAt: serverTimestamp(),
-        questionStartTime: serverTimestamp(),
+        questionStartTime: null, // سيتم تعيينه بعد 5 ثوان
         showResults: false,
+        showQuestionOnly: true, // إظهار السؤال فقط لمدة 5 ثوان
         currentQuestionTimeLimit: questions[0]?.timeLimit || 30,
-        shuffledQuestions: questions, // حفظ الأسئلة المخلوطة
+        shuffledQuestions: questions,
       },
       { merge: true },
     )
 
-    console.log("Quiz started successfully")
+    // بعد 5 ثوان، إظهار الاختيارات وبدء المؤقت
+    setTimeout(async () => {
+      await setDoc(
+        gameStateRef,
+        {
+          showQuestionOnly: false,
+          questionStartTime: serverTimestamp(),
+        },
+        { merge: true },
+      )
+    }, 5000)
 
-    const docSnap = await getDoc(gameStateRef)
-    if (docSnap.exists()) {
-      console.log("Game state created:", docSnap.data())
-    } else {
-      console.error("Failed to create game state document")
-      throw new Error("فشل في إنشاء حالة اللعبة")
-    }
+    console.log("Quiz started successfully")
   } catch (error: any) {
     console.error("Error starting quiz:", error)
     throw new Error(`فشل في بدء الامتحان: ${error.message}`)
@@ -294,26 +301,39 @@ const shuffleArrayWithCorrectAnswer = (choices: string[], correctAnswer: number)
   const shuffled = shuffleArray(choicesWithIndex)
 
   const newChoices = shuffled.map((item) => item.choice)
-  const newCorrectAnswer = shuffled.findIndex((item) => item.originalIndex === correctAnswer) // Find the new index of the original correct answer
+  const newCorrectAnswer = shuffled.findIndex((item) => item.originalIndex === correctAnswer)
 
-  return { choices: newChoices, correctAnswer: newCorrectAnswer } as { choices: string[]; correctAnswer: number }
+  return { choices: newChoices, correctAnswer: newCorrectAnswer }
 }
 
-export const nextQuestion = async (quizId: string, questionIndex: number, timeLimit: number) => {
+export const nextQuestion = async (quizId: string, questionIndex: number) => {
   try {
     console.log("Moving to next question:", questionIndex)
     const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current")
 
+    // إظهار السؤال فقط لمدة 5 ثوان
     await setDoc(
       gameStateRef,
       {
         currentQuestionIndex: questionIndex,
-        questionStartTime: serverTimestamp(),
+        questionStartTime: null,
         showResults: false,
-        currentQuestionTimeLimit: timeLimit,
+        showQuestionOnly: true,
       },
       { merge: true },
     )
+
+    // بعد 5 ثوان، إظهار الاختيارات وبدء المؤقت
+    setTimeout(async () => {
+      await setDoc(
+        gameStateRef,
+        {
+          showQuestionOnly: false,
+          questionStartTime: serverTimestamp(),
+        },
+        { merge: true },
+      )
+    }, 5000)
 
     console.log("Moved to question", questionIndex)
   } catch (error) {
@@ -362,7 +382,7 @@ export const endQuiz = async (quizId: string) => {
   }
 }
 
-// Response operations\
+// Response operations
 export const submitResponse = async (quizId: string, response: Omit<QuizResponse, "id" | "timestamp">) => {
   try {
     const responsesRef = collection(db, "quizzes", quizId, "responses")
@@ -435,6 +455,7 @@ export const subscribeToGameState = (quizId: string, callback: (gameState: GameS
           startedAt: data.startedAt?.toDate() || null,
           questionStartTime: data.questionStartTime?.toDate() || null,
           showResults: data.showResults || false,
+          showQuestionOnly: data.showQuestionOnly || false,
           currentQuestionTimeLimit: data.currentQuestionTimeLimit || 30,
         }
         console.log("Parsed game state:", gameState)
@@ -451,7 +472,7 @@ export const subscribeToGameState = (quizId: string, callback: (gameState: GameS
   )
 }
 
-// Update group scores
+// Update group scores - محسن مع نظام النقاط الجديد
 export const updateGroupScores = async (quizId: string, scores: { groupId: string; score: number }[]) => {
   try {
     const batch = writeBatch(db)

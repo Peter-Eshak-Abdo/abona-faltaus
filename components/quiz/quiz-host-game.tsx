@@ -3,15 +3,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponsesOnce } from "@/lib/firebase-utils"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Trophy, Clock, Users, ArrowRight, AlertCircle } from "lucide-react"
+import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponsesOnce, updateGroupScores } from "@/lib/firebase-utils"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Trophy, Clock, Users, ArrowRight, AlertCircle, SkipForward } from 'lucide-react'
 import type { Quiz, Group, GameState, QuizResponse, LeaderboardEntry } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
-import { Alert, AlertDescription } from "../ui/alert"
 
 interface QuizHostGameProps {
   quiz: Quiz
@@ -21,22 +17,47 @@ interface QuizHostGameProps {
 
 export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [responses, setResponses] = useState<QuizResponse[]>([])
-  const [timeLeft, setTimeLeft] = useState(5)
+  const [timeLeft, setTimeLeft] = useState(30)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
+  const [previousLeaderboard, setPreviousLeaderboard] = useState<LeaderboardEntry[]>([])
   const [showingResults, setShowingResults] = useState(false)
+  const [showScoreAnimation, setShowScoreAnimation] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState(5)
 
   const currentQuestion = quiz.questions[gameState.currentQuestionIndex]
   const isLastQuestion = gameState.currentQuestionIndex >= quiz.questions.length - 1
 
+  // مؤقت إظهار السؤال فقط لمدة 5 ثوان
   useEffect(() => {
-    if (!gameState.questionStartTime || gameState.showResults) return
+    if (gameState.showQuestionOnly && gameState.isActive) {
+      const timer = setInterval(() => {
+        setQuestionOnlyTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer)
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+
+      return () => clearInterval(timer)
+    } else {
+      setQuestionOnlyTimeLeft(5)
+    }
+  }, [gameState.showQuestionOnly, gameState.isActive, gameState.currentQuestionIndex])
+
+  // مؤقت الإجابة
+  useEffect(() => {
+    if (!gameState.questionStartTime || gameState.showResults || gameState.showQuestionOnly) return
 
     const startTime = gameState.questionStartTime.getTime()
+    const timeLimit = currentQuestion?.timeLimit || 30
+
     const timer = setInterval(() => {
       const elapsed = (Date.now() - startTime) / 1000
-      const remaining = Math.max(0, 5 - elapsed)
+      const remaining = Math.max(0, timeLimit - elapsed)
       setTimeLeft(remaining)
 
       if (remaining === 0) {
@@ -45,11 +66,11 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }, 100)
 
     return () => clearInterval(timer)
-  }, [gameState.questionStartTime, gameState.showResults])
+  }, [gameState.questionStartTime, gameState.showResults, gameState.showQuestionOnly, currentQuestion?.timeLimit])
 
-  // استخدام polling بدلاً من الاستماع المباشر لتجنب مشكلة الفهارس
+  // استطلاع الردود كل ثانية
   useEffect(() => {
-    if (!gameState.isActive) return
+    if (!gameState.isActive || gameState.showQuestionOnly) return
 
     const pollResponses = async () => {
       try {
@@ -60,21 +81,23 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       }
     }
 
-    // استطلاع الردود كل ثانية
     const pollInterval = setInterval(pollResponses, 1000)
-
-    // استطلاع فوري
     pollResponses()
 
     return () => clearInterval(pollInterval)
-  }, [gameState.quizId, gameState.currentQuestionIndex, gameState.isActive])
+  }, [gameState.quizId, gameState.currentQuestionIndex, gameState.isActive, gameState.showQuestionOnly])
 
   useEffect(() => {
     if (gameState.showResults) {
       calculateLeaderboard()
       setShowingResults(true)
+
+      setTimeout(() => {
+        setShowScoreAnimation(true)
+      }, 1000)
     } else {
       setShowingResults(false)
+      setShowScoreAnimation(false)
     }
   }, [gameState.showResults, responses])
 
@@ -86,36 +109,61 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       await showQuestionResults(gameState.quizId)
     } catch (error: any) {
       console.error("Error showing results:", error)
-      setError(error.message || "Failed to show results")
+      setError(error.message || "فشل في إظهار النتائج")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleForceNext = async () => {
+    try {
+      setIsLoading(true)
+      await showQuestionResults(gameState.quizId)
+    } catch (error: any) {
+      console.error("Error forcing next:", error)
+      setError(error.message || "فشل في الانتقال للسؤال التالي")
     } finally {
       setIsLoading(false)
     }
   }
 
   const calculateLeaderboard = () => {
+    setPreviousLeaderboard([...leaderboard])
+
     const groupScores = new Map<string, number>()
 
-    // Initialize scores
     groups.forEach((group) => {
       groupScores.set(group.id, group.score || 0)
     })
 
-    // Calculate scores for current question
+    // نظام النقاط الجديد: 1000 نقطة ناقص الوقت بالميلي ثانية
     const correctResponses = responses.filter((r) => r.isCorrect).sort((a, b) => a.responseTime - b.responseTime)
+    const newScores: { groupId: string; score: number }[] = []
 
-    correctResponses.forEach((response, index) => {
-      const points = Math.max(100 - index * 10, 10) // 100, 90, 80, etc., minimum 10
+    correctResponses.forEach((response) => {
+      // حساب النقاط: 1000 - (وقت الاستجابة بالميلي ثانية / 10)
+      const responseTimeMs = response.responseTime * 1000
+      const points = Math.max(Math.round(1000 - (responseTimeMs / 10)), 50) // أقل نقاط 50
+
       const currentScore = groupScores.get(response.groupId) || 0
-      groupScores.set(response.groupId, currentScore + points)
+      const newScore = currentScore + points
+      groupScores.set(response.groupId, newScore)
+
+      newScores.push({ groupId: response.groupId, score: newScore })
     })
 
-    // Create leaderboard
+    if (newScores.length > 0) {
+      updateGroupScores(gameState.quizId, newScores).catch(console.error)
+    }
+
     const leaderboardEntries: LeaderboardEntry[] = groups
       .map((group) => ({
         groupId: group.id,
         groupName: group.groupName,
         members: group.members,
         score: groupScores.get(group.id) || 0,
+        saintName: group.saintName,
+        saintImage: group.saintImage,
       }))
       .sort((a, b) => b.score - a.score)
 
@@ -128,7 +176,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
         setIsLoading(true)
         await endQuiz(gameState.quizId)
       } catch (error: any) {
-        setError(error.message || "Failed to end quiz")
+        setError(error.message || "فشل في إنهاء الامتحان")
       } finally {
         setIsLoading(false)
       }
@@ -138,12 +186,12 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     try {
       setIsLoading(true)
       setError(null)
-      await nextQuestion(gameState.quizId, gameState.currentQuestionIndex + 1, Date.now())
+      await nextQuestion(gameState.quizId, gameState.currentQuestionIndex + 1)
       setResponses([])
-      setTimeLeft(5)
+      setTimeLeft(quiz.questions[gameState.currentQuestionIndex + 1]?.timeLimit || 30)
     } catch (error: any) {
       console.error("Error moving to next question:", error)
-      setError(error.message || "Failed to move to next question")
+      setError(error.message || "فشل في الانتقال للسؤال التالي")
     } finally {
       setIsLoading(false)
     }
@@ -162,67 +210,120 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     return stats
   }
 
+  const getPositionChange = (groupId: string) => {
+    const currentPos = leaderboard.findIndex(g => g.groupId === groupId)
+    const previousPos = previousLeaderboard.findIndex(g => g.groupId === groupId)
+
+    if (previousPos === -1) return 0
+    return previousPos - currentPos
+  }
+
   if (!gameState.isActive) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <Card className="w-full max-w-2xl text-center">
-          <CardContent className="pt-6">
-            <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
-            <div className="space-y-4">
-              {leaderboard.slice(0, 3).map((entry, index) => (
-                <motion.div
-                  key={entry.groupId}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.2 }}
-                  className={`p-4 rounded-lg ${
-                    index === 0
-                      ? "bg-yellow-100 border-2 border-yellow-400"
-                      : index === 1
-                        ? "bg-gray-100 border-2 border-gray-400"
-                        : "bg-orange-100 border-2 border-orange-400"
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4">
+        <div className="w-full max-w-4xl text-center bg-white rounded-3xl shadow-2xl p-8 border-4 border-amber-200">
+          <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Trophy className="w-12 h-12 text-amber-600" />
+          </div>
+          <h2 className="text-4xl font-bold mb-6 text-gray-900">انتهى الامتحان!</h2>
+
+          <div className="space-y-6">
+            {leaderboard.slice(0, 3).map((entry, index) => (
+              <motion.div
+                key={entry.groupId}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.3 }}
+                className={`p-6 rounded-2xl transform hover:scale-105 transition-all duration-300 ${index === 0
+                    ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-2xl"
+                    : index === 1
+                      ? "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 shadow-xl"
+                      : "bg-gradient-to-r from-orange-300 to-red-400 text-white shadow-lg"
                   }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-bold text-lg">
-                        #{index + 1} {entry.groupName}
-                      </h3>
-                      <p className="text-sm text-gray-600">{entry.members.join(", ")}</p>
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ${index === 0 ? "bg-white text-amber-500" : "bg-white/20"
+                      }`}>
+                      {index + 1}
                     </div>
-                    <div className="text-2xl font-bold">{entry.score} pts</div>
+                    {entry.saintImage && (
+                      <img
+                        src={entry.saintImage || "/placeholder.svg"}
+                        alt={entry.saintName}
+                        className="w-12 h-12 rounded-full border-2 border-white object-cover"
+                      />
+                    )}
+                    <div className="text-right">
+                      <h3 className="font-bold text-2xl">{entry.groupName}</h3>
+                      <p className="text-sm opacity-90">{entry.members.join(" • ")}</p>
+                    </div>
                   </div>
-                </motion.div>
-              ))}
+                  <div className="text-3xl font-bold">{entry.score.toLocaleString()}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // إظهار السؤال فقط لمدة 5 ثوان
+  if (gameState.showQuestionOnly) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6 bg-white rounded-2xl p-6 shadow-xl border-4 border-purple-200">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
+              </h1>
+              <p className="text-gray-600 text-lg">{quiz.title}</p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex items-center gap-2 bg-purple-100 px-4 py-2 rounded-xl">
+              <Clock className="w-5 h-5 text-purple-600" />
+              <span className="font-bold text-purple-600">{questionOnlyTimeLeft}ث</span>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-purple-200"
+          >
+            <div className="bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-600 text-white p-12 text-center">
+              <h2 className="text-4xl font-bold mb-4">استعدوا للسؤال!</h2>
+              <p className="text-6xl font-bold mb-6">{currentQuestion.text}</p>
+              <div className="text-2xl">سيظهر الاختيارات خلال {questionOnlyTimeLeft} ثانية</div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 bg-white rounded-2xl p-6 shadow-xl border-4 border-amber-200">
           <div>
-            <h1 className="text-2xl font-bold">
-              Question {gameState.currentQuestionIndex + 1} of {quiz.questions.length}
+            <h1 className="text-3xl font-bold text-gray-900">
+              السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
             </h1>
-            <p className="text-gray-600">{quiz.title}</p>
+            <p className="text-gray-600 text-lg">{quiz.title}</p>
           </div>
-          <div className="flex items-center gap-4">
-            <Badge variant="secondary" className="text-lg px-3 py-1">
-              <Users className="w-4 h-4 mr-1" />
-              {groups.length} groups
-            </Badge>
+          <div className="flex items-center gap-4 mt-4 md:mt-0">
+            <div className="flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-xl">
+              <Users className="w-5 h-5 text-blue-600" />
+              <span className="font-bold text-blue-600">{groups.length} مجموعة</span>
+            </div>
             {!gameState.showResults && (
-              <Badge variant="outline" className="text-lg px-3 py-1">
-                <Clock className="w-4 h-4 mr-1" />
-                {Math.ceil(timeLeft)}s
-              </Badge>
+              <div className="flex items-center gap-2 bg-orange-100 px-4 py-2 rounded-xl">
+                <Clock className="w-5 h-5 text-orange-600" />
+                <span className="font-bold text-orange-600">{Math.ceil(timeLeft)}ث</span>
+              </div>
             )}
           </div>
         </div>
@@ -231,50 +332,76 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
         {error && (
           <Alert className="mb-6" variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="text-lg">{error}</AlertDescription>
           </Alert>
         )}
 
         {/* Progress */}
-        <Progress value={(gameState.currentQuestionIndex / quiz.questions.length) * 100} className="mb-6" />
+        <div className="mb-6 bg-white rounded-2xl p-4 shadow-xl border-4 border-amber-200">
+          <div className="w-full bg-gray-200 rounded-full h-4">
+            <div
+              className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 h-4 rounded-full transition-all duration-300"
+              style={{ width: `${(gameState.currentQuestionIndex / quiz.questions.length) * 100}%` }}
+            ></div>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Question Display */}
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle className="text-xl">{currentQuestion.text}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-3">
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-purple-200">
+            <div className="bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-600 text-white p-6">
+              <h2 className="text-2xl font-bold">{currentQuestion.text}</h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 gap-4">
                 {currentQuestion.choices.map((choice, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`p-4 rounded-lg flex items-center gap-3 ${
-                      gameState.showResults && index === currentQuestion.correctAnswer
-                        ? "ring-2 ring-green-500 bg-green-50"
-                        : "bg-gray-50"
-                    }`}
+                    className={`p-4 rounded-xl flex items-center gap-3 transform hover:scale-105 transition-all duration-200 ${gameState.showResults && index === currentQuestion.correctAnswer
+                        ? "ring-4 ring-green-500 bg-green-50 shadow-lg"
+                        : "bg-gray-50 hover:bg-gray-100"
+                      }`}
                   >
-                    <div className={`w-6 h-6 rounded-full ${getChoiceColor(index)}`} />
-                    <span className="font-medium">{choice}</span>
+                    <div className={`w-8 h-8 rounded-full ${getChoiceColor(index)} flex items-center justify-center text-white font-bold`}>
+                      {String.fromCharCode(65 + index)}
+                    </div>
+                    <span className="font-medium text-lg flex-1">{choice}</span>
                     {gameState.showResults && index === currentQuestion.correctAnswer && (
-                      <Badge className="ml-auto bg-green-500">Correct</Badge>
+                      <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                        الإجابة الصحيحة
+                      </div>
                     )}
                   </motion.div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+
+              {/* Admin Controls */}
+              <div className="mt-6 flex gap-3">
+                {!gameState.showResults && (
+                  <button
+                    onClick={handleForceNext}
+                    disabled={isLoading}
+                    className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+                  >
+                    <SkipForward className="w-5 h-5" />
+                    تخطي الوقت
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
 
           {/* Response Stats or Leaderboard */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{showingResults ? "Current Leaderboard" : "Live Responses"}</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-green-200">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6">
+              <h2 className="text-2xl font-bold">
+                {showingResults ? "الترتيب الحالي" : "الردود المباشرة"}
+              </h2>
+            </div>
+            <div className="p-6">
               <AnimatePresence mode="wait">
                 {showingResults ? (
                   <motion.div
@@ -282,36 +409,79 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    className="space-y-3"
+                    className="space-y-4"
                   >
-                    {leaderboard.map((entry, index) => (
-                      <motion.div
-                        key={entry.groupId}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className={`p-3 rounded-lg flex items-center justify-between ${
-                          index === 0
-                            ? "bg-yellow-100"
-                            : index === 1
-                              ? "bg-gray-100"
-                              : index === 2
-                                ? "bg-orange-100"
-                                : "bg-gray-50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
-                            {index + 1}
+                    {leaderboard.map((entry, index) => {
+                      const positionChange = getPositionChange(entry.groupId)
+                      return (
+                        <motion.div
+                          key={entry.groupId}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{
+                            opacity: 1,
+                            x: 0,
+                            scale: showScoreAnimation ? [1, 1.05, 1] : 1
+                          }}
+                          transition={{
+                            delay: index * 0.1,
+                            scale: { duration: 0.5, delay: 1 + index * 0.2 }
+                          }}
+                          className={`p-4 rounded-xl flex items-center justify-between transform transition-all duration-500 border-4 ${index === 0
+                              ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-xl border-amber-300"
+                              : index === 1
+                                ? "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 shadow-lg border-gray-300"
+                                : index === 2
+                                  ? "bg-gradient-to-r from-orange-300 to-red-400 text-white shadow-md border-orange-300"
+                                  : "bg-gray-50 hover:bg-gray-100 border-gray-200"
+                            }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${index < 3 ? "bg-white/20" : "bg-amber-500 text-white"
+                              }`}>
+                              {index + 1}
+                            </div>
+                            {entry.saintImage && (
+                              <img
+                                src={entry.saintImage || "/placeholder.svg"}
+                                alt={entry.saintName}
+                                className="w-10 h-10 rounded-full border-2 border-white object-cover"
+                              />
+                            )}
+                            <div>
+                              <div className="font-bold text-lg">{entry.groupName}</div>
+                              <div className="text-sm opacity-75">{entry.members.join(" • ")}</div>
+                            </div>
                           </div>
-                          <div>
-                            <div className="font-semibold">{entry.groupName}</div>
-                            <div className="text-sm text-gray-600">{entry.members.join(", ")}</div>
+                          <div className="flex items-center gap-2">
+                            {positionChange > 0 && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="text-green-500 font-bold"
+                              >
+                                ↑{positionChange}
+                              </motion.div>
+                            )}
+                            {positionChange < 0 && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="text-red-500 font-bold"
+                              >
+                                ↓{Math.abs(positionChange)}
+                              </motion.div>
+                            )}
+                            <motion.div
+                              className="text-2xl font-bold"
+                              animate={showScoreAnimation ? { scale: [1, 1.2, 1] } : {}}
+                              transition={{ duration: 0.5, delay: 1 + index * 0.2 }}
+                            >
+                              {entry.score.toLocaleString()}
+                            </motion.div>
                           </div>
-                        </div>
-                        <div className="text-lg font-bold">{entry.score} pts</div>
-                      </motion.div>
-                    ))}
+                        </motion.div>
+                      )
+                    })}
                   </motion.div>
                 ) : (
                   <motion.div
@@ -319,55 +489,61 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    className="space-y-3"
+                    className="space-y-4"
                   >
-                    <div className="text-center mb-4">
-                      <div className="text-2xl font-bold">
+                    <div className="text-center mb-6">
+                      <div className="text-4xl font-bold text-blue-600">
                         {responses.length} / {groups.length}
                       </div>
-                      <div className="text-sm text-gray-600">responses received</div>
+                      <div className="text-gray-600 text-lg">رد مستلم</div>
                     </div>
 
                     {getResponseStats().map((stat, index) => (
-                      <div key={index} className="flex items-center gap-3">
-                        <div className={`w-4 h-4 rounded-full ${getChoiceColor(index)}`} />
+                      <div key={index} className="flex items-center gap-4">
+                        <div className={`w-6 h-6 rounded-full ${getChoiceColor(index)}`} />
                         <div className="flex-1">
-                          <div className="flex justify-between text-sm">
-                            <span>{currentQuestion.choices[index]}</span>
-                            <span>{stat.count}</span>
+                          <div className="flex justify-between text-lg mb-2">
+                            <span className="font-medium">{currentQuestion.choices[index]}</span>
+                            <span className="font-bold">{stat.count}</span>
                           </div>
-                          <Progress
-                            value={responses.length > 0 ? (stat.count / responses.length) * 100 : 0}
-                            className="h-2 mt-1"
-                          />
+                          <div className="w-full bg-gray-200 rounded-full h-3">
+                            <div
+                              className={`h-3 rounded-full transition-all duration-300 ${getChoiceColor(index)}`}
+                              style={{ width: `${responses.length > 0 ? (stat.count / responses.length) * 100 : 0}%` }}
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
                   </motion.div>
                 )}
               </AnimatePresence>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* Controls */}
         {gameState.showResults && (
           <div className="mt-6 text-center">
-            <Button onClick={handleNextQuestion} size="lg" className="px-8" disabled={isLoading}>
+            <button
+              onClick={handleNextQuestion}
+              disabled={isLoading}
+              className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 disabled:opacity-50 text-white font-bold py-4 px-12 rounded-2xl transition-all duration-200 text-xl flex items-center gap-3 mx-auto shadow-2xl transform hover:scale-105 border-4 border-amber-300"
+            >
               {isLoading ? (
-                "Loading..."
+                "جاري التحميل..."
               ) : isLastQuestion ? (
                 <>
-                  <Trophy className="w-5 h-5 mr-2" />
-                  End Quiz
+                  <Trophy className="w-6 h-6" />
+                  إنهاء الامتحان
                 </>
               ) : (
                 <>
-                  <ArrowRight className="w-5 h-5 mr-2" />
-                  Next Question
+                  <ArrowRight className="w-6 h-6" />
+                  السؤال التالي
                 </>
               )}
-            </Button>
+            </button>
           </div>
         )}
       </div>

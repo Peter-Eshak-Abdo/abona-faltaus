@@ -20,7 +20,7 @@ export default function PlayQuizPage() {
   const [currentGroup, setCurrentGroup] = useState<Group | null>(null)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [hasAnswered, setHasAnswered] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(5)
+  const [timeLeft, setTimeLeft] = useState(30)
   const [showResults, setShowResults] = useState(false)
   const quizId = params.quizId as string
 
@@ -53,6 +53,7 @@ export default function PlayQuizPage() {
         setSelectedAnswer(null)
         setHasAnswered(false)
         setShowResults(false)
+        setTimeLeft(state.currentQuestionTimeLimit || 30)
       }
 
       if (state.showResults) {
@@ -67,9 +68,11 @@ export default function PlayQuizPage() {
     if (!gameState?.questionStartTime || gameState.showResults || hasAnswered) return
 
     const startTime = gameState.questionStartTime.getTime()
+    const timeLimit = gameState.currentQuestionTimeLimit || 30
+
     const timer = setInterval(() => {
       const elapsed = (Date.now() - startTime) / 1000
-      const remaining = Math.max(0, 5 - elapsed)
+      const remaining = Math.max(0, timeLimit - elapsed)
       setTimeLeft(remaining)
 
       if (remaining === 0) {
@@ -79,7 +82,7 @@ export default function PlayQuizPage() {
     }, 100)
 
     return () => clearInterval(timer)
-  }, [gameState?.questionStartTime, gameState?.showResults, hasAnswered])
+  }, [gameState?.questionStartTime, gameState?.showResults, gameState?.currentQuestionTimeLimit, hasAnswered])
 
   const loadQuiz = async () => {
     try {
@@ -136,8 +139,8 @@ export default function PlayQuizPage() {
 
   if (!quiz || !gameState || !currentGroup) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
       </div>
     )
   }
