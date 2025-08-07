@@ -4,8 +4,6 @@
 
 import { useState, useEffect } from "react"
 import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponsesOnce, updateGroupScores } from "@/lib/firebase-utils"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Trophy, Clock, Users, ArrowRight, AlertCircle, SkipForward } from 'lucide-react'
 import type { Quiz, Group, GameState, QuizResponse, LeaderboardEntry } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -220,12 +218,14 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
   if (!gameState.isActive) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4">
-        <div className="w-full max-w-4xl text-center bg-white rounded-3xl shadow-2xl p-8 border-4 border-amber-200">
-          <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Trophy className="w-12 h-12 text-amber-600" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-700 p-4">
+        <div className="w-full max-w-6xl text-center bg-white rounded-2xl shadow-2xl p-8">
+          <div className="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-12 h-12 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+            </svg>
           </div>
-          <h2 className="text-4xl font-bold mb-6 text-gray-900">انتهى الامتحان!</h2>
+          <h2 className="text-4xl font-bold mb-8 text-gray-900">انتهى الامتحان!</h2>
 
           <div className="space-y-6">
             {leaderboard.slice(0, 3).map((entry, index) => (
@@ -234,8 +234,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.3 }}
-                className={`p-6 rounded-2xl transform hover:scale-105 transition-all duration-300 ${index === 0
-                    ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-2xl"
+                className={`p-6 rounded-2xl transition-all duration-300 ${index === 0
+                    ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-2xl"
                     : index === 1
                       ? "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 shadow-xl"
                       : "bg-gradient-to-r from-orange-300 to-red-400 text-white shadow-lg"
@@ -243,7 +243,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ${index === 0 ? "bg-white text-amber-500" : "bg-white/20"
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-3xl ${index === 0 ? "bg-white text-yellow-500" : "bg-white/20"
                       }`}>
                       {index + 1}
                     </div>
@@ -251,15 +251,15 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                       <img
                         src={entry.saintImage || "/placeholder.svg"}
                         alt={entry.saintName}
-                        className="w-12 h-12 rounded-full border-2 border-white object-cover"
+                        className="w-16 h-16 rounded-full border-4 border-white object-cover"
                       />
                     )}
                     <div className="text-right">
-                      <h3 className="font-bold text-2xl">{entry.groupName}</h3>
-                      <p className="text-sm opacity-90">{entry.members.join(" • ")}</p>
+                      <h3 className="font-bold text-3xl">{entry.groupName}</h3>
+                      <p className="text-lg opacity-90">{entry.members.join(" • ")}</p>
                     </div>
                   </div>
-                  <div className="text-3xl font-bold">{entry.score.toLocaleString()}</div>
+                  <div className="text-4xl font-bold">{entry.score.toLocaleString()}</div>
                 </div>
               </motion.div>
             ))}
@@ -272,9 +272,9 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   // إظهار السؤال فقط لمدة 5 ثوان
   if (gameState.showQuestionOnly) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-700 p-4">
         <div className="max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-6 bg-white rounded-2xl p-6 shadow-xl border-4 border-purple-200">
+          <div className="flex justify-between items-center mb-6 bg-white rounded-2xl p-6 shadow-xl">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
                 السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
@@ -282,7 +282,9 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
               <p className="text-gray-600 text-lg">{quiz.title}</p>
             </div>
             <div className="flex items-center gap-2 bg-purple-100 px-4 py-2 rounded-xl">
-              <Clock className="w-5 h-5 text-purple-600" />
+              <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+              </svg>
               <span className="font-bold text-purple-600">{questionOnlyTimeLeft}ث</span>
             </div>
           </div>
@@ -290,9 +292,9 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-purple-200"
+            className="bg-white rounded-2xl shadow-2xl overflow-hidden"
           >
-            <div className="bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-600 text-white p-12 text-center">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-12 text-center">
               <h2 className="text-4xl font-bold mb-4">استعدوا للسؤال!</h2>
               <p className="text-6xl font-bold mb-6">{currentQuestion.text}</p>
               <div className="text-2xl">سيظهر الاختيارات خلال {questionOnlyTimeLeft} ثانية</div>
@@ -304,10 +306,10 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-6 bg-white rounded-2xl p-6 shadow-xl border-4 border-amber-200">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 bg-white rounded-2xl p-6 shadow-xl">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
               السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
@@ -316,12 +318,16 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
           </div>
           <div className="flex items-center gap-4 mt-4 md:mt-0">
             <div className="flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-xl">
-              <Users className="w-5 h-5 text-blue-600" />
+              <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+              </svg>
               <span className="font-bold text-blue-600">{groups.length} مجموعة</span>
             </div>
             {!gameState.showResults && (
               <div className="flex items-center gap-2 bg-orange-100 px-4 py-2 rounded-xl">
-                <Clock className="w-5 h-5 text-orange-600" />
+                <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                </svg>
                 <span className="font-bold text-orange-600">{Math.ceil(timeLeft)}ث</span>
               </div>
             )}
@@ -330,17 +336,21 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
         {/* Error Message */}
         {error && (
-          <Alert className="mb-6" variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="text-lg">{error}</AlertDescription>
-          </Alert>
+          <div className="mb-6 bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+            <div className="flex">
+              <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <p className="mr-3 text-red-700 text-lg">{error}</p>
+            </div>
+          </div>
         )}
 
         {/* Progress */}
-        <div className="mb-6 bg-white rounded-2xl p-4 shadow-xl border-4 border-amber-200">
+        <div className="mb-6 bg-white rounded-2xl p-4 shadow-xl">
           <div className="w-full bg-gray-200 rounded-full h-4">
             <div
-              className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 h-4 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 h-4 rounded-full transition-all duration-300"
               style={{ width: `${(gameState.currentQuestionIndex / quiz.questions.length) * 100}%` }}
             ></div>
           </div>
@@ -348,8 +358,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Question Display */}
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-purple-200">
-            <div className="bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-600 text-white p-6">
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
               <h2 className="text-2xl font-bold">{currentQuestion.text}</h2>
             </div>
             <div className="p-6">
@@ -360,7 +370,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`p-4 rounded-xl flex items-center gap-3 transform hover:scale-105 transition-all duration-200 ${gameState.showResults && index === currentQuestion.correctAnswer
+                    className={`p-4 rounded-xl flex items-center gap-3 transition-all duration-200 ${gameState.showResults && index === currentQuestion.correctAnswer
                         ? "ring-4 ring-green-500 bg-green-50 shadow-lg"
                         : "bg-gray-50 hover:bg-gray-100"
                       }`}
@@ -368,7 +378,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                     <div className={`w-8 h-8 rounded-full ${getChoiceColor(index)} flex items-center justify-center text-white font-bold`}>
                       {String.fromCharCode(65 + index)}
                     </div>
-                    <span className="font-medium text-lg flex-1">{choice}</span>
+                    <span className="font-medium text-lg flex-1 text-gray-900">{choice}</span>
                     {gameState.showResults && index === currentQuestion.correctAnswer && (
                       <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                         الإجابة الصحيحة
@@ -386,7 +396,9 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                     disabled={isLoading}
                     className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
                   >
-                    <SkipForward className="w-5 h-5" />
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0zM4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                    </svg>
                     تخطي الوقت
                   </button>
                 )}
@@ -395,7 +407,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
           </div>
 
           {/* Response Stats or Leaderboard */}
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-green-200">
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
             <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6">
               <h2 className="text-2xl font-bold">
                 {showingResults ? "الترتيب الحالي" : "الردود المباشرة"}
@@ -426,17 +438,17 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                             delay: index * 0.1,
                             scale: { duration: 0.5, delay: 1 + index * 0.2 }
                           }}
-                          className={`p-4 rounded-xl flex items-center justify-between transform transition-all duration-500 border-4 ${index === 0
-                              ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-xl border-amber-300"
+                          className={`p-4 rounded-xl flex items-center justify-between transition-all duration-500 ${index === 0
+                              ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-xl"
                               : index === 1
-                                ? "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 shadow-lg border-gray-300"
+                                ? "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 shadow-lg"
                                 : index === 2
-                                  ? "bg-gradient-to-r from-orange-300 to-red-400 text-white shadow-md border-orange-300"
-                                  : "bg-gray-50 hover:bg-gray-100 border-gray-200"
+                                  ? "bg-gradient-to-r from-orange-300 to-red-400 text-white shadow-md"
+                                  : "bg-gray-50 hover:bg-gray-100 text-gray-900"
                             }`}
                         >
                           <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${index < 3 ? "bg-white/20" : "bg-amber-500 text-white"
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${index < 3 ? "bg-white/20" : "bg-blue-500 text-white"
                               }`}>
                               {index + 1}
                             </div>
@@ -503,8 +515,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                         <div className={`w-6 h-6 rounded-full ${getChoiceColor(index)}`} />
                         <div className="flex-1">
                           <div className="flex justify-between text-lg mb-2">
-                            <span className="font-medium">{currentQuestion.choices[index]}</span>
-                            <span className="font-bold">{stat.count}</span>
+                            <span className="font-medium text-gray-900">{currentQuestion.choices[index]}</span>
+                            <span className="font-bold text-gray-900">{stat.count}</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-3">
                             <div
@@ -528,18 +540,22 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
             <button
               onClick={handleNextQuestion}
               disabled={isLoading}
-              className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 disabled:opacity-50 text-white font-bold py-4 px-12 rounded-2xl transition-all duration-200 text-xl flex items-center gap-3 mx-auto shadow-2xl transform hover:scale-105 border-4 border-amber-300"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 text-white font-bold py-4 px-12 rounded-2xl transition-all duration-200 text-xl flex items-center gap-3 mx-auto shadow-2xl"
             >
               {isLoading ? (
                 "جاري التحميل..."
               ) : isLastQuestion ? (
                 <>
-                  <Trophy className="w-6 h-6" />
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+                  </svg>
                   إنهاء الامتحان
                 </>
               ) : (
                 <>
-                  <ArrowRight className="w-6 h-6" />
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
                   السؤال التالي
                 </>
               )}

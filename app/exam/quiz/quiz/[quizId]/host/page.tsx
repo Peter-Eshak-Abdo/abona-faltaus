@@ -14,8 +14,6 @@ import {
   deleteGroup,
   cleanupOldGroups,
 } from "@/lib/firebase-utils"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Users, Play, QrCode, AlertCircle, CheckCircle, Trash2, RefreshCw, ZoomIn, ZoomOut } from 'lucide-react'
 import { QRCodeSVG } from "qrcode.react"
 import type { Quiz, Group, GameState } from "@/types/quiz"
 import { motion } from "framer-motion"
@@ -130,10 +128,6 @@ export default function HostQuizPage() {
   }
 
   const handleDeleteGroup = async (groupId: string, groupName: string) => {
-    if (!window.confirm(`هل أنت متأكد من حذف مجموعة "${groupName}"؟ لا يمكن التراجع عن هذا الإجراء.`)) {
-      return
-    }
-
     setDeletingGroupId(groupId)
 
     try {
@@ -180,8 +174,8 @@ export default function HostQuizPage() {
 
   if (loading || !quiz) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white"></div>
       </div>
     )
   }
@@ -193,19 +187,19 @@ export default function HostQuizPage() {
   const joinUrl = typeof window !== "undefined" ? `${window.location.origin}/exam/quiz/quiz/${quizId}/join` : `abona-faltaus.vercel.app/exam/quiz/quiz/${quizId}/join`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 text-center md:text-right">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">{quiz.title}</h1>
-          <p className="text-gray-600 text-lg mb-3">{quiz.description}</p>
+          <h1 className="text-4xl font-bold text-white mb-3">{quiz.title}</h1>
+          <p className="text-white/80 text-lg mb-3">{quiz.description}</p>
           <div className="flex flex-wrap justify-center md:justify-start gap-2">
             {quiz.shuffleQuestions && (
-              <div className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium border-2 border-amber-300">
+              <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                 خلط الأسئلة
               </div>
             )}
             {quiz.shuffleChoices && (
-              <div className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium border-2 border-orange-300">
+              <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                 خلط الاختيارات
               </div>
             )}
@@ -213,34 +207,44 @@ export default function HostQuizPage() {
         </div>
 
         {error && (
-          <Alert className="mb-6" variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="text-lg">{error}</AlertDescription>
-          </Alert>
+          <div className="mb-6 bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+            <div className="flex">
+              <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <p className="mr-3 text-red-700 text-lg">{error}</p>
+            </div>
+          </div>
         )}
 
         {startSuccess && !gameState?.isActive && (
-          <Alert className="mb-6">
-            <CheckCircle className="h-4 w-4" />
-            <AlertDescription className="text-lg">
-              جاري بدء الامتحان... يرجى انتظار تحميل واجهة اللعبة.
-            </AlertDescription>
-          </Alert>
+          <div className="mb-6 bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+            <div className="flex">
+              <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+              </svg>
+              <p className="mr-3 text-green-700 text-lg">
+                جاري بدء الامتحان... يرجى انتظار تحميل واجهة اللعبة.
+              </p>
+            </div>
+          </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* QR Code Card */}
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-300 border-4 border-blue-200">
-            <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 text-white p-6">
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
               <h2 className="flex items-center gap-3 text-2xl font-bold">
-                <QrCode className="w-7 h-7" />
+                <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 3a1 1 0 00-1 1v3a1 1 0 001 1h3a1 1 0 001-1V4a1 1 0 00-1-1h-3z" clipRule="evenodd" />
+                </svg>
                 الانضمام للامتحان
               </h2>
             </div>
             <div className="text-center p-8">
               {joinUrl && (
                 <>
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-2xl inline-block mb-6 border-4 border-gray-200 shadow-inner">
+                  <div className="bg-gray-50 p-8 rounded-2xl inline-block mb-6 border-2 border-gray-200">
                     <QRCodeSVG value={joinUrl} size={qrSize} />
                   </div>
 
@@ -249,32 +253,36 @@ export default function HostQuizPage() {
                     <div className="flex items-center justify-between mb-3">
                       <button
                         onClick={() => setQrSize(Math.max(150, qrSize - 25))}
-                        className="p-3 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors border-2 border-blue-300"
-                        title="تصغير حجم الكود"
+                        className="p-3 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors"
+                        title="تقليل حجم الكود"
                         type="button"
                       >
-                        <ZoomOut className="w-5 h-5 text-blue-600" />
+                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+                        </svg>
                       </button>
-                      <span className="text-lg font-bold text-gray-700 bg-gray-100 px-4 py-2 rounded-xl border-2 border-gray-300">{qrSize}px</span>
+                      <span className="text-lg font-bold text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">{qrSize}px</span>
                       <button
                         onClick={() => setQrSize(Math.min(400, qrSize + 25))}
-                        className="p-3 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors border-2 border-blue-300"
-                        title="تكبير حجم الكود"
+                        className="p-3 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors"
+                        title="زيادة حجم الكود"
                         type="button"
                       >
-                        <ZoomIn className="w-5 h-5 text-blue-600" />
+                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM15.5 10.5l3 3m-3-3l-3 3" />
+                        </svg>
                       </button>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-3 border-2 border-gray-300">
+                    <div className="w-full bg-gray-200 rounded-full h-3">
                       <div
-                        className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 h-3 rounded-full transition-all duration-300"
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full transition-all duration-300"
                         style={{ width: `${((qrSize - 150) / (400 - 150)) * 100}%` }}
                       />
                     </div>
                   </div>
 
                   <p className="text-gray-600 mb-4 text-lg font-medium">امسح الكود أو ادخل على:</p>
-                  <div className="bg-gray-100 p-4 rounded-xl border-4 border-gray-200">
+                  <div className="bg-gray-100 p-4 rounded-xl border-2 border-gray-200">
                     <p className="font-mono text-sm break-all text-gray-800 font-medium">{joinUrl}</p>
                   </div>
                 </>
@@ -283,21 +291,23 @@ export default function HostQuizPage() {
           </div>
 
           {/* Groups Card */}
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-300 border-4 border-green-200">
-            <div className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 text-white p-6">
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6">
               <div className="flex justify-between items-center">
                 <h2 className="flex items-center gap-3 text-2xl font-bold">
-                  <Users className="w-7 h-7" />
+                  <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                  </svg>
                   المجموعات ({groups.length})
                 </h2>
                 <button
                   onClick={handleCleanupOldGroups}
                   disabled={isCleaningUp}
-                  className="bg-white/20 hover:bg-white/30 disabled:opacity-50 px-4 py-2 rounded-xl transition-colors flex items-center gap-2 border-2 border-white/30"
-                  title="تنظيف المجموعات غير النشطة"
-                  type="button"
+                  className="bg-white/20 hover:bg-white/30 disabled:opacity-50 px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
                 >
-                  <RefreshCw className={`w-5 h-5 ${isCleaningUp ? "animate-spin" : ""}`} />
+                  <svg className={`w-5 h-5 ${isCleaningUp ? "animate-spin" : ""}`} fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                  </svg>
                   تنظيف
                 </button>
               </div>
@@ -306,7 +316,9 @@ export default function HostQuizPage() {
               {groups.length === 0 ? (
                 <div className="text-center py-16 text-gray-500">
                   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-10 h-10 text-gray-400" />
+                    <svg className="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                    </svg>
                   </div>
                   <p className="text-xl mb-2 font-medium">لم تنضم أي مجموعة بعد</p>
                   <p className="text-lg">شارك الكود للبدء</p>
@@ -323,42 +335,39 @@ export default function HostQuizPage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="group relative bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-2xl border-4 border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden"
+                        className="bg-gray-50 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
                       >
-                        {/* 3D Effect Background */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 via-orange-50/50 to-red-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                        <div className="relative p-6 flex items-center justify-between">
+                        <div className="p-6 flex items-center justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-4 mb-3">
-                              <div className="w-12 h-12 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 border-white">
+                              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
                                 {index + 1}
                               </div>
                               {group.saintImage && (
                                 <img
                                   src={group.saintImage || "/placeholder.svg"}
                                   alt={group.saintName}
-                                  className="w-12 h-12 rounded-full border-4 border-amber-300 object-cover shadow-lg"
+                                  className="w-12 h-12 rounded-full border-2 border-gray-300 object-cover shadow-lg"
                                 />
                               )}
                               <div>
-                                <h3 className="font-bold text-xl text-gray-900 group-hover:text-amber-600 transition-colors">
+                                <h3 className="font-bold text-xl text-gray-900">
                                   {group.groupName}
                                 </h3>
                                 <div className="flex items-center gap-2 mt-1">
-                                  <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium border-2 border-blue-300">
+                                  <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                                     {group.members.length} عضو
                                   </div>
-                                  <div className={`px-3 py-1 rounded-full text-sm font-medium border-2 ${activity.status === 'active' ? 'bg-green-100 text-green-800 border-green-300' :
-                                      activity.status === 'idle' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
-                                        'bg-red-100 text-red-800 border-red-300'
+                                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${activity.status === 'active' ? 'bg-green-100 text-green-800' :
+                                      activity.status === 'idle' ? 'bg-yellow-100 text-yellow-800' :
+                                        'bg-red-100 text-red-800'
                                     }`}>
                                     {activity.text}
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-3 border-2 border-gray-200">
+                            <div className="bg-white rounded-xl p-3 border border-gray-200">
                               <p className="text-gray-700 font-medium">{group.members.join(" • ")}</p>
                             </div>
                           </div>
@@ -366,14 +375,14 @@ export default function HostQuizPage() {
                           <button
                             onClick={() => handleDeleteGroup(group.id, group.groupName)}
                             disabled={isDeleting}
-                            className="mr-4 p-3 bg-red-50 hover:bg-red-100 disabled:opacity-50 text-red-600 rounded-xl transition-all duration-200 transform hover:scale-110 shadow-md hover:shadow-lg border-2 border-red-200"
-                            type="button"
-                            title={`حذف المجموعة ${group.groupName}`}
+                            className="mr-4 p-3 bg-red-50 hover:bg-red-100 disabled:opacity-50 text-red-600 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
                           >
                             {isDeleting ? (
                               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600" />
                             ) : (
-                              <Trash2 className="w-6 h-6" />
+                              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                              </svg>
                             )}
                           </button>
                         </div>
@@ -387,27 +396,27 @@ export default function HostQuizPage() {
         </div>
 
         {/* Quiz Stats */}
-        <div className="bg-white rounded-3xl shadow-2xl mb-8 overflow-hidden transform hover:scale-105 transition-all duration-300 border-4 border-purple-200">
-          <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white p-6">
+        <div className="bg-white rounded-2xl shadow-2xl mb-8 overflow-hidden">
+          <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6">
             <h2 className="text-2xl font-bold">تفاصيل الامتحان</h2>
           </div>
           <div className="p-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg transform hover:scale-110 transition-all duration-300 border-4 border-blue-200">
+              <div className="text-center p-6 bg-blue-50 rounded-2xl shadow-lg">
                 <div className="text-4xl font-bold text-blue-600 mb-2">{quiz.questions.length}</div>
                 <div className="text-gray-700 font-bold text-lg">سؤال</div>
               </div>
-              <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl shadow-lg transform hover:scale-110 transition-all duration-300 border-4 border-green-200">
+              <div className="text-center p-6 bg-green-50 rounded-2xl shadow-lg">
                 <div className="text-4xl font-bold text-green-600 mb-2">{groups.length}</div>
                 <div className="text-gray-700 font-bold text-lg">مجموعة</div>
               </div>
-              <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl shadow-lg transform hover:scale-110 transition-all duration-300 border-4 border-purple-200">
+              <div className="text-center p-6 bg-purple-50 rounded-2xl shadow-lg">
                 <div className="text-4xl font-bold text-purple-600 mb-2">
                   {groups.reduce((total, group) => total + group.members.length, 0)}
                 </div>
                 <div className="text-gray-700 font-bold text-lg">طالب</div>
               </div>
-              <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl shadow-lg transform hover:scale-110 transition-all duration-300 border-4 border-orange-200">
+              <div className="text-center p-6 bg-orange-50 rounded-2xl shadow-lg">
                 <div className="text-4xl font-bold text-orange-600 mb-2">
                   {Math.round(quiz.questions.reduce((sum, q) => sum + q.timeLimit, 0) / 60)}
                 </div>
@@ -422,17 +431,17 @@ export default function HostQuizPage() {
           <button
             onClick={handleStartQuiz}
             disabled={groups.length === 0 || isStarting || gameState?.isActive}
-            className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-16 py-6 rounded-3xl transition-all duration-300 text-2xl shadow-2xl transform hover:scale-110 flex items-center gap-4 mx-auto border-4 border-amber-300"
-            type="button"
-            title="بدء الامتحان"
+            className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-16 py-6 rounded-2xl transition-all duration-300 text-2xl shadow-2xl flex items-center gap-4 mx-auto"
           >
-            <Play className="w-8 h-8" />
+            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+            </svg>
             {isStarting ? "جاري البدء..." : gameState?.isActive ? "تم بدء الامتحان" : "بدء الامتحان"}
           </button>
           {groups.length === 0 && (
-            <p className="text-gray-600 mt-6 text-xl font-medium">يجب أن تنضم مجموعة واحدة على الأقل قبل البدء</p>
+            <p className="text-white/80 mt-6 text-xl font-medium">يجب أن تنضم مجموعة واحدة على الأقل قبل البدء</p>
           )}
-          {isStarting && <p className="text-amber-600 mt-6 text-xl font-medium">يرجى الانتظار أثناء تحضير الامتحان...</p>}
+          {isStarting && <p className="text-white/80 mt-6 text-xl font-medium">يرجى الانتظار أثناء تحضير الامتحان...</p>}
         </div>
       </div>
     </div>

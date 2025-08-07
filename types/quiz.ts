@@ -26,8 +26,8 @@ export interface Group {
   joinedAt: Date;
   score: number;
   lastActivity: Date;
-  saintName?: string; // اسم القديس المختار
-  saintImage?: string; // صورة القديس
+  saintName?: string;
+  saintImage?: string;
 }
 
 export interface GameState {
@@ -37,7 +37,7 @@ export interface GameState {
   startedAt: Date | null;
   questionStartTime: Date | null;
   showResults: boolean;
-  showQuestionOnly: boolean; // إظهار السؤال فقط لمدة 5 ثوان
+  showQuestionOnly: boolean;
   currentQuestionTimeLimit: number;
 }
 
