@@ -37,7 +37,7 @@
     "dompurify": "^3.2.6",
     "embla-carousel-react": "^8.6.0",
     "express": "^5.1.0",
-    "firebase": "^12.1.0",
+    "firebase": "^12.2.1",
     "framer-motion": "^12.23.12",
     "geist": "^1.4.2",
     "html2canvas": "^1.4.1",
