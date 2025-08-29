@@ -1,16 +1,62 @@
-Vercel It's running now
-# https://abona-faltaus.vercel.app/
+# ابونا فلتاؤس — موقع كنسي أرثوذكسي
 
-Railway it's for backend
-## https://abona-faltaus-production.up.railway.app
+## https://abona-faltaus.vercel.app/
 
-it's firebase Hosting, but now i stop it
-### https://abona-faltaus.web.app/
+موقع كنسي عربي/سرياني باسم **ابونا فلتاؤس**، مبني بـ Next.js وTypeScript ويحتوي واجهة أمامية غنيّة بميزات مثل صفحات تقديمية، امتحانات تجميعية/فردية، واستخدام Socket.IO للـ realtime (backend منفصل). الموقع منشور على Vercel (النسخة الحية). :contentReference[oaicite:1]{index=1}
 
+---
 
-## Getting Started
+## الفكرة والهدف
+هذا المشروع هدفه تقديم محتوى كنسي (مقالات، مسابقات/اختبارات، مواد دينية، ألحان/ملفات صوتية...) بواجهة حديثة ويمكن تشغيله كـ PWA من خلال Service Worker مخصص.
 
-First, run the development server:
-npm run dev
+---
+## الصفحات
+- صفحة الكتاب المقدس : تحتوي علي الكتاب المقدس كامل بالعهدين بالعربي و يوجد زرار لتكبير او تصغير حجم الخط
+- صفحة الميديا :
+1- يوجد بها صفحة الالحان مقسمة علي حسب المناسبة والطقس وبعض صورة للهزات(سيضاف الكلمات قريبا)
+2- صفحة الترانيم بها مجموعة تارنيم ومقسمة علي حسب المناسبة (سيضاف كلمات قريباً)
+3- العظات بها بعض غظات مقسمة حسب الاب الكاهن الواعظ
+- صفحة الامتحانات :
+1- امتحان فردي : تقدر ختار محتوي الاسئلة (الميلا - الغطاس - صوم يونان - الصوم الكبير - صوم نينوي(فيه حاجة غلط هصلها . اسف) - القيامة - نهضة العذراء - صوم الميلاد - الخماسين - صوم الرسل - اسرار الكنيسة - الطقس السنوي - رسالة تيموثاوس الاولي)طبعا تقدر تختار كذا محموي في نفس الامتحان + تقدر تحدد وقت الامتحان + عدد الاسئلة
+2-
+- ينزل علي التلفون بنظام PWA و ممكن يشتغل افلاين (تحت التطوير)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
+
+## أبرز الميزات
+- مبني بـ **Next.js** + **TypeScript**.
+- يعتمد **Tailwind CSS** و**Bootstrap 5** في الواجهات.
+- استخدام **Socket.IO** لتجارب الامتحانات الجماعية/الوقت الحقيقي.
+- يحتوي على ملفات خدمات (server.js) لربط الـ backend.
+- مُهيّأ للنشر على Vercel (واجهات) وخيارات لاستضافة backend على Railway/Glitch/Render. :contentReference[oaicite:2]{index=2}
+---
+
+## التقنيات المستخدمة (Tech Stack)
+- Next.js (App Router) + TypeScript
+- React
+- Tailwind CSS و Bootstrap 5
+- Node/Express (server.js) + Socket.IO
+- Firebase (مذكور في المشروع/ملفات الإعداد)
+- أدوات: Vercel لنشر الواجهة، خيارات أخرى للـ backend.
+
+---
+
+## روابط مهمة
+- المستودع على GitHub: `https://github.com/Peter-Eshak-Abdo/abona-faltaus`. :contentReference[oaicite:3]{index=3}
+- الموقع الحي: `https://abona-faltaus.vercel.app/`. :contentReference[oaicite:4]{index=4}
+
+---
+
+## متطلبات قبل التشغيل محليًا
+- Node.js (النسخة الموصى بها: 18+)
+- npm أو pnpm
+- (إن وُجد) إعداد مفاتيح Firebase / متغيرات بيئية للـ backend
+
+---
+
+## الإعداد والتشغيل محليًا
+
+1. استنساخ المشروع:
+```bash
+git clone https://github.com/Peter-Eshak-Abdo/abona-faltaus.git
+cdabona-faltaus
