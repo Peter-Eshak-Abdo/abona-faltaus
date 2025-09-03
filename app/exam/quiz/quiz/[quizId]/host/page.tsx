@@ -206,6 +206,7 @@ export default function HostQuizPage() {
                 خلط الاختيارات
               </div>
             )}
+            <br/><img src={"/images/alnosor/logo.jpeg"} alt="Logo" className=" w-auto rounded-lg shadow-lg mb-2" style={{height: "50vw"}} />
           </div>
         </div>
 
@@ -260,8 +261,12 @@ export default function HostQuizPage() {
                         title="تقليل حجم الكود"
                         type="button"
                       >
-                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {/* <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+                        </svg> */}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" className="bi bi-dash-circle fw-bolder" viewBox="0 0 16 16">
+                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                          <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8" />
                         </svg>
                       </button>
                       <span className="text-lg font-bold text-gray-700 bg-gray-100 px-4 py-2 rounded-xl">{qrSize}px</span>
@@ -271,8 +276,12 @@ export default function HostQuizPage() {
                         title="زيادة حجم الكود"
                         type="button"
                       >
-                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {/* <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM15.5 10.5l3 3m-3-3l-3 3" />
+                        </svg> */}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" className="bi bi-plus-circle fw-bolder" viewBox="0 0 16 16">
+                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                         </svg>
                       </button>
                     </div>
@@ -306,11 +315,14 @@ export default function HostQuizPage() {
                 <button
                   onClick={handleCleanupOldGroups}
                   disabled={isCleaningUp}
-                  className="bg-white/20 hover:bg-white/30 disabled:opacity-50 px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
+                  className="bg-white/20 hover:bg-white/30 disabled:opacity-50 px-4 py-2 rounded-xl transition-colors flex items-center gap-2 bg-warning text-black"
                   type="button"
                 >
-                  <svg className={`w-5 h-5 ${isCleaningUp ? "animate-spin" : ""}`} fill="currentColor" viewBox="0 0 20 20">
+                  {/* <svg className={`w-5 h-5 ${isCleaningUp ? "animate-spin" : ""}`} fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                  </svg> */}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-trash3 fw-bolder" viewBox="0 0 16 16">
+                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
                   </svg>
                   تنظيف
                 </button>
@@ -372,15 +384,19 @@ export default function HostQuizPage() {
                           <button
                             onClick={() => handleDeleteGroup(group.id, group.groupName)}
                             disabled={isDeleting}
-                            className="mr-4 p-3 bg-red-50 hover:bg-red-100 disabled:opacity-50 text-red-600 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
+                            className="mr-4 p-3 hover:bg-red-100 disabled:opacity-50 text-red-600 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg bg-danger"
                             type="button"
                           >
                             {isDeleting ? (
                               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600" />
                             ) : (
-                              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                              </svg>
+                              // <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                              //   <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                // </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-trash3 fw-bolder" viewBox="0 0 16 16">
+                                  <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                </svg>
+
                             )}
                           </button>
                         </div>
@@ -425,11 +441,11 @@ export default function HostQuizPage() {
         </div>
 
         {/* Start Button */}
-        <div className="text-center">
+        <div className="text-center mt-3">
           <button
             onClick={handleStartQuiz}
             disabled={groups.length === 0 || isStarting || gameState?.isActive}
-            className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-8 sm:px-16 py-4 sm:py-6 rounded-2xl transition-all duration-300 text-xl sm:text-2xl shadow-2xl flex items-center gap-4 mx-auto"
+            className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold sm:px-16 py-4 sm:py-6 rounded-2xl transition-all duration-300 text-xl sm:text-2xl shadow-2xl flex items-center gap-4 mx-auto bg-primary text-primary-foreground px-2"
             type="button"
           >
             <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">

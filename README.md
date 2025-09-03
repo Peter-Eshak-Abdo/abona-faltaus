@@ -1,8 +1,8 @@
 # ابونا فلتاؤس — موقع كنسي أرثوذكسي
 
 ## https://abona-faltaus.vercel.app/
-
-موقع كنسي عربي/سرياني باسم **ابونا فلتاؤس**، مبني بـ Next.js وTypeScript ويحتوي واجهة أمامية غنيّة بميزات مثل صفحات تقديمية، امتحانات تجميعية/فردية، واستخدام Socket.IO للـ realtime (backend منفصل). الموقع منشور على Vercel (النسخة الحية). :contentReference[oaicite:1]{index=1}
+## أكتب علي اي متصفح (ابونا فلتاؤس تفاحة)
+موقع كنسي عربي/سرياني باسم **ابونا فلتاؤس**، مبني بـ Next.js وTypeScript ويحتوي واجهة أمامية غنيّة بميزات مثل صفحات تقديمية، امتحانات تجميعية/فردية، واستخدام Socket.IO للـ realtime (backend منفصل). الموقع منشور على Vercel (النسخة الحية).
 
 ---
 
@@ -28,7 +28,7 @@
 - يعتمد **Tailwind CSS** و**Bootstrap 5** في الواجهات.
 - استخدام **Socket.IO** لتجارب الامتحانات الجماعية/الوقت الحقيقي.
 - يحتوي على ملفات خدمات (server.js) لربط الـ backend.
-- مُهيّأ للنشر على Vercel (واجهات) وخيارات لاستضافة backend على Railway/Glitch/Render. :contentReference[oaicite:2]{index=2}
+- مُهيّأ للنشر على Vercel (واجهات) وخيارات لاستضافة backend على Railway/Glitch/Render.
 ---
 
 ## التقنيات المستخدمة (Tech Stack)
@@ -42,8 +42,8 @@
 ---
 
 ## روابط مهمة
-- المستودع على GitHub: `https://github.com/Peter-Eshak-Abdo/abona-faltaus`. :contentReference[oaicite:3]{index=3}
-- الموقع الحي: `https://abona-faltaus.vercel.app/`. :contentReference[oaicite:4]{index=4}
+- المستودع على GitHub: `https://github.com/Peter-Eshak-Abdo/abona-faltaus`.
+- الموقع الحي: `https://abona-faltaus.vercel.app/`.
 
 ---
 

@@ -179,19 +179,20 @@ export default function JoinQuizPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-4">
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-3">{quiz.title}</h1>
-          <p className="text-white/80 text-lg">{quiz.description}</p>
+          <h1 className="text-4xl font-bold text-black mb-3">{quiz.title}</h1>
+          <p className="text-black/80 text-lg">{quiz.description}</p>
+          <br /><img src={"/images/alnosor/logo.jpeg"} alt="Logo" className=" w-auto rounded-lg shadow-lg mb-2" style={{ height: "50vw" }} />
         </motion.div>
 
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden m-2 p-3">
+          {/* <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-2 m-2"> */}
             <h2 className="flex items-center gap-3 text-center justify-center text-2xl font-bold">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              {/* <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-              </svg>
+              </svg> */}
               الانضمام كفريق
             </h2>
-          </div>
+          {/* </div> */}
 
           <div className="p-8 space-y-8">
             {error && (
@@ -208,11 +209,11 @@ export default function JoinQuizPage() {
             {/* اختيار نوع الاسم */}
             <div>
               <label className="block text-lg font-bold text-gray-900 mb-4">اختر اسم الفريق</label>
-              <div className="flex gap-4 mb-6">
+              <div className="flex gap-4 mb-3">
                 <button
                   onClick={() => setUseCustomName(false)}
                   className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all ${!useCustomName
-                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
+                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg bg-primary"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                   type="button"
@@ -222,7 +223,7 @@ export default function JoinQuizPage() {
                 <button
                   onClick={() => setUseCustomName(true)}
                   className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all ${useCustomName
-                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
+                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg bg-primary"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                   type="button"
@@ -261,13 +262,13 @@ export default function JoinQuizPage() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.05 }}
-                        onClick={() => setSelectedSaint(saint as Saint)}
+                        onClick={() => setSelectedSaint(saint)}
                         className={`p-4 rounded-xl border-2 transition-all ${selectedSaint?.name === saint.name
-                          ? "border-purple-500 bg-purple-50 shadow-lg ring-2 ring-purple-200"
-                          : "border-gray-200 bg-white hover:border-purple-300 hover:shadow-md"
+                          ? "border-purple-500 bg-purple-50 shadow-lg ring-2 ring-purple-200 bg-info fw-bolder fs-3"
+                          : "border-gray-200 hover:border-purple-300 hover:shadow-md bg-stone-800"
                           }`}
                       >
-                        <p className="text-sm font-bold text-gray-800 text-center leading-tight">
+                        <p className="text-sm font-bold text-black text-center leading-tight">
                           {saint.name}
                         </p>
                       </motion.button>
@@ -276,6 +277,8 @@ export default function JoinQuizPage() {
                 )}
               </AnimatePresence>
             </div>
+
+            <hr className="border-primary border-3 opacity-75" />
 
             <div>
               <label className="block text-lg font-bold text-gray-900 mb-4">عدد الأعضاء</label>

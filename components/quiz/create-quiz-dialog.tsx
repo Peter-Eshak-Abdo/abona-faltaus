@@ -261,7 +261,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                               />
                               <Button
                                 onClick={() => updateQuestion(index, { correctAnswer: choiceIndex })}
-                                variant={question.correctAnswer === choiceIndex ? "secseec" : "destructive"}
+                                variant={question.correctAnswer === choiceIndex ? "success" : "destructive"}
                                 size="sm"
                                 className="px-2"
                               >

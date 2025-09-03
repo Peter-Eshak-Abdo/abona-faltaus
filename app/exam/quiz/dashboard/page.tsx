@@ -105,13 +105,14 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div className="flex flex-col md:flex-row justify-center items-center md:items-center mb-8 gap-4">
+          <img src={"images/alnosor/LogoHeader.jpeg"} alt="Logo" className="h-20 w-auto rounded-lg shadow-lg" />
           {/* <div className="center font-size-bigger"> */}
-          <div className="">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">لوحة تحكم المسابقات</h1>
+          {/* <div className="items-center"> */}
+            <h1 className="text-4xl font-bolder text-gray-900 mb-2">لوحة تحكم المسابقات</h1>
             <p className="text-gray-600 text-lg">إنشاء وإدارة مسابقاتك التفاعلية</p>
             <p className="text-sm text-gray-500 mt-1">أهلاً بك، {user.displayName || user.email}</p>
-          </div>
+          {/* </div> */}
           <Button
             onClick={() => setIsCreateDialogOpen(true)}
             variant="default"
@@ -195,7 +196,7 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+                <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-lg my-2 p-2">
                   <CardHeader className="pb-4">
                     <CardTitle className="text-xl font-bold text-gray-900">{quiz.title}</CardTitle>
                     <CardDescription className="line-clamp-2 text-gray-600">{quiz.description}</CardDescription>
@@ -213,7 +214,7 @@ export default function DashboardPage() {
                     </div>
                     <Button
                       onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 text-lg font-semibold"
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r animate-ping from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 text-lg font-semibold"
                       variant="default"
                     >
                       <Play className="w-5 h-5" />
