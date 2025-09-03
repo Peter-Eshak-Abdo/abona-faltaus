@@ -56,7 +56,7 @@ export default function DashboardPage() {
         setIndexUrl(urlMatch[1])
         setError("مطلوب فهرس قاعدة البيانات. انقر على الزر أدناه لإنشائه تلقائياً.")
       } else {
-        setError(error.message || "فشل في تحميل الامتحانات")
+        setError(error.message || "فشل في تحميل المسابقات")
       }
     } finally {
       setLoadingQuizzes(false)
@@ -106,18 +106,20 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">لوحة تحكم الامتحانات</h1>
-            <p className="text-gray-600 text-lg">إنشاء وإدارة امتحاناتك التفاعلية</p>
+          {/* <div className="center font-size-bigger"> */}
+          <div className="">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">لوحة تحكم المسابقات</h1>
+            <p className="text-gray-600 text-lg">إنشاء وإدارة مسابقاتك التفاعلية</p>
             <p className="text-sm text-gray-500 mt-1">أهلاً بك، {user.displayName || user.email}</p>
           </div>
           <Button
             onClick={() => setIsCreateDialogOpen(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 text-lg font-semibold shadow-lg"
+            variant="default"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-3 text-lg font-semibold shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 px-2"
             size="lg"
           >
             <Plus className="w-6 h-6" />
-            إنشاء امتحان جديد
+            إنشاء مسابقة جديد
           </Button>
         </div>
 
@@ -131,7 +133,7 @@ export default function DashboardPage() {
                   {indexUrl && (
                     <Button
                       onClick={handleCreateIndex}
-                      variant="outline"
+                      variant="default"
                       size="sm"
                       className="flex items-center gap-1 bg-transparent"
                     >
@@ -139,7 +141,7 @@ export default function DashboardPage() {
                       إنشاء الفهرس
                     </Button>
                   )}
-                  <Button onClick={handleRetry} variant="outline" size="sm">
+                  <Button onClick={handleRetry} variant="secondary" size="sm">
                     إعادة المحاولة
                   </Button>
                 </div>
@@ -178,11 +180,11 @@ export default function DashboardPage() {
             <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <Plus className="w-16 h-16 text-blue-600" />
             </div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-3">لا توجد امتحانات بعد</h3>
-            <p className="text-gray-600 mb-8 text-lg">أنشئ امتحانك الأول للبدء</p>
-            <Button onClick={() => setIsCreateDialogOpen(true)} size="lg" className="px-8 py-3 text-lg">
-              إنشاء امتحانك الأول
-            </Button>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-3">لا توجد مسابقات بعد</h3>
+              <p className="text-gray-600 mb-8 text-lg">دوس علي زرار &quot;إنشاء مسابقة جديدة&quot;</p>
+            {/* <Button onClick={() => setIsCreateDialogOpen(true)} size="lg" className="px-8 py-3 text-lg">
+              إنشاء مسابقتك الأول
+            </Button> */}
           </motion.div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -212,9 +214,10 @@ export default function DashboardPage() {
                     <Button
                       onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
                       className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 text-lg font-semibold"
+                      variant="default"
                     >
                       <Play className="w-5 h-5" />
-                      بدء الامتحان
+                      بدء المسابقة
                     </Button>
                   </CardContent>
                 </Card>

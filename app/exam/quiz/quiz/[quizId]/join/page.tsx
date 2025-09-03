@@ -55,13 +55,13 @@ export default function JoinQuizPage() {
     try {
       const quizData = await getQuiz(quizId)
       if (!quizData) {
-        setError("الامتحان غير موجود")
+        setError("المسابقة غير موجوده")
         return
       }
       setQuiz(quizData)
     } catch (error) {
       console.error("Error loading quiz:", error)
-      setError("فشل في تحميل الامتحان")
+      setError("فشل في تحميل المسابقة")
     }
   }
 
@@ -75,7 +75,7 @@ export default function JoinQuizPage() {
     const finalGroupName = useCustomName ? groupName.trim() : selectedSaint?.name || ""
 
     if (!finalGroupName) {
-      setError("يرجى اختيار قديس أو إدخال اسم مخصص للمجموعة")
+      setError("يرجى اختيار قديس أو إدخال اسم مخصص للفريق")
       return
     }
 
@@ -87,7 +87,7 @@ export default function JoinQuizPage() {
 
     const uniqueNames = new Set(validNames.map((name) => name.trim().toLowerCase()))
     if (uniqueNames.size !== validNames.length) {
-      setError("يجب أن تكون جميع أسماء الأعضاء مختلفة داخل مجموعتكم")
+      setError("لازم تكون كل أسماء الأعضاء مختلفة في فريقكم")
       return
     }
 
@@ -100,7 +100,6 @@ export default function JoinQuizPage() {
         members: validNames.map((name) => name.trim()),
         ...(selectedSaint && !useCustomName && {
           saintName: selectedSaint.name,
-          saintImage: selectedSaint.image,
         }),
       }
 
@@ -116,7 +115,7 @@ export default function JoinQuizPage() {
 
       setHasJoined(true)
     } catch (error: any) {
-      setError(error.message || "فشل في الانضمام للامتحان")
+      setError(error.message || "فشل في الانضمام للمسابقة")
     } finally {
       setIsJoining(false)
     }
@@ -139,11 +138,12 @@ export default function JoinQuizPage() {
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold mb-4 text-gray-900">بدأ الامتحان بالفعل</h2>
-          <p className="text-gray-600 mb-6 text-lg">هذا الامتحان بدأ بالفعل. لا يمكنك الانضمام الآن.</p>
+          <h2 className="text-2xl font-bold mb-4 text-gray-900">بدأ المسابقة بالفعل</h2>
+          <p className="text-gray-600 mb-6 text-lg">هذة المسابقة بدأ بالفعل. لا يمكنك الانضمام الآن.</p>
           <button
             onClick={() => router.push("/")}
             className="w-full py-3 text-lg bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-colors font-bold"
+            type="button"
           >
             العودة للرئيسية
           </button>
@@ -164,7 +164,7 @@ export default function JoinQuizPage() {
             </div>
             <h2 className="text-2xl font-bold mb-4 text-gray-900">تم الانضمام بنجاح!</h2>
             <p className="text-gray-600 mb-6 text-lg">
-              مجموعة &quot;{useCustomName ? groupName : selectedSaint?.name}&quot; انضمت للامتحان. في انتظار بدء المشرف...
+              فريق &quot;{useCustomName ? groupName : selectedSaint?.name}&quot; انضمت للمسابقة. في انتظار بدء الخادم...
             </p>
             <div className="animate-pulse">
               <div className="h-3 bg-green-200 rounded-full"></div>
@@ -189,7 +189,7 @@ export default function JoinQuizPage() {
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
               </svg>
-              الانضمام كمجموعة
+              الانضمام كفريق
             </h2>
           </div>
 
@@ -207,23 +207,25 @@ export default function JoinQuizPage() {
 
             {/* اختيار نوع الاسم */}
             <div>
-              <label className="block text-lg font-bold text-gray-900 mb-4">اختر اسم المجموعة</label>
+              <label className="block text-lg font-bold text-gray-900 mb-4">اختر اسم الفريق</label>
               <div className="flex gap-4 mb-6">
                 <button
                   onClick={() => setUseCustomName(false)}
                   className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all ${!useCustomName
-                      ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
+                  type="button"
                 >
                   اختيار قديس
                 </button>
                 <button
                   onClick={() => setUseCustomName(true)}
                   className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all ${useCustomName
-                      ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
+                  type="button"
                 >
                   اسم مخصص
                 </button>
@@ -241,7 +243,7 @@ export default function JoinQuizPage() {
                       type="text"
                       value={groupName}
                       onChange={(e) => setGroupName(e.target.value)}
-                      placeholder="أدخل اسم مجموعتكم..."
+                      placeholder="أدخل اسم فريقك..."
                       className="w-full text-lg p-4 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:outline-none transition-colors text-gray-900"
                     />
                   </motion.div>
@@ -259,22 +261,14 @@ export default function JoinQuizPage() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.05 }}
-                        onClick={() => setSelectedSaint(saint)}
+                        onClick={() => setSelectedSaint(saint as Saint)}
                         className={`p-4 rounded-xl border-2 transition-all ${selectedSaint?.name === saint.name
-                            ? "border-purple-500 bg-purple-50 shadow-lg ring-2 ring-purple-200"
-                            : "border-gray-200 bg-white hover:border-purple-300 hover:shadow-md"
+                          ? "border-purple-500 bg-purple-50 shadow-lg ring-2 ring-purple-200"
+                          : "border-gray-200 bg-white hover:border-purple-300 hover:shadow-md"
                           }`}
                       >
-                        <img
-                          src={saint.image || "/placeholder.svg"}
-                          alt={saint.name}
-                          className="w-16 h-16 mx-auto mb-2 rounded-full object-cover border-2 border-gray-200"
-                        />
                         <p className="text-sm font-bold text-gray-800 text-center leading-tight">
                           {saint.name}
-                        </p>
-                        <p className="text-xs text-gray-500 text-center mt-1">
-                          {saint.feast}
                         </p>
                       </motion.button>
                     ))}
@@ -347,7 +341,7 @@ export default function JoinQuizPage() {
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
                   </svg>
-                  الانضمام للامتحان
+                  الانضمام للمسابقة
                 </>
               )}
             </button>

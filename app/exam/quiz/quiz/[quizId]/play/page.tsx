@@ -167,9 +167,9 @@ export default function PlayQuizPage() {
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold mb-4 text-gray-900">انتهى الامتحان!</h2>
+            <h2 className="text-3xl font-bold mb-4 text-gray-900">انتهى المسابقة!</h2>
             <p className="text-gray-600 mb-4 text-lg">شكراً لمشاركتكم، {currentGroup.groupName}!</p>
-            <p className="text-sm text-gray-500 mb-8">تحققوا من النتائج النهائية مع المشرف.</p>
+            <p className="text-sm text-gray-500 mb-8">تحققوا من النتائج النهائية مع الخادم.</p>
             <button
               onClick={() => router.push("/")}
               className="w-full py-3 text-lg bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-bold"
@@ -260,10 +260,10 @@ export default function PlayQuizPage() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
                       className={`p-6 rounded-xl flex items-center gap-4 text-lg ${index === currentQuestion.correctAnswer
-                          ? "bg-green-100 border-4 border-green-500"
-                          : index === selectedAnswer
-                            ? "bg-red-100 border-4 border-red-500"
-                            : "bg-gray-50 border-2 border-gray-200"
+                        ? "bg-green-100 border-4 border-green-500"
+                        : index === selectedAnswer
+                          ? "bg-red-100 border-4 border-red-500"
+                          : "bg-gray-50 border-2 border-gray-200"
                         }`}
                     >
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl ${getChoiceColor(index)}`}>
@@ -320,7 +320,7 @@ export default function PlayQuizPage() {
             </svg>
             {currentGroup.groupName}
           </h1>
-          <p className="text-white/80 mt-2">{currentGroup.members.join(" • ")}</p>
+          <p className="text-white/80 mt-2">{currentGroup.members.join(" || ")}</p>
           {currentGroup.saintImage && (
             <img
               src={currentGroup.saintImage || "/placeholder.svg"}
@@ -362,8 +362,8 @@ export default function PlayQuizPage() {
                       onClick={() => handleAnswerSelect(index)}
                       disabled={hasAnswered || timeLeft === 0}
                       className={`p-6 rounded-xl flex items-center gap-4 text-right transition-all duration-200 ${hasAnswered || timeLeft === 0
-                          ? "cursor-not-allowed opacity-60"
-                          : `cursor-pointer ${getChoiceColorHover(index)} transform hover:scale-105 active:scale-95`
+                        ? "cursor-not-allowed opacity-60"
+                        : `cursor-pointer ${getChoiceColorHover(index)} transform hover:scale-105 active:scale-95`
                         } ${selectedAnswer === index ? "ring-4 ring-white shadow-2xl" : ""
                         } ${getChoiceColor(index)} text-white font-semibold text-lg shadow-lg`}
                     >

@@ -62,6 +62,4 @@ export interface LeaderboardEntry {
 
 export interface Saint {
   name: string;
-  image: string;
-  feast: string;
 }

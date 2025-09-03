@@ -22,6 +22,7 @@ interface CreateQuizDialogProps {
   onQuizCreated: () => void
 }
 
+// export function CreateQuizDialogAction({ open, onOpenChange, onQuizCreated }: CreateQuizDialogProps) {
 export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQuizDialogProps) {
   const [user] = useAuthState(auth)
   const [title, setTitle] = useState("")
@@ -33,12 +34,13 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
 
   const addQuestion = () => {
     const newQuestion: Question = {
+      // id: Date.now().toString() + (random*100).toInteger,
       id: Date.now().toString(),
       type: "multiple-choice",
       text: "",
       choices: ["", "", "", ""],
       correctAnswer: 0,
-      timeLimit: 30, // مؤقت افتراضي 30 ثانية
+      timeLimit: 30,
     }
     setQuestions([...questions, newQuestion])
   }
@@ -95,37 +97,37 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-2">
         <DialogHeader>
-          <DialogTitle>Create New Quiz</DialogTitle>
+          <DialogTitle>انشئ المسابقة الجديدة</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <Label htmlFor="title">Quiz Title</Label>
+              <Label htmlFor="title">اسم المسابقة</Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter quiz title..."
-                className="mt-1"
+                placeholder="اضف اسم المسابقة ..."
+                // className="m-1 primary-color "
+                className="m-1 "
               />
             </div>
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">وصف المسابقة</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter quiz description..."
-                className="mt-1"
+                placeholder="اضف وصف للمسابقة ..."
+                className="m-1"
                 rows={3}
               />
             </div>
           </div>
 
-          {/* خيارات الخلط */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -135,7 +137,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
               />
               <Label htmlFor="shuffleQuestions" className="flex items-center gap-2">
                 <Shuffle className="w-4 h-4" />
-                Shuffle Questions
+                الاسئلة عشوائية
               </Label>
             </div>
             <div className="flex items-center space-x-2">
@@ -146,17 +148,17 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
               />
               <Label htmlFor="shuffleChoices" className="flex items-center gap-2">
                 <Shuffle className="w-4 h-4" />
-                Shuffle Answer Choices
+                ترتيب الاختيارات عشوائي
               </Label>
             </div>
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Questions ({questions.length})</h3>
-              <Button onClick={addQuestion} variant="outline" size="sm">
+              <h3 className="text-lg font-semibold">عدد الاسئلة ({questions.length})</h3>
+              <Button onClick={addQuestion} variant="ghost" size="sm">
                 <Plus className="w-4 h-4 mr-2" />
-                Add Question
+                اضف سؤال
               </Button>
             </div>
 
@@ -172,10 +174,10 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                   <Card>
                     <CardHeader className="pb-3">
                       <div className="flex justify-between items-start">
-                        <CardTitle className="text-base">Question {index + 1}</CardTitle>
+                        <CardTitle className="text-base">سؤال  {index + 1}</CardTitle>
                         <Button
                           onClick={() => removeQuestion(index)}
-                          variant="ghost"
+                          variant="destructive"
                           size="sm"
                           className="text-red-600 hover:text-red-700"
                         >
@@ -183,10 +185,10 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                         </Button>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 px-2">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <Label>Question Type</Label>
+                          <Label>نوع السؤال</Label>
                           <Select
                             value={question.type}
                             onValueChange={(value: "true-false" | "multiple-choice") =>
@@ -201,15 +203,15 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
-                              <SelectItem value="true-false">True/False</SelectItem>
+                              <SelectItem value="multiple-choice">اختيارات</SelectItem>
+                              <SelectItem value="true-false">صح و غلط</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div>
                           <Label className="flex items-center gap-2">
                             <Clock className="w-4 h-4" />
-                            Time Limit (seconds)
+                            وقت السؤال (بالثواني)
                           </Label>
                           <Input
                             type="number"
@@ -219,47 +221,47 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                             onChange={(e) =>
                               updateQuestion(index, { timeLimit: Number.parseInt(e.target.value) || 30 })
                             }
-                            className="mt-1"
+                            className="m-1"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <Label>Question Text</Label>
+                        <Label>السؤال .......</Label>
                         <Textarea
                           value={question.text}
                           onChange={(e) => updateQuestion(index, { text: e.target.value })}
-                          placeholder="Enter your question..."
-                          className="mt-1"
+                          placeholder="اكتب السؤال ...."
+                          className="m-1"
                           rows={2}
                         />
                       </div>
 
                       <div>
-                        <Label>Answer Choices</Label>
+                        <Label>الأختيارات</Label>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
                           {question.choices.map((choice, choiceIndex) => (
                             <div key={choiceIndex} className="flex items-center gap-2">
                               <div
                                 className={`w-4 h-4 rounded-full ${choiceIndex === 0
-                                    ? "bg-red-500"
-                                    : choiceIndex === 1
-                                      ? "bg-green-500"
-                                      : choiceIndex === 2
-                                        ? "bg-blue-500"
-                                        : "bg-yellow-500"
+                                  ? "bg-red-500"
+                                  : choiceIndex === 1
+                                    ? "bg-green-500"
+                                    : choiceIndex === 2
+                                      ? "bg-blue-500"
+                                      : "bg-yellow-500"
                                   }`}
                               />
                               <Input
                                 value={choice}
                                 onChange={(e) => updateChoice(index, choiceIndex, e.target.value)}
-                                placeholder={`Choice ${choiceIndex + 1}`}
+                                placeholder={`اختيار ${choiceIndex + 1}`}
                                 disabled={question.type === "true-false"}
                                 className="flex-1"
                               />
                               <Button
                                 onClick={() => updateQuestion(index, { correctAnswer: choiceIndex })}
-                                variant={question.correctAnswer === choiceIndex ? "default" : "outline"}
+                                variant={question.correctAnswer === choiceIndex ? "secseec" : "destructive"}
                                 size="sm"
                                 className="px-2"
                               >
@@ -268,7 +270,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                             </div>
                           ))}
                         </div>
-                        <p className="text-sm text-gray-600 mt-2">Click the checkmark to set the correct answer</p>
+                        <p className="text-sm text-gray-600 mt-2">اضغط علي مربع (صح) علشان تختار الاجابة الصحيحة</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -278,17 +280,17 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
 
             {questions.length === 0 && (
               <div className="text-center py-8 text-gray-500">
-                <p>No questions added yet. Click &quot;Add Question&quot; to get started.</p>
+                <p>مفيش اي سؤال اضاف. اضغط &quot;اضف سؤال&quot; علشان تضيف اسئلة.</p>
               </div>
             )}
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button onClick={() => onOpenChange(false)} variant="outline">
-              Cancel
+            <Button onClick={() => onOpenChange(false)} variant="destructive">
+              الغاء
             </Button>
             <Button onClick={handleSubmit} disabled={!isValid || isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create Quiz"}
+              {isSubmitting ? "جاري الانشاء ..." : "إنشاء مسابقة"}
             </Button>
           </div>
         </div>
