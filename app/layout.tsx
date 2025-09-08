@@ -3,15 +3,14 @@
 import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
-// import { useEffect } from "react";
 import LoadingProvider from "./loading-provider";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
 // import ChatFab from "@/components/ChatFab";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/next";
-// import 'bootstrap/dist/css/bootstrap.rtl.min.css';
-// import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'bootstrap/dist/css/bootstrap.rtl.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import "./globals.css"; // Tailwind Over Bootstrap0
 
 const vazirmatn = Vazirmatn({
