@@ -21,7 +21,8 @@ const sections = [
   { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
   { name: "العظات", href: "/3zat", icon: <FaChurch /> },
   { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
-  { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
+  { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },
+  // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
   { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
 ];
 
@@ -142,7 +143,7 @@ export default function HomeClient() {
                 <Link href={section.href}>
                   <div className="bg-purple-700 hover:bg-purple-500 text-white rounded-full w-14 h-14 flex flex-col items-center justify-center text-center shadow-xl border border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[10px] sm:text-[12px]">
                     <div className="text-base fs-5">{section.icon}</div>
-                    <div className="leading-tight mt-1 fs-5 ">{section.name}</div>
+                    <div className="leading-tight mt-1 fs-5">{section.name}</div>
                   </div>
                 </Link>
               </motion.div>

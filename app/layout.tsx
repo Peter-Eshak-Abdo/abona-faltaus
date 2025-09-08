@@ -1,13 +1,19 @@
-import "./globals.css";
+// 'use client';
+
 import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
+// import { useEffect } from "react";
 import LoadingProvider from "./loading-provider";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
-import ChatFab from "@/components/ChatFab";
+// import ChatFab from "@/components/ChatFab";
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import 'bootstrap/dist/css/bootstrap.rtl.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import "./globals.css"; // Tailwind Over Bootstrap
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -46,7 +52,6 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-
 };
 
 export default function RootLayout({
@@ -72,7 +77,7 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"
           rel="stylesheet"
         />
-        <link
+        {/* <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
         />
@@ -82,7 +87,7 @@ export default function RootLayout({
           integrity="sha512-VNBisELNHh6+nfDjsFXDA6WgXEZm8cfTEcMtfOZdx0XTRoRbr/6Eqb2BjqxF4sNFzdvGIt+WqxKgn0DSfh2kcA=="
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
-        />
+        /> */}
         <link
           rel="apple-touch-icon"
           sizes="180x180"
@@ -104,7 +109,7 @@ export default function RootLayout({
         <ServiceWorkerRegister />
         <div className="background-blur" />
         <LoadingProvider>
-        <ChatFab />
+        {/* <ChatFab /> */}
           <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
         </LoadingProvider>
         <Analytics />
@@ -114,12 +119,12 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
       </body>
-      <Script
+      {/* <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
         integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
         crossOrigin="anonymous"
         referrerPolicy="no-referrer"
-      />
+      /> */}
     </html>
   );
 }
