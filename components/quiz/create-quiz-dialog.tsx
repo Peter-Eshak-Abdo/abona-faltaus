@@ -4,14 +4,6 @@ import { useState } from "react"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "@/lib/firebase"
 import { createQuiz } from "@/lib/firebase-utils"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Plus, Trash2, Check, Shuffle, Clock } from "lucide-react"
 import type { Question } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
@@ -22,7 +14,6 @@ interface CreateQuizDialogProps {
   onQuizCreated: () => void
 }
 
-// export function CreateQuizDialogAction({ open, onOpenChange, onQuizCreated }: CreateQuizDialogProps) {
 export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQuizDialogProps) {
   const [user] = useAuthState(auth)
   const [title, setTitle] = useState("")
@@ -34,7 +25,6 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
 
   const addQuestion = () => {
     const newQuestion: Question = {
-      // id: Date.now().toString() + (random*100).toInteger,
       id: Date.now().toString(),
       type: "multiple-choice",
       text: "",
@@ -63,7 +53,6 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
 
   const handleSubmit = async () => {
     if (!user || !title.trim() || questions.length === 0) return
-
     setIsSubmitting(true)
     try {
       await createQuiz({
@@ -76,7 +65,6 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
         shuffleChoices,
       })
 
-      // Reset form
       setTitle("")
       setDescription("")
       setQuestions([])
@@ -95,71 +83,73 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
     questions.length > 0 &&
     questions.every((q) => q.text.trim() && (q.type === "true-false" || q.choices.every((c) => c.trim())))
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-2">
-        <DialogHeader>
-          <DialogTitle>انشئ المسابقة الجديدة</DialogTitle>
-        </DialogHeader>
+  if (!open) return null
 
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4">
-            <div>
-              <Label htmlFor="title">اسم المسابقة</Label>
-              <Input
-                id="title"
+  return (
+    <div className="modal show d-block" tabIndex={-1}>
+      <div className="modal-dialog modal-lg modal-dialog-scrollable">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">انشئ المسابقة الجديدة</h5>
+            <button type="button" className="btn-close" onClick={() => onOpenChange(false)} title="Close"></button>
+          </div>
+          <div className="modal-body">
+            <div className="mb-3">
+              <label className="form-label">اسم المسابقة</label>
+              <input
+                type="text"
+                className="form-control"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="اضف اسم المسابقة ..."
-                // className="m-1 primary-color "
-                className="m-1 "
               />
             </div>
-            <div>
-              <Label htmlFor="description">وصف المسابقة</Label>
-              <Textarea
-                id="description"
+            <div className="mb-3">
+              <label className="form-label">وصف المسابقة</label>
+              <textarea
+                className="form-control"
+                rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="اضف وصف للمسابقة ..."
-                className="m-1"
-                rows={3}
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="shuffleQuestions"
-                checked={shuffleQuestions}
-                onCheckedChange={(checked) => setShuffleQuestions(checked as boolean)}
-              />
-              <Label htmlFor="shuffleQuestions" className="flex items-center gap-2">
-                <Shuffle className="w-4 h-4" />
-                الاسئلة عشوائية
-              </Label>
+            <div className="row mb-4">
+              <div className="col-md-6 form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="shuffleQuestions"
+                  checked={shuffleQuestions}
+                  onChange={(e) => setShuffleQuestions(e.target.checked)}
+                />
+                <label className="form-check-label" htmlFor="shuffleQuestions">
+                  <Shuffle className="me-2" size={16} />
+                  الاسئلة عشوائية
+                </label>
+              </div>
+              <div className="col-md-6 form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="shuffleChoices"
+                  checked={shuffleChoices}
+                  onChange={(e) => setShuffleChoices(e.target.checked)}
+                />
+                <label className="form-check-label" htmlFor="shuffleChoices">
+                  <Shuffle className="me-2" size={16} />
+                  ترتيب الاختيارات عشوائي
+                </label>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="shuffleChoices"
-                checked={shuffleChoices}
-                onCheckedChange={(checked) => setShuffleChoices(checked as boolean)}
-              />
-              <Label htmlFor="shuffleChoices" className="flex items-center gap-2">
-                <Shuffle className="w-4 h-4" />
-                ترتيب الاختيارات عشوائي
-              </Label>
-            </div>
-          </div>
 
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">عدد الاسئلة ({questions.length})</h3>
-              <Button onClick={addQuestion} variant="ghost" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h6>عدد الاسئلة ({questions.length})</h6>
+              <button type="button" className="btn btn-outline-primary btn-sm" onClick={addQuestion}>
+                <Plus size={16} className="me-1" />
                 اضف سؤال
-              </Button>
+              </button>
             </div>
 
             <AnimatePresence>
@@ -169,132 +159,121 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="mb-4"
+                  className="card mb-3"
                 >
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <div className="flex justify-between items-start">
-                        <CardTitle className="text-base">سؤال  {index + 1}</CardTitle>
-                        <Button
-                          onClick={() => removeQuestion(index)}
-                          variant="destructive"
-                          size="sm"
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4 px-2">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <Label>نوع السؤال</Label>
-                          <Select
-                            value={question.type}
-                            onValueChange={(value: "true-false" | "multiple-choice") =>
-                              updateQuestion(index, {
-                                type: value,
-                                choices: value === "true-false" ? ["True", "False"] : ["", "", "", ""],
-                                correctAnswer: 0,
-                              })
-                            }
-                          >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="multiple-choice">اختيارات</SelectItem>
-                              <SelectItem value="true-false">صح و غلط</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label className="flex items-center gap-2">
-                            <Clock className="w-4 h-4" />
-                            وقت السؤال (بالثواني)
-                          </Label>
-                          <Input
-                            type="number"
-                            min="10"
-                            max="300"
-                            value={question.timeLimit}
-                            onChange={(e) =>
-                              updateQuestion(index, { timeLimit: Number.parseInt(e.target.value) || 30 })
-                            }
-                            className="m-1"
-                          />
-                        </div>
-                      </div>
+                  <div className="card-body">
+                    <div className="d-flex justify-content-between align-items-start mb-2">
+                      <h6>سؤال {index + 1}</h6>
+                      <button type="button" className="btn btn-sm btn-danger" onClick={() => removeQuestion(index)} title="احذف السؤال">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
 
-                      <div>
-                        <Label>السؤال .......</Label>
-                        <Textarea
-                          value={question.text}
-                          onChange={(e) => updateQuestion(index, { text: e.target.value })}
-                          placeholder="اكتب السؤال ...."
-                          className="m-1"
-                          rows={2}
+                    <div className="row mb-3">
+                      <div className="col-md-6">
+                        <label className="form-label">نوع السؤال</label>
+                        <select
+                          className="form-select"
+                          value={question.type}
+                          onChange={(e) =>
+                            updateQuestion(index, {
+                              type: e.target.value as "true-false" | "multiple-choice",
+                              choices: e.target.value === "true-false" ? ["True", "False"] : ["", "", "", ""],
+                              correctAnswer: 0,
+                            })
+                          }
+                          title="نوع السؤال"
+                        >
+                          <option value="multiple-choice">اختيارات</option>
+                          <option value="true-false">صح و غلط</option>
+                        </select>
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label d-flex align-items-center gap-2">
+                          <Clock size={16} /> وقت السؤال (بالثواني)
+                        </label>
+                        <input
+                          type="number"
+                          min="10"
+                          max="300"
+                          className="form-control"
+                          value={question.timeLimit}
+                          onChange={(e) =>
+                            updateQuestion(index, { timeLimit: Number.parseInt(e.target.value) || 30 })
+                          }
+                          title="وقت السؤال (بالثواني)"
                         />
                       </div>
+                    </div>
 
-                      <div>
-                        <Label>الأختيارات</Label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                          {question.choices.map((choice, choiceIndex) => (
-                            <div key={choiceIndex} className="flex items-center gap-2">
-                              <div
-                                className={`w-4 h-4 rounded-full ${choiceIndex === 0
-                                  ? "bg-red-500"
+                    <div className="mb-3">
+                      <label className="form-label">السؤال</label>
+                      <textarea
+                        className="form-control"
+                        rows={2}
+                        value={question.text}
+                        onChange={(e) => updateQuestion(index, { text: e.target.value })}
+                        title="السؤال"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="form-label">الاختيارات</label>
+                      {question.choices.map((choice, choiceIndex) => (
+                        <div key={choiceIndex} className="d-flex align-items-center gap-2 mb-2">
+                          <div
+                            className={`rounded-circle`}
+                            style={{
+                              width: 16,
+                              height: 16,
+                              backgroundColor:
+                                choiceIndex === 0
+                                  ? "red"
                                   : choiceIndex === 1
-                                    ? "bg-green-500"
+                                    ? "green"
                                     : choiceIndex === 2
-                                      ? "bg-blue-500"
-                                      : "bg-yellow-500"
-                                  }`}
-                              />
-                              <Input
-                                value={choice}
-                                onChange={(e) => updateChoice(index, choiceIndex, e.target.value)}
-                                placeholder={`اختيار ${choiceIndex + 1}`}
-                                disabled={question.type === "true-false"}
-                                className="flex-1"
-                              />
-                              <Button
-                                onClick={() => updateQuestion(index, { correctAnswer: choiceIndex })}
-                                variant={question.correctAnswer === choiceIndex ? "success" : "destructive"}
-                                size="sm"
-                                className="px-2"
-                              >
-                                <Check className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          ))}
+                                      ? "blue"
+                                      : "yellow",
+                            }}
+                          />
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={choice}
+                            placeholder={`اختيار ${choiceIndex + 1}`}
+                            onChange={(e) => updateChoice(index, choiceIndex, e.target.value)}
+                            disabled={question.type === "true-false"}
+                          />
+                          <button
+                            type="button"
+                            className={`btn btn-sm ${question.correctAnswer === choiceIndex ? "btn-success" : "btn-outline-danger"
+                              }`}
+                            onClick={() => updateQuestion(index, { correctAnswer: choiceIndex })}
+                            title="اختيار الصحيح"
+                          >
+                            <Check size={16} />
+                          </button>
                         </div>
-                        <p className="text-sm text-gray-600 mt-2">اضغط علي مربع (صح) علشان تختار الاجابة الصحيحة</p>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      ))}
+                      <small className="text-muted">اضغط على (صح) لاختيار الاجابة الصحيحة</small>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </AnimatePresence>
 
-            {questions.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                <p>مفيش اي سؤال اضاف. اضغط &quot;اضف سؤال&quot; علشان تضيف اسئلة.</p>
-              </div>
-            )}
+            {questions.length === 0 && <p className="text-center text-muted">مفيش اي سؤال مضاف</p>}
           </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button onClick={() => onOpenChange(false)} variant="destructive">
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={() => onOpenChange(false)} title="Cancel">
               الغاء
-            </Button>
-            <Button onClick={handleSubmit} disabled={!isValid || isSubmitting}>
+            </button>
+            <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={!isValid || isSubmitting} title="Create Quiz">
               {isSubmitting ? "جاري الانشاء ..." : "إنشاء مسابقة"}
-            </Button>
+            </button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   )
 }

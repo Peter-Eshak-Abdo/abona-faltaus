@@ -51,6 +51,12 @@ export default function HomeClient() {
     <motion.div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-white to-blue-100">
       <LogoHeader />
       <UserHeader />
+      <div className="bg-red-500 text-black p-4">
+        Tailwind Test
+      </div>
+      <div className="bg-green-500 text-amber-900 p-4 rounded">
+        Tailwind Test
+      </div>
 
       {/* اللوجو الأساسي */}
       <motion.div

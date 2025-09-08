@@ -1,11 +1,11 @@
 "use client";
 import { useState, useRef, useEffect, SetStateAction } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import DOMPurify from "dompurify";
 
-interface ChatMessage { role: "user" | "assistant"; content: string; }
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
 
 export default function ChatBot() {
   const [mode, setMode] = useState<"keyword" | "concept">("keyword");
@@ -25,7 +25,6 @@ export default function ChatBot() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages: [...messages, userMsg], mode }),
-      // body: JSON.stringify({ messages: [...messages, userMsg] }),
     });
     const { reply } = await res.json();
     setMessages((m) => [...m, { role: "assistant", content: reply.content }]);
@@ -37,55 +36,79 @@ export default function ChatBot() {
   }, [messages]);
 
   return (
-    <Card className="p-4 flex flex-col h-full">
+    <div className="p-4 flex flex-col h-full border rounded-xl shadow bg-white">
+      {/* أزرار التبديل بين الوضعين */}
       <div className="flex space-x-2 mb-2">
         <button
           onClick={() => setMode("keyword")}
-          className={mode === "keyword" ? "bg-blue-500 text-white" : "bg-gray-200"}
+          className={`px-4 py-2 rounded ${mode === "keyword" ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
           type="button"
-        >بحث بالكلمة</button>
+        >
+          بحث بالكلمة
+        </button>
         <button
           onClick={() => setMode("concept")}
-          className={mode === "concept" ? "bg-blue-500 text-white" : "bg-gray-200"}
+          className={`px-4 py-2 rounded ${mode === "concept" ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
           type="button"
-        >بحث بالمفهوم</button>
+        >
+          بحث بالمفهوم
+        </button>
       </div>
+
+      {/* الرسائل */}
       <div className="flex-1 overflow-auto space-y-2">
-        {messages.map((m, i) => (
+        {messages.map((m, i) =>
           m.role === "assistant" ? (
             <div
               key={i}
-              className={`max-w-xs md:max-w-md p-3 my-2 rounded-2xl shadow self-start bg-gray-200 text-black rounded-bl-none mr-auto`}
+              className="max-w-xs md:max-w-md p-3 my-2 rounded-2xl shadow self-start bg-gray-200 text-black rounded-bl-none mr-auto"
               style={{ wordBreak: "break-word" }}
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(m.content),
+              }}
             />
           ) : (
             <div
               key={i}
-                className={`max-w-xs md:max-w-md p-3 my-2 rounded-2xl shadow self-end bg-blue-500 text-white rounded-br-none text-right ml-auto`}
+              className="max-w-xs md:max-w-md p-3 my-2 rounded-2xl shadow self-end bg-blue-500 text-white rounded-br-none text-right ml-auto"
               style={{ wordBreak: "break-word" }}
             >
               {m.content}
             </div>
           )
-        ))}
+        )}
+
         {loading && (
           <div className="flex justify-end">
-            <div className="bg-blue-500 text-white p-2 rounded-lg self-end ml-2 animate-pulse">جاري التحميل...</div>
+            <div className="bg-blue-500 text-white p-2 rounded-lg self-end ml-2 animate-pulse">
+              جاري التحميل...
+            </div>
           </div>
         )}
         <div ref={endRef} />
       </div>
+
+      {/* إدخال الرسالة */}
       <div className="mt-2 flex">
-        <Input
+        <input
           value={input}
-          onChange={(e: { target: { value: SetStateAction<string>; }; }) => setInput(e.target.value)}
-          onKeyDown={(e: { key: string; }) => e.key === "Enter" && sendMessage()}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           placeholder="اكتب سؤالك..."
-          className="flex-1"
+          className="flex-1 border rounded-lg p-2"
+          title="اكتب سؤالك"
         />
-        <Button onClick={sendMessage} className="ml-2">إرسال</Button>
+        <button
+          onClick={sendMessage}
+          className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+          type="button"
+          title="ارسال"
+        >
+          إرسال
+        </button>
       </div>
-    </Card>
+    </div>
   );
 }

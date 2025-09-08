@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import { useState, useEffect } from "react"
@@ -7,11 +5,7 @@ import { useRouter } from "next/navigation"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "@/lib/firebase"
 import { getUserQuizzes } from "@/lib/firebase-utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus, Play, Users, Calendar, AlertCircle, ExternalLink } from "lucide-react"
-import { CreateQuizDialog } from "@/components/quiz/create-quiz-dialog"
 import type { Quiz } from "@/types/quiz"
 import { motion } from "framer-motion"
 
@@ -38,43 +32,29 @@ export default function DashboardPage() {
 
   const loadUserQuizzes = async () => {
     if (!user) return
-
     try {
       setError(null)
       setIndexUrl(null)
       setLoadingQuizzes(true)
-      console.log("Loading quizzes for user:", user.uid)
 
       const userQuizzes = await getUserQuizzes(user.uid)
-      console.log("Loaded quizzes:", userQuizzes)
       setQuizzes(userQuizzes)
-    } catch (error: any) {
-      console.error("Error loading quizzes:", error)
-
-      const urlMatch = error.message.match(/(https:\/\/console\.firebase\.google\.com[^\s]+)/)
+    } catch (error: unknown) {
+      let message = "فشل في تحميل المسابقات"
+      let urlMatch: RegExpMatchArray | null = null
+      if (typeof error === "object" && error !== null && "message" in error && typeof (error as { message: unknown }).message === "string") {
+        const errorMessage = (error as { message: string }).message
+        urlMatch = errorMessage.match(/(https:\/\/console\.firebase\.google\.com[^\s]+)/)
+        message = errorMessage || message
+      }
       if (urlMatch) {
         setIndexUrl(urlMatch[1])
-        setError("مطلوب فهرس قاعدة البيانات. انقر على الزر أدناه لإنشائه تلقائياً.")
+        setError("مطلوب فهرس قاعدة البيانات. اضغط على الزر لإنشائه.")
       } else {
-        setError(error.message || "فشل في تحميل المسابقات")
+        setError(message)
       }
     } finally {
       setLoadingQuizzes(false)
-    }
-  }
-
-  const handleQuizCreated = () => {
-    setIsCreateDialogOpen(false)
-    loadUserQuizzes()
-  }
-
-  const handleRetry = () => {
-    loadUserQuizzes()
-  }
-
-  const handleCreateIndex = () => {
-    if (indexUrl) {
-      window.open(indexUrl, "_blank")
     }
   }
 
@@ -89,15 +69,18 @@ export default function DashboardPage() {
   if (authError) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <Alert className="max-w-md">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            خطأ في المصادقة: {authError.message}
-            <Button onClick={() => router.push("/auth/login")} className="mt-2 w-full">
-              حاول مرة أخرى
-            </Button>
-          </AlertDescription>
-        </Alert>
+        <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded w-full max-w-md">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertCircle className="h-5 w-5" />
+            <span>خطأ في المصادقة: {authError.message}</span>
+          </div>
+          <button
+            onClick={() => router.push("/auth/login")}
+            className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+          >
+            حاول مرة أخرى
+          </button>
+        </div>
       </div>
     )
   }
@@ -105,133 +88,101 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-center items-center md:items-center mb-8 gap-4">
-          <img src={"images/alnosor/LogoHeader.jpeg"} alt="Logo" className="h-20 w-auto rounded-lg shadow-lg" />
-          {/* <div className="center font-size-bigger"> */}
-          {/* <div className="items-center"> */}
-            <h1 className="text-4xl font-bolder text-gray-900 mb-2">لوحة تحكم المسابقات</h1>
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-center items-center mb-8 gap-4">
+          <img src={"/images/alnosor/logo.jpeg"} alt="Logo"
+            className="w-auto rounded-lg shadow-lg mb-2"
+            style={{ height: "50vh" }} />
+          <div className="text-center md:text-left">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">لوحة تحكم المسابقات</h1>
             <p className="text-gray-600 text-lg">إنشاء وإدارة مسابقاتك التفاعلية</p>
             <p className="text-sm text-gray-500 mt-1">أهلاً بك، {user.displayName || user.email}</p>
-          {/* </div> */}
-          <Button
+          </div>
+          <button
             onClick={() => setIsCreateDialogOpen(true)}
-            variant="default"
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-3 text-lg font-semibold shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 px-2"
-            size="lg"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-3 px-4 text-lg font-semibold shadow-lg text-white rounded-lg"
           >
             <Plus className="w-6 h-6" />
             إنشاء مسابقة جديد
-          </Button>
+          </button>
         </div>
 
+        {/* Error message */}
         {error && (
-          <Alert className="mb-6" variant={indexUrl ? "default" : "destructive"}>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              <div className="flex flex-col gap-3">
-                <span>{error}</span>
-                <div className="flex gap-2">
-                  {indexUrl && (
-                    <Button
-                      onClick={handleCreateIndex}
-                      variant="default"
-                      size="sm"
-                      className="flex items-center gap-1 bg-transparent"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      إنشاء الفهرس
-                    </Button>
-                  )}
-                  <Button onClick={handleRetry} variant="secondary" size="sm">
-                    إعادة المحاولة
-                  </Button>
-                </div>
-                {indexUrl && (
-                  <div className="text-xs text-gray-600 mt-2 p-3 bg-gray-50 rounded">
-                    <strong>التعليمات:</strong>
-                    <ol className="list-decimal list-inside mt-1 space-y-1">
-                      <li>انقر على &quot;إنشاء الفهرس&quot; لفتح وحدة تحكم Firebase</li>
-                      <li>انقر على &quot;Create Index&quot; في وحدة تحكم Firebase</li>
-                      <li>انتظر حتى يتم بناء الفهرس (عادة 1-2 دقيقة)</li>
-                      <li>ارجع وانقر على &quot;إعادة المحاولة&quot;</li>
-                    </ol>
-                  </div>
-                )}
-              </div>
-            </AlertDescription>
-          </Alert>
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 p-4 rounded mb-6">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />
+              <span>{error}</span>
+            </div>
+            {indexUrl && (
+              <button
+                onClick={() => window.open(indexUrl, "_blank")}
+                className="mt-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+              >
+                إنشاء الفهرس
+              </button>
+            )}
+            <button
+              onClick={loadUserQuizzes}
+              className="mt-2 ml-2 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+            >
+              إعادة المحاولة
+            </button>
+          </div>
         )}
 
+        {/* Quizzes */}
         {loadingQuizzes ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <Card key={i} className="animate-pulse shadow-lg">
-                <CardHeader>
-                  <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-full"></div>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </CardContent>
-              </Card>
+              <div key={i} className="bg-white p-6 rounded-lg shadow animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+              </div>
             ))}
           </div>
-        ) : quizzes.length === 0 && !error ? (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-16">
+        ) : quizzes.length === 0 ? (
+          <motion.div initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-16">
             <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <Plus className="w-16 h-16 text-blue-600" />
             </div>
             <h3 className="text-2xl font-semibold text-gray-900 mb-3">لا توجد مسابقات بعد</h3>
-              <p className="text-gray-600 mb-8 text-lg">دوس علي زرار &quot;إنشاء مسابقة جديدة&quot;</p>
-            {/* <Button onClick={() => setIsCreateDialogOpen(true)} size="lg" className="px-8 py-3 text-lg">
-              إنشاء مسابقتك الأول
-            </Button> */}
+            <p className="text-gray-600 mb-8 text-lg">دوس على زرار &quot;إنشاء مسابقة جديدة&quot;</p>
           </motion.div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {quizzes.map((quiz, index) => (
-              <motion.div
-                key={quiz.id}
+              <motion.div key={quiz.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-lg my-2 p-2">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-xl font-bold text-gray-900">{quiz.title}</CardTitle>
-                    <CardDescription className="line-clamp-2 text-gray-600">{quiz.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between text-sm text-gray-600 mb-6">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-5 h-5" />
-                        <span className="font-medium">{quiz.questions.length} سؤال</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-5 h-5" />
-                        <span>{quiz.createdAt.toLocaleDateString("ar-EG")}</span>
-                      </div>
-                    </div>
-                    <Button
-                      onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r animate-ping from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 text-lg font-semibold"
-                      variant="default"
-                    >
-                      <Play className="w-5 h-5" />
-                      بدء المسابقة
-                    </Button>
-                  </CardContent>
-                </Card>
+                transition={{ delay: index * 0.1 }}>
+                <div className="bg-white p-4 rounded-lg shadow hover:shadow-xl transition cursor-pointer">
+                  <h2 className="text-xl font-bold text-gray-900 mb-2">{quiz.title}</h2>
+                  <p className="text-gray-600 mb-4">{quiz.description}</p>
+                  <div className="flex justify-between text-sm text-gray-600 mb-4">
+                    <span className="flex items-center gap-2">
+                      <Users className="w-5 h-5" />
+                      {quiz.questions.length} سؤال
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <Calendar className="w-5 h-5" />
+                      {quiz.createdAt.toLocaleDateString("ar-EG")}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
+                    className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2 rounded"
+                  >
+                    <Play className="w-5 h-5" />
+                    بدء المسابقة
+                  </button>
+                </div>
               </motion.div>
             ))}
           </div>
         )}
-
-        <CreateQuizDialog
-          open={isCreateDialogOpen}
-          onOpenChange={setIsCreateDialogOpen}
-          onQuizCreated={handleQuizCreated}
-        />
       </div>
     </div>
   )
