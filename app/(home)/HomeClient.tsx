@@ -2,7 +2,6 @@
 export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
-// import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -27,7 +26,6 @@ const sections = [
 ];
 
 export default function HomeClient() {
-  // const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
   const [logoPos, setLogoPos] = useState("center");
   const eagleControls = useAnimation();
@@ -48,19 +46,13 @@ export default function HomeClient() {
   };
 
   return (
-    <motion.div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-white to-blue-100">
+    <motion.div className="min-h-screen relative overflow-hidden bg-gradient-to-b">
       <LogoHeader />
       <UserHeader />
-      <div className="bg-red-500 text-black p-4">
-        Tailwind Test
-      </div>
-      <div className="bg-green-500 text-amber-900 p-4 rounded">
-        Tailwind Test
-      </div>
 
       {/* اللوجو الأساسي */}
       <motion.div
-        className="z-20 rounded-full border-blue-300 p-4 shadow-xl absolute bg-transparent"
+        className="z-20 rounded-full border-blue-300 p-1 shadow-xl absolute bg-transparent"
         animate={
           logoPos === "center"
             ? {
@@ -166,6 +158,5 @@ export default function HomeClient() {
         <svg width="32" height="32" fill="currentColor"><circle cx="16" cy="16" r="16" /></svg>
       </button> */}
     </motion.div>
-
   );
 }

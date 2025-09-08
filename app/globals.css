@@ -1,13 +1,11 @@
 @import "tw-animate-css";
 
+@import "tailwindcss";
+
 @custom-variant dark (&:is(.dark *));
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
-  --background: oklch(1 0 0);
+  /* --background: oklch(1 0 0); */
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
