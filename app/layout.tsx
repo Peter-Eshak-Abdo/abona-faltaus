@@ -21,11 +21,11 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://abona-faltaus.vercel.app"),
+  metadataBase: new URL(process.env.VERCEL_URL || "https://abona-faltaus.vercel.app"),
   title: 'Abona Faltaus Tofa7a | أبونا فلتاؤس تفاحة',
   description: "الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية",
   keywords: ["الحان", "عظات", "وعظات", "ترانيم", "مقالات دينية", "امتحانات", "اسئلة دينية", "ابونا فلتاؤس السرياني", "الكتاب المقدس", "كنيسة", "ارثوذكسية", "تفاحة"],
-  authors: [{ name: 'Peter Eshak Abdo', url: 'https://abona-faltaus.vercel.app' }],
+  authors: [{ name: 'Peter Eshak Abdo', url: process.env.VERCEL_URL || "https://abona-faltaus.vercel.app" }],
   creator: 'Peter Eshak Abdo',
   icons: {
     icon: "/images/icons/favicon.ico",
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'أبونا فلتاؤس السرياني',
     description: 'الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية.',
-    url: 'https://abona-faltaus.vercel.app',
-    siteName: 'Abona Faltaous',
+    url: process.env.VERCEL_URL || "https://abona-faltaus.vercel.app",
+    siteName: 'Abona Faltaus',
     images: [
       {
         url: '/images/icons/favicon.ico',
@@ -63,7 +63,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="أبونا فلتاؤس السرياني تفاحة" />
-        <meta property="og:url" content="https://abona-faltaus.vercel.app/" />
+        <meta property="og:url" content="https://abona-faltaus.vercel.app" />
         <meta property="og:title" content="أبونا فلتاؤس السرياني تفاحة" />
         <meta property="og:description" content="الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية." />
         <meta property="og:image" content="/images/icons/favicon.ico" />
@@ -116,13 +116,14 @@ export default function RootLayout({
           src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"
           strategy="afterInteractive"
         />
+        <Script
+          src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+          integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+          strategy="afterInteractive"
+        />
       </body>
-      {/* <Script
-        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
-        integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
-        crossOrigin="anonymous"
-        referrerPolicy="no-referrer"
-      /> */}
     </html>
   );
 }

@@ -4,7 +4,7 @@ import BabaShenodyPlayer from "./BabaShenodyPlayer";
 import Image from "next/image";
 
 export const metadata = {
-  metadataBase: new URL("https://abona-faltaus.vercel.app"),
+  metadataBase: new URL(process.env.VERCEL_URL || "https://abona-faltaus.vercel.app"),
   title: "العظات تفاحة",
   description: "العظات الارثوذكسية المسيحية",
   keywords: "العظات, العظات الارثوذكسية, عظات ابونا فلتاؤس, عظات ابونا داؤد لمعي, عظات البابا شنودة",
@@ -22,7 +22,7 @@ function W3zat() {
           </h2>
           <Image
             src="/images/sec1.jpeg"
-            alt="قسم الالحان والترانيم والعظات"
+            alt="قسم العظات"
             className="img-thumbnail rounded"
             width={400}
             height={200}
@@ -72,7 +72,6 @@ function W3zat() {
                         </div>
                       </div>
                     </div>
-
                     <div className="accordion-item">
                       <h4 className="accordion-header">
                         <button

@@ -3,7 +3,7 @@ import KyamaPlayer from "./KyamaPlayer";
 import MeladPlayer from "./MeladPlayer";
 
 export const metadata = {
-  metadataBase: new URL("https://abona-faltaus.vercel.app"),
+  metadataBase: new URL(process.env.VERCEL_URL || "https://abona-faltaus.vercel.app"),
   title: "الترانيم تفاحة",
   description: "ترانيم مسيحية ارثوذكسية",
   keywords: "ترانيم, ترانيم مسيحية, ترانيم ارثوذكسية, ترانيم عيد الميلاد, ترانيم عيد القيامة",
@@ -16,14 +16,14 @@ function Tranim() {
         <div className="d-flex flex-column justify-content-center align-items-center">
           <h1 className="display-1 text-center m-5 text-primary fw-bolder">صفحة ابونا فلتاؤس</h1>
           <h2 className="fs-2 text-secondry text-center fw-light mt-2"> الترانيم الارثوذكسية المسيحية</h2>
-          <Image src="/images/sec1.jpeg" alt=" الترانيم" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" />
+          <Image src="/images/sec1.jpeg" alt="الترانيم" className="img-thumbnail rounded" width={750} height={500} sizes="(max-width: 768px) 90vw" />
         </div>
         <div className="bd-example-snippet bd-code-snippet">
           <div className="bd-example m-0 border-0">
             <div className="accordion" id="accordionExample">
               <div className="accordion-item">
                 <h4 className="accordion-header">
-                  <button
+                <button
                     className="accordion-button collapsed"
                     type="button"
                     data-bs-toggle="collapse"
@@ -42,7 +42,7 @@ function Tranim() {
               </div>
               <div className="accordion-item">
                 <h4 className="accordion-header">
-                  <button
+                <button
                     className="accordion-button collapsed"
                     type="button"
                     data-bs-toggle="collapse"

@@ -1,10 +1,11 @@
 {
   "name": "ابونا فلتاؤس السرياني",
   "short_name": "ابونا فلتاؤس",
+  "description": "تطبيق ابونا فلتاؤس السرياني هو تطبيق فيه الحان وعظات وترانيم والكتاب المقدس.",
   "start_url": "/",
+  "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "display": "standalone",
   "orientation": "portrait",
   "prefer_related_applications": false,
   "icons": [
@@ -39,7 +40,6 @@
       "sizes": "any"
     }
   ],
-  "description": "تطبيق ابونا فلتاؤس السرياني هو تطبيق فيه الحان وعظات وترانيم والكتاب المقدس.",
   "screenshots": [
     {
       "src": "/images/screenshots/homepage-wide.png",
@@ -51,5 +51,11 @@
       "type": "image/png",
       "sizes": "360x640"
     }
-  ]
+  ],
+    "categories": [
+      "productivity",
+      "social"
+    ],
+    "lang": "ar",
+    "dir": "rtl"
 }

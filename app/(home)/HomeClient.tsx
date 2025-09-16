@@ -126,8 +126,8 @@ export default function HomeClient() {
         {showMenu &&
           sections.map((section, index) => {
             const angle = (index / sections.length) * 2 * Math.PI;
-            const x = Math.cos(angle) * 150 - 35;
-            const y = Math.sin(angle) * 150 - 10;
+            const x = Math.cos(angle) * 150 - 60;
+            const y = Math.sin(angle) * 150 - 60;
             return (
               <motion.div
                 key={section.name}
@@ -139,7 +139,7 @@ export default function HomeClient() {
                 style={{ transform: "translate(-50%, -50%)" }}
               >
                 <Link href={section.href}>
-                  <div className="bg-purple-700 hover:bg-purple-500 text-white rounded-full w-14 h-14 flex flex-col items-center justify-center text-center shadow-xl border border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[10px] sm:text-[12px]">
+                  <div className="bg-purple-700 hover:bg-purple-500 text-white rounded-full w-6 h-6 flex flex-col items-center justify-center text-center shadow-xl border border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[10px] sm:text-[12px]">
                     <div className="text-base fs-5">{section.icon}</div>
                     <div className="leading-tight mt-1 fs-5">{section.name}</div>
                   </div>
