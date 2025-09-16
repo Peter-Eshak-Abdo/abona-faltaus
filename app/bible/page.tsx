@@ -4,7 +4,7 @@ import Link from "next/link";
 import { bookNames, oldTestament, newTestament } from "@/lib/books";
 
 export const metadata = {
-  metadataBase: new URL("https://abona-faltaus.vercel.app"),
+  metadataBase: new URL(process.env.VERCEL_URL || "https://abona-faltaus.vercel.app"),
   title: "الكتاب المقدس تفاحة",
   description: "الكتاب المقدس - العهد القديم والعهد الجديد",
   keywords:
@@ -29,36 +29,39 @@ export default async function BibleHomePage() {
   const newBooks = getBooks(newTestament);
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-bold">الكتاب المقدس</h1>
-      <section>
-        <h2 className="text-xl font-semibold mb-2">العهد القديم</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {oldBooks.map((book) => (
+    <div className="space-y-8 m-4 animate-fade-in">
+      <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">الكتاب المقدس</h1>
+      <section className="animate-slide-up">
+        <h2 className="text-2xl font-semibold mb-4 text-blue-700">العهد القديم</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {oldBooks.map((book, index) => (
             <Link
               key={book.abbrev}
               href={`/bible/${book.abbrev}`}
-              className="bg-blue-100 hover:bg-blue-200 px-3 py-1 rounded text-blue-800 text-right"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-center font-medium text-right block"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               {book.name}
             </Link>
           ))}
         </div>
       </section>
-      <section>
-        <h2 className="text-xl font-semibold mb-2">العهد الجديد</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {newBooks.map((book) => (
+      <section className="animate-slide-up" style={{ animationDelay: '0.5s' }}>
+        <h2 className="text-2xl font-semibold mb-4 text-green-700">العهد الجديد</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {newBooks.map((book, index) => (
             <Link
               key={book.abbrev}
               href={`/bible/${book.abbrev}`}
-              className="bg-green-100 hover:bg-green-200 px-3 py-1 rounded text-green-800 text-right"
+              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-center font-medium text-right block"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               {book.name}
             </Link>
           ))}
         </div>
       </section>
+      <div className="background-blur"></div>
     </div>
   );
 }
