@@ -14,15 +14,15 @@ function Mkalat() {
         <div className="flex flex-col md:flex-row gap-10">
           <div className="md:w-2/3">
             <article className="blog-post">
-              <h2 className="display-5 link-body-emphasis mb-1">
+              <h2 className="text-5xl text-blue-600 mb-1">
                 مقالة حياتية
               </h2>
-              <p className="blog-post-meta">
-                23 سبتمبر 2020 بواسطة <a href="#">Peter</a>
+              <p className="text-gray-600">
+                23 سبتمبر 2020 بواسطة <a href="#" className="text-blue-600 hover:underline">Peter</a>
               </p>
-              <hr />
+              <hr className="my-4" />
 
-              <p className="fs-5">
+              <p className="text-xl">
                 انا لازم انجح علشان مافيش اختيار تاني في الحياه غيره .{" "}
               </p>
 
@@ -143,15 +143,15 @@ function Mkalat() {
                 من دلوقتي .{" "}
               </p>
               <blockquote>
-                <p className="text-secondary">اذكرني في صلاتك. بيتر اسحاق</p>
+                <p className="text-gray-600">اذكرني في صلاتك. بيتر اسحاق</p>
               </blockquote>
             </article>
           </div>
 
-          <div className="col-md-4">
-            <div className="position-sticky" style={{ top: "2rem" }}>
-              <div className="p-4 mb-3 bg-body-tertiary rounded">
-                <h4 className="fst-italic">حول</h4>
+          <div className="md:w-1/3">
+            <div className="sticky top-8">
+              <div className="p-4 mb-3 bg-gray-100 rounded-lg">
+                <h4 className="italic">حول</h4>
                 <p className="mb-0">
                   ده مقالات دينية مسيحية او مقالات حياتية مفيدة
                 </p>
