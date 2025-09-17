@@ -76,17 +76,17 @@ export default function SignUpPage() {
   return (
     <>
       <LogoHeader />
-      <div className="container my-5">
+      <div className="max-w-4xl mx-auto my-5">
         <h2 className="mb-4">إنشاء حساب جديد</h2>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+        {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">{error}</div>}
 
-        <form onSubmit={handleSignUp} className="card p-4 shadow-sm">
+        <form onSubmit={handleSignUp} className="bg-white p-4 rounded-lg shadow-md">
           <div className="mb-3">
-            <label className="form-label">الاسم</label>
+            <label className="block text-sm font-medium text-gray-700">الاسم</label>
             <input
               type="text"
-              className="form-control"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -95,10 +95,10 @@ export default function SignUpPage() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">البريد الإلكتروني</label>
+            <label className="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
             <input
               type="email"
-              className="form-control"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -107,25 +107,25 @@ export default function SignUpPage() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">كلمة المرور</label>
+            <label className="block text-sm font-medium text-gray-700">كلمة المرور</label>
             <input
               type="password"
-              className="form-control"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="••••••••"
             />
-            <small className="form-text text-muted">يجب أن تكون كلمة المرور 6 أحرف على الأقل.</small>
+            <small className="text-gray-500">يجب أن تكون كلمة المرور 6 أحرف على الأقل.</small>
           </div>
 
-          <button type="submit" className="btn btn-success w-100">
+          <button type="submit" className="bg-green-600 hover:bg-green-700 text-white w-full py-2 px-4 rounded">
             إنشاء حساب
           </button>
 
           <p className="mt-3 text-center">
             لديك حساب بالفعل؟{' '}
-            <Link href="/auth/signin" className="text-decoration-underline">
+            <Link href="/auth/signin" className="underline">
               سجل الدخول
             </Link>
           </p>

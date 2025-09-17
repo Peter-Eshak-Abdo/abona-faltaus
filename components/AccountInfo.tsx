@@ -14,7 +14,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Copy, Share2, LogOut } from "lucide-react";
+import { Copy, Share2, LogOut, X } from "lucide-react";
 import LogoHeader from "./LogoHeader";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -107,33 +107,35 @@ export default function AccountInfo() {
   if (loading)
     return (
       <div className="text-center my-5">
-        <div className="spinner-border text-primary" role="status" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
       </div>
     );
 
   return (
     <>
       <LogoHeader />
-      <div className="container py-4">
+      <div className="max-w-7xl mx-auto px-4 py-4">
         {successMsg && (
           <div
-            className="toast show position-fixed top-0 end-0 m-3"
+            className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded-md shadow-lg z-50"
             role="alert"
           >
-            <div className="toast-header">
-              <strong className="me-auto">نظام الموقع</strong>
+            <div className="flex justify-between items-center">
+              <strong>نظام الموقع</strong>
               <button
                 type="button"
-                className="btn-close"
+                className="text-white hover:text-gray-200"
                 onClick={() => setSuccessMsg("")}
                 title="إغلاق"
-              ></button>
+              >
+                <X size={16} />
+              </button>
             </div>
-            <div className="toast-body">{successMsg}</div>
+            <div className="mt-2">{successMsg}</div>
           </div>
         )}
 
-        <div className="card mx-auto p-4 shadow account-card-maxwidth">
+        <div className="max-w-md mx-auto p-4 shadow rounded-lg border border-border bg-card text-card-foreground">
           <div className="text-center mb-3">
             <Image
               key={userData?.photoURL}
@@ -141,15 +143,15 @@ export default function AccountInfo() {
               alt="الصورة الشخصية"
               width={100}
               height={100}
-              className="rounded-circle mb-2"
+              className="rounded-full mb-2 mx-auto"
               style={{ objectFit: "cover" }}
             />
             <h4>{userData?.name}</h4>
-            <small className="text-muted">{userData?.email}</small>
+            <small className="text-muted-foreground">{userData?.email}</small>
           </div>
 
           <div className="mb-3">
-            <label htmlFor="upload" className="form-label">
+            <label htmlFor="upload" className="block text-sm font-medium mb-1">
               تغيير الصورة الشخصية
             </label>
             <input
@@ -157,22 +159,22 @@ export default function AccountInfo() {
               id="upload"
               accept="image/*"
               onChange={handleImageUpload}
-              className="form-control"
+              className="w-full rounded-md border border-input bg-background p-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
               disabled={uploading}
             />
           </div>
 
-          <ul className="list-group list-group-flush mb-3">
-            <li className="list-group-item">
+          <ul className="space-y-2 mb-3">
+            <li className="flex justify-between">
               <strong>الاسم:</strong> {userData?.name}
             </li>
-            <li className="list-group-item">
+            <li className="flex justify-between">
               <strong>البريد:</strong> {userData?.email}
             </li>
-            <li className="list-group-item">
+            <li className="flex justify-between">
               <strong>رقم الحساب:</strong> {firebaseUser?.uid}
             </li>
-            <li className="list-group-item">
+            <li className="flex justify-between">
               <strong>تاريخ الإنشاء:</strong>{" "}
               {userData?.createdAt
                 ? userData.createdAt.toDate().toLocaleString()
@@ -180,17 +182,17 @@ export default function AccountInfo() {
             </li>
           </ul>
 
-          <div className="d-flex justify-content-center gap-2 mt-2">
-            <button onClick={handleCopy} className="btn btn-sm btn-primary">
-              <Copy size={16} className="me-1" />
+          <div className="flex justify-center gap-2 mt-2">
+            <button onClick={handleCopy} className="inline-flex items-center rounded-md bg-primary px-3 py-1 text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none text-sm">
+              <Copy size={16} className="mr-1" />
               {copied ? "تم النسخ!" : "نسخ UID"}
             </button>
-            <button onClick={handleShare} className="btn btn-sm btn-success">
-              <Share2 size={16} className="me-1" />
+            <button onClick={handleShare} className="inline-flex items-center rounded-md bg-green-600 px-3 py-1 text-primary-foreground hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none text-sm">
+              <Share2 size={16} className="mr-1" />
               مشاركة
             </button>
-            <button onClick={handleLogout} className="btn btn-sm btn-danger">
-              <LogOut size={16} className="me-1" />
+            <button onClick={handleLogout} className="inline-flex items-center rounded-md bg-destructive px-3 py-1 text-primary-foreground hover:bg-destructive/90 disabled:opacity-50 disabled:pointer-events-none text-sm">
+              <LogOut size={16} className="mr-1" />
               تسجيل الخروج
             </button>
           </div>

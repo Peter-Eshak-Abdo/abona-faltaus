@@ -73,25 +73,26 @@ export default function ExamSetupPage() {
 
   return (
     <>
-      <div className="container py-5">
-        <div className="row justify-content-center">
-          <div className="col-md-8">
-            <div className="card shadow">
-              <div className="card-header bg-primary text-white">
-                <h2 className="h4 mb-0 text-center">إعدادات الامتحان</h2>
+      <div className="max-w-7xl mx-auto py-5">
+        <div className="flex justify-center">
+          <div className="w-full md:w-2/3">
+            <div className="bg-white shadow-lg rounded-lg">
+              <div className="bg-blue-600 text-white p-4">
+                <h2 className="text-xl font-bold text-center mb-0">إعدادات الامتحان</h2>
               </div>
 
-              <div className="card-body">
+              <div className="p-4">
                 <div className="mb-4">
-                  <h3 className="h5 mb-3">اختر الفئات:</h3>
-                  <div className="d-flex flex-wrap gap-2">
+                  <h3 className="text-lg font-semibold mb-3">اختر الفئات:</h3>
+                  <div className="flex flex-wrap gap-2">
                     {categories.map(category => (
                       <button
                         key={category.name}
                         onClick={() => handleCategoryToggle(category.name)}
-                        className={`btn btn-sm ${selectedCategories.includes(category.name)
-                          ? "btn-primary"
-                          : "btn-outline-primary"}`}
+                        className={`px-3 py-1 rounded text-sm ${selectedCategories.includes(category.name)
+                          ? "bg-blue-600 hover:bg-blue-700 text-white"
+                          : "border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`}
+                        type="button"
                       >
                         {category.name} ({category.count})
                       </button>
@@ -100,31 +101,31 @@ export default function ExamSetupPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="questionCount" className="form-label">
+                  <label htmlFor="questionCount" className="block text-sm font-medium text-gray-700">
                     عدد الأسئلة (الحد الأقصى: {selectedMax})
                   </label>
                   <input
                     type="range"
-                    className="form-range"
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                     min="1"
                     max={selectedMax}
                     value={questionCount}
                     onChange={(e) => setQuestionCount(parseInt(e.target.value))}
                     id="questionCount"
                   />
-                  <div className="d-flex justify-content-between">
+                  <div className="flex justify-between">
                     <span>1</span>
-                    <span className="fw-bold">{questionCount}</span>
+                    <span className="font-bold">{questionCount}</span>
                     <span>{selectedMax}</span>
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="timeLimit" className="form-label">
+                  <label htmlFor="timeLimit" className="block text-sm font-medium text-gray-700">
                     الوقت المخصص (دقيقة)
                   </label>
                   <select
-                    className="form-select"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     value={timeLimit}
                     onChange={(e) => setTimeLimit(parseInt(e.target.value))}
                     id="timeLimit"
@@ -139,14 +140,15 @@ export default function ExamSetupPage() {
                   </select>
                 </div>
 
-                <div className="d-flex justify-content-between mt-4">
-                  <Link href="/exam" className="btn btn-secondary">
+                <div className="flex justify-between mt-4">
+                  <Link href="/exam" className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
                     رجوع
                   </Link>
                   <button
                     onClick={handleStartExam}
                     disabled={selectedCategories.length === 0 || questionCount < 1}
-                    className="btn btn-primary"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                    type="button"
                   >
                     بدء الامتحان
                   </button>

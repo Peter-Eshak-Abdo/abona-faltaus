@@ -10,37 +10,37 @@ export default function ExamPage() {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="container min-vh-100 d-flex flex-column align-items-center justify-content-center py-5"
+      className="max-w-7xl mx-auto min-h-screen flex flex-col items-center justify-center py-5"
     >
       <motion.h1
-        className="mb-5 text-center fw-bold text-primary"
+        className="mb-5 text-center font-bold text-blue-600"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         نظام الاختبارات الإلكتروني
       </motion.h1>
-      <div className="row row-cols-1 row-cols-md-2 g-4 w-100">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         {/* كارت الأسئلة المجمعة */}
         <motion.div
-          className="col"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="card shadow border-0 h-100">
-            <div className="card-body d-flex flex-column justify-content-between">
+          <div className="bg-white shadow-lg rounded-lg h-full">
+            <div className="p-4 flex flex-col justify-between">
               <div>
-                <h5 className="card-title text-center text-primary fw-bold">
+                <h5 className="text-center text-blue-600 font-bold">
                   الأسئلة المجمعة
                 </h5>
-                <p className="card-text text-center text-muted">
+                <p className="text-center text-gray-600">
                   نظام تقسيم الأسئلة لمجموعات مع وقت محدد لكل مجموعة.
                 </p>
               </div>
               <button
-                className="btn btn-primary w-100 mt-3"
+                className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 px-4 rounded mt-3"
                 onClick={() => router.push("/exam/exam-settings")}
+                type="button"
               >
                 ابدأ الاختبار المجمع
               </button>
@@ -50,30 +50,29 @@ export default function ExamPage() {
 
         {/* كارت الأسئلة المجمعة اونلاين */}
         <motion.div
-          className="col"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="card shadow border-0 h-100">
-            <div className="card-body d-flex flex-column justify-content-between">
+          <div className="bg-white shadow-lg rounded-lg h-full">
+            <div className="p-4 flex flex-col justify-between">
               <div>
-                <h5 className="card-title text-center text-primary fw-bold">
+                <h5 className="text-center text-blue-600 font-bold">
                   الأسئلة المجمعة اونلاين
                 </h5>
-                <p className="card-text text-center text-muted">
+                <p className="text-center text-gray-600">
                   نظام تقسيم الأسئلة لمجموعات مع وقت محدد لكل مجموعة.
                 </p>
               </div>
-              <div className="d-flex gap-2">
+              <div className="flex gap-2">
                 <button
-                  className="btn btn-primary w-50 mt-3"
+                  className="bg-blue-600 hover:bg-blue-700 text-white w-1/2 py-2 px-4 rounded mt-3"
                   onClick={() => router.push("/exam/group/admin")}
                 >
                   إنشاء غرفة
                 </button>
                 <button
-                  className="btn btn-secondary w-50 mt-3"
+                  className="bg-gray-600 hover:bg-gray-700 text-white w-1/2 py-2 px-4 rounded mt-3"
                   onClick={() => router.push("/exam/group/join")}
                 >
                   انضم إلى غرفة
@@ -85,23 +84,22 @@ export default function ExamPage() {
 
         {/* كارت الأسئلة الفردية */}
         <motion.div
-          className="col"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="card shadow border-0 h-100">
-            <div className="card-body d-flex flex-column justify-content-between">
+          <div className="bg-white shadow-lg rounded-lg h-full">
+            <div className="p-4 flex flex-col justify-between">
               <div>
-                <h5 className="card-title text-center text-success fw-bold">
+                <h5 className="text-center text-green-600 font-bold">
                   الأسئلة الفردية
                 </h5>
-                <p className="card-text text-center text-muted">
+                <p className="text-center text-gray-600">
                   نظام الأسئلة الفردية مع إمكانية التنقل بين الأسئلة بحرية.
                 </p>
               </div>
               <button
-                className="btn btn-success w-100 mt-3"
+                className="bg-green-600 hover:bg-green-700 text-white w-full py-2 px-4 rounded mt-3"
                 onClick={() => router.push("/exam/individual-questions")}
               >
                 ابدأ الاختبار الفردي
@@ -112,23 +110,22 @@ export default function ExamPage() {
 
         {/* كارت الأسئلة كاهوت */}
         <motion.div
-          className="col"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="card shadow border-0 h-100">
-            <div className="card-body d-flex flex-column justify-content-between">
+          <div className="bg-white shadow-lg rounded-lg h-full">
+            <div className="p-4 flex flex-col justify-between">
               <div>
-                <h5 className="card-title text-center text-success fw-bold">
+                <h5 className="text-center text-green-600 font-bold">
                   الأسئلة الكاهوتية
                 </h5>
-                <p className="card-text text-center text-muted">
+                <p className="text-center text-gray-600">
                   نظام الأسئلة الكاهوتية مع إمكانية التنقل بين الأسئلة بحرية.
                 </p>
               </div>
               <button
-                className="btn btn-success w-100 mt-3"
+                className="bg-green-600 hover:bg-green-700 text-white w-full py-2 px-4 rounded mt-3"
                 onClick={() => router.push("/exam/quiz/dashboard")}
               >
                 ابدأ الاختبار الكاهوتي

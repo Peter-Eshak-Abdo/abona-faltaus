@@ -1,85 +1,82 @@
-// 'use client';
+'use client';
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Phone, PhoneCall, Mail, MessageCircle, User } from "lucide-react";
 
 function Footer() {
   return (
-    <footer className="container">
-      {/* <hr className="featurette-divider" /> */}
-
+    <footer className="max-w-7xl mx-auto px-4 py-8">
       {/* هذا القسم سيظهر فقط على الشاشات الكبيرة (md فما فوق) */}
-      <div className="d-none d-md-block">
-        <Link href={"/"} className="nav-link p-0 text-body fs-4 fw-bolder mb-3 text-center">
+      <div className="hidden md:block">
+        <Link href="/" className="block text-foreground text-2xl font-bold mb-6 text-center hover:text-primary transition-colors">
           الصفحة الرئيسية
         </Link>
-        <div className="row">
-          <div className="col-6 col-md-2 mb-3">
-            <h5> قسم الالحان والترانيم والعظات</h5>
-            <ul className="nav flex-column">
-              <li className="nav-item mb-2">
-                <Link href={"/al7an"} className="nav-link p-0 text-body-secondary">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="col-span-6 md:col-span-2">
+            <h5 className="text-lg font-semibold mb-4">قسم الالحان والترانيم والعظات</h5>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/al7an" className="text-muted-foreground hover:text-foreground transition-colors">
                   الحان
                 </Link>
               </li>
-              <li className="nav-item mb-2">
-                <Link href={"/tranim"} className="nav-link p-0 text-body-secondary">
+              <li>
+                <Link href="/tranim" className="text-muted-foreground hover:text-foreground transition-colors">
                   ترانيم
                 </Link>
               </li>
-              <li className="nav-item mb-2">
-                <Link href={"/3zat"} className="nav-link p-0 text-body-secondary">
+              <li>
+                <Link href="/3zat" className="text-muted-foreground hover:text-foreground transition-colors">
                   عظات
                 </Link>
               </li>
             </ul>
           </div>
 
-          <div className="col-6 col-md-2 mb-3">
-            <h5>الكتاب المقدس والمقالات الدينية</h5>
-            <ul className="nav flex-column">
-              <li className="nav-item mb-2">
-                <Link href={"/bible"} className="nav-link p-0 text-body-secondary">
+          <div className="col-span-6 md:col-span-2">
+            <h5 className="text-lg font-semibold mb-4">الكتاب المقدس والمقالات الدينية</h5>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/bible" className="text-muted-foreground hover:text-foreground transition-colors">
                   الكتاب المقدس
                 </Link>
               </li>
-              <li className="nav-item mb-2">
-                <Link href={"/mkalat"} className="nav-link p-0 text-body-secondary">
+              <li>
+                <Link href="/mkalat" className="text-muted-foreground hover:text-foreground transition-colors">
                   المقالات
                 </Link>
               </li>
             </ul>
           </div>
 
-          <div className="col-6 col-md-2 mb-3">
-            <h5> عرض فقرات</h5>
-            <ul className="nav flex-column">
-              <li className="nav-item mb-2">
-                <Link href={"/exam"} className="nav-link p-0 text-body-secondary">
+          <div className="col-span-6 md:col-span-2">
+            <h5 className="text-lg font-semibold mb-4">عرض فقرات</h5>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/exam" className="text-muted-foreground hover:text-foreground transition-colors">
                   الامتحانات
                 </Link>
               </li>
             </ul>
           </div>
 
-          <div className="col-md-5 offset-md-1 mb-3">
-            <form>
-              <h5>اشترك علشان يصلك كل جديد</h5>
-              <p>
+          <div className="col-span-12 md:col-span-5 md:col-start-8">
+            <form className="space-y-4">
+              <h5 className="text-lg font-semibold">اشترك علشان يصلك كل جديد</h5>
+              <p className="text-muted-foreground">
                 ده طبعاً لسة مش بعرف اعملك ف سيبك من الحته ديه دلوقتي وشوف باقيتة
                 الصفحة وخلاص
               </p>
-              <div className="d-flex flex-column flex-sm-row w-100 gap-2">
-                <label htmlFor="newsletter1" className="visually-hidden">
-                  ايميلك
-                </label>
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   id="newsletter1"
-                  type="text"
-                  className="form-control"
+                  type="email"
                   placeholder="Email address"
+                  className="flex-1 px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 />
-                <button className="btn btn-primary disabled" type="button">
+                <Button type="button" disabled>
                   ماقلتلك ماتشتركش ياعم
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -87,56 +84,53 @@ function Footer() {
       </div>
 
       {/* هذا القسم سيظهر على جميع أحجام الشاشات */}
-      <div className="d-flex flex-column flex-sm-row justify-content-between pt-3 mt-2 border-top">
+      <div className="flex flex-col sm:flex-row justify-between items-center pt-6 mt-6 border-t border-border">
         <a
           href="https://tofa7a-5e936.web.app/"
-          className="link-offset-2 link-underline link-offset-3-hover link-underline-opacity-0 link-underline-opacity-75-hover"
+          className="text-muted-foreground hover:text-foreground transition-colors"
         >
           <p>&copy; جميع الحقوق محفوظة لدي تفاحة طبعاً.</p>
         </a>
-        <ul className="list-unstyled d-flex">
-          <li className="ms-3">
-            <a href="tel:01221331602">
-              <i className="bi bi-telephone fs-1"></i>
+        <ul className="flex items-center gap-4 mt-4 sm:mt-0">
+          <li>
+            <a href="tel:01221331602" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Phone className="h-6 w-6" />
             </a>
-            ||
-            <a href="tel:01202224608">
-              <i className="bi bi-telephone-fill fs-1"></i>
+            <span className="mx-2 text-muted-foreground">||</span>
+            <a href="tel:01202224608" className="text-muted-foreground hover:text-foreground transition-colors">
+              <PhoneCall className="h-6 w-6" />
             </a>
-            {/* مترنش علشان مش فاضي */}
           </li>
-          <li className="ms-3">
-            {/* Email:{" "} */}
-            <a href="mailto:petereshak11gmail.com">
-              <i className="bi bi-envelope fs-1"></i>
+          <li>
+            <a href="mailto:petereshak11gmail.com" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Mail className="h-6 w-6" />
             </a>
-            <br />
-            {/* يعم مش هشوفة */}
           </li>
-          <li className="ms-3">
+          <li>
             <a
-              className="text-body"
               href="https://wa.me/message/AOH44Q2TY3H2E1"
               title="Whatsapp"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              <i className="bi bi-whatsapp text-success fs-1"></i>
+              <MessageCircle className="h-6 w-6 text-green-600" />
             </a>
           </li>
-          <li className="ms-3">
+          <li>
             <a
-              className="text-body"
               href="https://wa.me/qr/36KBTEORX2N3O1"
               title="Whatsapp"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              <i className="bi bi-whatsapp text-success-emphasis fs-1"></i>
+              <MessageCircle className="h-6 w-6 text-green-700" />
             </a>
           </li>
-          <li className="ms-3">
+          <li>
             <a
               href="https://tofa7a-5e936.web.app/"
-              className="link-offset-2 link-underline link-offset-3-hover link-underline-opacity-0 link-underline-opacity-75-hover"
+              className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
             >
-              <i className="bi bi-person-circle fs-1"> عن المطور</i>
+              <User className="h-6 w-6" />
+              عن المطور
             </a>
           </li>
         </ul>

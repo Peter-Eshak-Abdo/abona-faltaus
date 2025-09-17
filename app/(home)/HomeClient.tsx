@@ -21,7 +21,7 @@ const sections = [
   { name: "العظات", href: "/3zat", icon: <FaChurch /> },
   { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },
-  // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
+  { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
   { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
 ];
 
@@ -96,7 +96,7 @@ export default function HomeClient() {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="position-absolute top-50 start-50 translate-middle"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           >
             <motion.div
               animate={{ rotate: [0, 5, -5, 5, 0] }}
@@ -140,8 +140,8 @@ export default function HomeClient() {
               >
                 <Link href={section.href}>
                   <div className="bg-purple-700 hover:bg-purple-500 text-white rounded-full w-6 h-6 flex flex-col items-center justify-center text-center shadow-xl border border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[10px] sm:text-[12px]">
-                    <div className="text-base fs-5">{section.icon}</div>
-                    <div className="leading-tight mt-1 fs-5">{section.name}</div>
+                    <div className="text-sm">{section.icon}</div>
+                    <div className="leading-tight mt-1 text-sm">{section.name}</div>
                   </div>
                 </Link>
               </motion.div>

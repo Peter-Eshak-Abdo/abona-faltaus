@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 
 const links = [
   { name: "الصفحة الرئيسية", href: "/" },
@@ -39,51 +40,50 @@ function Header() {
   return (
     <>
       <nav
-        className="navbar navbar-expand-lg fixed-top shadow-sm"
+        className="fixed top-0 left-0 right-0 z-50 shadow-md transition-colors duration-300"
         style={{
-          backgroundColor: `rgba(13, 110, 253, ${opacity})`,
-          transition: "background-color 0.3s ease",
+          backgroundColor: `rgba(59, 130, 246, ${opacity})`, // blue-500
         }}
       >
-        <div className="container-fluid">
-          <Link className="navbar-brand d-flex align-items-center" href="/">
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
+          <Link className="flex items-center gap-2" href="/">
             <Image
               src="/images/logo.jpg"
               alt="لوجو أبونا فلتاؤس"
               width={50}
               height={40}
-              className="rounded me-2"
+              className="rounded"
               style={{
                 transition: "transform 0.5s ease-in-out",
                 transform: `rotate(${scrollY / 5}deg)`,
               }}
             />
-            <span className="fw-bold text-white">أبونا فلتاؤس</span>
+            <span className="font-bold text-white">أبونا فلتاؤس</span>
           </Link>
           <button
-            className="navbar-toggler"
+            className="md:hidden text-white p-2"
             type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
             aria-controls="navbarNav"
             aria-expanded={!isCollapsed}
             aria-label="Toggle navigation"
           >
-            <span className="navbar-toggler-icon"></span>
+            {isCollapsed ? <Menu className="h-6 w-6" /> : <X className="h-6 w-6" />}
           </button>
 
           <div
-            className={`collapse visible navbar-collapse ${!isCollapsed ? "show" : ""}`}
+            className={`md:flex ${isCollapsed ? 'hidden' : 'flex'} flex-col md:flex-row gap-4 md:gap-6`}
             id="navbarNav"
           >
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul className="flex flex-col md:flex-row gap-4 md:gap-6">
               {links.map((link) => {
                 const isActive = pathname === link.href;
                 return (
-                  <li className="nav-item" key={link.name}>
+                  <li key={link.name}>
                     <Link
                       href={link.href}
-                      className={`nav-link fw-semibold ${
-                        isActive ? "text-warning active" : "text-white"
+                      className={`font-semibold text-white hover:text-yellow-400 transition-colors ${
+                        isActive ? "text-yellow-400" : ""
                       }`}
                       aria-current={isActive ? "page" : undefined}
                     >

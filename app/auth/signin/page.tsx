@@ -69,17 +69,17 @@ export default function SignInPage() {
   return (
     <>
       <LogoHeader />
-      <div className="container my-5">
+      <div className="max-w-4xl mx-auto my-5">
         <h2 className="mb-4">تسجيل الدخول</h2>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+        {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">{error}</div>}
 
-        <form onSubmit={handleEmailSignIn} className="card p-4 shadow-sm">
+        <form onSubmit={handleEmailSignIn} className="bg-white p-4 rounded-lg shadow-md">
           <div className="mb-3">
-            <label className="form-label">البريد الإلكتروني</label>
+            <label className="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
             <input
               type="email"
-              className="form-control"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -88,10 +88,10 @@ export default function SignInPage() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">كلمة المرور</label>
+            <label className="block text-sm font-medium text-gray-700">كلمة المرور</label>
             <input
               type="password"
-              className="form-control"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -99,7 +99,7 @@ export default function SignInPage() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-100 mb-2">
+          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 px-4 rounded mb-2">
             دخول بالبريد الإلكتروني
           </button>
         </form>
@@ -108,17 +108,17 @@ export default function SignInPage() {
           <span>أو</span>
         </div>
 
-        <div className="d-grid gap-2">
+        <div className="grid gap-2">
           <button
             onClick={handleGoogleSignIn}
-            className="btn btn-outline-danger"
+            className="border border-red-600 text-red-600 hover:bg-red-600 hover:text-white py-2 px-4 rounded"
           >
             الدخول باستخدام Google
           </button>
 
           <button
             onClick={handlePhoneSignIn}
-            className="btn btn-outline-success"
+            className="border border-green-600 text-green-600 hover:bg-green-600 hover:text-white py-2 px-4 rounded"
           >
             الدخول برقم الهاتف
           </button>
@@ -128,7 +128,7 @@ export default function SignInPage() {
 
         <p className="mt-3 text-center">
           ليس لديك حساب؟{" "}
-          <Link href="/auth/signup" className="text-decoration-underline">
+          <Link href="/auth/signup" className="underline">
             أنشئ حساب جديد
           </Link>
         </p>

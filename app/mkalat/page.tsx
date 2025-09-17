@@ -9,10 +9,10 @@ export const metadata = {
 function Mkalat() {
   return (
     <>
-      <br className="mt-5" />
-      <main className="container mt-5">
-        <div className="row g-5">
-          <div className="col-md-8">
+      <br className="mt-20" />
+      <main className="max-w-7xl mx-auto mt-20 p-4">
+        <div className="flex flex-col md:flex-row gap-10">
+          <div className="md:w-2/3">
             <article className="blog-post">
               <h2 className="display-5 link-body-emphasis mb-1">
                 مقالة حياتية

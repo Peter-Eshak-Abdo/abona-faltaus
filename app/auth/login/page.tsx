@@ -114,27 +114,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="container d-flex align-items-center justify-content-center min-vh-100 bg-light">
+    <div className="max-w-4xl mx-auto flex items-center justify-center min-h-screen bg-gray-100">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card shadow p-4 w-100"
+        className="bg-white shadow-lg p-4 w-full"
         style={{ maxWidth: "400px" }}
       >
         <h2 className="text-center mb-4">
           {mode === "login" ? "تسجيل الدخول" : "إنشاء حساب"}
         </h2>
 
-        <div className="d-flex justify-content-center mb-4">
+        <div className="flex justify-center mb-4">
           <button
-            className={`btn ${mode === "login" ? "btn-primary" : "btn-outline-primary"} me-2`}
+            className={`px-4 py-2 rounded mr-2 ${mode === "login" ? "bg-blue-600 hover:bg-blue-700 text-white" : "border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`}
             onClick={() => setMode("login")}
             disabled={isLoading}
           >
             دخول
           </button>
           <button
-            className={`btn ${mode === "signup" ? "btn-primary" : "btn-outline-primary"}`}
+            className={`px-4 py-2 rounded ${mode === "signup" ? "bg-blue-600 hover:bg-blue-700 text-white" : "border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`}
             onClick={() => setMode("signup")}
             disabled={isLoading}
           >
@@ -146,7 +146,7 @@ export default function LoginPage() {
           <div className="mb-3">
             <input
               type="text"
-              className="form-control"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               placeholder="الاسم الكامل"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -158,7 +158,7 @@ export default function LoginPage() {
         <div className="mb-3">
           <input
             type="email"
-            className="form-control"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
             placeholder="البريد الإلكتروني"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -169,19 +169,19 @@ export default function LoginPage() {
         <div className="mb-3">
           <input
             type="password"
-            className="form-control"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
             placeholder="كلمة المرور"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={isLoading}
           />
-          <small className="form-text text-muted">
+          <small className="text-gray-500">
             يجب أن تكون كلمة المرور 6 أحرف على الأقل.
           </small>
         </div>
 
         <button
-          className="btn btn-success w-100 mb-3"
+          className="bg-green-600 hover:bg-green-700 text-white w-full py-2 px-4 rounded mb-3"
           onClick={handleEmailAuth}
           disabled={isLoading}
         >
@@ -194,25 +194,25 @@ export default function LoginPage() {
               : "إنشاء حساب"}
         </button>
 
-        <div className="d-grid gap-2 mb-3">
+        <div className="grid gap-2 mb-3">
           <button
-            className="btn btn-danger"
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
             onClick={() => handleSocialLogin(new GoogleAuthProvider())}
             disabled={isLoading}
           >
-            <i className="bi bi-google me-2"></i> Google
+            Google
           </button>
           <button
-            className="btn btn-dark"
+            className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded"
             onClick={() => handleSocialLogin(new GithubAuthProvider())}
             disabled={isLoading}
           >
-            <i className="bi bi-github me-2"></i> GitHub
+            GitHub
           </button>
         </div>
 
         {error && (
-          <div className="alert alert-danger mt-2 text-center">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-2 text-center">
             {error}
           </div>
         )}

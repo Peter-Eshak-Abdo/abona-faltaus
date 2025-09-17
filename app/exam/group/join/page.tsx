@@ -121,41 +121,41 @@ export default function JoinPage() {
   };
 
   return (
-    <div className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white text-center">
-              <h2 className="h4 mb-0">انضم إلى غرفة الامتحان</h2>
+    <div className="max-w-7xl mx-auto py-5">
+      <div className="flex justify-center">
+        <div className="w-full md:w-1/2">
+          <div className="bg-white shadow-lg rounded-lg">
+            <div className="bg-blue-600 text-white text-center p-4">
+              <h2 className="text-xl font-bold mb-0">انضم إلى غرفة الامتحان</h2>
             </div>
-            <div className="card-body">
+            <div className="p-4">
               {isConnecting && (
-                <div className="alert alert-info" role="alert">
+                <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
                   جاري الاتصال بالخادم...
                 </div>
               )}
               {error && (
-                <div className="alert alert-danger" role="alert">
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                   {error}
                 </div>
               )}
-              <div className="mb-3 d-flex align-items-center gap-2">
-                <label htmlFor="roomId" className="form-label mb-0">
+              <div className="mb-3 flex items-center gap-2">
+                <label htmlFor="roomId" className="block text-sm font-medium text-gray-700 mb-0">
                   رقم الغرفة
                 </label>
-                <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => { setShowScanner(true); setTimeout(startScanner, 100); }}>
+                <button type="button" className="border border-gray-600 text-gray-600 hover:bg-gray-600 hover:text-white px-3 py-1 rounded text-sm" onClick={() => { setShowScanner(true); setTimeout(startScanner, 100); }}>
                   <span role="img" aria-label="scan">📷</span> QR
                 </button>
               </div>
               {showScanner && (
                 <div className="mb-3">
-                  <div id="qr-reader" ref={scannerRef} className="w-100"></div>
-                  <button type="button" className="btn btn-danger mt-2" onClick={() => setShowScanner(false)}>إغلاق</button>
+                  <div id="qr-reader" ref={scannerRef} className="w-full"></div>
+                  <button type="button" className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mt-2" onClick={() => setShowScanner(false)}>إغلاق</button>
                 </div>
               )}
               <input
                 type="text"
-                className="form-control mb-3"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 mb-3"
                 id="roomId"
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
@@ -164,12 +164,12 @@ export default function JoinPage() {
                 disabled={showScanner}
               />
               <div className="mb-3">
-                <label htmlFor="teamName" className="form-label">
+                <label htmlFor="teamName" className="block text-sm font-medium text-gray-700">
                   اسم الفريق
                 </label>
                 <input
                   type="text"
-                  className="form-control"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   id="teamName"
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
@@ -178,12 +178,12 @@ export default function JoinPage() {
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">عدد أعضاء الفريق</label>
+                <label className="block text-sm font-medium text-gray-700">عدد أعضاء الفريق</label>
                 <input
                   type="number"
                   min={1}
                   max={10}
-                  className="form-control"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   value={memberCount}
                   onChange={e => handleMemberCountChange(Number(e.target.value))}
                   placeholder="عدد أعضاء الفريق"
@@ -192,10 +192,10 @@ export default function JoinPage() {
               </div>
               {Array.from({ length: memberCount }).map((_, idx) => (
                 <div className="mb-2" key={idx}>
-                  <label className="form-label">اسم العضو {idx + 1}</label>
+                  <label className="block text-sm font-medium text-gray-700">اسم العضو {idx + 1}</label>
                   <input
                     type="text"
-                    className="form-control"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     value={members[idx] || ""}
                     onChange={e => setMembers(m => { const arr = [...m]; arr[idx] = e.target.value; return arr; })}
                     placeholder={`اسم العضو ${idx + 1}`}
@@ -203,14 +203,14 @@ export default function JoinPage() {
                   />
                 </div>
               ))}
-              <div className="d-flex justify-content-between mt-4">
-                <Link href="/exam" className="btn btn-secondary">
+              <div className="flex justify-between mt-4">
+                <Link href="/exam" className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
                   رجوع
                 </Link>
                 <button
                   type="button"
                   onClick={handleJoinRoom}
-                  className="btn btn-primary"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
                   disabled={!roomId || !teamName || !socket}
                 >
                   انضم إلى الغرفة
