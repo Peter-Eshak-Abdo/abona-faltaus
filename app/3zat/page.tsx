@@ -4,8 +4,10 @@ import BabaShenodyPlayer from "./BabaShenodyPlayer";
 import Image from "next/image";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
+const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://abona-faltaus.vercel.app";
+
 export const metadata = {
-  metadataBase: new URL(process.env.VERCEL_URL || "https://abona-faltaus.vercel.app"),
+  metadataBase: new URL(baseUrl),
   title: "العظات تفاحة",
   description: "العظات الارثوذكسية المسيحية",
   keywords: "العظات, العظات الارثوذكسية, عظات ابونا فلتاؤس, عظات ابونا داؤد لمعي, عظات البابا شنودة",
