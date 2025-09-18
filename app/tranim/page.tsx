@@ -27,7 +27,7 @@ function Tranim() {
           <Image src="/images/sec1.jpeg" alt="الترانيم" className="rounded-lg border border-gray-300" width={750} height={500} sizes="(max-width: 768px) 90vw" />
         </div>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem valu="melad">
+          <AccordionItem value="melad">
             <AccordionTrigger>ترانيم عيد الميلاد</AccordionTrigger>
             <AccordionContent>
               <MeladPlayer />
