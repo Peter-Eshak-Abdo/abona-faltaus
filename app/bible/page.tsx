@@ -3,8 +3,9 @@ import path from "path";
 import Link from "next/link";
 import { bookNames, oldTestament, newTestament } from "@/lib/books";
 
+const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://abona-faltaus.vercel.app";
+
 export const metadata = {
-  metadataBase: new URL(process.env.VERCEL_URL || "https://abona-faltaus.vercel.app"),
   title: "الكتاب المقدس تفاحة",
   description: "الكتاب المقدس - العهد القديم والعهد الجديد",
   keywords:

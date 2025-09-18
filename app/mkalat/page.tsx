@@ -1,6 +1,5 @@
 
 export const metadata = {
-  metadataBase: new URL("https://abona-faltaus.vercel.app"),
   title: "المقالات تفاحة",
   description: "المقالات الحياتية او الدينية المسيحية",
   keywords: "مقالات, مقالات حياتية, مقالات دينية, مقالات مسيحية",

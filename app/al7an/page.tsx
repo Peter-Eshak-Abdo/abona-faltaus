@@ -9,7 +9,6 @@ const allNames = (al7anData as unknown as Al7anCategory[]).flatMap((c) =>
   Object.values(c)[0].map((h) => h.name)
 );
 export const metadata: Metadata = {
-  metadataBase: new URL("https://abona-faltaus.vercel.app"),
   title: "الألحان تفاحة",
   description: "مجموعة الألحان لجميع المناسبات",
   keywords: ["الحان", ...allNames],

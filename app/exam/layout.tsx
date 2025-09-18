@@ -1,5 +1,4 @@
 export const metadata = {
-  metadataBase: new URL("https://abona-faltaus.vercel.app"),
   title: "نظام الاختبارات الإلكترونية تفاحة",
   description: "امتحانات دينية فردية وجماعية حسب المواسم الكنسية.",
   keywords: [
