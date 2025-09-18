@@ -8,8 +8,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://abona-faltaus.vercel.app";
+
 export const metadata = {
-  metadataBase: new URL(process.env.VERCEL_URL || "https://abona-faltaus.vercel.app"),
+  metadataBase: new URL(baseUrl),
   title: "الترانيم تفاحة",
   description: "ترانيم مسيحية ارثوذكسية",
   keywords: "ترانيم, ترانيم مسيحية, ترانيم ارثوذكسية, ترانيم عيد الميلاد, ترانيم عيد القيامة",
@@ -25,7 +27,7 @@ function Tranim() {
           <Image src="/images/sec1.jpeg" alt="الترانيم" className="rounded-lg border border-gray-300" width={750} height={500} sizes="(max-width: 768px) 90vw" />
         </div>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="melad">
+          <AccordionItem valu="melad">
             <AccordionTrigger>ترانيم عيد الميلاد</AccordionTrigger>
             <AccordionContent>
               <MeladPlayer />

@@ -16,12 +16,14 @@ const vazirmatn = Vazirmatn({
   variable: '--font-vazirmatn'
 });
 
+const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://abona-faltaus.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.VERCEL_URL || "https://abona-faltaus.vercel.app"),
+  metadataBase: new URL(baseUrl),
   title: 'Abona Faltaus Tofa7a | أبونا فلتاؤس تفاحة',
   description: "الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية",
   keywords: ["الحان", "عظات", "وعظات", "ترانيم", "مقالات دينية", "امتحانات", "اسئلة دينية", "ابونا فلتاؤس السرياني", "الكتاب المقدس", "كنيسة", "ارثوذكسية", "تفاحة"],
-  authors: [{ name: 'Peter Eshak Abdo', url: process.env.VERCEL_URL || "https://abona-faltaus.vercel.app" }],
+  authors: [{ name: 'Peter Eshak Abdo', url: baseUrl }],
   creator: 'Peter Eshak Abdo',
   icons: {
     icon: "/images/icons/favicon.ico",
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'أبونا فلتاؤس السرياني',
     description: 'الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية.',
-    url: process.env.VERCEL_URL || "https://abona-faltaus.vercel.app",
+    url: baseUrl,
     siteName: 'Abona Faltaus',
     images: [
       {
@@ -92,7 +94,7 @@ export default function RootLayout({
         <ServiceWorkerRegister />
         <div className="background-blur" />
         <LoadingProvider>
-        {/* <ChatFab /> */}
+          {/* <ChatFab /> */}
           <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
         </LoadingProvider>
         <Analytics />
