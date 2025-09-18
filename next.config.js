@@ -56,6 +56,10 @@ export default {
         protocol: "https",
         hostname: "firebasestorage.googleapis.com", // لو بتستخدم صور من Firebase
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com", // For Google profile images
+      },
     ],
   },
 };

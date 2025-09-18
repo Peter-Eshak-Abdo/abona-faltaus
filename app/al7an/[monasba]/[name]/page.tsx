@@ -5,6 +5,7 @@ import al7anData from "@/public/al7an-all.json";
 import Link from "next/link";
 import { Metadata } from "next";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 type Hymn = {
   monasba: string;
@@ -57,34 +58,37 @@ export default async function L7nDetailsPage({ params }: { params: Promise<{ mon
   if (!hymn) return <div className="container mt-5">اللحن غير موجود</div>;
 
   return (
-    <div className="container mt-5">
+    <div className="max-w-7xl mx-auto mt-5">
       <nav aria-label="breadcrumb" className="mb-4">
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item"><Link href="/">الرئيسية</Link></li>
-          <li className="breadcrumb-item"><Link href="/al7an">الألحان</Link></li>
-          <li className="breadcrumb-item"><Link href={`/al7an/${monasba}`}>{monasba}</Link></li>
-          <li className="breadcrumb-item active" aria-current="page">{hymn.name}</li>
-        </ol>
+        <div className="flex flex-wrap gap-2 text-sm">
+          <Link href="/" className="text-blue-500 hover:underline">الرئيسية</Link>
+          <span>/</span>
+          <Link href="/al7an" className="text-blue-500 hover:underline">الألحان</Link>
+          <span>/</span>
+          <Link href={`/al7an/${monasba}`} className="text-blue-500 hover:underline">{monasba}</Link>
+          <span>/</span>
+          <span className="text-gray-600">{hymn.name}</span>
+        </div>
       </nav>
-      <h1>{hymn.name}</h1>
-      <p>المدة: {hymn.duration}</p>
+      <h1 className="text-3xl font-bold mb-2">{hymn.name}</h1>
+      <p className="mb-4">المدة: {hymn.duration}</p>
       {hymn.src && (
         <>
-          <audio controls src={hymn.src.replace("./", "/")} className="my-3 w-100">
-            متصفحك لا يدعم تشغيل الصوت.
-          </audio>
-          <a href={hymn.src.replace("./", "/")} download className="btn btn-info">
-            حفظ اللحن اوفلاين
-          </a>
+          <audio controls src={hymn.src.replace("./", "/")} className="my-3 w-full rounded shadow" />
+          <Button asChild variant="outline">
+            <a href={hymn.src.replace("./", "/")} download>
+              حفظ اللحن اوفلاين
+            </a>
+          </Button>
         </>
       )}
-      <div className="row mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
         {Object.keys(hymn)
           .filter((key) => key.startsWith("hazatSrc") && hymn[key])
           .map((key) => (
-            <div key={key} className="col-md-4 mb-3">
+            <div key={key} className="mb-3">
               <a href={hymn[key]} data-lightbox="lahn-gallery" title="صورة اللحن">
-                <Image src={hymn[key] as string} alt={hymn.name} width={400} height={300} />
+                <Image src={hymn[key] as string} alt={hymn.name} width={400} height={300} className="rounded shadow" />
               </a>
             </div>
           ))}

@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { socket } from "@/lib/socket";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type Category = {
   name: string;
@@ -154,28 +157,28 @@ export default function ExamSettings() {
   const joinUrl = `${typeof window !== "undefined" ? window.location.origin : "https://abona-faltaus.vercel.app"}/exam/group/join?room=${roomId}`;
 
   return (
-    <div className="container py-5">
-      <div className="row justify-content-center">
+    <Card className="container py-5">
+      <div className="row justify-center">
         <div className="col-lg-11 col-md-8">
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white text-center">
+          <Card>
+            <CardHeader className="bg-primary text-white text-center">
               <h2 className="h4 mb-0">إعدادات الامتحان</h2>
-            </div>
+            </CardHeader>
 
-            <div className="card-body">
+            <CardContent>
               {!showQR ? (
-                <button
+                <Button
                   type="button"
                   onClick={handleCreateRoom}
-                  className="btn btn-primary w-100 mb-4"
+                  className="w-full mb-4"
                 >
                   إنشاء غرفة الامتحان
-                </button>
+                </Button>
               ) : (
                 <div className="text-center mb-4">
                   <div className="mb-4">
                     <label className="block mb-1">حجم QR (px): {qrSize}</label>
-                    <input
+                    <Input
                       title="حجم QR"
                       type="range"
                       min={200}
@@ -198,12 +201,12 @@ export default function ExamSettings() {
               {previewQuestions.length > 0 && (
                 <div className="mt-4">
                   <p className="d-inline-flex gap-1">
-                    <button className="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <Button type="button" variant="default" size="sm" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                       <h5>معاينة الأسئلة:</h5>
-                    </button>
+                    </Button>
                   </p>
                   <div className="collapse" id="collapseExample">
-                    <div className="card card-body visible">
+                    <Card className="card-body visible">
                       <ul className="list-group">
                         {previewQuestions.map((q, i) => (
                           <li key={q.id ? q.id : i} className="list-group-item">
@@ -211,7 +214,7 @@ export default function ExamSettings() {
                           </li>
                         ))}
                       </ul>
-                    </div>
+                    </Card>
                   </div>
                 </div>
               )}
@@ -220,17 +223,15 @@ export default function ExamSettings() {
                 <h5 className="mb-3">اختر الفئات:</h5>
                 <div className="d-flex flex-wrap gap-2">
                   {categories.map((cat) => (
-                    <button
+                    <Button
                       type="button"
                       key={cat.name}
                       onClick={() => handleCategoryToggle(cat.name)}
-                      className={`btn btn-sm ${selectedCategories.includes(cat.name)
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                        }`}
+                      variant={selectedCategories.includes(cat.name) ? "default" : "outline"}
+                      size="sm"
                     >
                       {cat.name} ({cat.count})
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -239,9 +240,8 @@ export default function ExamSettings() {
                 <label className="form-label">
                   عدد الأسئلة (الحد الأقصى: {selectedMax})
                 </label>
-                <input
+                <Input
                   type="range"
-                  className="form-range"
                   min="1"
                   max={selectedMax}
                   value={questionCount}
@@ -257,34 +257,34 @@ export default function ExamSettings() {
 
               <div className="mb-4">
                 <label className="form-label">الوقت لكل سؤال (بالثواني):</label>
-                <input
+                <Input
                   type="number"
                   min="10"
                   max="300"
                   value={timePerQuestion}
                   onChange={(e) => setTimePerQuestion(Number(e.target.value))}
-                  className="form-control"
                   title="الوقت لكل سؤال"
                 />
               </div>
 
               <div className="d-flex justify-content-between mt-4">
-                <Link href="/exam" className="btn btn-secondary">
-                  رجوع
+                <Link href="/exam">
+                  <Button variant="secondary">
+                    رجوع
+                  </Button>
                 </Link>
-                <button
+                <Button
                   type="button"
                   onClick={handleStartExam}
                   disabled={!showQR || selectedCategories.length === 0 || questionCount < 1 || teams.length === 0}
-                  className="btn btn-primary"
                 >
                   ابدأ الامتحان
-                </button>
+                </Button>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

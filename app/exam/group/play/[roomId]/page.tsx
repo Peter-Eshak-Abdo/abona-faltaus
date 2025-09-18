@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { socket } from "@/lib/socket";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface Question {
   id: string;
@@ -173,24 +175,28 @@ export default function PlayPage() {
 
   if (!roomId) {
     return (
-      <div className="container py-5">
-        <div className="alert alert-danger" role="alert">
-          خطأ: رقم الغرفة غير موجود
-        </div>
+      <div className="py-5">
+        <Card className="bg-red-100 border-red-500">
+          <CardContent>
+            خطأ: رقم الغرفة غير موجود
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container py-5">
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
+      <div className="py-5">
+        <Card className="bg-red-100 border-red-500">
+          <CardContent>
+            {error}
+          </CardContent>
+        </Card>
       </div>
     );
   }
-  const colors = ["bg-primary", "bg-danger", "bg-success", "bg-warning"];
+  const colors = ["bg-blue-500", "bg-red-500", "bg-green-500", "bg-yellow-500"];
 
   const getArabicLetter = (index: number) => {
     const arabicLetters = ['أ', 'ب', 'ج', 'د', 'ه', 'و'];
@@ -198,60 +204,59 @@ export default function PlayPage() {
   };
 
   return (
-    <div className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-md-8">
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white text-center">
-              <h2 className="h4 mb-0">الامتحان</h2>
+    <div className="py-5 flex justify-center">
+      <div className="w-full max-w-2xl">
+        <Card>
+          <CardHeader className="bg-primary text-white text-center">
+            <h2 className="text-lg font-semibold mb-0">الامتحان</h2>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <h5 className="text-center">اسم الفريق: {teamName}</h5>
+              <h5 className="text-center">النتيجة: {score}</h5>
             </div>
-            <div className="card-body">
-              <div className="mb-4">
-                <h5 className="text-center">اسم الفريق: {teamName}</h5>
-                <h5 className="text-center">النتيجة: {score}</h5>
-              </div>
-              {currentQuestion ? (
-                <div>
-                  <h5 className="mb-4">{currentQuestion.question}</h5>
-                  {typeof timeLeft === "number" && (
-                    <div className="mb-3 text-center">
-                      <span className="badge bg-warning text-dark fs-5">الوقت المتبقي: {timeLeft} ثانية</span>
-                    </div>
-                  )}
-                  <div className="list-group">
-                    {currentQuestion && Array.isArray(currentQuestion.options) ? (
-                      currentQuestion.options.map((option, index) => (
-                        <button
-                          type="button"
-                          key={option + index}
-                          className={`list-group-item ${colors[index % colors.length]} my-2 list-group-item-action scale-90 ${selectedAnswer === index ? "active scale-105 fs-5 text-center rounded-full" : ""}`}
-                          onClick={() => setSelectedAnswer(index)}
-                          disabled={submitted}
-                        >
-                          {getArabicLetter(index)}. {option}
-                        </button>
-                      ))
-                    ) : (
-                      <div className="text-center text-muted">لا توجد خيارات متاحة</div>
-                    )}
+            {currentQuestion ? (
+              <div>
+                <h5 className="mb-4">{currentQuestion.question}</h5>
+                {typeof timeLeft === "number" && (
+                  <div className="mb-3 text-center">
+                    <span className="bg-yellow-500 text-black px-2 py-1 rounded text-lg">الوقت المتبقي: {timeLeft} ثانية</span>
                   </div>
-                  <button
-                    type="button"
-                    className={`btn btn-primary mt-4 w-100 btn ${submitted ? 'btn-success' : 'btn-primary'}`}
-                    onClick={handleAnswerSubmit}
-                    disabled={selectedAnswer === null || submitted}
-                  >
-                    إرسال الإجابة
-                  </button>
+                )}
+                <div className="space-y-2">
+                  {currentQuestion && Array.isArray(currentQuestion.options) ? (
+                    currentQuestion.options.map((option, index) => (
+                      <Button
+                        type="button"
+                        key={option + index}
+                        className={`${colors[index % colors.length]} text-white my-2 scale-90 ${selectedAnswer === index ? "scale-105 text-center rounded-full" : ""}`}
+                        onClick={() => setSelectedAnswer(index)}
+                        disabled={submitted}
+                        variant="default"
+                      >
+                        {getArabicLetter(index)}. {option}
+                      </Button>
+                    ))
+                  ) : (
+                    <div className="text-center text-muted">لا توجد خيارات متاحة</div>
+                  )}
                 </div>
-              ) : (
-                <div className="text-center">
-                  <p>في انتظار بدء الامتحان...</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+                <Button
+                  type="button"
+                  className={`mt-4 w-full ${submitted ? 'bg-green-500' : ''}`}
+                  onClick={handleAnswerSubmit}
+                  disabled={selectedAnswer === null || submitted}
+                >
+                  إرسال الإجابة
+                </Button>
+              </div>
+            ) : (
+              <div className="text-center">
+                <p>في انتظار بدء الامتحان...</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

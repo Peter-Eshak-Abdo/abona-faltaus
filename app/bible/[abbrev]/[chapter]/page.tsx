@@ -20,9 +20,9 @@ export async function generateStaticParams() {
   return params;
 }
 
-export async function generateMetadata({ params }) {
-  const { abbrev, chapter } = params;
-  const bookName = bookNames[abbrev] || `سفر ${abbrev.toUpperCase()}`;
+export async function generateMetadata({ params }: { params: Promise<{ abbrev: string; chapter: string }> }) {
+  const { abbrev, chapter } = await params;
+  const bookName = (bookNames as Record<string, string>)[abbrev] || `سفر ${abbrev.toUpperCase()}`;
   return {
     title: `${bookName} - إصحاح ${chapter} | الكتاب المقدس تفاحة`,
     description: `قراءة ${bookName} - إصحاح ${chapter} من الكتاب المقدس مع إمكانية تكبير الخط.`,
@@ -30,7 +30,13 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function ChapterPage({ params, searchParams }) {
+export default async function ChapterPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ abbrev: string; chapter: string }>;
+  searchParams?: Promise<Record<string, string>>;
+}) {
   const { abbrev, chapter } = await params;
   const awaitedSearchParams = await searchParams; // Await the searchParams
   const font = awaitedSearchParams?.font || "base";
@@ -40,9 +46,9 @@ export default async function ChapterPage({ params, searchParams }) {
   const fileData = await fs.readFile(filePath, "utf-8");
   const bible = JSON.parse(fileData.replace(/^\uFEFF/, ""));
   // const bible = JSON.parse(fileData);
-  const bookName = bookNames[abbrev] || `سفر ${abbrev.toUpperCase()}`;
+  const bookName = bookNames[abbrev as keyof typeof bookNames] || `سفر ${abbrev.toUpperCase()}`;
 
-  const book = bible.find((b) => b.abbrev === abbrev);
+  const book = bible.find((b: { abbrev: string; }) => b.abbrev === abbrev);
   if (!book) return <div>❌ لم يتم العثور على السفر</div>;
 
   const chapterIndex = parseInt(chapter, 10) - 1;
@@ -52,8 +58,14 @@ export default async function ChapterPage({ params, searchParams }) {
 
   const fontSizeClass = { sm: "fs-6", base: "fs-3", lg: "fs-1" }[font] || "fs-4";
 
-  const oldBooks = oldTestament.map((abbr) => ({ abbrev, name: bookNames[abbr] || abbr }));
-  const newBooks = newTestament.map((abbr) => ({ abbrev, name: bookNames[abbr] || abbr }));
+  const oldBooks = oldTestament.map((abbr) => ({
+    abbrev,
+    name: bookNames[abbr as keyof typeof bookNames] || abbr,
+  }));
+  const newBooks = newTestament.map((abbr) => ({
+    abbrev,
+    name: bookNames[abbr as keyof typeof bookNames] || abbr,
+  }));
 
   return (
     <div className="flex min-h-screen animate-fade-in">
@@ -63,7 +75,7 @@ export default async function ChapterPage({ params, searchParams }) {
         <div className="mb-4">
           <h3 className="font-bold mb-2 text-gray-700 text-sm">الإصحاحات</h3>
           <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
-            {book.chapters.map((_, idx) => (
+            {book.chapters.map((_chapter: string[], idx: number) => (
               <Link
                 key={idx}
                 href={`/bible/${abbrev}/${idx + 1}?font=${font}`}
@@ -168,7 +180,7 @@ export default async function ChapterPage({ params, searchParams }) {
 
         {/* الآيات */}
         <div className="space-y-4 md:space-y-6 mb-6 md:mb-8">
-          {verses.map((verse, idx) => (
+          {verses.map((verse: string, idx: number) => (
             <p key={idx} className={`${fontSizeClass} leading-relaxed text-gray-800`}>
               <strong className="text-blue-600 text-base md:text-lg">{idx + 1}</strong> - {verse}
             </p>

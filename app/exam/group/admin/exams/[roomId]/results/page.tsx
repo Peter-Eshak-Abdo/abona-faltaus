@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import confetti from "canvas-confetti";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 interface Team {
   id: string;
@@ -25,7 +26,7 @@ export default function ResultPage() {
     confetti({ particleCount: 150, spread: 120, origin: { y: 0.6 } });
   }, []);
 
-  if (!teams.length) return <div className="container py-5 text-center">لا توجد نتائج بعد.</div>;
+  if (!teams.length) return <div className="py-5 text-center">لا توجد نتائج بعد.</div>;
 
   // ترتيب المراكز
   const top3 = teams.slice(0, 3);
@@ -39,47 +40,49 @@ export default function ResultPage() {
   };
 
   return (
-    <div className="container py-5">
+    <div className="py-5">
       <h2 className="text-center mb-4">🏆 نتائج المسابقة</h2>
 
-      <div className="row justify-content-center mb-5">
+      <div className="flex justify-center mb-5 space-x-4">
         {top3.map((team, i) => (
-          <div key={team.id} className="col-md-4 text-center">
-            <div className={`p-3 shadow rounded bg-${i === 0 ? "warning" : i === 1 ? "secondary" : "info"} text-white`}>
-              <h4>{getPlaceText(i)}</h4>
-              <h5 className="fw-bold">{team.name}</h5>
-              <p>النقاط: {team.score}</p>
-              <ul className="list-unstyled">
-                {team.members &&
-                  team.members.map((member, j) => (
-                    <li key={j}>👤 {member}</li>
-                  ))}
-              </ul>
-            </div>
+          <div key={team.id} className="w-1/3 text-center">
+            <Card className={`p-3 ${i === 0 ? "bg-yellow-500" : i === 1 ? "bg-gray-500" : "bg-blue-500"} text-white`}>
+              <CardContent>
+                <h4>{getPlaceText(i)}</h4>
+                <h5 className="font-bold">{team.name}</h5>
+                <p>النقاط: {team.score}</p>
+                <ul className="list-none">
+                  {team.members &&
+                    team.members.map((member, j) => (
+                      <li key={j}>👤 {member}</li>
+                    ))}
+                </ul>
+              </CardContent>
+            </Card>
           </div>
         ))}
       </div>
 
       {rest.length > 0 && (
-        <div className="card shadow">
-          <div className="card-header bg-light text-center fw-bold">الفرق الأخرى</div>
-          <div className="card-body">
+        <Card>
+          <CardHeader className="bg-gray-100 text-center font-bold">الفرق الأخرى</CardHeader>
+          <CardContent>
             {rest.map((team, i) => (
-              <div key={team.id} className="d-flex justify-content-between border-bottom py-2">
+              <div key={team.id} className="flex justify-between border-b py-2">
                 <div>
                   {getPlaceText(i + 3)} - <strong>{team.name}</strong>
-                  <ul className="list-inline mb-0">
+                  <ul className="flex space-x-2 mb-0">
                     {team.members &&
                       team.members.map((m, idx) => (
-                        <li className="list-inline-item small" key={idx}>👤 {m}</li>
+                        <li className="text-sm" key={idx}>👤 {m}</li>
                       ))}
                   </ul>
                 </div>
-                <div><span className="badge bg-primary">{team.score} نقطة</span></div>
+                <div><span className="bg-blue-500 text-white px-2 py-1 rounded">{team.score} نقطة</span></div>
               </div>
             ))}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

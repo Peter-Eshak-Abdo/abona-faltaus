@@ -1,4 +1,6 @@
 "use client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const sounds = [
   {
@@ -35,46 +37,41 @@ const sounds = [
 
 const AbDaodLam3yAltobaPlayer: React.FC = () => {
   return (
-    <div id="sec-abDaodLam3y-altoba" className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+    <div id="sec-abDaodLam3y-altoba" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
       {sounds
         .filter((sound) => sound.monasba === "abDaodLam3y-altoba")
         .map((sound, index) => (
-          <div className="col" key={`abDaodLam3y-altoba-${index}`}>
-            <div className="card shadow-sm pt-3 ps-3" key={`abDaodLam3y-altoba-${index}`}>
-              <div className="d-flex justify-content-center align-items-center">
+          <Card key={`abDaodLam3y-altoba-${index}`} className="shadow-sm pt-3 ps-3">
+            <CardContent>
+              <div className="flex justify-center items-center">
                 <audio controls is="x-audio" id={`abDaodLam3y-altoba-audio-${index}`}>
                   <source src={sound.src} type="audio/mpeg" />
                   متصفحك لا يدعم ملفات الصوت.
                 </audio>
               </div>
-              <div className="card-body text-start">
-                <p className="card-text">
-                  <span className="fw-bold">ابونا: </span>داؤد لمعي
+              <div className="text-left">
+                <p>
+                  <span className="font-bold">ابونا: </span>داؤد لمعي
                 </p>
-                <p className="card-text">
-                  <span className="fw-bold">اسم الوعظة: </span>
+                <p>
+                  <span className="font-bold">اسم الوعظة: </span>
                   {sound.name}
                 </p>
-                <p className="card-text">
-                  <span className="fw-bold">تتحدث عن: </span>الصلاة
+                <p>
+                  <span className="font-bold">تتحدث عن: </span>الصلاة
                 </p>
-                <div className="d-flex justify-content-between align-items-center">
-                  <div className="btn-group">
-                    <button type="button" className="btn btn-sm btn-outline-secondary">
-                      تفاصيل
-                    </button>
-                  </div>
-                  <small className="text-body-secondary">{sound.duration}</small>
+                <div className="flex justify-between items-center">
+                  <Button type="button" variant="outline" size="sm">
+                    تفاصيل
+                  </Button>
+                  <small className="text-gray-500">{sound.duration}</small>
                 </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
     </div>
   );
 };
 
 export default AbDaodLam3yAltobaPlayer;
-
-
-

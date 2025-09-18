@@ -72,19 +72,19 @@ This file lists all pages that currently use Bootstrap classes and need to be up
 - [x] 1. app/tranim/page.tsx
 - [x] 2. app/tranim/MeladPlayer.tsx
 - [x] 3. app/tranim/KyamaPlayer.tsx
-- [ ] 4. app/mkalat/page.tsx
-- [ ] 5. app/exam/group/admin/page.tsx
-- [ ] 6. app/exam/group/play/loading.tsx
-- [ ] 7. app/exam/group/play/[roomId]/page.tsx
-- [ ] 8. app/exam/group/admin/exams/[roomId]/results/page.tsx
-- [ ] 9. app/exam/group/admin/exams/[roomId]/page.tsx
-- [ ] 10. app/exam/individual-questions/exam-individual/page.tsx
-- [ ] 11. app/exam/exam-settings/page.tsx
-- [ ] 12. app/exam/exam-settings/exam-groups/page.tsx
-- [ ] 13. app/3zat/BabaShenodyPlayer.tsx
-- [ ] 14. app/3zat/AbDaodLam3yAltobaPlayer.tsx
-- [ ] 15. app/3zat/AbDaodLam3yAlslaPlayer.tsx
-- [ ] 16. app/al7an/[monasba]/page.tsx
-- [ ] 17. app/al7an/Al7anClient.tsx
-- [ ] 18. app/3zat/page.tsx
-- [ ] 19. app/al7an/[monasba]/[name]/page.tsx
+- [x] 4. app/mkalat/page.tsx
+- [x] 5. app/exam/group/admin/page.tsx
+- [x] 6. app/exam/group/play/loading.tsx
+- [x] 7. app/exam/group/play/[roomId]/page.tsx
+- [x] 8. app/exam/group/admin/exams/[roomId]/results/page.tsx
+- [x] 9. app/exam/group/admin/exams/[roomId]/page.tsx
+- [x] 10. app/exam/individual-questions/exam-individual/page.tsx
+- [x] 11. app/exam/exam-settings/page.tsx
+- [x] 12. app/exam/exam-settings/exam-groups/page.tsx
+- [x] 13. app/3zat/BabaShenodyPlayer.tsx
+- [x] 14. app/3zat/AbDaodLam3yAltobaPlayer.tsx
+- [x] 15. app/3zat/AbDaodLam3yAlslaPlayer.tsx
+- [x] 16. app/al7an/[monasba]/page.tsx
+- [x] 17. app/al7an/Al7anClient.tsx
+- [x] 18. app/3zat/page.tsx
+- [x] 19. app/al7an/[monasba]/[name]/page.tsx

@@ -6,6 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import html2canvas from "html2canvas";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 type Question = {
   id: number;
@@ -179,6 +182,7 @@ function QuizContent() {
                 : "btn-outline-secondary"
               }`}
             onClick={() => setCurrentQuestionIndex(index)}
+            type="button"
           >
             {index + 1}
           </button>
@@ -231,32 +235,34 @@ function QuizContent() {
 
   if (isLoading) {
     return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <span className="ml-2">Loading...</span>
       </div>
     );
   }
 
   if (!questions.length) {
     return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
-        <div className="alert alert-danger text-center">
-          <h4>لا توجد أسئلة متاحة</h4>
-          <p>الرجاء التأكد من:</p>
-          <ul className="text-start">
-            <li>صحة ملف الأسئلة (simple.json)</li>
-            <li>اختيار الفئات الصحيحة</li>
-            <li>اتصال الإنترنت</li>
-          </ul>
-          <button
-            onClick={() => router.push('/exam')}
-            className="btn btn-warning mt-3"
-          >
-            العودة إلى صفحة الامتحانات
-          </button>
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <Card className="bg-red-100 border-red-500 text-center">
+          <CardContent>
+            <h4 className="text-xl font-semibold">لا توجد أسئلة متاحة</h4>
+            <p>الرجاء التأكد من:</p>
+            <ul className="text-left">
+              <li>صحة ملف الأسئلة (simple.json)</li>
+              <li>اختيار الفئات الصحيحة</li>
+              <li>اتصال الإنترنت</li>
+            </ul>
+            <Button
+              onClick={() => router.push('/exam')}
+              variant="outline"
+              className="bg-yellow-500 mt-3"
+            >
+              العودة إلى صفحة الامتحانات
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -264,8 +270,8 @@ function QuizContent() {
 
 
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center min-vh-75 p-3 position-relative">
-      <div className="position-absolute w-100 top-0 start-0">
+    <div className="flex flex-col items-center justify-center min-h-[75vh] p-3 relative">
+      <div className="absolute w-full top-0 left-0">
         <div className="wave-animation"></div>
       </div>
 
@@ -276,7 +282,7 @@ function QuizContent() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
-          className="bg-white p-4 rounded shadow w-100 w-md-75"
+          className="bg-white p-4 rounded shadow w-full md:w-3/4"
         >
           {quizFinished ? (
             <div id="result-share-box" className="text-center">
@@ -288,39 +294,39 @@ function QuizContent() {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: "spring", stiffness: 200 }}
-                className="bg-success text-white p-4 rounded shadow-xl border-2 border-success"
+                className="bg-green-500 text-white p-4 rounded shadow-xl border-2 border-green-500"
               >
                 {!userName ? (
                   <div className="mb-4">
-                    <h3 className="h5 mb-3">أدخل اسمك للمشاركة</h3>
-                    <input
+                    <h3 className="text-lg mb-3">أدخل اسمك للمشاركة</h3>
+                    <Input
                       type="text"
-                      className="form-control mb-2"
+                      className="mb-2"
                       placeholder="اسمك"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
                     />
-                    <button
+                    <Button
                       onClick={() => setUserName(userName)}
-                      className="btn btn-light"
+                      variant="secondary"
                       disabled={!userName.trim()}
                     >
                       متابعة
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   <>
-                    <h2 className="h4">🎉 مبروك {userName}!</h2>
-                    <p className="h5 mt-3">
-                      لقد أجبت على <span className="fw-bold">{score}</span> من {" "}
-                      <span className="fw-bold">{questions.length}</span> سؤال بشكل صحيح
+                    <h2 className="text-2xl">🎉 مبروك {userName}!</h2>
+                    <p className="text-lg mt-3">
+                      لقد أجبت على <span className="font-bold">{score}</span> من {" "}
+                      <span className="font-bold">{questions.length}</span> سؤال بشكل صحيح
                     </p>
 
                     <div className="mt-3">
-                      <h5 className="h6">توزيع الأسئلة:</h5>
-                      <div className="d-flex flex-wrap justify-content-center gap-2">
+                      <h5 className="text-base">توزيع الأسئلة:</h5>
+                      <div className="flex flex-wrap justify-center gap-2">
                         {Object.entries(categoriesCount).map(([cat]) => (
-                          <span key={cat} className="badge bg-info text-dark">
+                          <span key={cat} className="bg-blue-500 text-white px-2 py-1 rounded">
                             {cat}: {questions.filter(q => q.category === cat).length}
                           </span>
                         ))}
@@ -338,17 +344,17 @@ function QuizContent() {
                         alt="احتفال"
                         width={125}
                         height={125}
-                        className="w-50 mx-auto rounded-circle shadow"
+                        className="w-1/2 mx-auto rounded-full shadow"
                       />
                     </motion.div>
 
                     <div className="mt-4 flex flex-col items-center gap-2">
-                      <button
+                      <Button
                         onClick={generateShareImage}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        className="bg-blue-600 hover:bg-blue-700"
                       >
                         مشاركة نتيجتي
-                      </button>
+                      </Button>
 
                       {shareImageURL && (
                         <a
@@ -361,68 +367,70 @@ function QuizContent() {
                       )}
                     </div>
 
-                    <button
+                    <Button
                       onClick={() => router.push('/exam')}
-                      className="btn btn-light mt-3"
+                      variant="secondary"
+                      className="mt-3"
                     >
                       العودة إلى صفحة الامتحانات
-                    </button>
+                    </Button>
                   </>
                 )}
               </motion.div>
             </div>
           ) : currentQuestion ? (
             <>
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <span className={`text-muted ${questionStatus[currentQuestion.id] ? "text-primary" : "text-danger"
+              <div className="flex justify-between items-center mb-3">
+                <span className={`text-gray-500 ${questionStatus[currentQuestion.id] ? "text-blue-500" : "text-red-500"
                   }`}>
                   سؤال {currentQuestionIndex + 1} من {questions.length}
                 </span>
 
                 {timeLimit > 0 && (
-                  <div className={`badge ${timeLeft < 60 ? 'bg-danger' : 'bg-warning'
-                    } text-dark`}>
+                  <div className={`px-2 py-1 rounded ${timeLeft < 60 ? 'bg-red-500' : 'bg-yellow-500'
+                    } text-black`}>
                     الوقت المتبقي: {formatTime(timeLeft)}
                   </div>
                 )}
               </div>
 
               <div className="mb-2">
-                <span className="badge bg-secondary">
+                <span className="bg-gray-500 text-white px-2 py-1 rounded">
                   {currentQuestion.category}
                 </span>
               </div>
 
               <div className="mb-4">
-                <h2 className="h5">{currentQuestion.text}</h2>
+                <h2 className="text-lg">{currentQuestion.text}</h2>
                 {currentQuestion.type === "mcq" && (
-                  <small className="text-muted">اختر الإجابة الصحيحة</small>
+                  <small className="text-gray-500">اختر الإجابة الصحيحة</small>
                 )}
               </div>
 
-              <div className="d-grid gap-3 mb-4">
+              <div className="grid gap-3 mb-4">
                 {currentQuestion.options.map((option, index) => (
-                  <button
+                  <Button
                     key={index}
                     onClick={() => handleAnswer(option)}
-                    className={`btn btn-outline-primary text-start ${selectedAnswers[currentQuestion.id] === option ? "active" : ""
+                    variant="outline"
+                    className={`text-left ${selectedAnswers[currentQuestion.id] === option ? "bg-blue-500 text-white" : ""
                       }`}
                   >
                     {option}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
-              <div className="d-flex justify-content-between">
-                <button
+              <div className="flex justify-between">
+                <Button
                   onClick={() => changeQuestion(currentQuestionIndex - 1)}
                   disabled={currentQuestionIndex === 0}
-                  className="btn btn-secondary"
+                  variant="secondary"
                 >
                   السابق
-                </button>
+                </Button>
 
-                <button
+                <Button
                   onClick={() => {
                     if (currentQuestionIndex === questions.length - 1) {
                       handleFinishQuiz();
@@ -430,10 +438,10 @@ function QuizContent() {
                       changeQuestion(currentQuestionIndex + 1);
                     }
                   }}
-                  className="btn btn-primary"
+                  variant="default"
                 >
                   {currentQuestionIndex === questions.length - 1 ? "إنهاء الامتحان" : "التالي"}
-                </button>
+                </Button>
               </div>
               {renderPagination()}
             </>

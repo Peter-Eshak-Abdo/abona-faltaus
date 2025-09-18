@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 
 type Category = {
   name: string;
@@ -73,96 +77,92 @@ export default function ExamSettings() {
   const selectedMax = calculateMaxForSelected();
 
   return (
-    <div className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-md-8">
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white text-center">
-              <h2 className="h4 mb-0">إعدادات الامتحان للمجموعات</h2>
-            </div>
+    <div className="py-5">
+      <div className="flex justify-center">
+        <div className="w-full md:w-2/3">
+          <Card className="shadow">
+            <CardHeader className="bg-blue-500 text-white text-center">
+              <h2 className="text-lg mb-0">إعدادات الامتحان للمجموعات</h2>
+            </CardHeader>
 
-            <div className="card-body">
+            <CardContent>
               {/* اختيار الفئات */}
               <div className="mb-4">
-                <h5 className="mb-3">اختر الفئات:</h5>
-                <div className="d-flex flex-wrap gap-2">
+                <h5 className="text-lg mb-3">اختر الفئات:</h5>
+                <div className="flex flex-wrap gap-2">
                   {categories.map((cat) => (
-                    <button
+                    <Button
                       key={cat.name}
-                      type="button"
+                      size="sm"
+                      variant={selectedCategories.includes(cat.name) ? "default" : "outline"}
                       onClick={() => handleCategoryToggle(cat.name)}
-                      className={`btn btn-sm ${selectedCategories.includes(cat.name)
-                        ? "btn-primary"
-                        : "btn-outline-primary"}`}
                     >
                       {cat.name} ({cat.count})
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
 
               {/* عدد الأسئلة */}
               <div className="mb-4">
-                <label className="form-label">
+                <label className="block mb-2">
                   عدد الأسئلة (الحد الأقصى: {selectedMax})
                 </label>
-                <input
-                  type="range"
-                  className="form-range"
-                  min="1"
+                <Slider
+                  min={1}
                   max={selectedMax}
-                  value={questionCount}
-                  onChange={(e) => setQuestionCount(Number(e.target.value))}
-                  title="عدد الأسئلة"
+                  value={[questionCount]}
+                  onValueChange={(value) => setQuestionCount(value[0])}
+                  className="mb-2"
                 />
-                <div className="d-flex justify-content-between">
+                <div className="flex justify-between">
                   <span>1</span>
-                  <span className="fw-bold">{questionCount}</span>
+                  <span className="font-bold">{questionCount}</span>
                   <span>{selectedMax}</span>
                 </div>
               </div>
 
               {/* عدد المجموعات */}
               <div className="mb-4">
-                <label className="form-label">عدد المجموعات:</label>
-                <input
+                <label className="block mb-2">عدد المجموعات:</label>
+                <Input
                   type="number"
                   min="1"
                   max="30"
                   value={groupCount}
                   onChange={(e) => setGroupCount(Number(e.target.value))}
-                  className="form-control"
                   placeholder="أدخل عدد المجموعات"
                 />
               </div>
 
               {/* الوقت لكل مجموعة */}
               <div className="mb-4">
-                <label className="form-label">الوقت لكل مجموعة (بالدقائق):</label>
-                <input
+                <label className="block mb-2">الوقت لكل مجموعة (بالدقائق):</label>
+                <Input
                   type="number"
                   min="1"
                   max="120"
                   value={timePerGroup}
                   onChange={(e) => setTimePerGroup(Number(e.target.value))}
-                  className="form-control"
                   placeholder="أدخل الوقت لكل مجموعة"
                 />
               </div>
 
               {/* الأزرار */}
-              <div className="d-flex justify-content-between mt-4">
-                <Link href="/exam" className="btn btn-secondary">رجوع</Link>
-                <button
+              <div className="flex justify-between mt-4">
+                <Link href="/exam">
+                  <Button variant="secondary">رجوع</Button>
+                </Link>
+                <Button
                   onClick={handleStartExam}
                   disabled={selectedCategories.length === 0 || questionCount < 1}
-                  className="btn btn-primary"
+                  variant="default"
                 >
                   ابدأ الامتحان
-                </button>
+                </Button>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

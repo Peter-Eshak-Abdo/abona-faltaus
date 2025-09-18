@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { socket } from "@/lib/socket";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface Team {
   id: string;
@@ -159,24 +161,28 @@ export default function AdminExamPage() {
 
   if (!roomId) {
     return (
-      <div className="container py-5">
-        <div className="alert alert-danger" role="alert">
-          خطأ: رقم الغرفة غير موجود
-        </div>
+      <div className="py-5">
+        <Card className="bg-red-100 border-red-500">
+          <CardContent>
+            خطأ: رقم الغرفة غير موجود
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container py-5">
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
+      <div className="py-5">
+        <Card className="bg-red-100 border-red-500">
+          <CardContent>
+            {error}
+          </CardContent>
+        </Card>
       </div>
     );
   }
-  const colors = ["bg-primary", "bg-danger", "bg-success", "bg-warning"];
+  const colors = ["bg-blue-500", "bg-red-500", "bg-green-500", "bg-yellow-500"];
   const getArabicLetter = (index: number) => {
     const arabicLetters = ['أ', 'ب', 'ج', 'د', 'ه', 'و'];
     return arabicLetters[index] || '';
@@ -184,32 +190,38 @@ export default function AdminExamPage() {
 
   return (
     <div className="py-5 mx-3">
-      <div className="row">
-        <div className=" col-lg-10 col-md-8">
-          <div className="card shadow mb-4">
-            <div className="card-header bg-primary text-white text-center">
-              <h2 className="h4 mb-0">الامتحان</h2>
-            </div>
-            <div className="card-body">
+      <div className="flex">
+        <div className="w-4/5">
+          <Card className="mb-4">
+            <CardHeader className="bg-primary text-white text-center">
+              <h2 className="text-lg font-semibold mb-0">الامتحان</h2>
+            </CardHeader>
+            <CardContent>
               {currentQuestion && (
                 <div className="mt-4 p-3 border rounded">
                   <h3>السؤال {currentIndex} من {totalQuestions}</h3>
-                  <p className="fw-bolder fs-1">{currentQuestion.question}</p>
-                  <div className="d-flex flex-column gap-2">
+                  <p className="font-bold text-2xl">{currentQuestion.question}</p>
+                  <div className="flex flex-col gap-2">
                     {currentQuestion && Array.isArray(currentQuestion.options) ? (
                       currentQuestion.options.map((opt, i) => (
-                        <button type="button" key={i} className={`btn ${colors[i % colors.length]} text-black fs-1 fw-bolder my-2`} disabled>
+                        <Button
+                          type="button"
+                          key={i}
+                          className={`${colors[i % colors.length]} text-black text-2xl font-bold my-2`}
+                          disabled
+                        >
                           {getArabicLetter(i)}. {opt}
                           {/* {String.fromCharCode(65 + i)}. {opt} */}
-                        </button>
+                        </Button>
                       ))
                     ) : (
                       <div className="text-center text-muted">لا توجد خيارات متاحة</div>
                     )}
                   </div>
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-secondary mt-3 fs-3 fw-bold"
+                    variant="secondary"
+                    className="mt-3 text-xl font-bold"
                     onClick={() => {
                       if (currentIndex < totalQuestions) {
                         socket.emit("next-question", { roomId });
@@ -221,59 +233,25 @@ export default function AdminExamPage() {
                   // disabled={currentIndex >= totalQuestions}
                   >
                     {currentIndex < totalQuestions ? "السؤال التالي" : "عرض النتائج"}
-                  </button>
-                  <button type="button" onClick={() => socket.emit("pause-exam", { roomId })} className="btn btn-warning">⏸️ إيقاف</button>
-                  <button type="button" onClick={() => socket.emit("resume-exam", { roomId })} className="btn btn-success">▶️ استكمال</button>
+                  </Button>
+                  <Button type="button" onClick={() => socket.emit("pause-exam", { roomId })} className="bg-yellow-500">⏸️ إيقاف</Button>
+                  <Button type="button" onClick={() => socket.emit("resume-exam", { roomId })} className="bg-green-500">▶️ استكمال</Button>
                   {timeLeft !== null && (
-                    <div className="mt-3 justify-content-end d-flex">
-                      <p className="text-danger fw-bolder fs-3">الوقت المتبقي: {timeLeft} ثواني</p>
+                    <div className="mt-3 flex justify-end">
+                      <p className="text-red-500 font-bold text-xl">الوقت المتبقي: {timeLeft} ثواني</p>
                     </div>
                   )}
                 </div>
               )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
-        <div className="col-lg-2 col-md-4">
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white text-center">
-              <h2 className="h4 mb-0">الفرق</h2>
-            </div>
-            <div className="card-body">
-              {/* {teams.sort((a, b) => b.score - a.score).map(team => (
-                <motion.div
-                  key={team.id}
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="list-group-item"
-                >
-                  {Array.isArray(teams) && teams.length > 0 ? (
-                    teams.map(team => (
-                      <div key={team.id}>
-                        <div className="list-group-item d-flex justify-content-between align-items-center">
-                          <span>{team.name}</span>
-                          <span className="badge bg-primary rounded-pill">{team.score}</span>
-                        </div>
-                        {team.members && (
-                          <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center text-muted">لا يوجد فرق متصلة</div>
-                  )} */}
-              {/* <div className="list-group-item d-flex justify-content-between align-items-center">
-                    <span>{team.name}</span>
-                    <span className="badge bg-primary rounded-pill">{team.score}</span>
-                    </div>
-                    {team.members && (
-                      <small className="text-muted">{team.memberCount} أعضاء : {team.members.join(", ")}</small>
-                      )}
-                      </motion.div>
-                      ))}*/}
+        <div className="w-1/5">
+          <Card>
+            <CardHeader className="bg-primary text-white text-center">
+              <h2 className="text-lg font-semibold mb-0">الفرق</h2>
+            </CardHeader>
+            <CardContent>
               {teams.length > 0 ? (
                 teams.sort((a, b) => b.score - a.score).map(team => (
                   <motion.div
@@ -283,14 +261,14 @@ export default function AdminExamPage() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="list-group-item"
+                    className="p-2"
                   >
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="flex justify-between items-center">
                       <span>{team.name}</span>
-                      <span className="badge bg-primary rounded-pill">{team.score}</span>
+                      <span className="bg-blue-500 text-white px-2 py-1 rounded-full">{team.score}</span>
                     </div>
                     {team.members && team.members.length > 0 && (
-                      <small className="text-muted">
+                      <small className="text-gray-500">
                         {team.memberCount} أعضاء: {team.members.join(", ")}
                       </small>
                     )}
@@ -299,8 +277,8 @@ export default function AdminExamPage() {
               ) : (
                 <div className="text-center text-muted">لا يوجد فرق متصلة</div>
               )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

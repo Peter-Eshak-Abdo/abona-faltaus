@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "@/lib/firebase"
 import { getUserQuizzes } from "@/lib/firebase-utils"
-import { Plus, Play, Users, Calendar, AlertCircle, ExternalLink } from "lucide-react"
+import { Plus, Play, Users, Calendar, AlertCircle } from "lucide-react"
 import type { Quiz } from "@/types/quiz"
 import { motion } from "framer-motion"
 
 export default function DashboardPage() {
   const [user, loading, authError] = useAuthState(auth)
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [, setIsCreateDialogOpen] = useState(false)
   const [loadingQuizzes, setLoadingQuizzes] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [indexUrl, setIndexUrl] = useState<string | null>(null)
@@ -77,6 +77,7 @@ export default function DashboardPage() {
           <button
             onClick={() => router.push("/auth/login")}
             className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+            type="button"
           >
             حاول مرة أخرى
           </button>
@@ -101,6 +102,7 @@ export default function DashboardPage() {
           <button
             onClick={() => setIsCreateDialogOpen(true)}
             className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-3 px-4 text-lg font-semibold shadow-lg text-white rounded-lg"
+            type="button"
           >
             <Plus className="w-6 h-6" />
             إنشاء مسابقة جديد
@@ -118,6 +120,7 @@ export default function DashboardPage() {
               <button
                 onClick={() => window.open(indexUrl, "_blank")}
                 className="mt-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+                type="button"
               >
                 إنشاء الفهرس
               </button>
@@ -125,6 +128,7 @@ export default function DashboardPage() {
             <button
               onClick={loadUserQuizzes}
               className="mt-2 ml-2 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+              type="button"
             >
               إعادة المحاولة
             </button>
@@ -174,6 +178,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
                     className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2 rounded"
+                    type="button"
                   >
                     <Play className="w-5 h-5" />
                     بدء المسابقة

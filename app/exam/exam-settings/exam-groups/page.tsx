@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import "../../exam.model.css";
 import html2canvas from "html2canvas";
+import { Button } from "@/components/ui/button";
 
 type Question = {
   id: number;
@@ -194,25 +195,26 @@ function GroupedQuestionsContent() {
 
   // عرض أزرار الترقيم
   const renderPagination = () => (
-    <div className="d-flex flex-wrap gap-2 justify-content-center my-3">
+    <div className="flex flex-wrap gap-2 justify-center my-3">
       {currentQuestions.map((q, index) => {
         const answered = selectedAnswers[q.id];
         const status = questionStatus[q.id];
+        let variant: "default" | "secondary" | "destructive" | "outline" = "outline";
+        if (currentQuestionIndex === index) {
+          variant = "default";
+        } else if (answered) {
+          variant = status ? "default" : "destructive";
+        }
         return (
-          <button
+          <Button
             key={q.id}
-            className={`btn btn-sm rounded-circle pagination-btn ${currentQuestionIndex === index
-              ? "btn-primary"
-              : answered
-                ? status
-                  ? "btn-success"
-                  : "btn-danger"
-                : "btn-outline-secondary"
-              }`}
+            size="sm"
+            variant={variant}
+            className="rounded-full"
             onClick={() => setCurrentQuestionIndex(index)}
           >
             {index + 1}
-          </button>
+          </Button>
         );
       })}
     </div>
@@ -262,15 +264,15 @@ function GroupedQuestionsContent() {
 
   if (isLoading) {
     return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
-        <div className="spinner-border text-primary" role="status" />
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center min-vh-75 p-3 position-relative">
-      <div className="position-absolute w-100 top-0 start-0">
+    <div className="flex flex-col items-center justify-center min-h-[75vh] p-3 relative">
+      <div className="absolute w-full top-0 left-0">
         <div className="wave-animation"></div>
       </div>
 
@@ -281,7 +283,7 @@ function GroupedQuestionsContent() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className="bg-white p-4 rounded shadow w-100 w-md-75"
+          className="bg-white p-4 rounded shadow w-full md:w-3/4"
         >
           {quizFinished ? (
             <div id="result-share-box" className="text-center">
@@ -292,24 +294,24 @@ function GroupedQuestionsContent() {
               <motion.div
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="bg-success text-white p-4 rounded-3 shadow-lg border border-3 border-success"
+                className="bg-green-500 text-white p-4 rounded shadow-xl border-2 border-green-500"
               >
-                <h2 className="h2 mb-4 fw-bold">🏆 النتائج النهائية</h2>
+                <h2 className="text-2xl mb-4 font-bold">🏆 النتائج النهائية</h2>
 
                 {groupResults.map((group) => (
-                  <div key={group.group} className="my-3 fs-5">
-                    <span className="fw-bold">المجموعة {group.group}: </span>
-                    <span className="text-warning">
+                  <div key={group.group} className="my-3 text-lg">
+                    <span className="font-bold">المجموعة {group.group}: </span>
+                    <span className="text-yellow-500">
                       {group.score}/{group.total}
                     </span>
                   </div>
                 ))}
 
                 <div className="mt-4">
-                  <h5 className="h5 mb-3">توزيع الأسئلة:</h5>
-                  <div className="d-flex flex-wrap justify-content-center gap-3">
+                  <h5 className="text-lg mb-3">توزيع الأسئلة:</h5>
+                  <div className="flex flex-wrap justify-center gap-3">
                     {Object.entries(categoriesCount).map(([cat, count]) => (
-                      <span key={cat} className="badge bg-info text-dark">
+                      <span key={cat} className="bg-blue-500 text-white px-2 py-1 rounded">
                         {cat}: {count}
                       </span>
                     ))}
@@ -326,17 +328,17 @@ function GroupedQuestionsContent() {
                     alt="احتفال"
                     width={125}
                     height={125}
-                    className="w-50 mx-auto rounded-circle shadow"
+                    className="w-1/2 mx-auto rounded-full shadow"
                   />
                 </motion.div>
 
                 <div className="mt-4 flex flex-col items-center gap-2">
-                  <button
+                  <Button
                     onClick={generateShareImage}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700"
                   >
                     مشاركة نتيجتي
-                  </button>
+                  </Button>
 
                   {shareImageURL && (
                     <a
@@ -349,68 +351,69 @@ function GroupedQuestionsContent() {
                   )}
                 </div>
 
-                <button
+                <Button
                   onClick={() => router.push("/exam")}
-                  className="btn btn-light mt-4 px-5 py-2 fs-5"
+                  variant="secondary"
+                  className="mt-4 px-5 py-2 text-lg"
                 >
                   العودة للرئيسية
-                </button>
+                </Button>
               </motion.div>
             </div>
           ) : (currentQuestion && (
             <>
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <span className="text-muted">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-gray-500">
                   المجموعة {currentGroup + 1} - سؤال {currentQuestionIndex + 1} من {currentQuestions.length}
                 </span>
-                <div className={`badge ${timeLeft < 60 ? 'bg-danger' : 'bg-warning'} text-dark`}>
+                <div className={`px-2 py-1 rounded ${timeLeft < 60 ? 'bg-red-500' : 'bg-yellow-500'} text-black`}>
                   الوقت المتبقي: {formatTime(timeLeft)}
                 </div>
               </div>
 
               <div className="mb-2">
-                <span className="badge bg-secondary">
+                <span className="bg-gray-500 text-white px-2 py-1 rounded">
                   {currentQuestion.category}
                 </span>
               </div>
 
               <div className="mb-4">
-                <h2 className="h5">{currentQuestion.text}</h2>
+                <h2 className="text-lg">{currentQuestion.text}</h2>
                 {currentQuestion.type === "mcq" && (
-                  <small className="text-muted">اختر الإجابة الصحيحة</small>
+                  <small className="text-gray-500">اختر الإجابة الصحيحة</small>
                 )}
               </div>
 
-              <div className="d-grid gap-3 mb-4">
+              <div className="grid gap-3 mb-4">
                 {currentQuestion.options.map((option, index) => (
-                  <button
+                  <Button
                     key={index}
                     onClick={() => handleAnswer(option)}
-                    className={`btn btn-outline-primary text-start ${selectedAnswers[currentQuestion.id] === option ? "active" : ""
-                      }`}
+                    variant="outline"
+                    className={`text-left ${selectedAnswers[currentQuestion.id] === option ? "bg-blue-500 text-white" : ""}`}
                   >
                     {option}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
               {renderPagination()}
 
-              <div className="d-flex justify-content-between">
-                <button
+              <div className="flex justify-between">
+                <Button
                   onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
                   disabled={currentQuestionIndex === 0}
-                  className="btn btn-secondary"
+                  variant="secondary"
                 >
                   السابق
-                </button>
+                </Button>
 
-                <button
+                <Button
                   onClick={handleNextOrFinish}
-                  className="btn btn-primary"
+                  variant="default"
                 >
                   {currentQuestionIndex === currentQuestions.length - 1 ? "إنهاء المجموعة" : "التالي"}
-                </button>
+                </Button>
               </div>
             </>
           )

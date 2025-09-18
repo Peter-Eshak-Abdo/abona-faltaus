@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, SetStateAction } from "react";
+import { useState, useRef, useEffect } from "react";
 import DOMPurify from "dompurify";
 
 interface ChatMessage {

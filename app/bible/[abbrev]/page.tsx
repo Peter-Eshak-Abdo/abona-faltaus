@@ -3,19 +3,24 @@ import path from "path";
 import Link from "next/link";
 import { bookNames } from "@/lib/books";
 
+interface Book {
+  abbrev: string;
+  chapters: string[][];
+}
+
 export async function generateStaticParams() {
   const filePath = path.join(process.cwd(), "public", "ar_svd.json");
   const fileData = await fs.readFile(filePath, "utf-8");
-  const bible = JSON.parse(fileData.replace(/^\uFEFF/, ""));
+  const bible: Book[] = JSON.parse(fileData.replace(/^\uFEFF/, ""));
 
   return bible.map((book) => ({
     abbrev: book.abbrev,
   }));
 }
 
-export async function generateMetadata({ params }) {
-  const { abbrev } = params;
-  const bookName = bookNames[abbrev] || `سفر ${abbrev.toUpperCase()}`;
+export async function generateMetadata({ params }: { params: Promise<{ abbrev: string }> }) {
+  const { abbrev } = await params;
+  const bookName = bookNames[abbrev as keyof typeof bookNames] || `سفر ${abbrev.toUpperCase()}`;
   return {
     title: `${bookName} - الكتاب المقدس تفاحة`,
     description: `قراءة ${bookName} من الكتاب المقدس مع تقسيم الإصحاحات.`,
@@ -23,13 +28,13 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function BookPage({ params }) {
+export default async function BookPage({ params }: { params: Promise<{ abbrev: string }> }) {
   const { abbrev } = await params;
   const filePath = path.join(process.cwd(), "public", "ar_svd.json");
   const fileContent = await fs.readFile(filePath, "utf-8");
-  const bible = JSON.parse(fileContent.replace(/^\uFEFF/, ""));
+  const bible: { abbrev: string; chapters: string[][] }[] = JSON.parse(fileContent.replace(/^\uFEFF/, ""));
   const book = bible.find((b) => b.abbrev === abbrev);
-  const bookName = bookNames[abbrev] || `سفر ${abbrev.toUpperCase()}`;
+  const bookName = bookNames[abbrev as keyof typeof bookNames] || `سفر ${abbrev.toUpperCase()}`;
 
   if (!book)
     return <div className="p-6 text-red-600">❌ لم يتم العثور على السفر</div>;

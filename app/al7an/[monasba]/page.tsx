@@ -25,13 +25,13 @@ export default async function MonasbaPage({ params }: { params: Promise<{ monasb
   const { monasba } = await params;
   const hymns = typedAl7anData.find((c) => c[monasba])?.[monasba] || [];
   return (
-    <div className="container mt-5">
+    <div className="max-w-7xl mx-auto mt-5">
       <h1>ألحان مناسبة {monasba}</h1>
-      <ul className="list-group">
+      <ul className="space-y-2">
         {hymns.map((h) => {
           const slug = slugify(h.name, { lower: true, strict: true });
           return (
-            <li key={slug} className="list-group-item">
+            <li key={slug} className="p-2 bg-white rounded shadow">
               <Link href={`/al7an/${monasba}/${slug}`}>{h.name}</Link>
             </li>
           );
