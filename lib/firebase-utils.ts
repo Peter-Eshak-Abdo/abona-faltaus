@@ -54,6 +54,28 @@ export const getQuiz = async (quizId: string): Promise<Quiz | null> => {
   }
 };
 
+export const updateQuiz = async (quizId: string, updates: Partial<Omit<Quiz, "id" | "createdAt">>) => {
+  try {
+    const quizRef = doc(db, "quizzes", quizId);
+    await setDoc(quizRef, updates, { merge: true });
+    console.log("Quiz updated successfully");
+  } catch (error) {
+    console.error("Error updating quiz:", error);
+    throw error;
+  }
+};
+
+export const deleteQuiz = async (quizId: string) => {
+  try {
+    const quizRef = doc(db, "quizzes", quizId);
+    await deleteDoc(quizRef);
+    console.log("Quiz deleted successfully");
+  } catch (error) {
+    console.error("Error deleting quiz:", error);
+    throw error;
+  }
+};
+
 export const getUserQuizzes = async (userId: string) => {
   try {
     console.log("Fetching quizzes for user:", userId);

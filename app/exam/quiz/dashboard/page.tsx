@@ -8,11 +8,12 @@ import { getUserQuizzes } from "@/lib/firebase-utils"
 import { Plus, Play, Users, Calendar, AlertCircle } from "lucide-react"
 import type { Quiz } from "@/types/quiz"
 import { motion } from "framer-motion"
+import { CreateQuizDialog } from "@/components/quiz/create-quiz-dialog"
 
 export default function DashboardPage() {
   const [user, loading, authError] = useAuthState(auth)
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
-  const [, setIsCreateDialogOpen] = useState(false)
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [loadingQuizzes, setLoadingQuizzes] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [indexUrl, setIndexUrl] = useState<string | null>(null)
@@ -107,6 +108,14 @@ export default function DashboardPage() {
             <Plus className="w-6 h-6" />
             إنشاء مسابقة جديد
           </button>
+          <CreateQuizDialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+            onQuizCreated={() => {
+              setIsCreateDialogOpen(false)
+              loadUserQuizzes()
+            }}
+          />
         </div>
 
         {/* Error message */}
@@ -183,6 +192,40 @@ export default function DashboardPage() {
                     <Play className="w-5 h-5" />
                     بدء المسابقة
                   </button>
+                  <div className="flex justify-between mt-2 gap-2">
+                    <button
+                      onClick={() => {
+                        // TODO: Implement edit functionality
+                        alert("ميزة التعديل قيد التطوير")
+                      }}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-1 rounded"
+                      type="button"
+                      title="تعديل المسابقة"
+                    >
+                      تعديل
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (confirm("هل أنت متأكد من حذف هذه المسابقة؟")) {
+                          try {
+                            // Import deleteQuiz from firebase-utils
+                            const { deleteQuiz } = await import("@/lib/firebase-utils")
+                            await deleteQuiz(quiz.id)
+                            alert("تم حذف المسابقة بنجاح")
+                            loadUserQuizzes()
+                          } catch (error) {
+                            console.error("Error deleting quiz:", error)
+                            alert("فشل في حذف المسابقة")
+                          }
+                        }
+                      }}
+                      className="flex-1 bg-red-600 hover:bg-red-700 text-white py-1 rounded"
+                      type="button"
+                      title="حذف المسابقة"
+                    >
+                      حذف
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             ))}

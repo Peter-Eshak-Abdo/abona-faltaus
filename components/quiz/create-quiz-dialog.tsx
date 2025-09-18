@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "@/lib/firebase"
 import { createQuiz } from "@/lib/firebase-utils"
-import { Plus, Trash2, Check, Shuffle, Clock, X } from "lucide-react"
+import { Plus, Trash2, Check, Shuffle, Clock, X, Upload, Download } from "lucide-react"
 import type { Question } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
+import * as XLSX from "xlsx"
 
 interface CreateQuizDialogProps {
   open: boolean
@@ -22,6 +23,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
   const [shuffleQuestions, setShuffleQuestions] = useState(false)
   const [shuffleChoices, setShuffleChoices] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const addQuestion = () => {
     const newQuestion: Question = {
@@ -49,6 +51,66 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
     const updatedQuestions = [...questions]
     updatedQuestions[questionIndex].choices[choiceIndex] = value
     setQuestions(updatedQuestions)
+  }
+
+  const downloadTemplate = () => {
+    // Create sample data for template
+    const sampleData = [
+      ["Question", "Choice1", "Choice2", "Choice3", "Choice4", "Correct"],
+      ["ما هو عاصمة مصر؟", "القاهرة", "الإسكندرية", "أسوان", "المنصورة", "1"],
+      ["كم عدد أيام الأسبوع؟", "5", "6", "7", "8", "3"],
+      ["ما هو لون السماء؟", "أحمر", "أزرق", "أخضر", "أصفر", "2"]
+    ]
+
+    const worksheet = XLSX.utils.aoa_to_sheet(sampleData)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Template")
+
+    // Generate and download the file
+    XLSX.writeFile(workbook, "quiz_template.xlsx")
+  }
+
+  const handleExcelImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer)
+        const workbook = XLSX.read(data, { type: 'array' })
+        const sheetName = workbook.SheetNames[0]
+        const worksheet = workbook.Sheets[sheetName]
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as string[][]
+
+        // Assume first row is headers: Question, Choice1, Choice2, Choice3, Choice4, Correct
+        const importedQuestions: Question[] = []
+        for (let i = 1; i < jsonData.length; i++) {
+          const row = jsonData[i]
+          if (row.length >= 6) {
+            const [questionText, choice1, choice2, choice3, choice4, correctStr] = row
+            const correctAnswer = parseInt(correctStr) - 1 // Assuming 1-based index in Excel
+            if (questionText && choice1 && choice2 && choice3 && choice4 && correctAnswer >= 0 && correctAnswer < 4) {
+              const newQuestion: Question = {
+                id: Date.now().toString() + i,
+                type: "multiple-choice",
+                text: questionText,
+                choices: [choice1, choice2, choice3, choice4],
+                correctAnswer,
+                timeLimit: 20,
+              }
+              importedQuestions.push(newQuestion)
+            }
+          }
+        }
+
+        setQuestions([...questions, ...importedQuestions])
+      } catch (error) {
+        console.error("Error parsing Excel file:", error)
+        alert("خطأ في قراءة ملف Excel. تأكد من الصيغة الصحيحة.")
+      }
+    }
+    reader.readAsArrayBuffer(file)
   }
 
   const handleSubmit = async () => {
@@ -86,8 +148,8 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white/90 backdrop-blur-md rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
         <div className="flex justify-between items-center mb-4">
           <h5 className="text-lg font-semibold">انشئ المسابقة الجديدة</h5>
           <button type="button" className="text-gray-500 hover:text-gray-700" onClick={() => onOpenChange(false)} title="Close">
@@ -114,6 +176,37 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
               onChange={(e) => setDescription(e.target.value)}
               placeholder="اضف وصف للمسابقة ..."
             />
+          </div>
+          <div className="mb-3">
+            <div className="flex gap-2 mb-2">
+              <button
+                type="button"
+                className="inline-flex items-center rounded-md border border-primary px-3 py-2 text-primary hover:bg-primary hover:text-primary-foreground"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload size={16} className="ml-2" />
+                استيراد الأسئلة من Excel
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center rounded-md border border-secondary px-3 py-2 text-secondary hover:bg-secondary hover:text-secondary-foreground"
+                onClick={downloadTemplate}
+              >
+                <Download size={16} className="ml-2" />
+                تحميل نموذج Excel
+              </button>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleExcelImport}
+              className="hidden"
+              aria-label="استيراد ملف Excel للأسئلة"
+            />
+            <small className="text-muted-foreground block mt-1">
+              الصيغة: عمود الأسئلة، الاختيار1، الاختيار2، الاختيار3، الاختيار4، الإجابة الصحيحة (رقم 1-4)
+            </small>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -245,8 +338,8 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                       <button
                         type="button"
                         className={`inline-flex items-center rounded-md px-2 py-1 text-sm ${question.correctAnswer === choiceIndex
-                            ? "bg-green-600 text-white"
-                            : "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                          ? "bg-green-600 text-white"
+                          : "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                           }`}
                         onClick={() => updateQuestion(index, { correctAnswer: choiceIndex })}
                         title="اختيار الصحيح"
