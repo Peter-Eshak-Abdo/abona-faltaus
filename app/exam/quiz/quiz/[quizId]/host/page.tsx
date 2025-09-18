@@ -187,7 +187,7 @@ export default function HostQuizPage() {
   const joinUrl = typeof window !== "undefined" ? `${window.location.origin}/exam/quiz/quiz/${quizId}/join` : `abona-faltaus.vercel.app/exam/quiz/quiz/${quizId}/join`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-2 sm:p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-300 to-purple-300 p-2 sm:p-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 text-center md:text-right px-2 sm:px-0">
           <h1 className="text-4xl font-bold text-white mb-3 drop-shadow-lg">{quiz.title}</h1>

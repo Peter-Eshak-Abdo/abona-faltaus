@@ -3,8 +3,8 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { getQuiz, subscribeToGameState, submitResponse } from "@/lib/firebase-utils"
-import type { Quiz, GameState, Group } from "@/types/quiz"
+import { getQuiz, subscribeToGameState, submitResponse, getQuizGroups, getQuestionResponses } from "@/lib/firebase-utils"
+import type { Quiz, GameState, Group, LeaderboardEntry, QuizResponse } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function PlayQuizPage() {
@@ -12,11 +12,15 @@ export default function PlayQuizPage() {
   const router = useRouter()
   const [quiz, setQuiz] = useState<Quiz | null>(null)
   const [gameState, setGameState] = useState<GameState | null>(null)
+  const [groups, setGroups] = useState<Group[]>([])
+  const [responses, setResponses] = useState<QuizResponse[]>([])
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [currentGroup, setCurrentGroup] = useState<Group | null>(null)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [hasAnswered, setHasAnswered] = useState(false)
   const [timeLeft, setTimeLeft] = useState(30)
   const [showResults, setShowResults] = useState(false)
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState(5)
   const quizId = params.quizId as string
 
@@ -34,11 +38,12 @@ export default function PlayQuizPage() {
   useEffect(() => {
     if (!quizId) return
 
-    const unsubscribe = subscribeToGameState(quizId, (state) => {
+    const unsubscribeGameState = subscribeToGameState(quizId, (state) => {
       setGameState(state)
 
       if (!state?.isActive) {
         setShowResults(true)
+        setShowLeaderboard(true)
         return
       }
 
@@ -46,16 +51,42 @@ export default function PlayQuizPage() {
         setSelectedAnswer(null)
         setHasAnswered(false)
         setShowResults(false)
+        setShowLeaderboard(false)
         setTimeLeft(state.currentQuestionTimeLimit || 30)
       }
 
       if (state.showResults) {
         setShowResults(true)
+        setShowLeaderboard(false)
       }
     })
 
-    return unsubscribe
-  }, [quizId])
+    const unsubscribeGroups = getQuizGroups(quizId, (updatedGroups) => {
+      setGroups(updatedGroups)
+      // Calculate leaderboard
+      const leaderboardEntries: LeaderboardEntry[] = updatedGroups
+        .map((group) => ({
+          groupId: group.id,
+          groupName: group.groupName,
+          members: group.members,
+          score: group.score || 0,
+          saintName: group.saintName,
+          saintImage: group.saintImage,
+        }))
+        .sort((a, b) => b.score - a.score)
+      setLeaderboard(leaderboardEntries)
+    })
+
+    const unsubscribeResponses = getQuestionResponses(quizId, gameState?.currentQuestionIndex || 0, (updatedResponses) => {
+      setResponses(updatedResponses)
+    })
+
+    return () => {
+      unsubscribeGameState()
+      unsubscribeGroups()
+      unsubscribeResponses()
+    }
+  }, [quizId, gameState?.currentQuestionIndex])
 
   // مؤقت إظهار السؤال فقط
   useEffect(() => {
@@ -95,6 +126,17 @@ export default function PlayQuizPage() {
 
     return () => clearInterval(timer)
   }, [gameState?.questionStartTime, gameState?.showResults, gameState?.currentQuestionTimeLimit, gameState?.showQuestionOnly, hasAnswered])
+
+  // Switch to leaderboard after showing response stats
+  useEffect(() => {
+    if (showResults && !showLeaderboard && gameState?.isActive) {
+      const timer = setTimeout(() => {
+        setShowLeaderboard(true)
+      }, 5000) // Show response stats for 5 seconds, then leaderboard
+
+      return () => clearTimeout(timer)
+    }
+  }, [showResults, showLeaderboard, gameState?.isActive])
 
   const loadQuiz = async () => {
     try {
@@ -159,25 +201,123 @@ export default function PlayQuizPage() {
 
   if (!gameState.isActive) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 to-blue-700 p-4">
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
-          <div className="text-center bg-white rounded-2xl shadow-2xl p-8">
-            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <h2 className="text-3xl font-bold mb-4 text-gray-900">انتهى المسابقة!</h2>
-            <p className="text-gray-600 mb-4 text-lg">شكراً لمشاركتكم، {currentGroup.groupName}!</p>
-            <p className="text-sm text-gray-500 mb-8">تحققوا من النتائج النهائية مع الخادم.</p>
+      <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 p-4">
+        <div className="max-w-7xl mx-auto">
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-12">
+            <motion.h1
+              className="text-6xl font-bold text-white mb-4"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              🎉 تهانينا! 🎉
+            </motion.h1>
+            <motion.p
+              className="text-2xl text-white/90"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              انتهت المسابقة بنجاح!
+            </motion.p>
+          </motion.div>
+
+          {/* Top 3 celebration */}
+          <div className="space-y-8">
+            {leaderboard.slice(0, 3).map((entry, index) => {
+              const podiumHeights = ["h-48", "h-36", "h-24"]
+              const colors = [
+                "from-yellow-400 to-orange-500",
+                "from-gray-300 to-gray-400",
+                "from-orange-300 to-red-400"
+              ]
+              const delays = [0, 0.5, 1]
+              const scales = [1.2, 1.1, 1]
+
+              return (
+                <motion.div
+                  key={entry.groupId}
+                  initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: scales[index] }}
+                  transition={{
+                    delay: delays[index],
+                    duration: 0.8,
+                    type: "spring",
+                    stiffness: 100
+                  }}
+                  className={`relative ${podiumHeights[index]} bg-gradient-to-r ${colors[index]} rounded-3xl shadow-2xl overflow-hidden`}
+                >
+                  {/* Confetti effect */}
+                  <motion.div
+                    className="absolute inset-0"
+                    animate={{
+                      background: [
+                        "radial-gradient(circle at 20% 80%, rgba(255,255,255,0.3) 0%, transparent 50%)",
+                        "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3) 0%, transparent 50%)",
+                        "radial-gradient(circle at 40% 40%, rgba(255,255,255,0.3) 0%, transparent 50%)"
+                      ]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  />
+
+                  <div className="h-full flex items-center justify-center p-6">
+                    <div className="text-center">
+                      <motion.div
+                        className={`w-24 h-24 rounded-full flex items-center justify-center font-bold text-4xl mb-4 mx-auto ${index === 0 ? "bg-white text-yellow-500" : "bg-white/20 text-white"
+                          }`}
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        {index === 0 ? "👑" : index === 1 ? "🥈" : "🥉"}
+                      </motion.div>
+
+                      {entry.saintImage && (
+                        <motion.img
+                          src={entry.saintImage || "/placeholder.svg"}
+                          alt={entry.saintName}
+                          className="w-20 h-20 rounded-full border-4 border-white object-cover mx-auto mb-4"
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ duration: 1, repeat: Infinity }}
+                        />
+                      )}
+
+                      <motion.h3
+                        className="font-bold text-4xl text-white mb-2"
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        {entry.groupName}
+                      </motion.h3>
+
+                      <p className="text-xl text-white/90 mb-4">{entry.members.join(" || ")}</p>
+
+                      <motion.div
+                        className="text-5xl font-bold text-white"
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      >
+                        {entry.score.toLocaleString()}
+                      </motion.div>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2 }}
+            className="text-center mt-12"
+          >
+            <p className="text-white/80 text-lg mb-8">شكراً لمشاركتكم في المسابقة!</p>
             <button
               onClick={() => router.push("/")}
-              className="w-full py-3 text-lg bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-bold"
+              className="px-8 py-4 text-xl bg-white text-orange-600 rounded-2xl hover:bg-gray-100 transition-colors font-bold shadow-xl"
             >
-              تم
+              العودة للرئيسية
             </button>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     )
   }
@@ -220,8 +360,15 @@ export default function PlayQuizPage() {
     )
   }
 
-  if (showResults && selectedAnswer !== null) {
-    const isCorrect = selectedAnswer === currentQuestion.correctAnswer
+  // Show response stats
+  if (showResults && !showLeaderboard) {
+    const getResponseStats = () => {
+      const stats = currentQuestion.choices.map((_, index) => ({
+        choice: index,
+        count: responses.filter((r) => r.answer === index).length,
+      }))
+      return stats
+    }
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-4">
@@ -230,22 +377,10 @@ export default function PlayQuizPage() {
             <div className="bg-white px-4 py-2 rounded-full text-lg font-bold text-gray-900 inline-block mb-4">
               السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
             </div>
-            <h1 className="text-3xl font-bold text-white">{currentGroup.groupName}</h1>
-            {currentGroup.saintImage && (
-              <img
-                src={currentGroup.saintImage || "/placeholder.svg"}
-                alt={currentGroup.saintName}
-                className="w-16 h-16 rounded-full mx-auto mt-4 border-4 border-white"
-              />
-            )}
+            <h1 className="text-3xl font-bold text-white">نتائج السؤال</h1>
           </motion.div>
 
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <div className={`text-center p-6 text-white ${isCorrect ? "bg-green-500" : "bg-red-500"}`}>
-              <h2 className="text-2xl font-bold">
-                {isCorrect ? <span>إجابة صحيحة! 🎉</span> : <span>إجابة خاطئة 😔</span>}
-              </h2>
-            </div>
             <div className="p-8">
               <div className="space-y-6">
                 <div className="text-center">
@@ -253,45 +388,99 @@ export default function PlayQuizPage() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                  {currentQuestion.choices.map((choice, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className={`p-6 rounded-xl flex items-center gap-4 text-lg ${index === currentQuestion.correctAnswer
-                        ? "bg-green-100 border-4 border-green-500"
-                        : index === selectedAnswer
-                          ? "bg-red-100 border-4 border-red-500"
+                  {currentQuestion.choices.map((choice, index) => {
+                    const isCorrect = index === currentQuestion.correctAnswer
+                    const count = getResponseStats().find(s => s.choice === index)?.count || 0
+                    return (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0, scale: isCorrect ? 1.05 : 1 }}
+                        transition={{ delay: index * 0.1 }}
+                        className={`p-6 rounded-xl flex items-center gap-4 text-lg ${isCorrect
+                          ? "bg-green-100 border-4 border-green-500"
                           : "bg-gray-50 border-2 border-gray-200"
-                        }`}
-                    >
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl ${getChoiceColor(index)}`}>
-                        {getChoiceLabel(index)}
-                      </div>
-                      <span className="font-medium flex-1 text-gray-900">{choice}</span>
-                      {index === currentQuestion.correctAnswer && (
-                        <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                          الإجابة الصحيحة
+                          }`}
+                      >
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl ${getChoiceColor(index)}`}>
+                          {getChoiceLabel(index)}
                         </div>
-                      )}
-                      {index === selectedAnswer && index !== currentQuestion.correctAnswer && (
-                        <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                          إجابتكم
-                        </div>
-                      )}
-                    </motion.div>
-                  ))}
+                        <span className="font-medium flex-1 text-gray-900">{choice}</span>
+                        {isCorrect && (
+                          <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                            الإجابة الصحيحة
+                          </div>
+                        )}
+                        <div className="text-2xl font-bold text-gray-700">{count}</div>
+                      </motion.div>
+                    )
+                  })}
                 </div>
 
                 <div className="text-center pt-6">
-                  <p className="text-gray-600 text-lg">في انتظار السؤال التالي...</p>
+                  <p className="text-gray-600 text-lg">في انتظار الترتيب الحالي...</p>
                   <div className="animate-pulse mt-4">
                     <div className="h-3 bg-blue-200 rounded-full"></div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Full screen leaderboard
+  if (showResults && showLeaderboard) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-700 p-4">
+        <div className="max-w-6xl mx-auto">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-white mb-4">الترتيب الحالي</h1>
+            <p className="text-white/80 text-lg">بعد السؤال {gameState.currentQuestionIndex + 1}</p>
+          </motion.div>
+
+          <div className="space-y-6">
+            {leaderboard.map((entry, index) => (
+              <motion.div
+                key={entry.groupId}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.2 }}
+                className={`p-6 rounded-2xl flex items-center justify-between transition-all duration-500 ${index === 0
+                  ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-2xl"
+                  : index === 1
+                    ? "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 shadow-xl"
+                    : index === 2
+                      ? "bg-gradient-to-r from-orange-300 to-red-400 text-white shadow-lg"
+                      : "bg-gray-50 hover:bg-gray-100 text-gray-900"
+                  }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-3xl ${index < 3 ? "bg-white/20" : "bg-blue-500 text-white"
+                    }`}>
+                    {index + 1}
+                  </div>
+                  {entry.saintImage && (
+                    <img
+                      src={entry.saintImage || "/placeholder.svg"}
+                      alt={entry.saintName}
+                      className="w-16 h-16 rounded-full border-4 border-white object-cover"
+                    />
+                  )}
+                  <div className="text-right">
+                    <h3 className="font-bold text-3xl">{entry.groupName}</h3>
+                    <p className="text-lg opacity-90">{entry.members.join(" || ")}</p>
+                  </div>
+                </div>
+                <div className="text-4xl font-bold">{entry.score.toLocaleString()}</div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <p className="text-white/80 text-lg">في انتظار السؤال التالي...</p>
           </div>
         </div>
       </div>
