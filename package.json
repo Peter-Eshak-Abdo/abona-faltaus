@@ -39,7 +39,7 @@
     "embla-carousel-react": "^8.6.0",
     "express": "^5.1.0",
     "firebase": "^12.3.0",
-    "framer-motion": "^12.23.16",
+    "framer-motion": "^12.23.19",
     "geist": "^1.5.1",
     "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.3.8",
