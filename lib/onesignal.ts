@@ -64,12 +64,11 @@ export const sendDailyVerseNotification = async (userId: string) => {
   }
 };
 
-// @ts-expect-error OneSignal types not available
 export const requestNotificationPermission = async () => {
   if (typeof window === "undefined" || !window.OneSignal) return false;
 
   try {
-    const permission = await window.OneSignal.Notifications.requestPermission();
+    const permission = await window.OneSignal.Notifications!.requestPermission();
     return permission;
   } catch (error) {
     console.error("Error requesting notification permission:", error);
@@ -77,13 +76,11 @@ export const requestNotificationPermission = async () => {
   }
 };
 
-// @ts-expect-error OneSignal types not available
 export const getNotificationPermission = () => {
   if (typeof window === "undefined" || !window.OneSignal) return false;
-  return window.OneSignal.Notifications.permission;
+  return window.OneSignal.Notifications!.permission;
 };
 
-// @ts-expect-error OneSignal types not available
 export const getPlayerId = () => {
   if (
     typeof window === "undefined" ||
@@ -99,7 +96,6 @@ export const getPlayerId = () => {
 export const updateBadge = async (count: number) => {
   if ('setAppBadge' in navigator) {
     try {
-      // @ts-expect-error Badging API not in types
       await navigator.setAppBadge(count);
     } catch (e) {
       console.error("Badging failed", e);

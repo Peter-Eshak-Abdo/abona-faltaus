@@ -2,13 +2,11 @@
 
 import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 
 declare global {
   interface Window {
-    OneSignalDeferred?: ((OneSignal: typeof import('onesignal-web-sdk')) => void)[];
-    OneSignal?: typeof import('onesignal-web-sdk');
+    OneSignalDeferred?: ((OneSignal: any) => void)[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 }
 
@@ -19,7 +17,7 @@ export default function OneSignal() {
 
     // Initialize OneSignal
     window.OneSignalDeferred = window.OneSignalDeferred || [];
-    window.OneSignalDeferred.push(async function (OneSignal) {
+    window.OneSignalDeferred.push(async function (OneSignal: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       await OneSignal.init({
         appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
         safari_web_id: process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID!,
