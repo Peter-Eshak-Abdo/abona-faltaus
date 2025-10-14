@@ -7,6 +7,7 @@ import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
 // import ChatFab from "@/components/ChatFab";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/next";
+import OneSignal from "@/components/OneSignal";
 import "./globals.css";
 
 const vazirmatn = Vazirmatn({
@@ -89,12 +90,14 @@ export default function RootLayout({
           href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css"
           rel="stylesheet"
         />
+
       </head>
       <body suppressHydrationWarning={true}>
         <ServiceWorkerRegister />
         <div className="background-blur" />
         <LoadingProvider>
           {/* <ChatFab /> */}
+          <OneSignal />
           <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
         </LoadingProvider>
         <Analytics />
