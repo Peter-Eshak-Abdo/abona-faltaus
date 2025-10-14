@@ -111,7 +111,6 @@ export default async function L7nDetailsPage({ params }: { params: Promise<{ mon
         finalSrc={finalSrc}
         pageTitle={hymn.name}
         lyrics={lyrics}
-        images={images}
       />
 
       {/* صور الهزّات */}

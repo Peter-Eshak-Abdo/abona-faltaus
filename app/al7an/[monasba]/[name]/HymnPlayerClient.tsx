@@ -10,10 +10,9 @@ type Props = {
   finalSrc: string;
   pageTitle: string;
   lyrics?: string;
-  images?: string[];
 };
 
-export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "", images = [] }: Props) {
+export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -143,7 +142,9 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "", ima
               src={finalSrc || undefined}
             />
             {finalSrc ? (
-              <div className="text-xs text-muted-foreground mt-2">مصدر الصوت: {new URL(finalSrc).hostname}</div>
+              <div className="text-xs text-muted-foreground mt-2">
+                مصدر الصوت: {finalSrc.startsWith('http') ? new URL(finalSrc).hostname : 'محلي'}
+              </div>
             ) : (
               <div className="text-sm text-red-500 mt-2">❌ لا يوجد ملف صوتي متاح</div>
             )}
