@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // صلاحية الوصول إلى ملف المستخدم فقط
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // صلاحيات المقالات
+    match /articles/{articleId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null &&
+      request.auth.uid == resource.data.authorId;
+    }
+
+    // صلاحيات الامتحانات (quizzes)
+    match /quizzes/{quizId} {
+    // Allow anyone to read a quiz, but only the creator can update or delete it.
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth.uid == resource.data.createdBy;
+
+
+      // المجموعات (groups)
+      match /groups/{groupId} {
+        // Allow anyone to join a quiz (create a group) and read group data.
+        allow read, create: if true;
+        // IMPORTANT: This is the rule that fixes the error.
+        // It allows a user to update or delete a group if their UID matches
+        // the 'createdBy' field on the parent quiz document.
+        allow update, delete: if request.auth.uid == get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy;
+      }
+
+      // حالة اللعبة (gameState)
+      match /gameState/{gameStateId} {
+        allow read: if true;
+        allow write: if request.auth != null &&
+          get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy == request.auth.uid;
+      }
+
+      // الردود (responses)
+      match /responses/{responseId} {
+        allow read: if true;
+        allow create: if true;
+        allow update, delete: if false;
+      }
+    }
+
+    // صلاحيات الآيات (verses)
+    match /verses/{verseId} {
+      allow read: if true;
+      allow write: if request.auth != null; // Only authenticated users can modify verses
+    }
+
+    // صلاحيات جدولة الإشعارات (notificationSchedules)
+    match /notificationSchedules/{scheduleId} {
+      allow read: if true;
+      allow write: if request.auth != null; // Only authenticated users can modify schedules
+    }
+  }
+}
