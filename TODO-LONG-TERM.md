@@ -68,6 +68,7 @@ This file contains the long-term plan for the Abona Faltaus project, flattened i
 - [ ] Implement authentication (Google, Facebook, or create user).
 - [ ] Allow any user to add articles, with reactions or comments.
 - [ ] Add video support, integrate with Express for logging.
+- [ ] Implement user roles: member (default for new users), admin (for servants/important people), Manager (only for owner to access admin pages and manage articles).
 
 ### ChatBot
 - [ ] Add loading animation.

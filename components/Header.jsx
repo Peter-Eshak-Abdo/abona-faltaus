@@ -13,6 +13,8 @@ const links = [
   { name: "الكتاب المقدس", href: "/bible" },
   { name: "مقالات", href: "/mkalat" },
   { name: "امتحانات", href: "/exam" },
+  { name: "الإعدادات", href: "/settings" },
+  { name: "حول", href: "/about" },
 ];
 
 function Header() {

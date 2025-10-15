@@ -8,6 +8,7 @@ import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/next";
 import OneSignal from "@/components/OneSignal";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const vazirmatn = Vazirmatn({
@@ -106,6 +107,7 @@ export default function RootLayout({
           src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"
           strategy="afterInteractive"
         />
+        <Toaster />
       </body>
     </html>
   );

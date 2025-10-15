@@ -11,18 +11,22 @@ import {
   FaFileAlt,
   FaPenFancy,
   FaPlayCircle,
+  FaCog,
+  FaInfoCircle,
 } from "react-icons/fa";
 import LogoHeader from "@/components/LogoHeader";
 import UserHeader from "@/components/UserHeader";
 
 const sections = [
-  { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
-  { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
   { name: "العظات", href: "/3zat", icon: <FaChurch /> },
-  { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
+  { name: "حول", href: "/about", icon: <FaInfoCircle /> },
+  { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },
-  { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
+  // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
   { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
+  { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
+  { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
+  { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
 ];
 
 export default function HomeClient() {
