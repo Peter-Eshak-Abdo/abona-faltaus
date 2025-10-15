@@ -25,7 +25,7 @@
 
 ## أبرز الميزات
 - مبني بـ **Next.js** + **TypeScript**.
-- يعتمد **Tailwind CSS** و**Bootstrap 5** في الواجهات.
+- يعتمد **Tailwind CSS** في الواجهات.
 - استخدام **Socket.IO** لتجارب الامتحانات الجماعية/الوقت الحقيقي.
 - يحتوي على ملفات خدمات (server.js) لربط الـ backend.
 - مُهيّأ للنشر على Vercel (واجهات) وخيارات لاستضافة backend على Railway/Glitch/Render.
@@ -34,7 +34,7 @@
 ## التقنيات المستخدمة (Tech Stack)
 - Next.js (App Router) + TypeScript
 - React
-- Tailwind CSS و Bootstrap 5
+- Tailwind CSS
 - Node/Express (server.js) + Socket.IO
 - Firebase (مذكور في المشروع/ملفات الإعداد)
 - أدوات: Vercel لنشر الواجهة، خيارات أخرى للـ backend.
