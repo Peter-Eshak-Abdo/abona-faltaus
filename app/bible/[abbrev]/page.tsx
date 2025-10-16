@@ -40,21 +40,20 @@ export default async function BookPage({ params }: { params: Promise<{ abbrev: s
     return <div className="p-6 text-red-600">❌ لم يتم العثور على السفر</div>;
 
   return (
-    <div className="p-4 animate-fade-in">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">{bookName}</h1>
-      <p className="mb-6 text-center text-lg text-gray-600">عدد الإصحاحات: {book.chapters.length}</p>
-      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-4">
+    <div className="p-4">
+      <h1 className="text-3xl font-bold mb-2 text-center text-gray-800">{bookName}</h1>
+      <p className="mb-1 text-center text-lg text-gray-600">عدد الإصحاحات: {book.chapters.length}</p>
+      <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2">
         {book.chapters.map((_, idx) => (
           <Link
             key={idx}
             href={`/bible/${abbrev}/${idx + 1}`}
-            className="bg-gradient-to-r from-gray-200 to-gray-300 hover:from-indigo-400 hover:to-indigo-500 text-gray-800 hover:text-white text-center rounded-lg px-4 py-3 border border-gray-300 hover:border-indigo-500 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium"
+            className="bg-white/10 backdrop-blur-md text-white text-center p-1 rounded-lg shadow-xl/30 inset-shadow-sm border-gray-300 hover:border-indigo-500 shadow-md hover:shadow-xl/10 transition-all duration-300 transform hover:scale-105 font-bold"
           >
             إصحاح {idx + 1}
           </Link>
         ))}
       </div>
-      <div className="background-blur"></div>
     </div>
   );
 }

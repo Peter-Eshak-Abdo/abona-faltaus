@@ -4,6 +4,12 @@
   ],
   "hints": {
     "disown-opener": "off",
-    "apple-touch-icons": "off"
+    "apple-touch-icons": "off",
+    "axe/aria": [
+      "default",
+      {
+        "aria-valid-attr-value": "off"
+      }
+    ]
   }
 }
