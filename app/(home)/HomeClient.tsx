@@ -56,7 +56,7 @@ export default function HomeClient() {
 
       {/* اللوجو الأساسي */}
       <motion.div
-        className="z-20 rounded-full border-blue-300 p-1 shadow-xl absolute bg-transparent"
+        className="z-20 rounded-full border-blue-300 shadow-xl absolute bg-transparent"
         animate={
           logoPos === "center"
             ? {
@@ -71,7 +71,7 @@ export default function HomeClient() {
               left: "50%",
               translateX: "-50%",
               translateY: "-50%",
-              scale: 0.10,
+              scale: 0.30,
             }
         }
         transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -85,9 +85,9 @@ export default function HomeClient() {
           <Image
             src="/images/logo.jpg"
             alt="Logo"
-            width={200}
-            height={200}
-            className="rounded-full border-4 border-blue-300"
+            width={250}
+            height={250}
+            className="rounded-full border-blue-300"
             priority
           />
         </motion.button>
@@ -108,16 +108,15 @@ export default function HomeClient() {
               className="mx-auto"
               style={{
                 width: '50vw',
-                maxWidth: '300px',
+                maxWidth: '250px',
                 height: 'auto',
               }}
             >
               <Image
                 src="/images/eagle.png"
                 alt="Eagle"
-                width={300}
-                height={300}
-                style={{ width: '100%', height: 'auto' }}
+                width={250}
+                height={250}
                 priority
               />
             </motion.div>
@@ -143,7 +142,7 @@ export default function HomeClient() {
                 style={{ transform: "translate(-50%, -50%)" }}
               >
                 <Link href={section.href}>
-                  <div className="bg-purple-700 hover:bg-purple-500 text-white rounded-full w-6 h-6 flex flex-col items-center justify-center text-center shadow-xl border border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[10px] sm:text-[12px]">
+                  <div className="bg-purple-700 hover:bg-purple-500 rounded-full w-6 h-6 flex flex-col items-center justify-center text-center shadow-xl shadow-xl/30 inset-shadow-sm border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[10px] sm:text-[12px]">
                     <div className="text-sm">{section.icon}</div>
                     <div className="leading-tight mt-1 text-sm">{section.name}</div>
                   </div>
