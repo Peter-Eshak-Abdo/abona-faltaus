@@ -22,7 +22,6 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow update, delete: if request.auth.uid == resource.data.createdBy;
 
-
       // المجموعات (groups)
       match /groups/{groupId} {
         // Allow anyone to join a quiz (create a group) and read group data.
@@ -46,6 +45,12 @@ service cloud.firestore {
         allow create: if true;
         allow update, delete: if false;
       }
+    }
+
+    // سلة المحذوفات (trashedQuizzes)
+    match /trashedQuizzes/{trashId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.createdBy;
+      allow create: if request.auth != null;
     }
 
     // صلاحيات الآيات (verses)

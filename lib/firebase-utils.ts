@@ -67,9 +67,25 @@ export const updateQuiz = async (quizId: string, updates: Partial<Omit<Quiz, "id
 
 export const deleteQuiz = async (quizId: string) => {
   try {
-    const quizRef = doc(db, "quizzes", quizId);
-    await deleteDoc(quizRef);
-    console.log("Quiz deleted successfully");
+    // First get the quiz data
+    const quizDoc = await getDoc(doc(db, "quizzes", quizId));
+    if (!quizDoc.exists()) {
+      throw new Error("Quiz not found");
+    }
+
+    const quizData = quizDoc.data();
+
+    // Move to trash collection
+    await addDoc(collection(db, "trashedQuizzes"), {
+      ...quizData,
+      originalId: quizId,
+      deletedAt: serverTimestamp(),
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+    });
+
+    // Delete from main collection
+    await deleteDoc(doc(db, "quizzes", quizId));
+    console.log("Quiz moved to trash successfully");
   } catch (error) {
     console.error("Error deleting quiz:", error);
     throw error;
@@ -606,5 +622,88 @@ export const getQuestionResponsesOnce = async (
   } catch (error) {
     console.error("Error getting responses once:", error);
     return [];
+  }
+};
+
+// Trash operations
+export const getTrashedQuizzes = async (userId: string) => {
+  try {
+    const q = query(
+      collection(db, "trashedQuizzes"),
+      where("createdBy", "==", userId),
+      orderBy("deletedAt", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        deletedAt: data.deletedAt?.toDate() || new Date(),
+        expiresAt: data.expiresAt?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+      };
+    }) as (Quiz & { originalId: string; deletedAt: Date; expiresAt: Date })[];
+  } catch (error) {
+    console.error("Error getting trashed quizzes:", error);
+    return [];
+  }
+};
+
+export const restoreQuiz = async (trashId: string) => {
+  try {
+    // Get trashed quiz data
+    const trashDoc = await getDoc(doc(db, "trashedQuizzes", trashId));
+    if (!trashDoc.exists()) {
+      throw new Error("Trashed quiz not found");
+    }
+
+    const quizData = trashDoc.data();
+    const { originalId, deletedAt, expiresAt, ...cleanData } = quizData;
+
+    // Restore to main collection
+    await setDoc(doc(db, "quizzes", originalId), cleanData);
+
+    // Remove from trash
+    await deleteDoc(doc(db, "trashedQuizzes", trashId));
+
+    console.log("Quiz restored successfully");
+  } catch (error) {
+    console.error("Error restoring quiz:", error);
+    throw error;
+  }
+};
+
+export const permanentlyDeleteQuiz = async (trashId: string) => {
+  try {
+    await deleteDoc(doc(db, "trashedQuizzes", trashId));
+    console.log("Quiz permanently deleted");
+  } catch (error) {
+    console.error("Error permanently deleting quiz:", error);
+    throw error;
+  }
+};
+
+export const cleanupExpiredTrash = async (userId: string) => {
+  try {
+    const trashedQuizzes = await getTrashedQuizzes(userId);
+    const now = new Date();
+
+    const expiredQuizzes = trashedQuizzes.filter(quiz => quiz.expiresAt < now);
+
+    if (expiredQuizzes.length > 0) {
+      const batch = writeBatch(db);
+      expiredQuizzes.forEach(quiz => {
+        batch.delete(doc(db, "trashedQuizzes", quiz.id));
+      });
+      await batch.commit();
+      console.log(`Cleaned up ${expiredQuizzes.length} expired trashed quizzes`);
+    }
+
+    return expiredQuizzes.length;
+  } catch (error) {
+    console.error("Error cleaning up expired trash:", error);
+    return 0;
   }
 };

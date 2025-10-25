@@ -3,12 +3,16 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { auth } from "@/lib/firebase"
+import { auth, db } from "@/lib/firebase"
 import { getUserQuizzes } from "@/lib/firebase-utils"
-import { Plus, Play, Users, Calendar, AlertCircle } from "lucide-react"
+import { Plus, Play, Users, Calendar, AlertCircle, Edit, Trash2, Trash } from "lucide-react"
 import type { Quiz } from "@/types/quiz"
 import { motion } from "framer-motion"
 import { CreateQuizDialog } from "@/components/quiz/create-quiz-dialog"
+import { getDoc, doc } from "firebase/firestore"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import TrashSection from "@/components/quiz/trash-section"
 
 export default function DashboardPage() {
   const [user, loading, authError] = useAuthState(auth)
@@ -18,6 +22,8 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null)
   const [indexUrl, setIndexUrl] = useState<string | null>(null)
   const router = useRouter()
+  const [customDisplayName, setCustomDisplayName] = useState<string | null>(null);
+  const [showTrash, setShowTrash] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -29,6 +35,21 @@ export default function DashboardPage() {
     if (user) {
       loadUserQuizzes()
     }
+    const loadCustomName = async () => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setCustomDisplayName(userData.name || null);
+          }
+        } catch (error) {
+          console.error("Error loading custom name:", error);
+        }
+      }
+    };
+    loadCustomName();
+
   }, [user])
 
   const loadUserQuizzes = async () => {
@@ -87,36 +108,72 @@ export default function DashboardPage() {
     )
   }
 
+  const displayName = customDisplayName || user?.displayName || "اهلا بك";
+
+  const handleEditQuiz = (quiz: Quiz) => {
+    // TODO: Implement edit functionality
+    alert("ميزة التعديل قيد التطوير")
+  }
+
+  const handleDeleteQuiz = async (quizId: string) => {
+    if (confirm("هل أنت متأكد من حذف هذه المسابقة؟ سيتم نقلها إلى سلة المحذوفات لمدة 30 يوم.")) {
+      try {
+        const { deleteQuiz } = await import("@/lib/firebase-utils")
+        await deleteQuiz(quizId)
+        alert("تم نقل المسابقة إلى سلة المحذوفات")
+        loadUserQuizzes()
+      } catch (error) {
+        console.error("Error deleting quiz:", error)
+        alert("فشل في حذف المسابقة")
+      }
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-1">
+      <div className="max-w-8xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-center items-center mb-8 gap-4">
-          <img src={"/images/alnosor/logo.jpeg"} alt="Logo"
-            className="w-auto rounded-lg shadow-lg mb-2"
-            style={{ height: "50vh" }} />
-          <div className="text-center md:text-left">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">لوحة تحكم المسابقات</h1>
-            <p className="text-gray-600 text-lg">إنشاء وإدارة مسابقاتك التفاعلية</p>
-            <p className="text-sm text-gray-500 mt-1">أهلاً بك، {user.displayName || user.email}</p>
-          </div>
-          <button
-            onClick={() => setIsCreateDialogOpen(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-3 px-4 text-lg font-semibold shadow-lg text-white rounded-lg"
-            type="button"
-          >
-            <Plus className="w-6 h-6" />
-            إنشاء مسابقة جديد
-          </button>
-          <CreateQuizDialog
-            open={isCreateDialogOpen}
-            onOpenChange={setIsCreateDialogOpen}
-            onQuizCreated={() => {
-              setIsCreateDialogOpen(false)
-              loadUserQuizzes()
-            }}
-          />
-        </div>
+        <Card className="mb-8">
+          <CardHeader>
+            <div className="flex flex-col md:flex-row justify-center items-center gap-1">
+              <img src={"/images/alnosor/logo.jpeg"} alt="Logo"
+                className="w-auto rounded-lg shadow-lg mb-2"
+                style={{ height: "50vh" }} />
+              <div className="text-center md:text-left">
+                <CardTitle className="text-5xl font-bold text-gray-900 mb-2">لوحة تحكم المسابقات</CardTitle>
+                <p className="text-gray-600 text-3xl">إنشاء وإدارة مسابقاتك التفاعلية</p>
+                <p className="text-2xl text-gray-500 mt-1">استاذ/ة {displayName}</p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={() => setIsCreateDialogOpen(true)}
+                  className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 p-1 font-bold shadow-lg text-white rounded-lg text-2xl scale-95 hover:scale-100 transition-all duration-200 hover:shadow-2xl hover:text-2xl"
+                  type="button"
+                >
+                  <Plus className="w-4 h-4 " />
+                  إنشاء مسابقة جديد
+                </Button>
+                <Button
+                  onClick={() => setShowTrash(!showTrash)}
+                  variant="outline"
+                  className="flex items-center gap-2 py-3 px-4 font-bold shadow-lg rounded-lg text-4xl scale-95 hover:scale-100 transition-all duration-200 hover:shadow-2xl hover:text-2xl"
+                  type="button"
+                >
+                  <Trash className="w-4 h-4" />
+                  سلة المحذوفات
+                </Button>
+              </div>
+              <CreateQuizDialog
+                open={isCreateDialogOpen}
+                onOpenChange={setIsCreateDialogOpen}
+                onQuizCreated={() => {
+                  setIsCreateDialogOpen(false)
+                  loadUserQuizzes()
+                }}
+              />
+            </div>
+          </CardHeader>
+        </Card>
 
         {/* Error message */}
         {error && (
@@ -165,71 +222,89 @@ export default function DashboardPage() {
             <p className="text-gray-600 mb-8 text-lg">دوس على زرار &quot;إنشاء مسابقة جديدة&quot;</p>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {quizzes.map((quiz, index) => (
               <motion.div key={quiz.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}>
-                <div className="bg-white p-4 rounded-lg shadow hover:shadow-xl transition cursor-pointer">
-                  <h2 className="text-xl font-bold text-gray-900 mb-2">{quiz.title}</h2>
-                  <p className="text-gray-600 mb-4">{quiz.description}</p>
-                  <div className="flex justify-between text-sm text-gray-600 mb-4">
-                    <span className="flex items-center gap-2">
-                      <Users className="w-5 h-5" />
-                      {quiz.questions.length} سؤال
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5" />
-                      {quiz.createdAt.toLocaleDateString("ar-EG")}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
-                    className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2 rounded"
-                    type="button"
-                  >
-                    <Play className="w-5 h-5" />
-                    بدء المسابقة
-                  </button>
-                  <div className="flex justify-between mt-2 gap-2">
-                    <button
-                      onClick={() => {
-                        // TODO: Implement edit functionality
-                        alert("ميزة التعديل قيد التطوير")
-                      }}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-1 rounded"
-                      type="button"
-                      title="تعديل المسابقة"
-                    >
-                      تعديل
-                    </button>
-                    <button
-                      onClick={async () => {
-                        if (confirm("هل أنت متأكد من حذف هذه المسابقة؟")) {
-                          try {
-                            // Import deleteQuiz from firebase-utils
-                            const { deleteQuiz } = await import("@/lib/firebase-utils")
-                            await deleteQuiz(quiz.id)
-                            alert("تم حذف المسابقة بنجاح")
-                            loadUserQuizzes()
-                          } catch (error) {
-                            console.error("Error deleting quiz:", error)
-                            alert("فشل في حذف المسابقة")
-                          }
-                        }
-                      }}
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white py-1 rounded"
-                      type="button"
-                      title="حذف المسابقة"
-                    >
-                      حذف
-                    </button>
-                  </div>
-                </div>
+                <Card className="shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out rounded-4xl">
+                  <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                    <CardTitle className="text-2xl mb-1 text-center font-bold">{quiz.title}</CardTitle>
+                    <p className="text-blue-100 text-lg">• {quiz.description}</p>
+                  </CardHeader>
+                  <CardContent className="p-1">
+                    <div className="flex items-center justify-between md:flex-row flex-col mb-1">
+                      <div className="flex items-center text-gray-600">
+                        <Calendar className="w-3 h-3" />
+                        <span className="text-2xl font-extrabold">
+                          {new Date(quiz.createdAt).toLocaleDateString("ar-EG")}
+                        </span>
+                      </div>
+                      <div className="flex items-center text-gray-600">
+                        <Users className="w-3 h-3" />
+                        <span className="text-2xl font-extrabold">{quiz.questions.length} سؤال</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 mb-2">
+                      <Button
+                        size="normal"
+                        onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
+                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-lg transition-all duration-200 flex items-center justify-center gap-1"
+                        type="button"
+                      >
+                        <Play className="w-4 h-4" />
+                        البدء
+                      </Button>
+                      <Button
+                        size="normal"
+                        onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/join`)}
+                        className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold rounded-lg transition-all duration-200 flex items-center justify-center gap-1"
+                        type="button"
+                      >
+                        <Users className="w-4 h-4" />
+                        الانضمام
+                      </Button>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="normal"
+                        onClick={() => handleEditQuiz(quiz)}
+                        variant="outline"
+                        className="flex-1 flex items-center justify-center gap-1 transition-all duration-200 scale-95 hover:scale-100 hover:text-2xl"
+                        type="button"
+                      >
+                        <Edit className="w-3 h-4" />
+                        تعديل
+                      </Button>
+                      <Button
+                        size="normal"
+                        onClick={() => handleDeleteQuiz(quiz.id)}
+                        variant="destructive"
+                        className="flex-1 flex items-center justify-center gap-1 transition-all duration-200 scale-95 hover:scale-100 hover:text-2xl"
+                        type="button"
+                      >
+                        <Trash2 className="w-3 h-4" />
+                        حذف
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </div>
+        )}
+
+        {/* Trash Section */}
+        {showTrash && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-8"
+          >
+            <TrashSection userId={user.uid} onClose={() => setShowTrash(false)} onRestore={loadUserQuizzes} />
+          </motion.div>
         )}
       </div>
     </div>
