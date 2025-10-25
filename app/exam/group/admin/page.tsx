@@ -7,6 +7,7 @@ import { socket } from "@/lib/socket";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLoading } from "@/app/loading-context";
 
 type Category = {
   name: string;
@@ -31,6 +32,7 @@ type Question = {
 
 export default function ExamSettings() {
   const router = useRouter();
+  const { setLoading } = useLoading();
   const [roomId, setRoomId] = useState<string>("");
   const [showQR, setShowQR] = useState(false);
   const [qrSize, setQrSize] = useState(200);
@@ -42,6 +44,15 @@ export default function ExamSettings() {
   const [maxQuestions, setMaxQuestions] = useState(0);
 
   const [previewQuestions, setPreviewQuestions] = useState<Question[]>([]);
+
+  useEffect(() => {
+    // Simulate page load completion
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Adjust time as needed
+
+    return () => clearTimeout(timer);
+  }, [setLoading]);
 
   useEffect(() => {
     if (socket) {

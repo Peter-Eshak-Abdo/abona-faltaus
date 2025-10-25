@@ -161,7 +161,7 @@ export default function DashboardPage() {
             <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <Plus className="w-16 h-16 text-blue-600" />
             </div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-3">لا توجد مسابقات بعد</h3>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-3">لا توجد مسابقات حتي الأن</h3>
             <p className="text-gray-600 mb-8 text-lg">دوس على زرار &quot;إنشاء مسابقة جديدة&quot;</p>
           </motion.div>
         ) : (

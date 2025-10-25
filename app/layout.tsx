@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import Script from "next/script";
 import LoadingProvider from "./loading-provider";
+import { LoadingProvider as GlobalLoadingProvider } from "./loading-context";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
 // import ChatFab from "@/components/ChatFab";
@@ -96,11 +97,13 @@ export default function RootLayout({
       <body suppressHydrationWarning={true}>
         <ServiceWorkerRegister />
         <div className="background-blur" />
-        <LoadingProvider>
-          {/* <ChatFab /> */}
-          <OneSignal />
-          <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
-        </LoadingProvider>
+        <GlobalLoadingProvider>
+          <LoadingProvider>
+            {/* <ChatFab /> */}
+            <OneSignal />
+            <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
+          </LoadingProvider>
+        </GlobalLoadingProvider>
         <Analytics />
         <SpeedInsights />
         <Script

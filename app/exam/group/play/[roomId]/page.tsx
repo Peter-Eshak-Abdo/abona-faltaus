@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { socket } from "@/lib/socket";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useLoading } from "../../../../loading-context";
 
 interface Question {
   id: string;
@@ -16,6 +17,7 @@ interface Question {
 export default function PlayPage() {
   const params = useParams();
   const roomId = params?.roomId as string;
+  const { setLoading } = useLoading();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -37,6 +39,15 @@ export default function PlayPage() {
       setSubmitted(true); // تمنع أي تعديل بعد الإرسال
     }
   }, [selectedAnswer, currentQuestion, roomId]);
+
+  useEffect(() => {
+    // Simulate page load completion
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Adjust time as needed
+
+    return () => clearTimeout(timer);
+  }, [setLoading]);
 
   useEffect(() => {
     if (!roomId) return;

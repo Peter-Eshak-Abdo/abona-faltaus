@@ -4,11 +4,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { socket } from "@/lib/socket";
 import { Html5QrcodeScanner } from 'html5-qrcode';
+import { useLoading } from "@/app/loading-context";
 
 export default function JoinPage() {
   // const searchParams = useSearchParams();
   // const prefilledRoomId = searchParams.get("room");
   const router = useRouter();
+  const { setLoading } = useLoading();
   const [roomId, setRoomId] = useState("");
   const [teamName, setTeamName] = useState("");
   const [error, setError] = useState("");
@@ -17,6 +19,15 @@ export default function JoinPage() {
   const [members, setMembers] = useState<string[]>([""]);
   const [isConnecting, setIsConnecting] = useState(true);
   const scannerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Simulate page load completion
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Adjust time as needed
+
+    return () => clearTimeout(timer);
+  }, [setLoading]);
 
   useEffect(() => {
     setIsConnecting(true);

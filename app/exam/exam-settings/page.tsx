@@ -7,6 +7,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
+import { useLoading } from "@/app/loading-context";
 
 type Category = {
   name: string;
@@ -15,6 +16,7 @@ type Category = {
 
 export default function ExamSettings() {
   const router = useRouter();
+  const { setLoading } = useLoading();
 
   const [questionCount, setQuestionCount] = useState(10);
   const [groupCount, setGroupCount] = useState(1);
@@ -22,6 +24,15 @@ export default function ExamSettings() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [maxQuestions, setMaxQuestions] = useState(0);
+
+  useEffect(() => {
+    // Simulate page load completion
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Adjust time as needed
+
+    return () => clearTimeout(timer);
+  }, [setLoading]);
 
   useEffect(() => {
     const loadCategories = async () => {
