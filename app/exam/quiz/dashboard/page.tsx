@@ -133,7 +133,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-1">
       <div className="max-w-8xl mx-auto">
         {/* Header */}
-        <Card className="mb-8">
+        <Card className="mb-4 shadow-xl rounded-4xl">
           <CardHeader>
             <div className="flex flex-col md:flex-row justify-center items-center gap-1">
               <img src={"/images/alnosor/logo.jpeg"} alt="Logo"

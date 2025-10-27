@@ -14,7 +14,7 @@ export default function LogoHeader() {
           className="rounded-full border-blue-300"
           priority
         />
-        <h1 className="font-bold text-3xl">
+        <h1 className="font-bold text-2xl md:text-4xl">
           ابونا فلتاؤس
         </h1>
         <Image
