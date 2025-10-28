@@ -418,55 +418,57 @@ export default function HostQuizPage() {
           </Card>
         </div>
 
-        {/* Quiz Stats */}
-        <Card className="shadow-2xl mb-8 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-            <CardTitle className="text-2xl font-bold">تفاصيل الامتحان</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              <div className="text-center p-6 bg-blue-50 rounded-2xl shadow-lg">
-                <div className="text-4xl font-bold text-blue-600 mb-2">{quiz.questions.length}</div>
-                <div className="text-gray-700 font-bold text-lg">سؤال</div>
-              </div>
-              <div className="text-center p-6 bg-green-50 rounded-2xl shadow-lg">
-                <div className="text-4xl font-bold text-green-600 mb-2">{groups.length}</div>
-                <div className="text-gray-700 font-bold text-lg">فريق</div>
-              </div>
-              <div className="text-center p-6 bg-purple-50 rounded-2xl shadow-lg">
-                <div className="text-4xl font-bold text-purple-600 mb-2">
-                  {groups.reduce((total, group) => total + group.members.length, 0)}
+        <div className="flex flex-row md:flex-row justify-center items-center gap-2">
+          {/* Quiz Stats */}
+          <Card className="shadow-2xl mb-1 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+              <CardTitle className="text-2xl font-bold">تفاصيل الامتحان</CardTitle>
+            </CardHeader>
+            <CardContent className="p-1">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                <div className="text-center p-1 bg-blue-50 rounded-2xl shadow-lg">
+                  <div className="text-4xl font-bold text-blue-600 mb-2">{quiz.questions.length}</div>
+                  <div className="text-gray-700 font-bold text-lg">سؤال</div>
                 </div>
-                <div className="text-gray-700 font-bold text-lg">عضو</div>
-              </div>
-              <div className="text-center p-6 bg-orange-50 rounded-2xl shadow-lg">
-                <div className="text-gray-700 font-bold text-lg">{Math.round(quiz.questions.reduce((sum, q) => sum + q.timeLimit, 0) / 60)} دقيقة</div>
-                <div className="text-4xl font-bold text-orange-600 mb-2">
-                  <div className="text-gray-700 font-bold text-lg">{Math.round(quiz.questions.reduce((sum, q) => sum + q.timeLimit, 0))} ثانية</div>
+                <div className="text-center p-1 bg-green-50 rounded-2xl shadow-lg">
+                  <div className="text-4xl font-bold text-green-600 mb-2">{groups.length}</div>
+                  <div className="text-gray-700 font-bold text-lg">فريق</div>
+                </div>
+                <div className="text-center p-1 bg-purple-50 rounded-2xl shadow-lg">
+                  <div className="text-4xl font-bold text-purple-600 mb-2">
+                    {groups.reduce((total, group) => total + group.members.length, 0)}
+                  </div>
+                  <div className="text-gray-700 font-bold text-lg">عضو</div>
+                </div>
+                <div className="text-center p-1 bg-orange-50 rounded-2xl shadow-lg">
+                  <div className="text-gray-700 font-bold text-lg">{Math.round(quiz.questions.reduce((sum, q) => sum + q.timeLimit, 0) / 60)} دقيقة</div>
+                  <div className="text-4xl font-bold text-orange-600 mb-2">
+                    <div className="text-gray-700 font-bold text-lg">{Math.round(quiz.questions.reduce((sum, q) => sum + q.timeLimit, 0))} ثانية</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
 
-      {/* Start Button */}
-      <div className="text-center mt-3">
-        <Button
-          onClick={handleStartQuiz}
-          disabled={groups.length === 0 || isStarting || gameState?.isActive}
-          className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold sm:px-16 py-4 sm:py-6 rounded-2xl transition-all duration-300 text-xl sm:text-2xl shadow-2xl flex items-center gap-4 mx-auto bg-primary text-primary-foreground px-2"
-          type="button"
-        >
-          <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-          </svg>
-          {isStarting ? "جاري البدء..." : gameState?.isActive ? "تم بدء المسابقة" : "بدء المسابقة"}
-        </Button>
-        {groups.length === 0 && (
-          <p className="text-white/80 mt-6 text-lg sm:text-xl font-medium">يجب أن ينضم فريق واحدة على الأقل قبل البدء</p>
-        )}
-        {isStarting && <p className="text-white/80 mt-6 text-lg sm:text-xl font-medium">يرجى الانتظار أثناء تحضير المسابقة...</p>}
+          {/* Start Button */}
+          <div className="text-center">
+            <Button
+              onClick={handleStartQuiz}
+              disabled={groups.length === 0 || isStarting || gameState?.isActive}
+              className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold rounded-2xl transition-all duration-300 text-xl sm:text-2xl shadow-2xl flex items-center mx-auto bg-primary text-primary-foreground p-1"
+              type="button"
+            >
+              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+              </svg>
+              {isStarting ? "جاري البدء..." : gameState?.isActive ? "تم بدء المسابقة" : "بدء المسابقة"}
+            </Button>
+            {groups.length === 0 && (
+              <p className="text-white/80 mt-1 text-lg sm:text-xl font-medium">يجب أن ينضم فريق واحدة على الأقل قبل البدء</p>
+            )}
+            {isStarting && <p className="text-white/80 mt-1 text-lg sm:text-xl font-medium">يرجى الانتظار أثناء تحضير المسابقة...</p>}
+          </div>
+        </div>
       </div>
     </div>
   )
