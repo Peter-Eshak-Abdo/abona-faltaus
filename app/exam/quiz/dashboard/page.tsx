@@ -228,7 +228,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}>
-                <Card className="shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out rounded-4xl">
+                <Card className="shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out rounded-4xl z-10 relative">
                   <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
                     <CardTitle className="text-2xl mb-1 text-center font-bold">{quiz.title}</CardTitle>
                     <p className="text-blue-100 text-lg">• {quiz.description}</p>
