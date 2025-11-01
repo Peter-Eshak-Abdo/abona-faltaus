@@ -99,6 +99,7 @@ export default function JoinQuizPage() {
         members: validNames.map((name) => name.trim()),
         ...(selectedSaint && !useCustomName && {
           saintName: selectedSaint.name,
+          saintImage: selectedSaint.src,
         }),
       }
 
@@ -276,13 +277,18 @@ export default function JoinQuizPage() {
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: index * 0.05 }}
                           onClick={() => setSelectedSaint(saint)}
-                          className={`p-1 rounded-xl border-2 transition-all duration-300 transform scale-90
+                          className={`p-2 rounded-xl border-2 transition-all duration-300 transform scale-90 flex flex-col items-center gap-1
                           ${isSelected
-                              ? "border-white/60 bg-white/40 scale-100 text-black shadow-lg text-2xl"
+                              ? "border-white/60 bg-white/40 scale-100 text-black shadow-lg"
                               : "border-white/30 hover:border-white/50 hover:bg-white/20 bg-white/10 text-black/80 hover:scale-95"
                             }`}
                         >
-                          <p className={`text-center leading-tight font-bold ${isSelected ? "text-xl" : "text-lg"}`}>
+                          <img
+                            src={saint.src}
+                            alt={saint.name}
+                            className="w-8 h-8 rounded-full object-cover border border-white/50"
+                          />
+                          <p className={`text-center leading-tight font-bold ${isSelected ? "text-sm" : "text-xs"}`}>
                             {saint.name}
                           </p>
                         </motion.button>
