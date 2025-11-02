@@ -221,14 +221,15 @@ export default function DashboardPage() {
             <h3 className="text-2xl font-semibold text-gray-900 mb-3">لا توجد مسابقات حتي الأن</h3>
             <p className="text-gray-600 mb-8 text-lg">دوس على زرار &quot;إنشاء مسابقة جديدة&quot;</p>
           </motion.div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          ) : (
+
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 ">
             {quizzes.map((quiz, index) => (
               <motion.div key={quiz.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}>
-                <Card className="shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out rounded-4xl z-10 relative">
+                <Card className="shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out rounded-4xl">
                   <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
                     <CardTitle className="text-2xl mb-1 text-center font-bold">{quiz.title}</CardTitle>
                     <p className="text-blue-100 text-lg">• {quiz.description}</p>

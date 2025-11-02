@@ -53,6 +53,7 @@ export default function HomeClient() {
     <motion.div className="min-h-screen relative overflow-hidden bg-gradient-to-b">
       <LogoHeader />
       <UserHeader />
+      {/* <div className="mt-8 pt-8 mx-auto flex justify-bottom items-end-safe relative w-full h-[70vh]"> */}
 
       {/* اللوجو الأساسي */}
       <motion.div
@@ -130,7 +131,7 @@ export default function HomeClient() {
           sections.map((section, index) => {
             const angle = (index / sections.length) * 2 * Math.PI;
             const x = Math.cos(angle) * 140 - 60;
-            const y = Math.sin(angle) * 165 - 60;
+            const y = Math.sin(angle) * 165 - 60 + 24;
             return (
               <motion.div
                 key={section.name}
@@ -157,9 +158,10 @@ export default function HomeClient() {
         aria-label="افتح الشات"
         title="افتح الشات"
         type="button"
-      >
+        >
         <svg width="32" height="32" fill="currentColor"><circle cx="16" cy="16" r="16" /></svg>
       </button> */}
+      {/* </div> */}
     </motion.div>
   );
 }
