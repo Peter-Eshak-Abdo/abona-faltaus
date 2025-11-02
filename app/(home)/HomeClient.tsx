@@ -79,7 +79,7 @@ export default function HomeClient() {
         <motion.button
           onClick={toggleMenu}
           whileTap={{ scale: 0.95 }}
-          className="rounded-full bg-transparent p-0 border-0 shadow-none"
+          className="rounded-full bg-transparent shadow-none"
           style={{ outline: "none" }}
         >
           <Image
@@ -115,7 +115,7 @@ export default function HomeClient() {
               <Image
                 src="/images/eagle.png"
                 alt="Eagle"
-                width={250}
+                width={230}
                 height={250}
                 priority
               />
@@ -129,8 +129,8 @@ export default function HomeClient() {
         {showMenu &&
           sections.map((section, index) => {
             const angle = (index / sections.length) * 2 * Math.PI;
-            const x = Math.cos(angle) * 150 - 60;
-            const y = Math.sin(angle) * 150 - 60;
+            const x = Math.cos(angle) * 140 - 60;
+            const y = Math.sin(angle) * 165 - 60;
             return (
               <motion.div
                 key={section.name}
@@ -138,13 +138,13 @@ export default function HomeClient() {
                 animate={{ x, y, opacity: 1 }}
                 exit={{ x: 0, y: 0, opacity: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.08 }}
-                className="absolute left-1/2 top-1/2"
+                className="absolute left-1/2 top-1/2 mx-auto"
                 style={{ transform: "translate(-50%, -50%)" }}
               >
                 <Link href={section.href}>
-                  <div className="bg-purple-700 hover:bg-purple-500 rounded-full w-6 h-6 flex flex-col items-center justify-center text-center shadow-xl shadow-xl/30 inset-shadow-sm border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[10px] sm:text-[12px]">
+                  <div className="bg-purple-700 hover:bg-purple-500 rounded-full w-6 h-5 flex flex-col items-center justify-center text-center shadow-xl shadow-xl/30 inset-shadow-sm border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[10px] sm:text-[12px]">
                     <div className="text-sm">{section.icon}</div>
-                    <div className="leading-tight mt-1 text-sm">{section.name}</div>
+                    <div className="leading-tight text-sm font-bold">{section.name}</div>
                   </div>
                 </Link>
               </motion.div>
