@@ -10,6 +10,7 @@ import type { Question } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 import * as XLSX from "xlsx"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 
 interface CreateQuizDialogProps {
@@ -59,10 +60,10 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
   const downloadTemplate = () => {
     // Create sample data for template
     const sampleData = [
-      ["Question", "Choice1", "Choice2", "Choice3", "Choice4", "Correct"],
-      ["ما هو عاصمة مصر؟", "القاهرة", "الإسكندرية", "أسوان", "المنصورة", "1"],
-      ["كم عدد أيام الأسبوع؟", "5", "6", "7", "8", "3"],
-      ["ما هو لون السماء؟", "أحمر", "أزرق", "أخضر", "أصفر", "2"]
+      ["Question", "Choice1", "Choice2", "Choice3", "Choice4", "Correct", "TimeLimit"],
+      ["ما هو عاصمة مصر؟", "القاهرة", "الإسكندرية", "أسوان", "المنصورة", "1", "20"],
+      ["كم عدد أيام الأسبوع؟", "5", "6", "7", "8", "3", "15"],
+      ["الشمس تشرق من الشرق", "صح", "خطأ", "", "", "1", "10"]
     ]
 
     const worksheet = XLSX.utils.aoa_to_sheet(sampleData)
@@ -86,21 +87,37 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
         const worksheet = workbook.Sheets[sheetName]
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as string[][]
 
-        // Assume first row is headers: Question, Choice1, Choice2, Choice3, Choice4, Correct
+        // Assume first row is headers: Question, Choice1, Choice2, Choice3, Choice4, Correct, TimeLimit
         const importedQuestions: Question[] = []
         for (let i = 1; i < jsonData.length; i++) {
           const row = jsonData[i]
           if (row.length >= 6) {
-            const [questionText, choice1, choice2, choice3, choice4, correctStr] = row
+            const questionText = row[0]?.toString().trim()
+            const choice1 = row[1]?.toString().trim()
+            const choice2 = row[2]?.toString().trim()
+            const choice3 = row[3]?.toString().trim() || ""
+            const choice4 = row[4]?.toString().trim() || ""
+            const correctStr = row[5]?.toString().trim()
+            const timeLimitStr = row[6]?.toString().trim()
+
+            if (!questionText || !choice1 || !choice2 || !correctStr) continue
+
             const correctAnswer = parseInt(correctStr) - 1 // Assuming 1-based index in Excel
-            if (questionText && choice1 && choice2 && choice3 && choice4 && correctAnswer >= 0 && correctAnswer < 4) {
+            const timeLimit = timeLimitStr ? parseInt(timeLimitStr) : 20
+
+            // Detect true/false questions if only 2 choices are provided
+            const isTrueFalse = !choice3 && !choice4
+            const type = isTrueFalse ? "true-false" : "multiple-choice"
+            const choices = isTrueFalse ? ["صح", "خطأ"] : [choice1, choice2, choice3, choice4]
+
+            if (correctAnswer >= 0 && correctAnswer < choices.length) {
               const newQuestion: Question = {
                 id: Date.now().toString() + i,
-                type: "multiple-choice",
+                type,
                 text: questionText,
-                choices: [choice1, choice2, choice3, choice4],
+                choices,
                 correctAnswer,
-                timeLimit: 20,
+                timeLimit,
               }
               importedQuestions.push(newQuestion)
             }
@@ -208,7 +225,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
               aria-label="استيراد ملف Excel للأسئلة"
             />
             <small className="text-black block mt-1">
-              الصيغة: عمود الأسئلة، الاختيار1، الاختيار2، الاختيار3، الاختيار4، الإجابة الصحيحة (رقم 1-4)
+              الصيغة: عمود الأسئلة، الاختيار1، الاختيار2، الاختيار3، الاختيار4، الإجابة الصحيحة (رقم 1-4)، وقت السؤال (بالثواني). للأسئلة صح/خطأ: اترك الاختيار3 والاختيار4 فارغين
             </small>
           </div>
 
@@ -237,114 +254,127 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
             </button>
           </div>
 
-          <AnimatePresence>
-            {questions.map((question, index) => (
-              <motion.div
-                key={question.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="border border-border rounded-lg p-1 mb-1"
-              >
-                <div className="flex justify-between items-start mb-1">
-                  <p className="text-xl font-bold">سؤال {index + 1}</p>
-                  <button type="button" className="inline-flex items-center rounded-md bg-red-600 p-1 text-black hover:bg-red-700" onClick={() => removeQuestion(index)} title="احذف السؤال">
-                    <Trash2 size={20} />
-                    حذف السؤال ال {index + 1}
-                  </button>
-                </div>
+          <Accordion type="multiple" className="w-full">
+            <AnimatePresence>
+              {questions.map((question, index) => (
+                <motion.div
+                  key={question.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                >
+                  <AccordionItem value={question.id} className="border border-border rounded-lg mb-1">
+                    <AccordionTrigger className="px-4 py-2 hover:no-underline">
+                      <div className="flex justify-between items-center w-full">
+                        <p className="text-xl font-bold">سؤال {index + 1}: {question.text.slice(0, 50)}{question.text.length > 50 ? '...' : ''}</p>
+                        <button
+                          type="button"
+                          className="inline-flex items-center rounded-md bg-red-600 p-1 text-black hover:bg-red-700 ml-2"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            removeQuestion(index)
+                          }}
+                          title="احذف السؤال"
+                        >
+                          <Trash2 size={20} />
+                        </button>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-1">
+                        <div>
+                          <label className="block text-lg font-medium mb-1">نوع السؤال</label>
+                          <select
+                            className="w-full rounded-md border border-input bg-background px-1 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            value={question.type}
+                            onChange={(e) =>
+                              updateQuestion(index, {
+                                type: e.target.value as "true-false" | "multiple-choice",
+                                choices: e.target.value === "true-false" ? ["True", "False"] : ["", "", "", ""],
+                                correctAnswer: 0,
+                              })
+                            }
+                            title="نوع السؤال"
+                          >
+                            <option value="multiple-choice">اختيارات</option>
+                            <option value="true-false">صح و غلط</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="flex items-center gap-1 text-lg font-medium mb-1">
+                            <Clock size={16} /> وقت السؤال (بالثواني)
+                          </label>
+                          <input
+                            type="number"
+                            min="5"
+                            max="300"
+                            className="w-full rounded-md border border-input bg-background px-1 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            value={question.timeLimit}
+                            onChange={(e) =>
+                              updateQuestion(index, { timeLimit: Number.parseInt(e.target.value) || 20 })
+                            }
+                            title="وقت السؤال (بالثواني)"
+                          />
+                        </div>
+                      </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-1">
-                  <div>
-                    <label className="block text-lg font-medium mb-1">نوع السؤال</label>
-                    <select
-                      className="w-full rounded-md border border-input bg-background px-1 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                      value={question.type}
-                      onChange={(e) =>
-                        updateQuestion(index, {
-                          type: e.target.value as "true-false" | "multiple-choice",
-                          choices: e.target.value === "true-false" ? ["True", "False"] : ["", "", "", ""],
-                          correctAnswer: 0,
-                        })
-                      }
-                      title="نوع السؤال"
-                    >
-                      <option value="multiple-choice">اختيارات</option>
-                      <option value="true-false">صح و غلط</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-1 text-lg font-medium mb-1">
-                      <Clock size={16} /> وقت السؤال (بالثواني)
-                    </label>
-                    <input
-                      type="number"
-                      min="5"
-                      max="300"
-                      className="w-full rounded-md border border-input bg-background px-1 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                      value={question.timeLimit}
-                      onChange={(e) =>
-                        updateQuestion(index, { timeLimit: Number.parseInt(e.target.value) || 20 })
-                      }
-                      title="وقت السؤال (بالثواني)"
-                    />
-                  </div>
-                </div>
+                      <div className="mb-1">
+                        <label className="block text-lg font-medium mb-1">السؤال</label>
+                        <textarea
+                          className="w-full resize-none rounded-md border border-input bg-background px-1 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          rows={2}
+                          value={question.text}
+                          onChange={(e) => updateQuestion(index, { text: e.target.value })}
+                          title="السؤال"
+                        />
+                      </div>
 
-                <div className="mb-1">
-                  <label className="block text-lg font-medium mb-1">السؤال</label>
-                  <textarea
-                    className="w-full resize-none rounded-md border border-input bg-background px-1 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    rows={2}
-                    value={question.text}
-                    onChange={(e) => updateQuestion(index, { text: e.target.value })}
-                    title="السؤال"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-lg font-medium mb-1">الاختيارات</label>
-                  {question.choices.map((choice, choiceIndex) => (
-                    <div key={choiceIndex} className="flex items-center gap-1 mb-1">
-                      <div
-                        className="rounded-full w-4 h-4"
-                        style={{
-                          backgroundColor:
-                            choiceIndex === 0
-                              ? "red"
-                              : choiceIndex === 1
-                                ? "green"
-                                : choiceIndex === 2
-                                  ? "blue"
-                                  : "yellow",
-                        }}
-                      />
-                      <input
-                        type="text"
-                        className="flex-1 rounded-md border border-input bg-background px-1 py-0.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        value={choice}
-                        placeholder={`اختيار ${choiceIndex + 1}`}
-                        onChange={(e) => updateChoice(index, choiceIndex, e.target.value)}
-                        disabled={question.type === "true-false"}
-                      />
-                      <button
-                        type="button"
-                        className={`inline-flex items-center rounded-md p-1 text-lg ${question.correctAnswer === choiceIndex
-                          ? "bg-green-600 text-green-500 hover:bg-green-700 border border-green-500"
-                          : "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                          }`}
-                        onClick={() => updateQuestion(index, { correctAnswer: choiceIndex })}
-                        title="اختيار الصحيح"
-                      >
-                        <Check size={24} />
-                      </button>
-                    </div>
-                  ))}
-                  <small className="text-muted-foreground">اضغط على (صح) لاختيار الاجابة الصحيحة</small>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                      <div>
+                        <label className="block text-lg font-medium mb-1">الاختيارات</label>
+                        {question.choices.map((choice, choiceIndex) => (
+                          <div key={choiceIndex} className="flex items-center gap-1 mb-1">
+                            <div
+                              className="rounded-full w-4 h-4"
+                              style={{
+                                backgroundColor:
+                                  choiceIndex === 0
+                                    ? "red"
+                                    : choiceIndex === 1
+                                      ? "green"
+                                      : choiceIndex === 2
+                                        ? "blue"
+                                        : "yellow",
+                              }}
+                            />
+                            <input
+                              type="text"
+                              className="flex-1 rounded-md border border-input bg-background px-1 py-0.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                              value={choice}
+                              placeholder={`اختيار ${choiceIndex + 1}`}
+                              onChange={(e) => updateChoice(index, choiceIndex, e.target.value)}
+                              disabled={question.type === "true-false"}
+                            />
+                            <button
+                              type="button"
+                              className={`inline-flex items-center rounded-md p-1 text-lg ${question.correctAnswer === choiceIndex
+                                ? "bg-green-600 text-green-500 hover:bg-green-700 border border-green-500"
+                                : "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                                }`}
+                              onClick={() => updateQuestion(index, { correctAnswer: choiceIndex })}
+                              title="اختيار الصحيح"
+                            >
+                              <Check size={24} />
+                            </button>
+                          </div>
+                        ))}
+                        <small className="text-muted-foreground">اضغط على (صح) لاختيار الاجابة الصحيحة</small>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </Accordion>
 
           {questions.length === 0 && <p className="text-center text-muted-foreground">مفيش اي سؤال مضاف</p>}
         </div>
