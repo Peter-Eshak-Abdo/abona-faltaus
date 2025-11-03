@@ -168,11 +168,11 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
   if (!open) return null
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center md:top-10 top-1 p-1 z-[100]">
-      <div className="bg-white dark:bg-black rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl  max-w-8xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center md:top-2 p-1 z-[100]">
+      <div className="bg-white dark:bg-black rounded-2xl p-1 border border-white/30 dark:border-white/20 shadow-2xl  max-w-8xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-1">
           <h5 className="text-lg font-semibold">انشئ المسابقة الجديدة</h5>
-          <button type="button" className="text-gray-500 hover:text-gray-700" onClick={() => onOpenChange(false)} title="Close">
+          <button type="button" className="text-red-500 hover:text-red-700" onClick={() => onOpenChange(false)} title="Close">
             <X size={24} />
           </button>
         </div>
@@ -264,12 +264,12 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <AccordionItem value={question.id} className="border border-border rounded-lg mb-1">
-                    <AccordionTrigger className="px-4 py-2 hover:no-underline">
+                    <AccordionTrigger className="p-1 hover:no-underline">
                       <div className="flex justify-between items-center w-full">
-                        <p className="text-xl font-bold">سؤال {index + 1}: {question.text.slice(0, 50)}{question.text.length > 50 ? '...' : ''}</p>
+                        <p className="text-xl font-bold">سؤال {index + 1}: {question.text.slice(0, 25)}{question.text.length > 25 ? '...' : ''}</p>
                         <button
                           type="button"
-                          className="inline-flex items-center rounded-md bg-red-600 p-1 text-black hover:bg-red-700 ml-2"
+                          className="inline-flex items-center rounded-md bg-red-600 p-1 text-black hover:bg-red-700 ml-1"
                           onClick={(e) => {
                             e.stopPropagation()
                             removeQuestion(index)
@@ -280,7 +280,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                         </button>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-4">
+                    <AccordionContent className="px-1 pb-1">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-1">
                         <div>
                           <label className="block text-lg font-medium mb-1">نوع السؤال</label>
