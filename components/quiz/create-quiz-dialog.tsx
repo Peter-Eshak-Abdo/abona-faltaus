@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "@/lib/firebase"
 import { createQuiz } from "@/lib/firebase-utils"
 import { Plus, Trash2, Check, Shuffle, Clock, X, Upload, Download } from "lucide-react"
-import type { Question } from "@/types/quiz"
+import type { Question, Quiz } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 import * as XLSX from "xlsx"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -17,9 +17,10 @@ interface CreateQuizDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onQuizCreated: () => void
+  editQuiz?: Quiz | null
 }
 
-export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQuizDialogProps) {
+export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }: CreateQuizDialogProps) {
   const [user] = useAuthState(auth)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -27,7 +28,26 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
   const [shuffleQuestions, setShuffleQuestions] = useState(false)
   const [shuffleChoices, setShuffleChoices] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!open) {
+      setTitle("")
+      setDescription("")
+      setQuestions([])
+      setShuffleQuestions(false)
+      setShuffleChoices(false)
+      setIsEditing(false)
+    } else if (editQuiz) {
+      setTitle(editQuiz.title)
+      setDescription(editQuiz.description)
+      setQuestions(editQuiz.questions)
+      setShuffleQuestions(editQuiz.shuffleQuestions || false)
+      setShuffleChoices(editQuiz.shuffleChoices || false)
+      setIsEditing(true)
+    }
+  }, [open, editQuiz])
 
   const addQuestion = () => {
     const newQuestion: Question = {
@@ -133,28 +153,78 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
     reader.readAsArrayBuffer(file)
   }
 
-  const handleSubmit = async () => {
-    if (!user || !title.trim() || questions.length === 0) return
+  const validateAndSubmit = async () => {
+    if (!user) {
+      alert("يجب تسجيل الدخول أولاً")
+      return
+    }
+    if (!title.trim()) {
+      alert("يجب إدخال اسم المسابقة")
+      return
+    }
+    if (questions.length === 0) {
+      alert("يجب إضافة سؤال واحد على الأقل")
+      return
+    }
+
+    // Check for empty question texts
+    const emptyTextQuestions = questions
+      .map((q, index) => ({ q, index }))
+      .filter(({ q }) => !q.text.trim())
+      .map(({ index }) => index + 1)
+
+    if (emptyTextQuestions.length > 0) {
+      alert(`يجب إدخال نص للأسئلة التالية: ${emptyTextQuestions.join(', ')}`)
+      return
+    }
+
+    // Check for incomplete multiple choice questions
+    const incompleteChoiceQuestions = questions
+      .map((q, index) => ({ q, index }))
+      .filter(({ q }) => q.type !== "true-false" && !q.choices.every((c) => c.trim()))
+      .map(({ index }) => index + 1)
+
+    if (incompleteChoiceQuestions.length > 0) {
+      alert(`يجب إدخال جميع الاختيارات للأسئلة متعددة الاختيارات التالية: ${incompleteChoiceQuestions.join(', ')}`)
+      return
+    }
+
     setIsSubmitting(true)
     try {
-      await createQuiz({
-        title: title.trim(),
-        description: description.trim(),
-        createdBy: user.uid,
-        questions,
-        isActive: false,
-        shuffleQuestions,
-        shuffleChoices,
-      })
+      if (isEditing && editQuiz) {
+        // Update existing quiz
+        const { updateQuiz } = await import("@/lib/firebase-utils")
+        await updateQuiz(editQuiz.id, {
+          title: title.trim(),
+          description: description.trim(),
+          questions,
+          shuffleQuestions,
+          shuffleChoices,
+        })
+        alert("تم تحديث المسابقة بنجاح!")
+      } else {
+        // Create new quiz
+        await createQuiz({
+          title: title.trim(),
+          description: description.trim(),
+          createdBy: user.uid,
+          questions,
+          isActive: false,
+          shuffleQuestions,
+          shuffleChoices,
+        })
+      }
 
       setTitle("")
       setDescription("")
       setQuestions([])
       setShuffleQuestions(false)
       setShuffleChoices(false)
+      setIsEditing(false)
       onQuizCreated()
     } catch (error) {
-      console.error("Error creating quiz:", error)
+      console.error("Error saving quiz:", error)
+      alert(`حدث خطأ في ${isEditing ? 'تحديث' : 'إنشاء'} المسابقة. حاول مرة أخرى.`)
     } finally {
       setIsSubmitting(false)
     }
@@ -165,13 +235,13 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
     questions.length > 0 &&
     questions.every((q) => q.text.trim() && (q.type === "true-false" || q.choices.every((c) => c.trim())))
 
-  if (!open) return null
+  if (typeof window === 'undefined' || !open) return null
 
   return createPortal(
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center md:top-2 p-1 z-[100]">
       <div className="bg-white dark:bg-black rounded-2xl p-1 border border-white/30 dark:border-white/20 shadow-2xl  max-w-8xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-1">
-          <h5 className="text-lg font-semibold">انشئ المسابقة الجديدة</h5>
+          <h5 className="text-lg font-semibold">{isEditing ? 'تعديل المسابقة' : 'انشئ المسابقة الجديدة'}</h5>
           <button type="button" className="text-red-500 hover:text-red-700" onClick={() => onOpenChange(false)} title="Close">
             <X size={24} />
           </button>
@@ -264,21 +334,19 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <AccordionItem value={question.id} className="border border-border rounded-lg mb-1">
-                    <AccordionTrigger className="p-1 hover:no-underline">
-                      <div className="flex justify-between items-center w-full">
-                        <p className="text-xl font-bold">سؤال {index + 1}: {question.text.slice(0, 25)}{question.text.length > 25 ? '...' : ''}</p>
-                        <button
-                          type="button"
-                          className="inline-flex items-center rounded-md bg-red-600 p-1 text-black hover:bg-red-700 ml-1"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            removeQuestion(index)
-                          }}
-                          title="احذف السؤال"
-                        >
-                          <Trash2 size={20} />
-                        </button>
-                      </div>
+                    <div className="flex justify-between items-center p-0.5 border-b border-border">
+                      <p className="text-xl font-bold flex-1">سؤال {index + 1}: {question.text.slice(0, 50)}{question.text.length > 50 ? '...' : ''}</p>
+                      <button
+                        type="button"
+                        className="inline-flex items-center rounded-md bg-red-600 px-1 text-black hover:bg-red-700 ml-1"
+                        onClick={() => removeQuestion(index)}
+                        title="احذف السؤال"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                    <AccordionTrigger className="px-1 hover:no-underline">
+                      <span className="text-lg font-medium">تفاصيل السؤال</span>
                     </AccordionTrigger>
                     <AccordionContent className="px-1 pb-1">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-1">
@@ -379,11 +447,11 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated }: CreateQu
           {questions.length === 0 && <p className="text-center text-muted-foreground">مفيش اي سؤال مضاف</p>}
         </div>
         <div className="flex justify-end gap-1 mt-1">
-          <button type="button" className="p-1 bg-red-600 border border-red-900 text-red-800 rounded-md hover:bg-red-300" onClick={() => onOpenChange(false)} title="Cancel">
+          <button type="button" className="p-1 bg-red-900 border border-red-900 text-red-900 rounded-md hover:text-red-600 hover:border-red-600 hover:font-bold" onClick={() => onOpenChange(false)} title="Cancel">
             الغاء
           </button>
-          <button type="button" className="p-1 bg-blue-600 border border-blue-900 text-blue-800 rounded-lg font-extrabolder text-xl hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none" onClick={handleSubmit} disabled={!isValid || isSubmitting} title="Create Quiz">
-            {isSubmitting ? "جاري الانشاء ..." : "إنشاء مسابقة"}
+          <button type="button" className="p-1 bg-blue-600 border border-blue-900 text-blue-800 rounded-lg font-extrabolder text-xl hover:bg-primary/90" onClick={validateAndSubmit} disabled={isSubmitting} title={isEditing ? "Update Quiz" : "Create Quiz"}>
+            {isSubmitting ? (isEditing ? "جاري التحديث ..." : "جاري الانشاء ...") : (isEditing ? "تحديث المسابقة" : "إنشاء مسابقة")}
           </button>
         </div>
       </div>

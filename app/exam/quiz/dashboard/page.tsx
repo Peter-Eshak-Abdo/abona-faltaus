@@ -18,6 +18,7 @@ export default function DashboardPage() {
   const [user, loading, authError] = useAuthState(auth)
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null)
   const [loadingQuizzes, setLoadingQuizzes] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [indexUrl, setIndexUrl] = useState<string | null>(null)
@@ -111,8 +112,8 @@ export default function DashboardPage() {
   const displayName = customDisplayName || user?.displayName || "اهلا بك";
 
   const handleEditQuiz = (quiz: Quiz) => {
-    // TODO: Implement edit functionality
-    alert("ميزة التعديل قيد التطوير")
+    setEditingQuiz(quiz)
+    setIsCreateDialogOpen(true)
   }
 
   const handleDeleteQuiz = async (quizId: string) => {
@@ -165,11 +166,16 @@ export default function DashboardPage() {
               </div>
               <CreateQuizDialog
                 open={isCreateDialogOpen}
-                onOpenChange={setIsCreateDialogOpen}
+                onOpenChange={(open) => {
+                  setIsCreateDialogOpen(open)
+                  if (!open) setEditingQuiz(null)
+                }}
                 onQuizCreated={() => {
                   setIsCreateDialogOpen(false)
+                  setEditingQuiz(null)
                   loadUserQuizzes()
                 }}
+                editQuiz={editingQuiz}
               />
             </div>
           </CardHeader>
@@ -221,7 +227,7 @@ export default function DashboardPage() {
             <h3 className="text-2xl font-semibold text-gray-900 mb-3">لا توجد مسابقات حتي الأن</h3>
             <p className="text-gray-600 mb-8 text-lg">دوس على زرار &quot;إنشاء مسابقة جديدة&quot;</p>
           </motion.div>
-          ) : (
+        ) : (
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 ">
             {quizzes.map((quiz, index) => (

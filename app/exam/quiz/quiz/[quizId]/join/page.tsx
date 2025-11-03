@@ -14,7 +14,7 @@ export default function JoinQuizPage() {
   const [quiz, setQuiz] = useState<Quiz | null>(null)
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [groupName, setGroupName] = useState("")
-  const [memberCount, setMemberCount] = useState(2)
+  const [memberCount, setMemberCount] = useState(5)
   const [memberNames, setMemberNames] = useState<string[]>(["", ""])
   const [selectedSaint, setSelectedSaint] = useState<Saint | null>(null)
   const [useCustomName, setUseCustomName] = useState(false)
