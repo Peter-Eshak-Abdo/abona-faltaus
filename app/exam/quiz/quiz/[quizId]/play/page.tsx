@@ -102,7 +102,7 @@ export default function PlayQuizPageTailwind() {
     }
   }, [quizId, gameState?.currentQuestionIndex])
 
-  // question-only timer
+  // question-only timer - تسريع لـ 3 ثوان بدلاً من 5
   useEffect(() => {
     if (gameState?.showQuestionOnly && gameState.isActive) {
       const t = setInterval(() => {
@@ -116,7 +116,7 @@ export default function PlayQuizPageTailwind() {
       }, 1000)
       return () => clearInterval(t)
     } else {
-      setQuestionOnlyTimeLeft(5)
+      setQuestionOnlyTimeLeft(3)
     }
   }, [gameState?.showQuestionOnly, gameState?.isActive, gameState?.currentQuestionIndex])
 
@@ -125,7 +125,7 @@ export default function PlayQuizPageTailwind() {
     if (!gameState?.questionStartTime || gameState.showResults || hasAnswered || gameState.showQuestionOnly) return
 
     const start = gameState.questionStartTime.getTime()
-    const timeLimit = gameState.currentQuestionTimeLimit || 30
+    const timeLimit = gameState.currentQuestionTimeLimit || 20
 
     const t = setInterval(() => {
       const elapsed = (Date.now() - start) / 1000
@@ -206,14 +206,14 @@ export default function PlayQuizPageTailwind() {
     return (
       <div className="min-h-screen p-1 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600">
         <div className="max-w-8xl mx-auto">
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-8">
-            <h1 className="text-5xl font-extrabold text-white mb-4">🎉 انتهت المسابقة!</h1>
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-1">
+            <h1 className="text-5xl font-extrabold text-white mb-1">🎉 انتهت المسابقة!</h1>
             <p className="text-lg text-white/90">شكراً لمشاركتكم — النتائج النهائية أدناه</p>
           </motion.div>
 
           <div className="grid grid-cols-1 gap-1">
             {leaderboard.slice(0, 3).map((entry, idx) => (
-              <Card key={entry.groupId} className={cn("p-6 rounded-2xl", idx === 0 ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : "bg-gradient-to-r from-orange-300 to-red-400 text-white")}>
+              <Card key={entry.groupId} className={cn("p-1 rounded-2xl", idx === 0 ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : "bg-gradient-to-r from-orange-300 to-red-400 text-white")}>
                 <div className="flex items-center gap-1">
                   <div className="text-4xl font-bold">{idx + 1}</div>
                   <div className="flex-1">
@@ -345,21 +345,21 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
-  // main playing UI
+  // main playing UI - تصميم أصغر
   return (
     <div className="min-h-screen p-1 bg-gradient-to-br from-blue-600 to-purple-700">
       <div className="max-w-8xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-6">
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-1">
           <div className="flex flex-col md:flex-row items-center justify-between gap-1 mb-1">
-            <div className="bg-white p-1 rounded-full font-bold">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
-            <div className="flex items-center gap-1 bg-orange-500 text-white p-1 rounded-full font-bold">
-              <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" /></svg>
+            <div className="bg-white p-1 rounded-full font-bold text-sm">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
+            <div className="flex items-center gap-1 bg-orange-500 text-white p-1 rounded-full font-bold text-sm">
+              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" /></svg>
               {Math.ceil(timeLeft)} ث
             </div>
           </div>
 
-          <div className="text-white text-2xl font-bold">{currentGroup.groupName}</div>
-          <div className="text-white/80">{currentGroup.members.join(" || ")}</div>
+          <div className="text-white text-lg font-bold">{currentGroup.groupName}</div>
+          <div className="text-white/80 text-sm">{currentGroup.members.join(" || ")}</div>
         </motion.div>
 
         {/* Progress */}
@@ -372,14 +372,14 @@ export default function PlayQuizPageTailwind() {
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
           <Card className="overflow-hidden">
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-1 text-center">
-              <h2 className="text-xl font-bold">{currentQuestion.text}</h2>
+              <h2 className="text-lg font-bold">{currentQuestion.text}</h2>
             </div>
             <div className="p-1">
               <div className="grid grid-cols-1 gap-1">
                 <AnimatePresence>
                   {currentQuestion.choices.map((choice, idx) => (
-                    <motion.button key={idx} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.04 }} onClick={() => handleAnswerSelect(idx)} disabled={hasAnswered || timeLeft === 0} className={cn("p-1 rounded-xl flex items-center gap-1 text-right w-full text-white font-semibold shadow-lg transition-transform transform", (hasAnswered || timeLeft === 0) ? "opacity-60 cursor-not-allowed scale-100" : `${getChoiceHover(idx)} hover:scale-105 active:scale-95`, selectedAnswer === idx ? "ring-4 ring-white" : "", getChoiceColor(idx))}>
-                      <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center font-bold text-2xl">{getChoiceLabel(idx)}</div>
+                    <motion.button key={idx} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.04 }} onClick={() => handleAnswerSelect(idx)} disabled={hasAnswered || timeLeft === 0} className={cn("p-1 rounded-lg flex items-center gap-1 text-right w-full text-white font-semibold shadow-md transition-transform transform text-sm", (hasAnswered || timeLeft === 0) ? "opacity-60 cursor-not-allowed scale-100" : `${getChoiceHover(idx)} hover:scale-105 active:scale-95`, selectedAnswer === idx ? "ring-4 ring-white" : "", getChoiceColor(idx))}>
+                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg">{getChoiceLabel(idx)}</div>
                       <div className="flex-1 text-right">{choice}</div>
                     </motion.button>
                   ))}
@@ -388,8 +388,8 @@ export default function PlayQuizPageTailwind() {
 
               {hasAnswered && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-1 p-1 bg-blue-50 rounded-lg text-center">
-                  <div className="text-blue-800 font-bold">تم إرسال الإجابة!</div>
-                  <div className="text-blue-600">في انتظار النتائج...</div>
+                  <div className="text-blue-800 font-bold text-sm">تم إرسال الإجابة!</div>
+                  <div className="text-blue-600 text-xs">في انتظار النتائج...</div>
                 </motion.div>
               )}
             </div>

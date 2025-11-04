@@ -1,10 +1,18 @@
-# TODO: Add OneSignal Notifications
+# Quiz Host Page Design Updates
 
-- [x] Edit app/layout.tsx to add OneSignal SDK script and initialization code in the <head> section
-- [x] Run the development server to test the integration
-- [x] Verify notifications work by checking browser console and OneSignal dashboard
-- [x] Update sendDailyVerseNotification to use random verse from daily-verses.ts and change language to Arabic
-- [x] Add badge functionality for unread notifications count
-- [x] Create API endpoint for sending notifications
-- [x] Update notification sending to use external_user_id instead of player_ids
-- [x] Remove unnecessary player ID storage in OneSignal component
+## Issues to Fix:
+
+1. ✅ Change host page design to glassy style like settings page
+2. ✅ Remove excessive colors - only choices should have background colors
+3. ✅ First choice should be green, second red, third blue, fourth yellow (corrected order)
+4. ✅ Remove direct responses - show choice statistics first, then current ranking
+5. ✅ Make ranking take full screen when shown
+
+## Implementation Plan:
+
+- [x] Update host page background to gray-50 with glassy elements
+- [x] Remove colorful backgrounds from header and stats
+- [x] Apply specific colors to choices: green, red, blue, yellow
+- [x] Change response display to show choice statistics instead of direct responses
+- [x] Make leaderboard display full screen when active
+- [x] Update spacing and padding for better glassy design
