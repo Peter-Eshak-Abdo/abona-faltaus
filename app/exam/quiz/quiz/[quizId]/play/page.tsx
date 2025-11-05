@@ -145,6 +145,24 @@ export default function PlayQuizPageTailwind() {
     }
   }, [showResults, showLeaderboard, gameState?.isActive])
 
+    useEffect(() => {
+    if (!gameState) return
+    if (!gameState.isActive) {
+      // نعيد تأكيد الترتيب النهائي عند الانتهاء
+      const lb = groups
+        .map((g) => ({
+          groupId: g.id,
+          groupName: g.groupName,
+          members: g.members,
+          score: g.score || 0,
+          saintName: g.saintName,
+          saintImage: g.saintImage,
+        }))
+        .sort((a, b) => b.score - a.score)
+      setLeaderboard(lb)
+    }
+  }, [gameState?.isActive, groups])
+
   const loadQuiz = async () => {
     try {
       const data = await getQuiz(quizId)
@@ -183,12 +201,12 @@ export default function PlayQuizPageTailwind() {
   }
 
   const getChoiceColor = (index: number) => {
-    const base = ["bg-red-500", "bg-green-500", "bg-blue-500", "bg-yellow-500"]
+    const base = ["bg-green-500", "bg-red-500", "bg-blue-500", "bg-yellow-500"]
     return base[index] ?? "bg-gray-500"
   }
 
   const getChoiceHover = (index: number) => {
-    const h = ["hover:bg-red-600", "hover:bg-green-600", "hover:bg-blue-600", "hover:bg-yellow-600"]
+    const h = ["hover:bg-green-600", "hover:bg-red-600", "hover:bg-blue-600", "hover:bg-yellow-600"]
     return h[index] ?? "hover:bg-gray-600"
   }
 

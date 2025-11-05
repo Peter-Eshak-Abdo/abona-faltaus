@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import { useState, useEffect } from "react"
@@ -18,11 +16,16 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [timeLeft, setTimeLeft] = useState(30)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [previousLeaderboard, setPreviousLeaderboard] = useState<LeaderboardEntry[]>([])
-  const [showingResults, setShowingResults] = useState(false)
   const [showScoreAnimation, setShowScoreAnimation] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState(5)
+
+  // displayPhase: controls what right-panel shows while showResults === true
+  // 'idle' -> during question (we won't show choice breakdown)
+  // 'stats' -> show response stats (short)
+  // 'leaderboard' -> show leaderboard
+  const [displayPhase, setDisplayPhase] = useState<"idle" | "stats" | "leaderboard">("idle")
 
   const currentQuestion = quiz.questions[gameState.currentQuestionIndex]
   const isLastQuestion = gameState.currentQuestionIndex >= quiz.questions.length - 1
@@ -46,7 +49,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }, [gameState.showQuestionOnly, gameState.isActive, gameState.currentQuestionIndex])
 
-  // مؤقت الإجابة
+  // مؤقت الإجابة (host) — يعتمد على الوقت بالبداية
   useEffect(() => {
     if (!gameState.questionStartTime || gameState.showResults || gameState.showQuestionOnly) return
 
@@ -66,42 +69,55 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     return () => clearInterval(timer)
   }, [gameState.questionStartTime, gameState.showResults, gameState.showQuestionOnly, currentQuestion?.timeLimit])
 
-  // استطلاع الردود كل 500ms لتحسين الأداء
+  // Poll responses (server-side firestore read) — poll to update count & end early if all groups answered
   useEffect(() => {
     if (!gameState.isActive || gameState.showQuestionOnly) return
 
+    let cancelled = false
     const pollResponses = async () => {
       try {
         const questionResponses = await getQuestionResponsesOnce(gameState.quizId, gameState.currentQuestionIndex)
+        if (cancelled) return
         setResponses(questionResponses)
 
         // إذا أجاب جميع الفرق، أنهِ السؤال مبكراً
         if (questionResponses.length >= groups.length && !gameState.showResults) {
           handleTimeUp()
         }
-      } catch (error) {
-        console.error("Error polling responses:", error)
+      } catch (err) {
+        console.error("Error polling responses:", err)
       }
     }
 
     const pollInterval = setInterval(pollResponses, 500)
     pollResponses()
 
-    return () => clearInterval(pollInterval)
+    return () => {
+      cancelled = true
+      clearInterval(pollInterval)
+    }
   }, [gameState.quizId, gameState.currentQuestionIndex, gameState.isActive, gameState.showQuestionOnly, groups.length, gameState.showResults])
 
+  // عندما يقوم السيرفر بتفعيل showResults نعرض أولاً إحصائيات (stats) ثم ننتقل للـ leaderboard
   useEffect(() => {
     if (gameState.showResults) {
-      calculateLeaderboard()
-      setShowingResults(true)
+      // عرض الإحصائيات أولاً
+      setDisplayPhase("stats")
+      // بعد فترة قصيرة ننتقل للترتيب
+      const t = setTimeout(() => {
+        calculateLeaderboard()
+        setDisplayPhase("leaderboard")
+        // تشغيل أنيميشن النقاط
+        setTimeout(() => setShowScoreAnimation(true), 150)
+      }, 2800) // عرض الإحصائيات ~2.8s (يمكن تعديل المدة)
 
-      setTimeout(() => {
-        setShowScoreAnimation(true)
-      }, 1000)
+      return () => clearTimeout(t)
     } else {
-      setShowingResults(false)
+      // أثناء السؤال أو قبل النتائج: عد للـ idle
+      setDisplayPhase("idle")
       setShowScoreAnimation(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState.showResults, responses])
 
   const handleTimeUp = async () => {
@@ -139,18 +155,15 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       groupScores.set(group.id, group.score || 0)
     })
 
-    // نظام النقاط الجديد: 1000 نقطة تقل تدريجياً مع الوقت
+    // نظام النقاط: 1000 تقل مع الزمن (كما عندك) — نطبق على الإجابات الصحيحة فقط
     const correctResponses = responses.filter((r) => r.isCorrect).sort((a, b) => a.responseTime - b.responseTime)
     const newScores: { groupId: string; score: number }[] = []
 
     correctResponses.forEach((response) => {
-      // حساب النقاط: 1000 - (وقت الاستجابة بالثانية * 100) لتقليل تدريجي
-      const points = Math.max(Math.round(1000 - (response.responseTime * 100)), 100) // أقل نقاط 100
-
+      const points = Math.max(Math.round(1000 - (response.responseTime * 100)), 100)
       const currentScore = groupScores.get(response.groupId) || 0
       const newScore = currentScore + points
       groupScores.set(response.groupId, newScore)
-
       newScores.push({ groupId: response.groupId, score: newScore })
     })
 
@@ -191,6 +204,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       await nextQuestion(gameState.quizId, gameState.currentQuestionIndex + 1)
       setResponses([])
       setTimeLeft(quiz.questions[gameState.currentQuestionIndex + 1]?.timeLimit || 20)
+      setDisplayPhase("idle")
     } catch (error: any) {
       console.error("Error moving to next question:", error)
       setError(error.message || "فشل في الانتقال للسؤال التالي")
@@ -199,6 +213,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }
 
+  // ألوان الاختيارات: ترتيب ثابت (أزرق، أصفر، أخضر، أحمر)
   const getChoiceColor = (index: number) => {
     const colors = ["bg-green-500", "bg-red-500", "bg-blue-500", "bg-yellow-500"]
     return colors[index] || "bg-gray-500"
@@ -220,50 +235,40 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     return previousPos - currentPos
   }
 
+  // --- UI ---
   if (!gameState.isActive) {
+    // عرض النتائج النهائية على شاشة الـ Host (podium)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-700 p-1">
-        <div className="w-full max-w-8xl text-center bg-white rounded-2xl shadow-2xl p-1">
+        <div className="w-full max-w-7xl text-center bg-white rounded-2xl shadow-2xl p-1">
           <div className="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-1">
             <svg className="w-12 h-12 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
             </svg>
           </div>
-          <h2 className="text-4xl font-bold mb-1 text-gray-900">انتهى المسابقة!</h2>
+          <h2 className="text-4xl font-bold mb-1 text-gray-900">انتهت المسابقة!</h2>
 
-          <div className="space-y-1">
+          <div className="grid grid-cols-1 gap-1">
             {leaderboard.slice(0, 3).map((entry, index) => (
               <motion.div
                 key={entry.groupId}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.3 }}
-                className={`p-1 rounded-2xl transition-all duration-300 ${index === 0
-                  ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-2xl"
-                  : index === 1
-                    ? "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 shadow-xl"
-                    : "bg-gradient-to-r from-orange-300 to-red-400 text-white shadow-lg"
-                  }`}
+                animate={{ opacity: 1, y: 0, scale: index === 0 ? 1.03 : 1 }}
+                transition={{ delay: index * 0.2 }}
+                className={`p-1 rounded-2xl ${index === 0 ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : "bg-gradient-to-r from-orange-300 to-red-400 text-white"}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-3xl ${index === 0 ? "bg-white text-yellow-500" : "bg-white/20"
-                      }`}>
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-3xl ${index === 0 ? "bg-white text-yellow-500" : "bg-white/20"}`}>
                       {index + 1}
                     </div>
-                    {entry.saintImage && (
-                      <img
-                        src={entry.saintImage || "/placeholder.svg"}
-                        alt={entry.saintName}
-                        className="w-16 h-16 rounded-full border-4 border-white object-cover"
-                      />
-                    )}
+                    {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-16 h-16 rounded-full border-4 border-white object-cover" />}
                     <div className="text-right">
-                      <h3 className="font-bold text-3xl">{entry.groupName}</h3>
+                      <h3 className="font-bold text-2xl">{entry.groupName}</h3>
                       <p className="text-lg opacity-90">{entry.members.join(" || ")}</p>
                     </div>
                   </div>
-                  <div className="text-4xl font-bold">{entry.score.toLocaleString()}</div>
+                  <div className="text-3xl font-bold">{entry.score.toLocaleString()}</div>
                 </div>
               </motion.div>
             ))}
@@ -273,31 +278,25 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     )
   }
 
-  // إظهار السؤال فقط لمدة 5 ثوان
+  // إظهار السؤال فقط (fullscreen) — موجود عندك مسبقاً
   if (gameState.showQuestionOnly) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-700 p-1">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-1 bg-white rounded-2xl p-1 shadow-xl">
+          <div className="flex justify-between items-center mb-4 bg-white rounded-2xl p-1">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
-              </h1>
+              <h1 className="text-3xl font-bold text-gray-900">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</h1>
               <p className="text-gray-600 text-lg">{quiz.title}</p>
             </div>
             <div className="flex items-center gap-1 bg-purple-100 p-1 rounded-xl">
               <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
               </svg>
-              <span className="font-bold text-purple-600">{questionOnlyTimeLeft}ث</span>
+              <span className="font-bold text-purple-600">{questionOnlyTimeLeft} ث</span>
             </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl shadow-2xl overflow-hidden"
-          >
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl shadow-2xl overflow-hidden">
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-1 text-center">
               <h2 className="text-4xl font-bold mb-1">استعدوا للسؤال!</h2>
               <p className="text-6xl font-bold mb-1">{currentQuestion.text}</p>
@@ -309,275 +308,117 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     )
   }
 
+  // العرض الطبيعي: يمين الصفحة إما إحصائيات (stats) أو اللوحة (leaderboard)
   return (
     <div className="min-h-screen bg-gray-50 p-1">
-      <div className="max-w-8xl mx-auto">
-        {/* Header - تصميم glassy */}
-        <div className="items-center mb-1 bg-white/80 backdrop-blur-sm rounded-2xl p-1 shadow-lg border border-white/20">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div>
-              {/* <h1 className="text-2xl font-bold text-gray-900">
-                السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
-              </h1> */}
-              <img src={"/images/alnosor/logo.jpeg"} alt="Logo"
-                className="w-8 rounded-lg shadow-lg mb-1 h-6" />
-            </div>
-            <p className="text-gray-600 text-4xl font-extrabold">{quiz.title}</p>
-            <div className="flex items-center mt-1 md:mt-0">
-              <div className="flex items-center bg-gray-100 p-1 rounded-lg">
-                <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-                </svg>
-                <span className="font-bold text-gray-600 text-lg">{groups.length} فريق</span>
-              </div>
-              {!gameState.showResults && (
-                <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
-                  <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                  </svg>
-                  <span className="font-bold text-gray-600 text-sm">{Math.ceil(timeLeft)}ث</span>
+      <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-1">
+        {/* LEFT: سؤال + اختيارات */}
+        <div className="bg-white rounded-2xl shadow-lg p-1">
+          <div className="bg-gray-100 p-1 rounded-lg mb-1">
+            <h2 className="text-3xl font-bold">{currentQuestion.text}</h2>
+          </div>
+
+          <div className="space-y-1">
+            {currentQuestion.choices.map((choice, index) => (
+              <motion.div key={index} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.06 }} className={`p-1 rounded-xl flex items-center gap-1 ${gameState.showResults && index === currentQuestion.correctAnswer ? "ring-4 ring-green-500 bg-green-50 shadow-lg" : "bg-gray-50 hover:bg-gray-100"}`}>
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-lg ${getChoiceColor(index)}`}>
+                  {String.fromCharCode(65 + index)}
                 </div>
-              )}
-
-            </div>
-          </div>
-          {/* Progress */}
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
-              className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full transition-all duration-300 block"
-              style={{ width: `${(gameState.currentQuestionIndex / quiz.questions.length) * 100}%` }}
-            >
-                            <h1 className="text-2xl font-bold text-center text-gray-900">
-                السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}
-              </h1>
-
+                <div className="text-2xl flex-1 text-gray-900">{choice}</div>
+                {gameState.showResults && index === currentQuestion.correctAnswer && (
+                  <div className="bg-green-500 text-white p-1 rounded-full text-sm font-bold">الإجابة الصحيحة</div>
+                )}
+              </motion.div>
+            ))}
           </div>
 
+          <div className="mt-1 flex gap-1">
+            {!gameState.showResults && (
+              <button onClick={handleForceNext} disabled={isLoading} className="flex-1 bg-orange-500 text-white font-bold py-1 rounded-xl">تخطي/إظهار النتائج</button>
+            )}
+            {gameState.showResults && (
+              <button onClick={handleNextQuestion} disabled={isLoading} className="flex-1 bg-purple-600 text-white font-bold py-1 rounded-xl">
+                {isLoading ? "جاري..." : isLastQuestion ? "انهاء المسابقة" : "السؤال التالي"}
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-1 bg-red-50 border-l-4 border-red-400 p-1 rounded-lg">
-            <div className="flex">
-              <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-              <p className="mr-1 text-red-700 text-lg">{error}</p>
-            </div>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-1">
-          {/* Question Display */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
-            <div className="bg-gray-100 text-gray-900 p-1">
-              <h2 className="text-5xl font-bold">{currentQuestion.text}</h2>
-            </div>
-            <div className="p-1">
-              <div className="grid grid-cols-1 gap-1">
-                {currentQuestion.choices.map((choice, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className={`p-1 rounded-xl flex items-center gap-1 transition-all duration-200 ${gameState.showResults && index === currentQuestion.correctAnswer
-                      ? "ring-4 ring-green-500 bg-green-50 shadow-lg"
-                      : "bg-gray-50 hover:bg-gray-100"
-                      }`}
-                  >
-                    <div className={`w-3 h-3 rounded-full ${getChoiceColor(index)} flex items-center justify-center text-white font-bold text-3xl`}>
-                      {String.fromCharCode(65 + index)}
-                    </div>
-                    <span className="font-medium text-4xl flex-1 text-gray-900">{choice}</span>
-                    {gameState.showResults && index === currentQuestion.correctAnswer && (
-                      <div className="bg-green-500 text-white p-1 rounded-full text-sm font-bold">
-                        الإجابة الصحيحة
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Admin Controls */}
-              <div className="mt-1 flex gap-1">
-                {!gameState.showResults && (
-                  <button
-                    onClick={handleForceNext}
-                    disabled={isLoading}
-                    className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 disabled:opacity-50 text-white font-bold p-1 rounded-xl transition-all duration-200 flex items-center justify-center gap-1"
-                    type="button"
-                  >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0zM4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                    </svg>
-                    تخطي الوقت
-                  </button>
-                )}
-              </div>
-            </div>
+        {/* RIGHT: conditional panel */}
+        <div className="bg-white rounded-2xl shadow-lg p-1">
+          <div className="bg-gray-100 p-1 rounded-lg mb-1">
+            <h2 className="text-2xl font-bold">{displayPhase === "leaderboard" ? "الترتيب الحالي" : displayPhase === "stats" ? "إحصائيات الاختيارات" : "حالة الأسئلة"}</h2>
           </div>
 
-          {/* Response Stats or Leaderboard */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
-            <div className="bg-gray-100 text-gray-900 p-1">
-              <h2 className="text-2xl font-bold">
-                {showingResults ? "الترتيب الحالي" : "إحصائيات الاختيارات"}
-              </h2>
-            </div>
-            <div className="p-1">
-              <AnimatePresence mode="wait">
-                {showingResults ? (
-                  <motion.div
-                    key="leaderboard"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="space-y-1"
-                  >
-                    {leaderboard.map((entry, index) => {
-                      const positionChange = getPositionChange(entry.groupId)
-                      return (
-                        <motion.div
-                          key={entry.groupId}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{
-                            opacity: 1,
-                            x: 0,
-                            scale: showScoreAnimation ? [1, 1.05, 1] : 1
-                          }}
-                          transition={{
-                            delay: index * 0.1,
-                            scale: { duration: 0.5, delay: 1 + index * 0.2 }
-                          }}
-                          className={`p-1 rounded-xl flex items-center justify-between transition-all duration-500 ${index === 0
-                            ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-xl"
-                            : index === 1
-                              ? "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 shadow-lg"
-                              : index === 2
-                                ? "bg-gradient-to-r from-orange-300 to-red-400 text-white shadow-md"
-                                : "bg-gray-50 hover:bg-gray-100 text-gray-900"
-                            }`}
-                        >
-                          <div className="flex items-center gap-1">
-                            <div className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-xl ${index < 3 ? "bg-white/20" : "bg-blue-500 text-white"
-                              }`}>
-                              {index + 1}
-                            </div>
-                            {entry.saintImage && (
-                              <img
-                                src={entry.saintImage || "/placeholder.svg"}
-                                alt={entry.saintName}
-                                className="w-5 h-5 rounded-full border-2 border-white object-cover"
-                              />
-                            )}
-                            <div>
-                              <div className="font-bold text-xl">{entry.groupName}</div>
-                              <div className="text-sm opacity-75">{entry.members.join(" • ")}</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            {positionChange > 0 && (
-                              <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="text-green-500 font-bold"
-                              >
-                                ↑{positionChange}
-                              </motion.div>
-                            )}
-                            {positionChange < 0 && (
-                              <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="text-red-500 font-bold"
-                              >
-                                ↓{Math.abs(positionChange)}
-                              </motion.div>
-                            )}
-                            <motion.div
-                              className="text-2xl font-bold"
-                              animate={showScoreAnimation ? { scale: [1, 1.2, 1] } : {}}
-                              transition={{ duration: 0.5, delay: 1 + index * 0.2 }}
-                            >
-                              {entry.score.toLocaleString()}
-                            </motion.div>
-                          </div>
-                        </motion.div>
-                      )
-                    })}
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="responses"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="space-y-1"
-                  >
-                    <div className="text-center mb-1">
-                      <div className="text-4xl font-bold text-gray-600">
-                        {responses.length} / {groups.length}
-                      </div>
-                      <div className="text-gray-600 text-lg">رد مستلم</div>
-                    </div>
+          <div>
+            <AnimatePresence mode="wait">
+              {displayPhase === "idle" && (
+                <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <div className="text-center mb-1">
+                    <div className="text-4xl font-bold text-gray-700">{responses.length} / {groups.length}</div>
+                    <div className="text-gray-600">رد مستلم</div>
+                  </div>
+                  <div className="text-sm text-gray-600">تفصيل إحصائيات الاختيارات سيظهر بعد انتهاء السؤال.</div>
+                </motion.div>
+              )}
 
+              {displayPhase === "stats" && (
+                <motion.div key="stats" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                  <div className="text-center mb-1">
+                    <div className="text-xl font-bold">{responses.length} / {groups.length} رد</div>
+                    <div className="text-gray-600">إحصائيات الإجابات</div>
+                  </div>
+
+                  <div className="space-y-1">
                     {getResponseStats().map((stat, index) => (
                       <div key={index} className="flex items-center gap-1">
-                        <div className={`w-8 h-8 rounded-full ${getChoiceColor(index)} flex items-center justify-center text-white font-bold text-lg`}>
-                          {String.fromCharCode(65 + index)}
-                        </div>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${getChoiceColor(index)}`}>{String.fromCharCode(65 + index)}</div>
                         <div className="flex-1">
-                          <div className="flex justify-between text-lg mb-1">
-                            <span className="font-medium text-gray-900">{currentQuestion.choices[index]}</span>
-                            <span className="font-bold text-gray-900">{stat.count}</span>
+                          <div className="flex justify-between">
+                            <div className="font-medium text-gray-900">{currentQuestion.choices[index]}</div>
+                            <div className="font-bold text-gray-900">{stat.count}</div>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-4">
-                            <div
-                              className={`h-4 rounded-full transition-all duration-300 ${getChoiceColor(index)}`}
-                              style={{ width: `${responses.length > 0 ? (stat.count / responses.length) * 100 : 0}%` }}
-                            />
+                          <div className="w-full bg-gray-200 rounded-full h-3 mt-1">
+                            <div className={`${getChoiceColor(index)} h-3 rounded-full`} style={{ width: `${responses.length > 0 ? (stat.count / responses.length) * 100 : 0}%` }} />
                           </div>
                         </div>
                       </div>
                     ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {displayPhase === "leaderboard" && (
+                <motion.div key="leaderboard" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                  <div className="space-y-1">
+                    {leaderboard.map((entry, index) => {
+                      const positionChange = getPositionChange(entry.groupId)
+                      return (
+                        <motion.div key={entry.groupId} layout initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0, scale: showScoreAnimation ? [1, 1.05, 1] : 1 }} transition={{ delay: index * 0.06 }}>
+                          <div className={`p-1 rounded-lg flex items-center justify-between ${index === 0 ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : index === 2 ? "bg-gradient-to-r from-orange-300 to-red-400 text-white" : "bg-white"}`}>
+                            <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${index < 3 ? "bg-white/20" : "bg-blue-500 text-white"}`}>{index + 1}</div>
+                              {entry.saintImage && <img src={entry.saintImage || "/placeholder.svg"} alt={entry.saintName} className="w-8 h-8 rounded-full border-2 border-white object-cover" />}
+                              <div>
+                                <div className="font-bold">{entry.groupName}</div>
+                                <div className="text-sm opacity-80">{entry.members.join(" • ")}</div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              {positionChange > 0 && <div className="text-green-500 font-bold">↑{positionChange}</div>}
+                              {positionChange < 0 && <div className="text-red-500 font-bold">↓{Math.abs(positionChange)}</div>}
+                              <div className="font-bold text-lg">{entry.score.toLocaleString()}</div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-
-        {/* Controls */}
-        {gameState.showResults && (
-          <div className="mt-1 text-center">
-            <button
-              onClick={handleNextQuestion}
-              disabled={isLoading}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 text-white font-bold p-1 rounded-2xl transition-all duration-200 text-xl flex items-center gap-1 mx-auto shadow-2xl"
-              type="button"
-            >
-              {isLoading ? (
-                "جاري التحميل..."
-              ) : isLastQuestion ? (
-                <>
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
-                  </svg>
-                  إنهاء المسابقة
-                </>
-              ) : (
-                <>
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                  السؤال التالي
-                </>
-              )}
-            </button>
-          </div>
-        )}
       </div>
     </div>
   )

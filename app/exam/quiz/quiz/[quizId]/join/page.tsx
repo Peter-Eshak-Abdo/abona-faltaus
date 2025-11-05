@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { getQuiz, joinQuizAsGroup, subscribeToGameState } from "@/lib/firebase-utils"
 import { SAINTS_DATA } from "@/lib/saints-data"
@@ -22,6 +22,7 @@ export default function JoinQuizPage() {
   const [error, setError] = useState("")
   const [hasJoined, setHasJoined] = useState(false)
   const quizId = params.quizId as string
+  const memberCountRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (quizId) {
@@ -68,6 +69,13 @@ export default function JoinQuizPage() {
     const newNames = [...memberNames]
     newNames[index] = name
     setMemberNames(newNames)
+  }
+
+  const handleSaintSelect = (saint: Saint) => {
+    setSelectedSaint(saint)
+    setTimeout(() => {
+      memberCountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 100)
   }
 
   const handleJoin = async () => {
@@ -276,17 +284,20 @@ export default function JoinQuizPage() {
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: index * 0.05 }}
-                          onClick={() => setSelectedSaint(saint)}
+                          onClick={() => handleSaintSelect(saint)}
                           className={`p-2 rounded-xl border-2 transition-all duration-300 transform scale-90 flex flex-col items-center gap-1
                           ${isSelected
                               ? "border-white/60 bg-white/40 scale-100 text-black shadow-lg"
-                              : "border-white/30 hover:border-white/50 hover:bg-white/20 bg-white/10 text-black/80 hover:scale-95"
+                              : selectedSaint
+                                ? "border-gray-400 bg-gray-200 text-gray-500 opacity-50 grayscale cursor-not-allowed"
+                                : "border-white/30 hover:border-white/50 hover:bg-white/20 bg-white/10 text-black/80 hover:scale-95"
                             }`}
+                          disabled={selectedSaint !== null && !isSelected}
                         >
                           <img
                             src={saint.src}
                             alt={saint.name}
-                            className="w-8 h-8 rounded-full object-cover border border-white/50"
+                            className={`w-8 h-8 rounded-full object-cover border border-white/50 ${selectedSaint && !isSelected ? "grayscale" : ""}`}
                           />
                           <p className={`text-center leading-tight font-bold ${isSelected ? "text-sm" : "text-xs"}`}>
                             {saint.name}
@@ -301,8 +312,8 @@ export default function JoinQuizPage() {
 
             <hr className="border-white/30" />
 
-            <div>
-              <label className="block text-lg font-bold text-black mb-1">عدد الأعضاء</label>
+            <div ref={memberCountRef}>
+              <label className="block text-lg font-bold text-black mb-1 select-none">عدد الأعضاء</label>
               <div className="flex items-center justify-center gap-1 px-1">
                 <button
                   onClick={() => setMemberCount(Math.max(1, memberCount - 1))}

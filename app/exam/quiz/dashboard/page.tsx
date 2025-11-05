@@ -134,31 +134,32 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-1">
       <div className="max-w-8xl mx-auto">
         {/* Header */}
-        <Card className="mb-4 shadow-xl rounded-4xl">
+        <Card className="mb-2 shadow-xl rounded-4xl">
           <CardHeader>
-            <div className="flex flex-col md:flex-row justify-center items-center gap-1">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-1">
               <img src={"/images/alnosor/logo.jpeg"} alt="Logo"
-                className="w-auto rounded-lg shadow-lg mb-2"
-                style={{ height: "50vh" }} />
+                className="w-auto rounded-lg shadow-lg mb-1 h-16" />
               <div className="text-center md:text-left">
                 <CardTitle className="text-5xl font-bold text-gray-900 mb-2">لوحة تحكم المسابقات</CardTitle>
                 <p className="text-gray-600 text-3xl">إنشاء وإدارة مسابقاتك التفاعلية</p>
                 <p className="text-2xl text-gray-500 mt-1">استاذ/ة {displayName}</p>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1">
                 <Button
                   onClick={() => setIsCreateDialogOpen(true)}
-                  className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 p-1 font-bold shadow-lg text-white rounded-lg text-2xl scale-95 hover:scale-100 transition-all duration-200 hover:shadow-2xl hover:text-2xl"
+                  className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 px-1 font-bold shadow-lg text-white rounded-lg text-2xl scale-95 hover:scale-100 transition-all duration-200 hover:shadow-2xl hover:text-2xl"
                   type="button"
+                  size="normal"
                 >
-                  <Plus className="w-4 h-4 " />
+                  <Plus className="w-3 h-3" />
                   إنشاء مسابقة جديد
                 </Button>
                 <Button
                   onClick={() => setShowTrash(!showTrash)}
                   variant="outline"
-                  className="flex items-center gap-2 py-3 px-4 font-bold shadow-lg rounded-lg text-4xl scale-95 hover:scale-100 transition-all duration-200 hover:shadow-2xl hover:text-2xl"
+                  className="flex items-center gap-1 p-1 font-bold shadow-lg rounded-lg text-4xl scale-95 hover:scale-100 transition-all duration-200 hover:shadow-2xl hover:text-2xl"
                   type="button"
+                  size="normal"
                 >
                   <Trash className="w-4 h-4" />
                   سلة المحذوفات
@@ -183,7 +184,7 @@ export default function DashboardPage() {
 
         {/* Error message */}
         {error && (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 p-4 rounded mb-6">
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 p-1 rounded mb-1">
             <div className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5" />
               <span>{error}</span>
@@ -191,7 +192,7 @@ export default function DashboardPage() {
             {indexUrl && (
               <button
                 onClick={() => window.open(indexUrl, "_blank")}
-                className="mt-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+                className="mt-1 bg-yellow-500 hover:bg-yellow-600 text-white p-1 rounded"
                 type="button"
               >
                 إنشاء الفهرس
@@ -199,7 +200,7 @@ export default function DashboardPage() {
             )}
             <button
               onClick={loadUserQuizzes}
-              className="mt-2 ml-2 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+              className="mt-1 ml-1 bg-gray-500 hover:bg-gray-600 text-white p-1 rounded"
               type="button"
             >
               إعادة المحاولة
@@ -209,10 +210,10 @@ export default function DashboardPage() {
 
         {/* Quizzes */}
         {loadingQuizzes ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg shadow animate-pulse">
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div key={i} className="bg-white p-1 rounded-lg shadow animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-3/4 mb-1"></div>
                 <div className="h-4 bg-gray-200 rounded w-full"></div>
               </div>
             ))}
@@ -220,16 +221,16 @@ export default function DashboardPage() {
         ) : quizzes.length === 0 ? (
           <motion.div initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-16">
-            <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            className="text-center py-1">
+            <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-1">
               <Plus className="w-16 h-16 text-blue-600" />
             </div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-3">لا توجد مسابقات حتي الأن</h3>
-            <p className="text-gray-600 mb-8 text-lg">دوس على زرار &quot;إنشاء مسابقة جديدة&quot;</p>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-1">لا توجد مسابقات حتي الأن</h3>
+            <p className="text-gray-600 mb-1 text-lg">دوس على زرار &quot;إنشاء مسابقة جديدة&quot;</p>
           </motion.div>
         ) : (
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 ">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1">
             {quizzes.map((quiz, index) => (
               <motion.div key={quiz.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -237,7 +238,7 @@ export default function DashboardPage() {
                 transition={{ delay: index * 0.1 }}>
                 <Card className="shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out rounded-4xl">
                   <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
-                    <CardTitle className="text-2xl mb-1 text-center font-bold">{quiz.title}</CardTitle>
+                    <CardTitle className="text-2xl text-center font-bold">{quiz.title}</CardTitle>
                     <p className="text-blue-100 text-lg">• {quiz.description}</p>
                   </CardHeader>
                   <CardContent className="p-1">
@@ -253,7 +254,7 @@ export default function DashboardPage() {
                         <span className="text-2xl font-extrabold">{quiz.questions.length} سؤال</span>
                       </div>
                     </div>
-                    <div className="flex gap-1 mb-2">
+                    <div className="flex gap-1 mb-1">
                       <Button
                         size="normal"
                         onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
@@ -273,7 +274,7 @@ export default function DashboardPage() {
                         الانضمام
                       </Button>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1">
                       <Button
                         size="normal"
                         onClick={() => handleEditQuiz(quiz)}
@@ -308,7 +309,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-8"
+            className="mt-1"
           >
             <TrashSection userId={user.uid} onClose={() => setShowTrash(false)} onRestore={loadUserQuizzes} />
           </motion.div>
