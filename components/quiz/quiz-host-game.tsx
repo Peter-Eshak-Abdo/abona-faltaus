@@ -239,7 +239,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   if (!gameState.isActive) {
     // عرض النتائج النهائية على شاشة الـ Host (podium)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-700 p-1">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-600 to-blue-700 p-1">
         <div className="w-full max-w-7xl text-center bg-white rounded-2xl shadow-2xl p-1">
           <div className="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-1">
             <svg className="w-12 h-12 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
@@ -255,7 +255,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0, scale: index === 0 ? 1.03 : 1 }}
                 transition={{ delay: index * 0.2 }}
-                className={`p-1 rounded-2xl ${index === 0 ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : "bg-gradient-to-r from-orange-300 to-red-400 text-white"}`}
+                className={`p-1 rounded-2xl ${index === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : "bg-linear-to-r from-orange-300 to-red-400 text-white"}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
@@ -281,7 +281,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   // إظهار السؤال فقط (fullscreen) — موجود عندك مسبقاً
   if (gameState.showQuestionOnly) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-700 p-1">
+      <div className="min-h-screen bg-linear-to-br from-purple-600 to-blue-700 p-1">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-4 bg-white rounded-2xl p-1">
             <div>
@@ -297,7 +297,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
           </div>
 
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-1 text-center">
+            <div className="bg-linear-to-r from-purple-600 to-blue-600 text-white p-1 text-center">
               <h2 className="text-4xl font-bold mb-1">استعدوا للسؤال!</h2>
               <p className="text-6xl font-bold mb-1">{currentQuestion.text}</p>
               <div className="text-2xl">سيظهر الاختيارات خلال {questionOnlyTimeLeft} ثانية</div>
@@ -395,7 +395,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                       const positionChange = getPositionChange(entry.groupId)
                       return (
                         <motion.div key={entry.groupId} layout initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0, scale: showScoreAnimation ? [1, 1.05, 1] : 1 }} transition={{ delay: index * 0.06 }}>
-                          <div className={`p-1 rounded-lg flex items-center justify-between ${index === 0 ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : index === 2 ? "bg-gradient-to-r from-orange-300 to-red-400 text-white" : "bg-white"}`}>
+                          <div className={`p-1 rounded-lg flex items-center justify-between ${index === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : index === 2 ? "bg-linear-to-r from-orange-300 to-red-400 text-white" : "bg-white"}`}>
                             <div className="flex items-center gap-3">
                               <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${index < 3 ? "bg-white/20" : "bg-blue-500 text-white"}`}>{index + 1}</div>
                               {entry.saintImage && <img src={entry.saintImage || "/placeholder.svg"} alt={entry.saintName} className="w-8 h-8 rounded-full border-2 border-white object-cover" />}

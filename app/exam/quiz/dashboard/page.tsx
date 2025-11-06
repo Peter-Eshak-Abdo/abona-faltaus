@@ -83,7 +83,7 @@ export default function DashboardPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100">
         <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
       </div>
     )
@@ -131,7 +131,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-1">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-1">
       <div className="max-w-8xl mx-auto">
         {/* Header */}
         <Card className="mb-2 shadow-xl rounded-4xl">
@@ -147,7 +147,7 @@ export default function DashboardPage() {
               <div className="flex flex-col gap-1">
                 <Button
                   onClick={() => setIsCreateDialogOpen(true)}
-                  className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 px-1 font-bold shadow-lg text-white rounded-lg text-2xl scale-95 hover:scale-100 transition-all duration-200 hover:shadow-2xl hover:text-2xl"
+                  className="flex items-center gap-1 bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 px-1 font-bold shadow-lg text-white rounded-lg text-2xl scale-95 hover:scale-100 transition-all duration-200 hover:shadow-2xl hover:text-2xl"
                   type="button"
                   size="normal"
                 >
@@ -229,7 +229,6 @@ export default function DashboardPage() {
             <p className="text-gray-600 mb-1 text-lg">دوس على زرار &quot;إنشاء مسابقة جديدة&quot;</p>
           </motion.div>
         ) : (
-
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-1">
             {quizzes.map((quiz, index) => (
               <motion.div key={quiz.id}
@@ -237,9 +236,10 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}>
                 <Card className="shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out rounded-4xl">
-                  <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                  <CardHeader className="bg-linear-to-r from-blue-500 to-indigo-600 text-white">
                     <CardTitle className="text-2xl text-center font-bold">{quiz.title}</CardTitle>
                     <p className="text-blue-100 text-lg">• {quiz.description}</p>
+                    {/* <p className="text-blue-100 text-lg">• {quiz.description.slice(0, 50)}{quiz.description.length > 50 ? '...' : ''}</p> */}
                   </CardHeader>
                   <CardContent className="p-1">
                     <div className="flex items-center justify-between md:flex-row flex-col mb-1">
@@ -258,7 +258,7 @@ export default function DashboardPage() {
                       <Button
                         size="normal"
                         onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
-                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-lg transition-all duration-200 flex items-center justify-center gap-1"
+                        className="flex-1 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-lg transition-all duration-200 flex items-center justify-center gap-1"
                         type="button"
                       >
                         <Play className="w-4 h-4" />
@@ -267,7 +267,7 @@ export default function DashboardPage() {
                       <Button
                         size="normal"
                         onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/join`)}
-                        className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold rounded-lg transition-all duration-200 flex items-center justify-center gap-1"
+                        className="flex-1 bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold rounded-lg transition-all duration-200 flex items-center justify-center gap-1"
                         type="button"
                       >
                         <Users className="w-4 h-4" />

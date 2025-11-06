@@ -26,10 +26,10 @@ export function QRCodeSection({ joinUrl, qrSize, setQrSize }: QRCodeSectionProps
 
             {/* QR Size Controls */}
             <div className="mb-1 px-1">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-1">
                 <Button
                   onClick={() => setQrSize(Math.max(250, qrSize - 75))}
-                  className="p-1 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors mb:p-3"
+                  className="p-1 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors mb:p-1"
                   title="تقليل حجم الكود"
                   type="button"
                 >
@@ -41,7 +41,7 @@ export function QRCodeSection({ joinUrl, qrSize, setQrSize }: QRCodeSectionProps
                 <span className="text-2xl font-extrabold text-gray-700 bg-gray-100 p-1 rounded-xl">{qrSize}px</span>
                 <Button
                   onClick={() => setQrSize(Math.min(1000, qrSize + 75))}
-                  className="p-1 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors mb:p-3"
+                  className="p-1 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors mb:p-1"
                   title="زيادة حجم الكود"
                   type="button"
                 >
@@ -51,7 +51,7 @@ export function QRCodeSection({ joinUrl, qrSize, setQrSize }: QRCodeSectionProps
                   </svg>
                 </Button>
               </div>
-              <div className="relative mb-2">
+              <div className="relative mb-1">
                 <div className="absolute inset-0 bg-gradient-to-l from-blue-600 to-purple-600 h-2 rounded-full" />
                 <Slider
                   value={[qrSize]}
@@ -62,7 +62,7 @@ export function QRCodeSection({ joinUrl, qrSize, setQrSize }: QRCodeSectionProps
                   className="custom-slider w-full"
                   dir="rtl"
                 />
-                <div className="flex justify-between text-sm text-gray-600 mt-3">
+                <div className="flex justify-between text-sm text-gray-600 mt-1">
                   <span>صغير</span>
                   <span>كبير</span>
                 </div>

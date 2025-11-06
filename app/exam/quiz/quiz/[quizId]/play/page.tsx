@@ -8,6 +8,7 @@ import {
   submitResponse,
   getQuizGroups,
   getQuestionResponses,
+  deleteGroup,
 } from "@/lib/firebase-utils"
 import type { Quiz, GameState, Group, LeaderboardEntry, QuizResponse } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
@@ -32,6 +33,7 @@ export default function PlayQuizPageTailwind() {
   const [showResults, setShowResults] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState<number>(5)
+  const [showExitConfirm, setShowExitConfirm] = useState(false)
 
   const quizId = params?.quizId as string
 
@@ -145,7 +147,7 @@ export default function PlayQuizPageTailwind() {
     }
   }, [showResults, showLeaderboard, gameState?.isActive])
 
-    useEffect(() => {
+  useEffect(() => {
     if (!gameState) return
     if (!gameState.isActive) {
       // نعيد تأكيد الترتيب النهائي عند الانتهاء
@@ -211,6 +213,18 @@ export default function PlayQuizPageTailwind() {
   }
 
   const getChoiceLabel = (i: number) => ["أ", "ب", "ج", "د"][i] ?? `${i + 1}`
+
+  const handleExitQuiz = async () => {
+    if (!currentGroup) return
+
+    try {
+      await deleteGroup(quizId, currentGroup.id)
+      localStorage.removeItem("currentGroup")
+      router.push(`/exam/quiz/quiz/${quizId}/join`)
+    } catch (err) {
+      console.error("Error exiting quiz:", err)
+    }
+  }
 
   if (!quiz || !gameState || !currentGroup) {
     return (
@@ -370,9 +384,19 @@ export default function PlayQuizPageTailwind() {
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-1">
           <div className="flex flex-col md:flex-row items-center justify-between gap-1 mb-1">
             <div className="bg-white p-1 rounded-full font-bold text-sm">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
-            <div className="flex items-center gap-1 bg-orange-500 text-white p-1 rounded-full font-bold text-sm">
-              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" /></svg>
-              {Math.ceil(timeLeft)} ث
+            <div className="flex items-center gap-1">
+              <Button
+                onClick={() => setShowExitConfirm(true)}
+                variant="outline"
+                size="sm"
+                className="bg-red-500 hover:bg-red-600 text-white border-red-500"
+              >
+                خروج
+              </Button>
+              <div className="flex items-center gap-1 bg-orange-500 text-white p-1 rounded-full font-bold text-sm">
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" /></svg>
+                {Math.ceil(timeLeft)} ث
+              </div>
             </div>
           </div>
 
@@ -413,6 +437,45 @@ export default function PlayQuizPageTailwind() {
             </div>
           </Card>
         </motion.div>
+
+        {/* Exit Confirmation Dialog */}
+        <AnimatePresence>
+          {showExitConfirm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+              onClick={() => setShowExitConfirm(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-2xl p-6 max-w-sm mx-4 text-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3 className="text-xl font-bold text-slate-800 mb-2">تأكيد الخروج</h3>
+                <p className="text-slate-600 mb-6">هل أنت متأكد من رغبتك في الخروج من المسابقة؟</p>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => setShowExitConfirm(false)}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    إلغاء
+                  </Button>
+                  <Button
+                    onClick={handleExitQuiz}
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                  >
+                    خروج
+                  </Button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

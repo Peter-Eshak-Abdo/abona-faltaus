@@ -238,7 +238,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
   if (typeof window === 'undefined' || !open) return null
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center md:top-2 p-1 z-[100]">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center md:top-2 p-1 z-100">
       <div className="bg-white dark:bg-black rounded-2xl p-1 border border-white/30 dark:border-white/20 shadow-2xl  max-w-8xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-1">
           <h5 className="text-lg font-semibold">{isEditing ? 'تعديل المسابقة' : 'انشئ المسابقة الجديدة'}</h5>
@@ -251,7 +251,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
             <label className="block text-sm font-medium mb-1">اسم المسابقة</label>
             <input
               type="text"
-              className="w-full rounded-md border border-input bg-black p-1 text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
+              className="w-full rounded-md border border-input bg-black p-1 text-black placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="اضف اسم المسابقة ..."
@@ -260,7 +260,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
           <div className="mb-1">
             <label className="block text-sm font-medium mb-1">وصف المسابقة</label>
             <textarea
-              className="w-full resize-none rounded-md border border-input bg-black p-1 text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
+              className="w-full resize-none rounded-md border border-input bg-black p-1 text-black placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -406,9 +406,9 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
                               style={{
                                 backgroundColor:
                                   choiceIndex === 0
-                                    ? "red"
+                                    ? "green"
                                     : choiceIndex === 1
-                                      ? "green"
+                                      ? "red"
                                       : choiceIndex === 2
                                         ? "blue"
                                         : "yellow",
