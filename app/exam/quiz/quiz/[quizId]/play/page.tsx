@@ -17,6 +17,9 @@ import { Card } from "@/components/ui/card"
 import { Avatar } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
+// عايز الصفحة تبقي glassy
+// عايز زراير الاختيارات تبقي متلونة (اخضر واحمر وازرق واصفر)
+// الاسكور مش بيتحسب خالص بيفضل 0
 
 export default function PlayQuizPageTailwind() {
   const params = useParams()
@@ -228,7 +231,7 @@ export default function PlayQuizPageTailwind() {
 
   if (!quiz || !gameState || !currentGroup) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
         <div className="w-16 h-16 rounded-full border-4 border-white border-t-transparent animate-spin" />
       </div>
     )
@@ -236,7 +239,7 @@ export default function PlayQuizPageTailwind() {
 
   if (!gameState.isActive) {
     return (
-      <div className="min-h-screen p-1 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600">
+      <div className="min-h-screen p-1 bg-linear-to-br from-yellow-400 via-orange-500 to-red-600">
         <div className="max-w-8xl mx-auto">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-1">
             <h1 className="text-5xl font-extrabold text-white mb-1">🎉 انتهت المسابقة!</h1>
@@ -245,7 +248,7 @@ export default function PlayQuizPageTailwind() {
 
           <div className="grid grid-cols-1 gap-1">
             {leaderboard.slice(0, 3).map((entry, idx) => (
-              <Card key={entry.groupId} className={cn("p-1 rounded-2xl", idx === 0 ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : "bg-gradient-to-r from-orange-300 to-red-400 text-white")}>
+              <Card key={entry.groupId} className={cn("p-1 rounded-2xl", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : "bg-linear-to-r from-orange-300 to-red-400 text-white")}>
                 <div className="flex items-center gap-1">
                   <div className="text-4xl font-bold">{idx + 1}</div>
                   <div className="flex-1">
@@ -282,7 +285,7 @@ export default function PlayQuizPageTailwind() {
   // question-only view
   if (gameState.showQuestionOnly) {
     return (
-      <div className="min-h-screen p-1 bg-gradient-to-br from-purple-600 to-blue-700">
+      <div className="min-h-screen p-1 bg-linear-to-br from-purple-600 to-blue-700">
         <div className="max-w-8xl mx-auto">
           <div className="flex items-center justify-between bg-white rounded-2xl p-1 mb-1">
             <div>
@@ -310,7 +313,7 @@ export default function PlayQuizPageTailwind() {
     const stats = currentQuestion.choices.map((_, i) => ({ choice: i, count: responses.filter((r) => r.answer === i).length }))
 
     return (
-      <div className="min-h-screen p-1 bg-gradient-to-br from-blue-600 to-purple-700">
+      <div className="min-h-screen p-1 bg-linear-to-br from-blue-600 to-purple-700">
         <div className="max-w-8xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-1">
             <div className="inline-block bg-white/90 p-1 rounded-full font-bold">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
@@ -348,7 +351,7 @@ export default function PlayQuizPageTailwind() {
   // full leaderboard
   if (showResults && showLeaderboard) {
     return (
-      <div className="min-h-screen p-1 bg-gradient-to-br from-purple-600 to-blue-700">
+      <div className="min-h-screen p-1 bg-linear-to-br from-purple-600 to-blue-700">
         <div className="max-w-8xl mx-auto">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-1">
             <h1 className="text-4xl font-bold text-white">الترتيب الحالي</h1>
@@ -357,7 +360,7 @@ export default function PlayQuizPageTailwind() {
 
           <div className="space-y-1">
             {leaderboard.map((entry, idx) => (
-              <motion.div key={entry.groupId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.06 }} className={cn("p-1 rounded-2xl flex items-center justify-between", idx === 0 ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : idx === 2 ? "bg-gradient-to-r from-orange-300 to-red-400 text-white" : "bg-white")}>
+              <motion.div key={entry.groupId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.06 }} className={cn("p-1 rounded-2xl flex items-center justify-between", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : idx === 2 ? "bg-linear-to-r from-orange-300 to-red-400 text-white" : "bg-white")}>
                 <div className="flex items-center gap-1">
                   <div className={cn("w-14 h-14 rounded-full flex items-center justify-center font-bold text-2xl", idx < 3 ? "bg-white/20" : "bg-blue-500 text-white")}>{idx + 1}</div>
                   {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-16 h-16 rounded-full object-cover border-2 border-white" />}
@@ -379,7 +382,7 @@ export default function PlayQuizPageTailwind() {
 
   // main playing UI - تصميم أصغر
   return (
-    <div className="min-h-screen p-1 bg-gradient-to-br from-blue-600 to-purple-700">
+    <div className="min-h-screen p-1 bg-linear-to-br from-blue-600 to-purple-700">
       <div className="max-w-8xl mx-auto">
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-1">
           <div className="flex flex-col md:flex-row items-center justify-between gap-1 mb-1">
@@ -413,7 +416,7 @@ export default function PlayQuizPageTailwind() {
 
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
           <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-1 text-center">
+            <div className="bg-linear-to-r from-purple-600 to-blue-600 text-white p-1 text-center">
               <h2 className="text-lg font-bold">{currentQuestion.text}</h2>
             </div>
             <div className="p-1">

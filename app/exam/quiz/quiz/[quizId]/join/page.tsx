@@ -124,7 +124,9 @@ export default function JoinQuizPage() {
       setHasJoined(true)
     } catch (error) {
       console.error("Error joining quiz:", error)
-      // setError(error.message || "فشل في الانضمام للمسابقة")
+      const errorMessage = (error as Error).message || "فشل في الانضمام للمسابقة"
+      alert(errorMessage)
+      setError(errorMessage)
     } finally {
       setIsJoining(false)
     }
@@ -132,7 +134,7 @@ export default function JoinQuizPage() {
 
   if (!quiz) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
         <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white"></div>
       </div>
     )
@@ -140,7 +142,7 @@ export default function JoinQuizPage() {
 
   if (gameState?.isActive) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700 p-4">
         <div className="w-full max-w-md text-center bg-white rounded-2xl shadow-2xl p-8">
           <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -195,7 +197,7 @@ export default function JoinQuizPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br flex items-center justify-center">
+    <div className="min-h-screen bg-linear-to-br flex items-center justify-center">
       <div className="w-full max-w-8xl space-y-2 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
         <div className="text-center mb-2">
           <h1 className="text-5xl font-bold mb-2 text-black drop-shadow-lg">{quiz.title}</h1>
@@ -292,7 +294,7 @@ export default function JoinQuizPage() {
                                 ? "border-gray-400 bg-gray-200 text-gray-500 opacity-50 grayscale cursor-not-allowed"
                                 : "border-white/30 hover:border-white/50 hover:bg-white/20 bg-white/10 text-black/80 hover:scale-95"
                             }`}
-                          disabled={selectedSaint !== null && !isSelected}
+                          // disabled={selectedSaint !== null && !isSelected}
                         >
                           <img
                             src={saint.src}

@@ -11,6 +11,12 @@ interface QuizHostGameProps {
   gameState: GameState
 }
 
+// التايمير مش ظاهر عندي في الhost game
+// الاختيارات مش متلونة بالالوان بتاعتها (اخضر واحمر وازرق واصفر)
+// الاسكور مش بيتحسب
+// مش بيظهر حالة النتيجة الحالية (stats/leaderboard) بشكل صحيح
+// حالة النتجة النهائية بتاعت ال 3 مراكز الاولي
+
 export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [responses, setResponses] = useState<QuizResponse[]>([])
   const [timeLeft, setTimeLeft] = useState(30)
