@@ -54,7 +54,10 @@ export const getQuiz = async (quizId: string): Promise<Quiz | null> => {
   }
 };
 
-export const updateQuiz = async (quizId: string, updates: Partial<Omit<Quiz, "id" | "createdAt">>) => {
+export const updateQuiz = async (
+  quizId: string,
+  updates: Partial<Omit<Quiz, "id" | "createdAt">>
+) => {
   try {
     const quizRef = doc(db, "quizzes", quizId);
     await setDoc(quizRef, updates, { merge: true });
@@ -110,7 +113,10 @@ export const getUserQuizzes = async (userId: string) => {
         return {
           id: doc.id,
           ...data,
-          createdAt: data.createdAt instanceof Date ? data.createdAt : data.createdAt?.toDate() || new Date(),
+          createdAt:
+            data.createdAt instanceof Date
+              ? data.createdAt
+              : data.createdAt?.toDate() || new Date(),
         };
       }) as Quiz[];
     } catch (indexError: any) {
@@ -135,7 +141,10 @@ export const getUserQuizzes = async (userId: string) => {
         return {
           id: doc.id,
           ...data,
-          createdAt: data.createdAt instanceof Date ? data.createdAt : data.createdAt?.toDate() || new Date(),
+          createdAt:
+            data.createdAt instanceof Date
+              ? data.createdAt
+              : data.createdAt?.toDate() || new Date(),
         };
       }) as Quiz[];
 
@@ -252,7 +261,12 @@ export const cleanupOldGroups = async (quizId: string) => {
     snapshot.docs.forEach((doc) => {
       const group = doc.data() as Group;
       const lastActivity: Date | undefined =
-        (group.lastActivity instanceof Date ? group.lastActivity : (group.lastActivity as any)?.toDate()) || (group.joinedAt instanceof Date ? group.joinedAt : (group.joinedAt as any)?.toDate());
+        (group.lastActivity instanceof Date
+          ? group.lastActivity
+          : (group.lastActivity as any)?.toDate()) ||
+        (group.joinedAt instanceof Date
+          ? group.joinedAt
+          : (group.joinedAt as any)?.toDate());
 
       if (lastActivity && lastActivity < oneHourAgo) {
         batch.delete(doc.ref);
@@ -285,8 +299,14 @@ export const getQuizGroups = (
       const groups = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-        joinedAt: doc.data().joinedAt instanceof Date ? doc.data().joinedAt : doc.data().joinedAt?.toDate() || new Date(),
-        lastActivity: doc.data().lastActivity instanceof Date ? doc.data().lastActivity : doc.data().lastActivity?.toDate() || new Date(),
+        joinedAt:
+          doc.data().joinedAt instanceof Date
+            ? doc.data().joinedAt
+            : doc.data().joinedAt?.toDate() || new Date(),
+        lastActivity:
+          doc.data().lastActivity instanceof Date
+            ? doc.data().lastActivity
+            : doc.data().lastActivity?.toDate() || new Date(),
       })) as Group[];
 
       groups.sort((a, b) => a.joinedAt.getTime() - b.joinedAt.getTime());
@@ -556,11 +576,15 @@ export const subscribeToGameState = (
           quizId,
           currentQuestionIndex: data.currentQuestionIndex || 0,
           isActive: data.isActive ?? false,
-          startedAt: data.startedAt instanceof Date ? data.startedAt : data.startedAt?.toDate() || null,
+          startedAt:
+            data.startedAt instanceof Date
+              ? data.startedAt
+              : data.startedAt?.toDate() || null,
           questionStartTime: data.questionStartTime?.toDate() || null,
           showResults: data.showResults || false,
           showQuestionOnly: data.showQuestionOnly || false,
           currentQuestionTimeLimit: data.currentQuestionTimeLimit || 30,
+          shuffledQuestions: data.shuffledQuestions,
         };
         console.log("Parsed game state:", gameState);
         callback(gameState);
@@ -586,7 +610,7 @@ export const updateGroupScores = async (
 
     scores.forEach(({ groupId, score }) => {
       const groupRef = doc(db, "quizzes", quizId, "groups", groupId);
-      batch.update(groupRef, { score });
+      batch.set(groupRef, { score }, { merge: true });
     });
 
     await batch.commit();
@@ -690,15 +714,19 @@ export const cleanupExpiredTrash = async (userId: string) => {
     const trashedQuizzes = await getTrashedQuizzes(userId);
     const now = new Date();
 
-    const expiredQuizzes = trashedQuizzes.filter(quiz => quiz.expiresAt < now);
+    const expiredQuizzes = trashedQuizzes.filter(
+      (quiz) => quiz.expiresAt < now
+    );
 
     if (expiredQuizzes.length > 0) {
       const batch = writeBatch(db);
-      expiredQuizzes.forEach(quiz => {
+      expiredQuizzes.forEach((quiz) => {
         batch.delete(doc(db, "trashedQuizzes", quiz.id));
       });
       await batch.commit();
-      console.log(`Cleaned up ${expiredQuizzes.length} expired trashed quizzes`);
+      console.log(
+        `Cleaned up ${expiredQuizzes.length} expired trashed quizzes`
+      );
     }
 
     return expiredQuizzes.length;

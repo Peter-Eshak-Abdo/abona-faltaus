@@ -17,10 +17,6 @@ import { Card } from "@/components/ui/card"
 import { Avatar } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
-// عايز الصفحة تبقي glassy
-// عايز زراير الاختيارات تبقي متلونة (اخضر واحمر وازرق واصفر)
-// الاسكور مش بيتحسب خالص بيفضل 0
-
 export default function PlayQuizPageTailwind() {
   const params = useParams()
   const router = useRouter()
@@ -189,7 +185,7 @@ export default function PlayQuizPageTailwind() {
     setHasAnswered(true)
 
     const responseTime = (Date.now() - gameState.questionStartTime.getTime()) / 1000
-    const currentQuestion = quiz?.questions[gameState.currentQuestionIndex]
+    const currentQuestion = gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState?.currentQuestionIndex]
     if (!currentQuestion) return
 
     try {
@@ -237,6 +233,12 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
+  useEffect(() => {
+    if (!gameState?.isActive) {
+      localStorage.removeItem("currentGroup")
+    }
+  }, [gameState?.isActive])
+
   if (!gameState.isActive) {
     return (
       <div className="min-h-screen p-1 bg-linear-to-br from-yellow-400 via-orange-500 to-red-600">
@@ -248,7 +250,7 @@ export default function PlayQuizPageTailwind() {
 
           <div className="grid grid-cols-1 gap-1">
             {leaderboard.slice(0, 3).map((entry, idx) => (
-              <Card key={entry.groupId} className={cn("p-1 rounded-2xl", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : "bg-linear-to-r from-orange-300 to-red-400 text-white")}>
+              <Card key={entry.groupId} className={cn("backdrop-blur-md p-1 rounded-2xl border-white/30 shadow-2xl", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : "bg-linear-to-r from-orange-300 to-red-400 text-white")}>
                 <div className="flex items-center gap-1">
                   <div className="text-4xl font-bold">{idx + 1}</div>
                   <div className="flex-1">
@@ -280,14 +282,14 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
-  const currentQuestion = quiz.questions[gameState.currentQuestionIndex]
+  const currentQuestion = gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState?.currentQuestionIndex]
 
   // question-only view
   if (gameState.showQuestionOnly) {
     return (
       <div className="min-h-screen p-1 bg-linear-to-br from-purple-600 to-blue-700">
         <div className="max-w-8xl mx-auto">
-          <div className="flex items-center justify-between bg-white rounded-2xl p-1 mb-1">
+          <div className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl flex items-center justify-between mb-1">
             <div>
               <div className="text-lg font-bold">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
               <div className="text-sm text-slate-600">{currentGroup.groupName}</div>
@@ -298,7 +300,7 @@ export default function PlayQuizPageTailwind() {
             </div>
           </div>
 
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl p-1 shadow-xl text-center">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl text-center">
             <h2 className="text-3xl font-bold mb-1">استعدوا للسؤال</h2>
             <p className="text-2xl font-semibold">{currentQuestion.text}</p>
             <p className="text-sm text-slate-500 mt-1">ستظهر الاختيارات بعد {questionOnlyTimeLeft} ثانية</p>
@@ -320,7 +322,7 @@ export default function PlayQuizPageTailwind() {
             <h1 className="text-3xl font-bold text-white mt-1">نتائج السؤال</h1>
           </motion.div>
 
-          <Card className="p-1">
+          <Card className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl">
             <div className="space-y-1">
               <div className="text-xl font-semibold text-slate-800">{currentQuestion.text}</div>
 
@@ -360,7 +362,7 @@ export default function PlayQuizPageTailwind() {
 
           <div className="space-y-1">
             {leaderboard.map((entry, idx) => (
-              <motion.div key={entry.groupId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.06 }} className={cn("p-1 rounded-2xl flex items-center justify-between", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : idx === 2 ? "bg-linear-to-r from-orange-300 to-red-400 text-white" : "bg-white")}>
+              <motion.div key={entry.groupId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.06 }} className={cn("backdrop-blur-md p-1 rounded-2xl border-white/30 shadow-2xl flex items-center justify-between", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : idx === 2 ? "bg-linear-to-r from-orange-300 to-red-400 text-white" : "bg-white/20")}>
                 <div className="flex items-center gap-1">
                   <div className={cn("w-14 h-14 rounded-full flex items-center justify-center font-bold text-2xl", idx < 3 ? "bg-white/20" : "bg-blue-500 text-white")}>{idx + 1}</div>
                   {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-16 h-16 rounded-full object-cover border-2 border-white" />}
@@ -382,10 +384,10 @@ export default function PlayQuizPageTailwind() {
 
   // main playing UI - تصميم أصغر
   return (
-    <div className="min-h-screen p-1 bg-linear-to-br from-blue-600 to-purple-700">
+    <div className="min-h-screen p-1 bg-linear-to-br from-blue-600/80 to-purple-700/80 backdrop-blur-md">
       <div className="max-w-8xl mx-auto">
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-1">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-1 mb-1">
+          <div className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-1 mb-1">
             <div className="bg-white p-1 rounded-full font-bold text-sm">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
             <div className="flex items-center gap-1">
               <Button
@@ -408,14 +410,14 @@ export default function PlayQuizPageTailwind() {
         </motion.div>
 
         {/* Progress */}
-        <div className="mb-1">
+        <div className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl mb-1">
           <div className="w-full bg-white/20 rounded-full h-2">
             <div className="h-2 rounded-full bg-orange-500 transition-all" style={{ width: hasAnswered ? "100%" : `${((gameState.currentQuestionTimeLimit - timeLeft) / gameState.currentQuestionTimeLimit) * 100}%` }} />
           </div>
         </div>
 
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
-          <Card className="overflow-hidden">
+          <Card className="backdrop-blur-md bg-white/20 rounded-2xl border-white/30 shadow-2xl overflow-hidden">
             <div className="bg-linear-to-r from-purple-600 to-blue-600 text-white p-1 text-center">
               <h2 className="text-lg font-bold">{currentQuestion.text}</h2>
             </div>
@@ -423,7 +425,7 @@ export default function PlayQuizPageTailwind() {
               <div className="grid grid-cols-1 gap-1">
                 <AnimatePresence>
                   {currentQuestion.choices.map((choice, idx) => (
-                    <motion.button key={idx} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.04 }} onClick={() => handleAnswerSelect(idx)} disabled={hasAnswered || timeLeft === 0} className={cn("p-1 rounded-lg flex items-center gap-1 text-right w-full text-white font-semibold shadow-md transition-transform transform text-sm", (hasAnswered || timeLeft === 0) ? "opacity-60 cursor-not-allowed scale-100" : `${getChoiceHover(idx)} hover:scale-105 active:scale-95`, selectedAnswer === idx ? "ring-4 ring-white" : "", getChoiceColor(idx))}>
+                    <motion.button key={idx} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.04 }} onClick={() => handleAnswerSelect(idx)} disabled={hasAnswered || timeLeft === 0} className={cn("p-1 rounded-lg flex items-center gap-1 text-right w-full text-white font-semibold shadow-md transition-transform transform text-sm", (hasAnswered || timeLeft === 0) ? "cursor-not-allowed scale-100" : `${getChoiceHover(idx)} hover:scale-105 active:scale-95`, selectedAnswer === idx ? "ring-4 ring-white" : "", getChoiceColor(idx))}>
                       <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg">{getChoiceLabel(idx)}</div>
                       <div className="flex-1 text-right">{choice}</div>
                     </motion.button>
@@ -455,7 +457,7 @@ export default function PlayQuizPageTailwind() {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-2xl p-6 max-w-sm mx-4 text-center"
+                className="backdrop-blur-md bg-white/20 rounded-2xl p-6 max-w-sm mx-4 text-center border-white/30 shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 <h3 className="text-xl font-bold text-slate-800 mb-2">تأكيد الخروج</h3>

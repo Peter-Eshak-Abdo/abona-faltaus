@@ -39,6 +39,7 @@ export interface GameState {
   showResults: boolean;
   showQuestionOnly: boolean;
   currentQuestionTimeLimit: number;
+  shuffledQuestions?: Question[];
 }
 
 export interface QuizResponse {

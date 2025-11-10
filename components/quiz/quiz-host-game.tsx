@@ -11,12 +11,6 @@ interface QuizHostGameProps {
   gameState: GameState
 }
 
-// التايمير مش ظاهر عندي في الhost game
-// الاختيارات مش متلونة بالالوان بتاعتها (اخضر واحمر وازرق واصفر)
-// الاسكور مش بيتحسب
-// مش بيظهر حالة النتيجة الحالية (stats/leaderboard) بشكل صحيح
-// حالة النتجة النهائية بتاعت ال 3 مراكز الاولي
-
 export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [responses, setResponses] = useState<QuizResponse[]>([])
   const [timeLeft, setTimeLeft] = useState(30)
@@ -33,7 +27,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   // 'leaderboard' -> show leaderboard
   const [displayPhase, setDisplayPhase] = useState<"idle" | "stats" | "leaderboard">("idle")
 
-  const currentQuestion = quiz.questions[gameState.currentQuestionIndex]
+  const currentQuestion = gameState.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz.questions[gameState.currentQuestionIndex]
   const isLastQuestion = gameState.currentQuestionIndex >= quiz.questions.length - 1
 
   // مؤقت إظهار السؤال فقط لمدة 5 ثوان
@@ -221,7 +215,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
   // ألوان الاختيارات: ترتيب ثابت (أزرق، أصفر، أخضر، أحمر)
   const getChoiceColor = (index: number) => {
-    const colors = ["bg-green-500", "bg-red-500", "bg-blue-500", "bg-yellow-500"]
+    const colors = ["bg-blue-500", "bg-yellow-500", "bg-green-500", "bg-red-500"]
     return colors[index] || "bg-gray-500"
   }
 
@@ -255,17 +249,17 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
           <h2 className="text-4xl font-bold mb-1 text-gray-900">انتهت المسابقة!</h2>
 
           <div className="grid grid-cols-1 gap-1">
-            {leaderboard.slice(0, 3).map((entry, index) => (
+            {leaderboard.map((entry, index) => (
               <motion.div
                 key={entry.groupId}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0, scale: index === 0 ? 1.03 : 1 }}
-                transition={{ delay: index * 0.2 }}
-                className={`p-1 rounded-2xl ${index === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : "bg-linear-to-r from-orange-300 to-red-400 text-white"}`}
+                transition={{ delay: index * 0.1 }}
+                className={`p-1 rounded-2xl ${index === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : index === 2 ? "bg-linear-to-r from-orange-300 to-red-400 text-white" : "bg-white"}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-3xl ${index === 0 ? "bg-white text-yellow-500" : "bg-white/20"}`}>
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-3xl ${index < 3 ? "bg-white/20" : "bg-blue-500 text-white"}`}>
                       {index + 1}
                     </div>
                     {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-16 h-16 rounded-full border-4 border-white object-cover" />}
@@ -321,32 +315,40 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
         {/* LEFT: سؤال + اختيارات */}
         <div className="bg-white rounded-2xl shadow-lg p-1">
           <div className="bg-gray-100 p-1 rounded-lg mb-1">
-            <h2 className="text-3xl font-bold">{currentQuestion.text}</h2>
-          </div>
 
-          <div className="space-y-1">
-            {currentQuestion.choices.map((choice, index) => (
-              <motion.div key={index} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.06 }} className={`p-1 rounded-xl flex items-center gap-1 ${gameState.showResults && index === currentQuestion.correctAnswer ? "ring-4 ring-green-500 bg-green-50 shadow-lg" : "bg-gray-50 hover:bg-gray-100"}`}>
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-lg ${getChoiceColor(index)}`}>
-                  {String.fromCharCode(65 + index)}
-                </div>
-                <div className="text-2xl flex-1 text-gray-900">{choice}</div>
-                {gameState.showResults && index === currentQuestion.correctAnswer && (
-                  <div className="bg-green-500 text-white p-1 rounded-full text-sm font-bold">الإجابة الصحيحة</div>
-                )}
-              </motion.div>
-            ))}
-          </div>
+            {!gameState.showResults && !gameState.showQuestionOnly && (
+              <div className="flex items-center gap-1 bg-purple-100 p-1 rounded-xl mb-1">
+                <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                </svg>
+                <span className="font-bold text-purple-600">{Math.ceil(timeLeft)} ث</span>
+              </div>
+            )}
 
-          <div className="mt-1 flex gap-1">
-            {!gameState.showResults && (
-              <button onClick={handleForceNext} disabled={isLoading} className="flex-1 bg-orange-500 text-white font-bold py-1 rounded-xl">تخطي/إظهار النتائج</button>
-            )}
-            {gameState.showResults && (
-              <button onClick={handleNextQuestion} disabled={isLoading} className="flex-1 bg-purple-600 text-white font-bold py-1 rounded-xl">
-                {isLoading ? "جاري..." : isLastQuestion ? "انهاء المسابقة" : "السؤال التالي"}
-              </button>
-            )}
+            <div className="space-y-1">
+              {currentQuestion.choices.map((choice, index) => (
+                <motion.div key={index} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.06 }} className={`p-1 rounded-xl flex items-center gap-1 ${gameState.showResults && index === currentQuestion.correctAnswer ? "ring-4 ring-green-500 bg-green-50 shadow-lg" : "bg-gray-50 hover:bg-gray-100"}`}>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-lg ${getChoiceColor(index)}`}>
+                    {String.fromCharCode(65 + index)}
+                  </div>
+                  <div className="text-2xl flex-1 text-gray-900">{choice}</div>
+                  {gameState.showResults && index === currentQuestion.correctAnswer && (
+                    <div className="bg-green-500 text-white p-1 rounded-full text-sm font-bold">الإجابة الصحيحة</div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-1 flex gap-1">
+              {!gameState.showResults && (
+                <button onClick={handleForceNext} disabled={isLoading} className="flex-1 bg-orange-500 text-white font-bold py-1 rounded-xl">تخطي/إظهار النتائج</button>
+              )}
+              {gameState.showResults && (
+                <button onClick={handleNextQuestion} disabled={isLoading} className="flex-1 bg-purple-600 text-white font-bold py-1 rounded-xl">
+                  {isLoading ? "جاري..." : isLastQuestion ? "انهاء المسابقة" : "السؤال التالي"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
