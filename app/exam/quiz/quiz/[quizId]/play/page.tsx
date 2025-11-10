@@ -9,6 +9,7 @@ import {
   getQuizGroups,
   getQuestionResponses,
   deleteGroup,
+  checkAndResetQuizIfNeeded,
 } from "@/lib/firebase-utils"
 import type { Quiz, GameState, Group, LeaderboardEntry, QuizResponse } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
@@ -33,6 +34,7 @@ export default function PlayQuizPageTailwind() {
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState<number>(5)
   const [showExitConfirm, setShowExitConfirm] = useState(false)
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
 
   const quizId = params?.quizId as string
 
@@ -225,6 +227,18 @@ export default function PlayQuizPageTailwind() {
     }
   }
 
+  const handleResetQuiz = async () => {
+    if (!currentGroup) return
+
+    try {
+      await checkAndResetQuizIfNeeded(quizId)
+      setShowResetConfirm(false)
+      // Optionally, you can add a toast or notification here
+    } catch (err) {
+      console.error("Error resetting quiz:", err)
+    }
+  }
+
   if (!quiz || !gameState || !currentGroup) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
@@ -398,6 +412,14 @@ export default function PlayQuizPageTailwind() {
               >
                 خروج
               </Button>
+              <Button
+                onClick={() => setShowResetConfirm(true)}
+                variant="outline"
+                size="sm"
+                className="bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
+              >
+                إعادة تعيين
+              </Button>
               <div className="flex items-center gap-1 bg-orange-500 text-white p-1 rounded-full font-bold text-sm">
                 <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" /></svg>
                 {Math.ceil(timeLeft)} ث
@@ -475,6 +497,45 @@ export default function PlayQuizPageTailwind() {
                     className="flex-1 bg-red-500 hover:bg-red-600 text-white"
                   >
                     خروج
+                  </Button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Reset Confirmation Dialog */}
+        <AnimatePresence>
+          {showResetConfirm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+              onClick={() => setShowResetConfirm(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="backdrop-blur-md bg-white/20 rounded-2xl p-6 max-w-sm mx-4 text-center border-white/30 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3 className="text-xl font-bold text-slate-800 mb-2">تأكيد إعادة التعيين</h3>
+                <p className="text-slate-600 mb-6">هل أنت متأكد من رغبتك في إعادة تعيين المسابقة؟ سيتم حذف جميع الإجابات والنقاط.</p>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => setShowResetConfirm(false)}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    إلغاء
+                  </Button>
+                  <Button
+                    onClick={handleResetQuiz}
+                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    إعادة تعيين
                   </Button>
                 </div>
               </motion.div>

@@ -182,7 +182,7 @@ export const getUserQuizzes = async (userId: string) => {
   }
 };
 
-// Group operations - محسن مع تنظيف تلقائي
+// Group operations - محسن مع تنظيف تلقائي وإعادة تعيين المسابقة
 export const joinQuizAsGroup = async (
   quizId: string,
   groupData: Omit<Group, "id" | "joinedAt" | "score" | "lastActivity">
@@ -192,6 +192,9 @@ export const joinQuizAsGroup = async (
 
     // تنظيف المجموعات القديمة أولاً (أكثر من ساعة)
     await cleanupOldGroups(quizId);
+
+    // التحقق من حالة المسابقة وإعادة تعيينها إذا لزم الأمر
+    await checkAndResetQuizIfNeeded(quizId);
 
     const q = query(groupsRef, where("groupName", "==", groupData.groupName));
     const existingGroups = await getDocs(q);
@@ -283,6 +286,63 @@ export const cleanupOldGroups = async (quizId: string) => {
   } catch (error) {
     console.error("Error cleaning up old groups:", error);
     throw error;
+  }
+};
+
+// التحقق من حالة المسابقة وإعادة تعيينها إذا لزم الأمر (أكثر من 3 ساعات)
+export const checkAndResetQuizIfNeeded = async (quizId: string) => {
+  try {
+    const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+    const gameStateDoc = await getDoc(gameStateRef);
+
+    if (gameStateDoc.exists()) {
+      const gameState = gameStateDoc.data();
+      const startedAt = gameState.startedAt?.toDate();
+
+      if (startedAt) {
+        const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000); // 3 ساعات
+        if (startedAt < threeHoursAgo) {
+          console.log("Quiz is older than 3 hours, resetting...");
+
+          // إعادة تعيين حالة المسابقة
+          await setDoc(
+            gameStateRef,
+            {
+              currentQuestionIndex: 0,
+              isActive: false,
+              startedAt: null,
+              questionStartTime: null,
+              showResults: false,
+              showQuestionOnly: false,
+              currentQuestionTimeLimit: 30,
+              shuffledQuestions: null,
+            },
+            { merge: true }
+          );
+
+          // حذف جميع الردود
+          const responsesRef = collection(db, "quizzes", quizId, "responses");
+          const responsesSnapshot = await getDocs(responsesRef);
+          const batch = writeBatch(db);
+          responsesSnapshot.docs.forEach((doc) => {
+            batch.delete(doc.ref);
+          });
+
+          // إعادة تعيين نقاط المجموعات
+          const groupsRef = collection(db, "quizzes", quizId, "groups");
+          const groupsSnapshot = await getDocs(groupsRef);
+          groupsSnapshot.docs.forEach((doc) => {
+            batch.set(doc.ref, { score: 0 }, { merge: true });
+          });
+
+          await batch.commit();
+          console.log("Quiz reset successfully");
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error checking and resetting quiz:", error);
+    // لا نرمي خطأ هنا لأن هذا ليس خطأ حرج
   }
 };
 
