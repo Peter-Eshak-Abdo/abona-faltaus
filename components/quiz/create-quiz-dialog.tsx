@@ -94,6 +94,49 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
     XLSX.writeFile(workbook, "quiz_template.xlsx")
   }
 
+  const exportQuizToExcel = () => {
+    if (questions.length === 0) {
+      alert("لا توجد أسئلة للتصدير")
+      return
+    }
+
+    const exportData = [
+      ["Question", "Choice1", "Choice2", "Choice3", "Choice4", "Correct", "TimeLimit"],
+      ...questions.map((question) => {
+        const correctIndex = question.correctAnswer + 1 // 1-based index
+        if (question.type === "true-false") {
+          return [
+            question.text,
+            question.choices[0] || "صح",
+            question.choices[1] || "خطأ",
+            "",
+            "",
+            correctIndex.toString(),
+            question.timeLimit.toString()
+          ]
+        } else {
+          return [
+            question.text,
+            question.choices[0] || "",
+            question.choices[1] || "",
+            question.choices[2] || "",
+            question.choices[3] || "",
+            correctIndex.toString(),
+            question.timeLimit.toString()
+          ]
+        }
+      })
+    ]
+
+    const worksheet = XLSX.utils.aoa_to_sheet(exportData)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, `${title || "Quiz"}_Questions`)
+
+    // Generate and download the file
+    const fileName = `${title.replace(/[^a-zA-Z0-9]/g, "_") || "quiz"}_questions.xlsx`
+    XLSX.writeFile(workbook, fileName)
+  }
+
   const handleExcelImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
@@ -284,6 +327,14 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
               >
                 <Download size={16} className="ml-1" />
                 تحميل نموذج Excel
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center rounded-md border border-green-500 p-1 text-green-600 hover:bg-green-500 hover:text-white"
+                onClick={exportQuizToExcel}
+              >
+                <Download size={16} className="ml-1" />
+                تصدير المسابقة إلى Excel
               </button>
             </div>
             <input

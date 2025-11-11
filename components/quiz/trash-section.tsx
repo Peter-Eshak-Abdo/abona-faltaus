@@ -44,7 +44,7 @@ const TrashSection = ({ userId, onClose, onRestore }: TrashSectionProps) => {
         const { restoreQuiz } = await import("@/lib/firebase-utils")
         await restoreQuiz(trashId)
         alert("تم استعادة المسابقة بنجاح")
-        loadTrashedQuizzes()
+        await loadTrashedQuizzes()
         onRestore()
       } catch (error) {
         console.error("Error restoring quiz:", error)

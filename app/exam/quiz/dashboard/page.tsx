@@ -311,7 +311,7 @@ export default function DashboardPage() {
             exit={{ opacity: 0, height: 0 }}
             className="mt-1"
           >
-            <TrashSection userId={user.uid} onClose={() => setShowTrash(false)} onRestore={loadUserQuizzes} />
+            <TrashSection userId={user.uid} onClose={() => setShowTrash(false)} onRestore={() => { setShowTrash(false); loadUserQuizzes(); }} />
           </motion.div>
         )}
       </div>
