@@ -13,6 +13,10 @@ import {
 import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -26,7 +30,7 @@ export default function SignInPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/auth/profile");
-    } catch  {
+    } catch {
       setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
     }
   };
@@ -69,69 +73,80 @@ export default function SignInPage() {
   return (
     <>
       <LogoHeader />
-      <div className="max-w-4xl mx-auto my-5">
-        <h2 className="mb-4">تسجيل الدخول</h2>
+      <div className="max-w-7xl mx-auto my-4">
+        <Card className="max-w-md mx-auto bg-white shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-center">تسجيل الدخول</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+                {error}
+              </div>
+            )}
 
-        {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">{error}</div>}
+            <form onSubmit={handleEmailSignIn} className="space-y-4">
+              <div>
+                <Label htmlFor="email">البريد الإلكتروني</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="example@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
 
-        <form onSubmit={handleEmailSignIn} className="bg-white p-4 rounded-lg shadow-md">
-          <div className="mb-3">
-            <label className="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
-            <input
-              type="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="example@example.com"
-            />
-          </div>
+              <div>
+                <Label htmlFor="password">كلمة المرور</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-          <div className="mb-3">
-            <label className="block text-sm font-medium text-gray-700">كلمة المرور</label>
-            <input
-              type="password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
-          </div>
+              <Button type="submit" className="w-full">
+                دخول بالبريد الإلكتروني
+              </Button>
+            </form>
 
-          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 px-4 rounded mb-2">
-            دخول بالبريد الإلكتروني
-          </button>
-        </form>
+            <div className="text-center my-4">
+              <span>أو</span>
+            </div>
 
-        <div className="text-center my-3">
-          <span>أو</span>
-        </div>
+            <div className="grid gap-2">
+              <Button
+                variant="outline"
+                onClick={handleGoogleSignIn}
+                className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+              >
+                الدخول باستخدام Google
+              </Button>
 
-        <div className="grid gap-2">
-          <button
-            onClick={handleGoogleSignIn}
-            className="border border-red-600 text-red-600 hover:bg-red-600 hover:text-white py-2 px-4 rounded"
-          >
-            الدخول باستخدام Google
-          </button>
+              <Button
+                variant="outline"
+                onClick={handlePhoneSignIn}
+                className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+              >
+                الدخول برقم الهاتف
+              </Button>
+            </div>
 
-          <button
-            onClick={handlePhoneSignIn}
-            className="border border-green-600 text-green-600 hover:bg-green-600 hover:text-white py-2 px-4 rounded"
-          >
-            الدخول برقم الهاتف
-          </button>
-        </div>
+            <div id="recaptcha-container"></div>
 
-        <div id="recaptcha-container"></div>
-
-        <p className="mt-3 text-center">
-          ليس لديك حساب؟{" "}
-          <Link href="/auth/signup" className="underline">
-            أنشئ حساب جديد
-          </Link>
-        </p>
+            <p className="mt-4 text-center">
+              ليس لديك حساب؟{" "}
+              <Link href="/auth/signup" className="underline">
+                أنشئ حساب جديد
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </>
   );

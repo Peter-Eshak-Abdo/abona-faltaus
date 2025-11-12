@@ -14,6 +14,10 @@ import {
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ButtonGroup } from "@/components/ui/button-group";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -114,108 +118,116 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="max-w-7xl mx-auto flex items-center justify-center min-h-screen bg-gray-100">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white shadow-lg p-4 w-full"
-        style={{ maxWidth: "400px" }}
       >
-        <h2 className="text-center mb-4">
-          {mode === "login" ? "تسجيل الدخول" : "إنشاء حساب"}
-        </h2>
+        <Card className="w-full max-w-xl bg-white shadow-lg">
+          <CardHeader className="mb-3">
+            <CardTitle className="text-center text-4xl font-extrabold">
+              {mode === "login" ? "تسجيل الدخول" : "إنشاء حساب"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-center mb-1">
+              <Button
+                variant={mode === "login" ? "default" : "outline"}
+                onClick={() => setMode("login")}
+                disabled={isLoading}
+                className="mr-1"
+                size="normal"
+              >
+                دخول
+              </Button>
+              <Button
+                variant={mode === "signup" ? "default" : "outline"}
+                onClick={() => setMode("signup")}
+                disabled={isLoading}
+                size="normal"
+              >
+                حساب جديد
+              </Button>
+            </div>
 
-        <div className="flex justify-center mb-4">
-          <button
-            className={`px-4 py-2 rounded mr-2 ${mode === "login" ? "bg-blue-600 hover:bg-blue-700 text-white" : "border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`}
-            onClick={() => setMode("login")}
-            disabled={isLoading}
-          >
-            دخول
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${mode === "signup" ? "bg-blue-600 hover:bg-blue-700 text-white" : "border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`}
-            onClick={() => setMode("signup")}
-            disabled={isLoading}
-          >
-            حساب جديد
-          </button>
-        </div>
+            {mode === "signup" && (
+              <div className="mb-1">
+                <Input
+                  type="text"
+                  placeholder="الاسم الكامل"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
+            )}
 
-        {mode === "signup" && (
-          <div className="mb-3">
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-              placeholder="الاسم الكامل"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+            <div className="mb-1">
+              <Input
+                type="email"
+                placeholder="البريد الإلكتروني"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                dir="ltr"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="mb-1">
+              <Input
+                type="password"
+                placeholder="كلمة المرور"
+                dir="ltr"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+              />
+              <small className="text-gray-500">
+                يجب أن تكون كلمة المرور 6 أحرف على الأقل.
+              </small>
+            </div>
+
+            <Button
+              className="w-full mb-1"
+              onClick={handleEmailAuth}
               disabled={isLoading}
-            />
-          </div>
-        )}
+              size="normal"
+            >
+              {isLoading
+                ? mode === "login"
+                  ? "جاري الدخول..."
+                  : "جاري الإنشاء..."
+                : mode === "login"
+                  ? "تسجيل الدخول"
+                  : "إنشاء حساب"}
+            </Button>
 
-        <div className="mb-3">
-          <input
-            type="email"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-            placeholder="البريد الإلكتروني"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={isLoading}
-          />
-        </div>
+            <ButtonGroup aria-label="Button group" className="w-full gap-1">
+              <Button
+                variant="destructive"
+                onClick={() => handleSocialLogin(new GoogleAuthProvider())}
+                disabled={isLoading}
+                size="normal"
+              >
+                Google
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => handleSocialLogin(new GithubAuthProvider())}
+                disabled={isLoading}
+                size="normal"
+              >
+                GitHub
+              </Button>
+            </ButtonGroup>
 
-        <div className="mb-3">
-          <input
-            type="password"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-            placeholder="كلمة المرور"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={isLoading}
-          />
-          <small className="text-gray-500">
-            يجب أن تكون كلمة المرور 6 أحرف على الأقل.
-          </small>
-        </div>
-
-        <button
-          className="bg-green-600 hover:bg-green-700 text-white w-full py-2 px-4 rounded mb-3"
-          onClick={handleEmailAuth}
-          disabled={isLoading}
-        >
-          {isLoading
-            ? mode === "login"
-              ? "جاري الدخول..."
-              : "جاري الإنشاء..."
-            : mode === "login"
-              ? "تسجيل الدخول"
-              : "إنشاء حساب"}
-        </button>
-
-        <div className="grid gap-2 mb-3">
-          <button
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-            onClick={() => handleSocialLogin(new GoogleAuthProvider())}
-            disabled={isLoading}
-          >
-            Google
-          </button>
-          <button
-            className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded"
-            onClick={() => handleSocialLogin(new GithubAuthProvider())}
-            disabled={isLoading}
-          >
-            GitHub
-          </button>
-        </div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-2 text-center">
-            {error}
-          </div>
-        )}
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 p-1 rounded mt-1 text-center">
+                {error}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </motion.div>
     </div>
   );
