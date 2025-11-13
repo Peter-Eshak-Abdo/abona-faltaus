@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import {
   getQuiz,
@@ -49,31 +49,41 @@ export default function PlayQuizPageTailwind() {
     loadQuiz()
   }, [quizId])
 
+  const handleGameStateUpdate = useCallback((state: GameState | null) => {
+    setGameState(state)
+
+    if (!state?.isActive) {
+      setShowResults(true)
+      setShowLeaderboard(true)
+      return
+    }
+
+    if (state.questionStartTime && !state.showResults && !state.showQuestionOnly) {
+      setSelectedAnswer(null)
+      setHasAnswered(false)
+      setShowResults(false)
+      setShowLeaderboard(false)
+      setTimeLeft(state.currentQuestionTimeLimit || 20)
+    }
+
+    if (state.showResults) {
+      setShowResults(true)
+      setShowLeaderboard(false)
+    }
+  }, [])
+
   useEffect(() => {
     if (!quizId) return
 
-    const unsubState = subscribeToGameState(quizId, (state) => {
-      setGameState(state)
+    const unsubState = subscribeToGameState(quizId, handleGameStateUpdate)
 
-      if (!state?.isActive) {
-        setShowResults(true)
-        setShowLeaderboard(true)
-        return
-      }
+    return () => {
+      if (typeof unsubState === "function") unsubState()
+    }
+  }, [quizId, handleGameStateUpdate])
 
-      if (state.questionStartTime && !state.showResults && !state.showQuestionOnly) {
-        setSelectedAnswer(null)
-        setHasAnswered(false)
-        setShowResults(false)
-        setShowLeaderboard(false)
-        setTimeLeft(state.currentQuestionTimeLimit || 20)
-      }
-
-      if (state.showResults) {
-        setShowResults(true)
-        setShowLeaderboard(false)
-      }
-    })
+  useEffect(() => {
+    if (!quizId) return
 
     const unsubGroups = getQuizGroups(quizId, (updatedGroups) => {
       setGroups(updatedGroups)
@@ -90,17 +100,23 @@ export default function PlayQuizPageTailwind() {
       setLeaderboard(lb)
     })
 
+    return () => {
+      if (typeof unsubGroups === "function") unsubGroups()
+    }
+  }, [quizId])
+
+  useEffect(() => {
+    if (!quizId || gameState?.currentQuestionIndex === undefined) return
+
     const unsubResponses = getQuestionResponses(
       quizId,
-      gameState?.currentQuestionIndex || 0,
+      gameState.currentQuestionIndex,
       (updatedResponses) => {
         setResponses(updatedResponses)
       }
     )
 
     return () => {
-      if (typeof unsubState === "function") unsubState()
-      if (typeof unsubGroups === "function") unsubGroups()
       if (typeof unsubResponses === "function") unsubResponses()
     }
   }, [quizId, gameState?.currentQuestionIndex])
@@ -529,7 +545,7 @@ export default function PlayQuizPageTailwind() {
                     variant="outline"
                     className="flex-1"
                     size="normal"
-                    >
+                  >
                     إلغاء
                   </Button>
                   <Button
