@@ -76,7 +76,7 @@ const TrashSection = ({ userId, onClose, onRestore }: TrashSectionProps) => {
 
   if (loading) {
     return (
-      <Card className="p-6">
+      <Card className="p-1">
         <div className="flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
@@ -85,7 +85,7 @@ const TrashSection = ({ userId, onClose, onRestore }: TrashSectionProps) => {
   }
 
   return (
-    <Card className="p-6">
+    <Card className="p-1">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="text-4xl">سلة المحذوفات</CardTitle>
@@ -94,29 +94,30 @@ const TrashSection = ({ userId, onClose, onRestore }: TrashSectionProps) => {
       </CardHeader>
       <CardContent>
         {trashedQuizzes.length === 0 ? (
-          <p className="text-center text-gray-500 text-2xl py-8">لا توجد مسابقات محذوفة</p>
+          <p className="text-center text-gray-500 text-2xl py-1">لا توجد مسابقات محذوفة</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
             {trashedQuizzes.map((quiz) => (
               <motion.div
                 key={quiz.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-4"
+                className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-1"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{quiz.title}</h3>
-                <p className="text-gray-600 mb-4">{quiz.description}</p>
-                <div className="text-sm text-gray-500 mb-4">
+                <h3 className="text-xl font-bold text-gray-900 mb-1">{quiz.title}</h3>
+                <p className="text-gray-600 mb-1">{quiz.description}</p>
+                <div className="text-sm text-gray-500 mb-1">
                   <p>تم الحذف: {quiz.deletedAt.toLocaleDateString("ar-EG")}</p>
                   <p className="text-red-600 font-semibold">
                     يتبقى {getDaysRemaining(quiz.expiresAt)} يوم للحذف النهائي
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-1">
                   <Button
                     onClick={() => handleRestore(quiz.id)}
                     className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                    size="normal"
                   >
                     استعادة
                   </Button>
@@ -124,6 +125,7 @@ const TrashSection = ({ userId, onClose, onRestore }: TrashSectionProps) => {
                     onClick={() => handlePermanentDelete(quiz.id)}
                     variant="destructive"
                     className="flex-1"
+                    size="normal"
                   >
                     حذف نهائي
                   </Button>

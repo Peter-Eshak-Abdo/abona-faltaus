@@ -91,15 +91,15 @@ export default function DashboardPage() {
 
   if (authError) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded w-full max-w-md">
-          <div className="flex items-center gap-2 mb-2">
+      <div className="min-h-screen flex items-center justify-center p-1">
+        <div className="bg-red-100 border border-red-400 text-red-700 p-1 rounded w-full max-w-md">
+          <div className="flex items-center gap-1 mb-1">
             <AlertCircle className="h-5 w-5" />
             <span>خطأ في المصادقة: {authError.message}</span>
           </div>
           <button
             onClick={() => router.push("/auth/login")}
-            className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+            className="w-full bg-red-500 hover:bg-red-600 text-white p-1 rounded"
             type="button"
           >
             حاول مرة أخرى
@@ -134,7 +134,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-1">
       <div className="max-w-8xl mx-auto">
         {/* Header */}
-        <Card className="mb-2 shadow-xl rounded-4xl">
+        <Card className="mb-1 shadow-xl rounded-4xl">
           <CardHeader>
             <div className="flex flex-col md:flex-row justify-between items-center gap-1">
               <img src={"/images/alnosor/logo.jpeg"} alt="Logo"

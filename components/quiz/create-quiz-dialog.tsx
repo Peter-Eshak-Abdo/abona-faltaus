@@ -130,10 +130,12 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
 
     const worksheet = XLSX.utils.aoa_to_sheet(exportData)
     const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, `${title || "Quiz"}_Questions`)
+    const sanitizedTitle = (title || "Quiz").replace(/[^a-zA-Z0-9]/g, "_").slice(0, 21)
+    const sheetName = `${sanitizedTitle}_Questions`
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
 
     // Generate and download the file
-    const fileName = `${title.replace(/[^a-zA-Z0-9]/g, "_") || "quiz"}_questions.xlsx`
+    const fileName = `${title.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, "_") || "quiz"}.xlsx`
     XLSX.writeFile(workbook, fileName)
   }
 
@@ -322,7 +324,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
               </button>
               <button
                 type="button"
-                className="inline-flex items-center rounded-md border border-secondary p-1 text-black hover:bg-primary hover:text-secondary-foreground"
+                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-primary hover:text-primary-foreground"
                 onClick={downloadTemplate}
               >
                 <Download size={16} className="ml-1" />
@@ -330,7 +332,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
               </button>
               <button
                 type="button"
-                className="inline-flex items-center rounded-md border border-green-500 p-1 text-green-600 hover:bg-green-500 hover:text-white"
+                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-primary hover:text-primary-foreground"
                 onClick={exportQuizToExcel}
               >
                 <Download size={16} className="ml-1" />

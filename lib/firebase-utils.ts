@@ -36,17 +36,24 @@ export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt">) => {
 
 export const getQuiz = async (quizId: string): Promise<Quiz | null> => {
   try {
+    // تحقق من الأمان: quizId يجب أن يكون string صالح
+    if (!quizId || typeof quizId !== "string" || quizId.length < 10) {
+      throw new Error("Invalid quiz ID");
+    }
+
     const docRef = doc(db, "quizzes", quizId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       const data = docSnap.data();
+      console.log("Quiz retrieved successfully:", quizId);
       return {
         id: docSnap.id,
         ...data,
         createdAt: data.createdAt?.toDate() || new Date(),
       } as Quiz;
     }
+    console.log("Quiz not found:", quizId);
     return null;
   } catch (error) {
     console.error("Error getting quiz:", error);
@@ -188,6 +195,11 @@ export const joinQuizAsGroup = async (
   groupData: Omit<Group, "id" | "joinedAt" | "score" | "lastActivity">
 ) => {
   try {
+    // تحقق من الأمان: quizId يجب أن يكون string صالح
+    if (!quizId || typeof quizId !== "string" || quizId.length < 10) {
+      throw new Error("Invalid quiz ID");
+    }
+
     const groupsRef = collection(db, "quizzes", quizId, "groups");
 
     // تنظيف المجموعات القديمة أولاً (أكثر من ساعة)
@@ -230,6 +242,7 @@ export const joinQuizAsGroup = async (
       score: 0,
     });
 
+    console.log("Group joined successfully:", docRef.id, "for quiz:", quizId);
     return docRef.id;
   } catch (error) {
     console.error("Error joining quiz:", error);
@@ -384,6 +397,11 @@ export const startQuiz = async (quizId: string, quiz: Quiz) => {
   try {
     console.log("Starting quiz:", quizId);
 
+    // تحقق من الأمان: quizId يجب أن يكون string صالح
+    if (!quizId || typeof quizId !== "string" || quizId.length < 10) {
+      throw new Error("Invalid quiz ID");
+    }
+
     // خلط الأسئلة إذا كان مطلوباً
     let questions = [...quiz.questions];
     if (quiz.shuffleQuestions) {
@@ -416,16 +434,16 @@ export const startQuiz = async (quizId: string, quiz: Quiz) => {
         currentQuestionIndex: 0,
         isActive: true,
         startedAt: serverTimestamp(),
-        questionStartTime: null, // سيتم تعيينه بعد 5 ثوان
+        questionStartTime: null, // سيتم تعيينه بعد 3 ثوان
         showResults: false,
-        showQuestionOnly: true, // إظهار السؤال فقط لمدة 5 ثوان
+        showQuestionOnly: true, // إظهار السؤال فقط لمدة 3 ثوان
         currentQuestionTimeLimit: questions[0]?.timeLimit || 30,
         shuffledQuestions: questions,
       },
       { merge: true }
     );
 
-    // بعد 5 ثوان، إظهار الاختيارات وبدء المؤقت
+    // بعد 3 ثوان، إظهار الاختيارات وبدء المؤقت
     setTimeout(async () => {
       await setDoc(
         gameStateRef,
@@ -435,9 +453,9 @@ export const startQuiz = async (quizId: string, quiz: Quiz) => {
         },
         { merge: true }
       );
-    }, 5000);
+    }, 3000);
 
-    console.log("Quiz started successfully");
+    console.log("Quiz started successfully with 3s question-only timer");
   } catch (error: any) {
     console.error("Error starting quiz:", error);
     throw new Error(`فشل في بدء الامتحان: ${error.message}`);
@@ -475,9 +493,15 @@ const shuffleArrayWithCorrectAnswer = (
 export const nextQuestion = async (quizId: string, questionIndex: number) => {
   try {
     console.log("Moving to next question:", questionIndex);
+
+    // تحقق من الأمان: quizId يجب أن يكون string صالح
+    if (!quizId || typeof quizId !== "string" || quizId.length < 10) {
+      throw new Error("Invalid quiz ID");
+    }
+
     const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
 
-    // إظهار السؤال فقط لمدة 5 ثوان
+    // إظهار السؤال فقط لمدة 3 ثوان
     await setDoc(
       gameStateRef,
       {
@@ -489,7 +513,7 @@ export const nextQuestion = async (quizId: string, questionIndex: number) => {
       { merge: true }
     );
 
-    // بعد 5 ثوان، إظهار الاختيارات وبدء المؤقت
+    // بعد 3 ثوان، إظهار الاختيارات وبدء المؤقت
     setTimeout(async () => {
       await setDoc(
         gameStateRef,
@@ -499,9 +523,13 @@ export const nextQuestion = async (quizId: string, questionIndex: number) => {
         },
         { merge: true }
       );
-    }, 5000);
+    }, 3000);
 
-    console.log("Moved to question", questionIndex);
+    console.log(
+      "Moved to question",
+      questionIndex,
+      "with 3s question-only timer"
+    );
   } catch (error) {
     console.error("Error moving to next question:", error);
     throw error;
@@ -554,12 +582,43 @@ export const submitResponse = async (
   response: Omit<QuizResponse, "id" | "timestamp">
 ) => {
   try {
+    // تحقق من الأمان: quizId و groupId يجب أن يكونا صالحين
+    if (!quizId || typeof quizId !== "string" || quizId.length < 10) {
+      throw new Error("Invalid quiz ID");
+    }
+    if (
+      !response.groupId ||
+      typeof response.groupId !== "string" ||
+      response.groupId.length < 10
+    ) {
+      throw new Error("Invalid group ID");
+    }
+
+    // التحقق من حالة المسابقة لمنع الإجابات المتأخرة
+    const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+    const gameStateDoc = await getDoc(gameStateRef);
+    if (gameStateDoc.exists()) {
+      const gameState = gameStateDoc.data();
+      if (gameState.showResults) {
+        console.warn(
+          "Late response rejected: results are already shown for question",
+          response.questionIndex
+        );
+        return; // لا نرمي خطأ، فقط نتجاهل
+      }
+    }
+
     const responsesRef = collection(db, "quizzes", quizId, "responses");
     await addDoc(responsesRef, {
       ...response,
       timestamp: serverTimestamp(),
     });
-    console.log("Response submitted successfully");
+    console.log(
+      "Response submitted successfully for group",
+      response.groupId,
+      "question",
+      response.questionIndex
+    );
   } catch (error) {
     console.error("Error submitting response:", error);
     throw error;
@@ -666,15 +725,29 @@ export const updateGroupScores = async (
   scores: { groupId: string; score: number }[]
 ) => {
   try {
+    // تحقق من الأمان: quizId يجب أن يكون string صالح
+    if (!quizId || typeof quizId !== "string" || quizId.length < 10) {
+      throw new Error("Invalid quiz ID");
+    }
+
     const batch = writeBatch(db);
 
     scores.forEach(({ groupId, score }) => {
+      if (!groupId || typeof groupId !== "string" || groupId.length < 10) {
+        console.warn("Invalid groupId in updateGroupScores:", groupId);
+        return;
+      }
       const groupRef = doc(db, "quizzes", quizId, "groups", groupId);
       batch.set(groupRef, { score }, { merge: true });
     });
 
     await batch.commit();
-    console.log("Group scores updated successfully");
+    console.log(
+      "Group scores updated successfully for",
+      scores.length,
+      "groups in quiz:",
+      quizId
+    );
   } catch (error) {
     console.error("Error updating group scores:", error);
     throw error;

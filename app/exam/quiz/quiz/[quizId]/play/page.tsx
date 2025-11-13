@@ -32,7 +32,7 @@ export default function PlayQuizPageTailwind() {
   const [timeLeft, setTimeLeft] = useState<number>(20)
   const [showResults, setShowResults] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
-  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState<number>(5)
+  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState<number>(3)
   const [showExitConfirm, setShowExitConfirm] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
 
@@ -204,12 +204,12 @@ export default function PlayQuizPageTailwind() {
   }
 
   const getChoiceColor = (index: number) => {
-    const base = ["bg-green-500", "bg-red-500", "bg-blue-500", "bg-yellow-500"]
+    const base = ["bg-blue-500", "bg-yellow-500", "bg-green-500", "bg-red-500"]
     return base[index] ?? "bg-gray-500"
   }
 
   const getChoiceHover = (index: number) => {
-    const h = ["hover:bg-green-600", "hover:bg-red-600", "hover:bg-blue-600", "hover:bg-yellow-600"]
+    const h = ["hover:bg-blue-600", "hover:bg-yellow-600", "hover:bg-green-600", "hover:bg-red-600"]
     return h[index] ?? "hover:bg-gray-600"
   }
 
@@ -479,12 +479,12 @@ export default function PlayQuizPageTailwind() {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="backdrop-blur-md bg-white/20 rounded-2xl p-6 max-w-sm mx-4 text-center border-white/30 shadow-2xl"
+                className="backdrop-blur-md bg-white/20 rounded-2xl p-1 max-w-sm mx-4 text-center border-white/30 shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
-                <h3 className="text-xl font-bold text-slate-800 mb-2">تأكيد الخروج</h3>
-                <p className="text-slate-600 mb-6">هل أنت متأكد من رغبتك في الخروج من المسابقة؟</p>
-                <div className="flex gap-3">
+                <h3 className="text-xl font-bold text-slate-800 mb-1">تأكيد الخروج</h3>
+                <p className="text-slate-600 mb-1">هل أنت متأكد من رغبتك في الخروج من المسابقة؟</p>
+                <div className="flex gap-1">
                   <Button
                     onClick={() => setShowExitConfirm(false)}
                     variant="outline"
@@ -518,22 +518,24 @@ export default function PlayQuizPageTailwind() {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="backdrop-blur-md bg-white/20 rounded-2xl p-6 max-w-sm mx-4 text-center border-white/30 shadow-2xl"
+                className="backdrop-blur-md bg-white/20 rounded-2xl p-1 max-w-sm mx-1 text-center border-white/30 shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
-                <h3 className="text-xl font-bold text-slate-800 mb-2">تأكيد إعادة التعيين</h3>
-                <p className="text-slate-600 mb-6">هل أنت متأكد من رغبتك في إعادة تعيين المسابقة؟ سيتم حذف جميع الإجابات والنقاط.</p>
-                <div className="flex gap-3">
+                <h3 className="text-xl font-bold text-slate-800 mb-1">تأكيد إعادة التعيين</h3>
+                <p className="text-slate-600 mb-1">هل أنت متأكد من رغبتك في إعادة تعيين المسابقة؟ سيتم حذف جميع الإجابات والنقاط.</p>
+                <div className="flex gap-1">
                   <Button
                     onClick={() => setShowResetConfirm(false)}
                     variant="outline"
                     className="flex-1"
-                  >
+                    size="normal"
+                    >
                     إلغاء
                   </Button>
                   <Button
                     onClick={handleResetQuiz}
                     className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+                    size="normal"
                   >
                     إعادة تعيين
                   </Button>

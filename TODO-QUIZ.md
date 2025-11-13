@@ -1,11 +1,16 @@
-@app/exam/quiz/quiz/[quizId]/play/page.tsx
-1- عايز الصفحة تبقي glassy
-2- عايز زراير الاختيارات تبقي متلونة (اخضر واحمر وازرق واصفر)
-3- الاسكور مش بيتحسب خالص بيفضل 0
+# TODO-QUIZ
 
-@components/quiz/quiz-host-game.tsx
-1- التايمير مش ظاهر عندي في الhost game
-2- الاختيارات مش متلونة بالالوان بتاعتها (اخضر واحمر وازرق واصفر)
-3- الاسكور مش بيتحسب
-4- مش بيظهر حالة النتيجة الحالية (stats/leaderboard) بشكل صحيح
-5- حالة النتجة النهائية بتاعت ال 3 مراكز الاولي
+## Current Tasks
+
+- [ ] توحيد المؤقتات: جعل questionOnlyTimeLeft = 3 ثوانٍ في Host و Play و firebase-utils.ts
+- [ ] تحسين Polling: استبدال polling في quiz-host-game.tsx بـ real-time listeners
+- [ ] التعامل مع الإجابات المتأخرة: تحقق من showResults في submitResponse
+- [ ] توحيد الألوان: جعل الألوان في Play نفسها في Host (أزرق، أصفر، أخضر، أحمر)
+- [ ] تحسين الأمان: أضف تحقق لـ quizId و groupId
+- [ ] إضافة Logging: أضف console.log في النقاط الحرجة
+- [ ] استخدام useCallback: في Host و Play و quiz-host-game
+- [ ] اختبار: اختبر مع عدة لاعبين للتأكد من التزامن
+
+## Completed Tasks
+
+- [x] مراجعة المنطق بين صفحة quiz/[quizId]/host و quiz/[quizId]/play و components/quiz/quiz-host-game

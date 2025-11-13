@@ -19,7 +19,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [showScoreAnimation, setShowScoreAnimation] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState(5)
+  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState(3)
 
   // displayPhase: controls what right-panel shows while showResults === true
   // 'idle' -> during question (we won't show choice breakdown)
@@ -215,8 +215,13 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
   // ألوان الاختيارات: ترتيب ثابت (أزرق، أصفر، أخضر، أحمر)
   const getChoiceColor = (index: number) => {
-    const colors = ["bg-blue-500", "bg-yellow-500", "bg-green-500", "bg-red-500"]
-    return colors[index] || "bg-gray-500"
+    const base = ["bg-blue-500", "bg-yellow-500", "bg-green-500", "bg-red-500"]
+    return base[index] ?? "bg-gray-500"
+  }
+
+  const getChoiceHover = (index: number) => {
+    const h = ["hover:bg-blue-600", "hover:bg-yellow-600", "hover:bg-green-600", "hover:bg-red-600"]
+    return h[index] ?? "hover:bg-gray-600"
   }
 
   const getResponseStats = () => {
