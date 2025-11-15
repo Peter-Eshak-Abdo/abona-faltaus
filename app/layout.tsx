@@ -23,7 +23,7 @@ const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
-  title: 'Abona Faltaus Tofa7a | أبونا فلتاؤس تفاحة',
+  title: 'أبونا فلتاؤس تفاحة',
   description: "الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية",
   keywords: ["الحان", "عظات", "وعظات", "ترانيم", "مقالات دينية", "امتحانات", "اسئلة دينية", "ابونا فلتاؤس السرياني", "الكتاب المقدس", "كنيسة", "ارثوذكسية", "تفاحة"],
   authors: [{ name: 'Peter Eshak Abdo', url: baseUrl }],
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     icon: "/images/icons/favicon.ico",
   },
   openGraph: {
-    title: 'أبونا فلتاؤس السرياني',
+    title: 'أبونا فلتاؤس تفاحة',
     description: 'الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية.',
     url: baseUrl,
     siteName: 'Abona Faltaus',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
         url: '/images/icons/favicon.ico',
         width: 1200,
         height: 630,
-        alt: 'أبونا فلتاؤس السرياني',
+        alt: 'أبونا فلتاؤس تفاحة',
       },
     ],
     locale: 'ar_EG',
@@ -63,9 +63,9 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="أبونا فلتاؤس السرياني تفاحة" />
+        <meta property="og:site_name" content="أبونا فلتاؤس تفاحة" />
         <meta property="og:url" content="https://abona-faltaus.vercel.app" />
-        <meta property="og:title" content="أبونا فلتاؤس السرياني تفاحة" />
+        <meta property="og:title" content="أبونا فلتاؤس تفاحة" />
         <meta property="og:description" content="الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية." />
         <meta property="og:image" content="/images/icons/favicon.ico" />
         <link rel="canonical" href="https://abona-faltaus.vercel.app/" />

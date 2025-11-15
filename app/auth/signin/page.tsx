@@ -40,8 +40,16 @@ export default function SignInPage() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       router.push("/profile");
-    } catch {
-      setError("فشل تسجيل الدخول باستخدام Google");
+    } catch (err: unknown) {
+      console.error(err);
+      if (typeof err === "object" && err !== null && "code" in err) {
+        const code = (err as { code: string }).code;
+        if (code !== 'auth/popup-closed-by-user') {
+          setError("فشل تسجيل الدخول باستخدام Google");
+        }
+      } else {
+        setError("فشل تسجيل الدخول باستخدام Google");
+      }
     }
   };
 

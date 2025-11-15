@@ -58,7 +58,14 @@ export default function LoginPage() {
       router.push("/");
     } catch (err: unknown) {
       console.error(err);
-      setError("حدث خطأ أثناء تسجيل الدخول الاجتماعي");
+      if (typeof err === "object" && err !== null && "code" in err) {
+        const code = (err as { code: string }).code;
+        if (code !== 'auth/popup-closed-by-user') {
+          setError("حدث خطأ أثناء تسجيل الدخول الاجتماعي");
+        }
+      } else {
+        setError("حدث خطأ أثناء تسجيل الدخول الاجتماعي");
+      }
     } finally {
       setIsLoading(false);
     }
