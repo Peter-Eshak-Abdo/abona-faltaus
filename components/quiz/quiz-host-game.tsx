@@ -13,13 +13,13 @@ interface QuizHostGameProps {
 
 export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [responses, setResponses] = useState<QuizResponse[]>([])
-  const [timeLeft, setTimeLeft] = useState(30)
+  const [timeLeft, setTimeLeft] = useState(20)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [previousLeaderboard, setPreviousLeaderboard] = useState<LeaderboardEntry[]>([])
   const [showScoreAnimation, setShowScoreAnimation] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState(3)
+  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState(5)
 
   // displayPhase: controls what right-panel shows while showResults === true
   // 'idle' -> during question (we won't show choice breakdown)
@@ -332,8 +332,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
             <div className="space-y-1">
               {currentQuestion.choices.map((choice, index) => (
-                <motion.div key={index} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.06 }} className={`p-1 rounded-xl flex items-center gap-1 ${gameState.showResults && index === currentQuestion.correctAnswer ? "ring-4 ring-green-500 bg-green-50 shadow-lg" : "bg-gray-50 hover:bg-gray-100"}`}>
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-lg ${getChoiceColor(index)}`}>
+                <motion.div key={index} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.06 }} className={`p-1 rounded-xl flex items-center gap-1 ${gameState.showResults && index === currentQuestion.correctAnswer ? "ring-1 ring-green-500 bg-green-50 shadow-lg" : "bg-gray-50 hover:bg-gray-100"}`}>
+                  <div className={`w-4 h-4 rounded-full flex items-center justify-center text-white font-bold text-lg ${getChoiceColor(index)}`}>
                     {String.fromCharCode(65 + index)}
                   </div>
                   <div className="text-2xl flex-1 text-gray-900">{choice}</div>

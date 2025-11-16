@@ -131,13 +131,13 @@ export default function LoginPage() {
         animate={{ opacity: 1, y: 0 }}
       >
         <Card className="w-full max-w-xl bg-white shadow-lg">
-          <CardHeader className="mb-3">
+          <CardHeader className="mb-1">
             <CardTitle className="text-center text-4xl font-extrabold">
               {mode === "login" ? "تسجيل الدخول" : "إنشاء حساب"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex justify-center mb-1">
+            <div className="flex justify-center mb-1 gap-1">
               <Button
                 variant={mode === "login" ? "default" : "outline"}
                 onClick={() => setMode("login")}
@@ -209,7 +209,7 @@ export default function LoginPage() {
                   : "إنشاء حساب"}
             </Button>
 
-            <ButtonGroup aria-label="Button group" className="w-full gap-1">
+            <ButtonGroup aria-label="Button group" className="w-full gap-1 flex justify-center">
               <Button
                 variant="destructive"
                 onClick={() => handleSocialLogin(new GoogleAuthProvider())}

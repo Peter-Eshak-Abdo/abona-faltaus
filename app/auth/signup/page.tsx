@@ -76,17 +76,17 @@ export default function SignUpPage() {
   return (
     <>
       <LogoHeader />
-      <div className="max-w-4xl mx-auto my-5">
-        <h2 className="mb-4">إنشاء حساب جديد</h2>
+      <div className="max-w-7xl mx-auto my-1">
+        <h2 className="mb-1">إنشاء حساب جديد</h2>
 
-        {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">{error}</div>}
+        {error && <div className="bg-red-100 border border-red-400 text-red-700 p-1 rounded">{error}</div>}
 
-        <form onSubmit={handleSignUp} className="bg-white p-4 rounded-lg shadow-md">
-          <div className="mb-3">
+        <form onSubmit={handleSignUp} className="bg-white p-1 rounded-lg shadow-md">
+          <div className="mb-1">
             <label className="block text-sm font-medium text-gray-700">الاسم</label>
             <input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -94,11 +94,11 @@ export default function SignUpPage() {
             />
           </div>
 
-          <div className="mb-3">
+          <div className="mb-1">
             <label className="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
             <input
               type="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -106,11 +106,11 @@ export default function SignUpPage() {
             />
           </div>
 
-          <div className="mb-3">
+          <div className="mb-1">
             <label className="block text-sm font-medium text-gray-700">كلمة المرور</label>
             <input
               type="password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -119,11 +119,11 @@ export default function SignUpPage() {
             <small className="text-gray-500">يجب أن تكون كلمة المرور 6 أحرف على الأقل.</small>
           </div>
 
-          <button type="submit" className="bg-green-600 hover:bg-green-700 text-white w-full py-2 px-4 rounded">
+          <button type="submit" className="bg-green-600 hover:bg-green-700 text-white w-full p-1 rounded">
             إنشاء حساب
           </button>
 
-          <p className="mt-3 text-center">
+          <p className="mt-1 text-center">
             لديك حساب بالفعل؟{' '}
             <Link href="/auth/signin" className="underline">
               سجل الدخول

@@ -81,19 +81,19 @@ export default function SignInPage() {
   return (
     <>
       <LogoHeader />
-      <div className="max-w-7xl mx-auto my-4">
+      <div className="max-w-7xl mx-auto my-1">
         <Card className="max-w-md mx-auto bg-white shadow-lg">
           <CardHeader>
             <CardTitle className="text-center">تسجيل الدخول</CardTitle>
           </CardHeader>
           <CardContent>
             {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+              <div className="bg-red-100 border border-red-400 text-red-700 p-1 rounded mb-1">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleEmailSignIn} className="space-y-4">
+            <form onSubmit={handleEmailSignIn} className="space-y-1">
               <div>
                 <Label htmlFor="email">البريد الإلكتروني</Label>
                 <Input
@@ -123,11 +123,11 @@ export default function SignInPage() {
               </Button>
             </form>
 
-            <div className="text-center my-4">
+            <div className="text-center my-1">
               <span>أو</span>
             </div>
 
-            <div className="grid gap-2">
+            <div className="grid gap-1">
               <Button
                 variant="outline"
                 onClick={handleGoogleSignIn}
@@ -147,7 +147,7 @@ export default function SignInPage() {
 
             <div id="recaptcha-container"></div>
 
-            <p className="mt-4 text-center">
+            <p className="mt-1 text-center">
               ليس لديك حساب؟{" "}
               <Link href="/auth/signup" className="underline">
                 أنشئ حساب جديد

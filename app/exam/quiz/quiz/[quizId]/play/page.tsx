@@ -32,7 +32,7 @@ export default function PlayQuizPageTailwind() {
   const [timeLeft, setTimeLeft] = useState<number>(20)
   const [showResults, setShowResults] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
-  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState<number>(3)
+  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState<number>(5)
   const [showExitConfirm, setShowExitConfirm] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
 
