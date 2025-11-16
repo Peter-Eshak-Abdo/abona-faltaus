@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponsesOnce, updateGroupScores } from "@/lib/firebase-utils"
 import type { Quiz, Group, GameState, QuizResponse, LeaderboardEntry } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
@@ -21,11 +21,14 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState(5)
 
-  // displayPhase: controls what right-panel shows while showResults === true
-  // 'idle' -> during question (we won't show choice breakdown)
-  // 'stats' -> show response stats (short)
-  // 'leaderboard' -> show leaderboard
-  const [displayPhase, setDisplayPhase] = useState<"idle" | "stats" | "leaderboard">("idle")
+  // fullScreenPhase: controls full screen display for each phase
+  // 'question' -> full screen question
+  // 'stats' -> full screen stats
+  // 'leaderboard' -> full screen leaderboard
+  const [fullScreenPhase, setFullScreenPhase] = useState<"question" | "stats" | "leaderboard" | null>(null)
+  const questionTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const statsTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const leaderboardTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const currentQuestion = gameState.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz.questions[gameState.currentQuestionIndex]
   const isLastQuestion = gameState.currentQuestionIndex >= quiz.questions.length - 1
@@ -48,6 +51,42 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       setQuestionOnlyTimeLeft(5)
     }
   }, [gameState.showQuestionOnly, gameState.isActive, gameState.currentQuestionIndex])
+
+  // Full screen phases sequence
+  useEffect(() => {
+    if (gameState.isActive && !gameState.showQuestionOnly && !gameState.showResults) {
+      // Start with full screen question for the duration of the question timer
+      setFullScreenPhase("question")
+      const questionDuration = currentQuestion?.timeLimit || 20
+      questionTimerRef.current = setTimeout(() => {
+        setFullScreenPhase(null) // Back to normal view after question time
+      }, questionDuration * 1000)
+      return () => {
+        if (questionTimerRef.current) clearTimeout(questionTimerRef.current)
+      }
+    } else if (gameState.showResults) {
+      // Show stats full screen for 5 seconds
+      setFullScreenPhase("stats")
+      statsTimerRef.current = setTimeout(() => {
+        calculateLeaderboard()
+        setFullScreenPhase("leaderboard")
+        setShowScoreAnimation(true)
+        // Show leaderboard for 5 seconds then auto next
+        leaderboardTimerRef.current = setTimeout(() => {
+          handleNextQuestion()
+        }, 5000)
+      }, 5000)
+      return () => {
+        if (statsTimerRef.current) clearTimeout(statsTimerRef.current)
+        if (leaderboardTimerRef.current) clearTimeout(leaderboardTimerRef.current)
+      }
+    } else {
+      setFullScreenPhase(null)
+      if (questionTimerRef.current) clearTimeout(questionTimerRef.current)
+      if (statsTimerRef.current) clearTimeout(statsTimerRef.current)
+      if (leaderboardTimerRef.current) clearTimeout(leaderboardTimerRef.current)
+    }
+  }, [gameState.isActive, gameState.showQuestionOnly, gameState.showResults, gameState.currentQuestionIndex, currentQuestion?.timeLimit])
 
   // مؤقت الإجابة (host) — يعتمد على الوقت بالبداية
   useEffect(() => {
@@ -98,27 +137,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }, [gameState.quizId, gameState.currentQuestionIndex, gameState.isActive, gameState.showQuestionOnly, groups.length, gameState.showResults])
 
-  // عندما يقوم السيرفر بتفعيل showResults نعرض أولاً إحصائيات (stats) ثم ننتقل للـ leaderboard
-  useEffect(() => {
-    if (gameState.showResults) {
-      // عرض الإحصائيات أولاً
-      setDisplayPhase("stats")
-      // بعد فترة قصيرة ننتقل للترتيب
-      const t = setTimeout(() => {
-        calculateLeaderboard()
-        setDisplayPhase("leaderboard")
-        // تشغيل أنيميشن النقاط
-        setTimeout(() => setShowScoreAnimation(true), 150)
-      }, 2800) // عرض الإحصائيات ~2.8s (يمكن تعديل المدة)
-
-      return () => clearTimeout(t)
-    } else {
-      // أثناء السؤال أو قبل النتائج: عد للـ idle
-      setDisplayPhase("idle")
-      setShowScoreAnimation(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState.showResults, responses])
+  // This effect is now handled in the full screen phases useEffect above
 
   const handleTimeUp = async () => {
     if (gameState.showResults) return
@@ -204,7 +223,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       await nextQuestion(gameState.quizId, gameState.currentQuestionIndex + 1)
       setResponses([])
       setTimeLeft(quiz.questions[gameState.currentQuestionIndex + 1]?.timeLimit || 20)
-      setDisplayPhase("idle")
+      setFullScreenPhase(null)
     } catch (error: any) {
       console.error("Error moving to next question:", error)
       setError(error.message || "فشل في الانتقال للسؤال التالي")
@@ -247,6 +266,24 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     return previousPos - currentPos
   }
 
+  const handleSkipPhase = () => {
+    if (fullScreenPhase === "question") {
+      if (questionTimerRef.current) clearTimeout(questionTimerRef.current)
+      setFullScreenPhase(null)
+    } else if (fullScreenPhase === "stats") {
+      if (statsTimerRef.current) clearTimeout(statsTimerRef.current)
+      calculateLeaderboard()
+      setFullScreenPhase("leaderboard")
+      setShowScoreAnimation(true)
+      leaderboardTimerRef.current = setTimeout(() => {
+        handleNextQuestion()
+      }, 5000)
+    } else if (fullScreenPhase === "leaderboard") {
+      if (leaderboardTimerRef.current) clearTimeout(leaderboardTimerRef.current)
+      handleNextQuestion()
+    }
+  }
+
   // --- UI ---
   if (!gameState.isActive) {
     // عرض النتائج النهائية على شاشة الـ Host (podium)
@@ -277,7 +314,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                     {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-16 h-16 rounded-full border-4 border-white object-cover" />}
                     <div className="text-right">
                       <h3 className="font-bold text-2xl">{entry.groupName}</h3>
-                      <p className="text-lg opacity-90">{entry.members.join(" || ")}</p>
+                      <p className="text-lg opacity-90">{entry.members.join(" • ")}</p>
                     </div>
                   </div>
                   <div className="text-3xl font-bold">{entry.score.toLocaleString()}</div>
@@ -295,7 +332,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     return (
       <div className="min-h-screen bg-linear-to-br from-purple-600 to-blue-700 p-1">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-4 bg-white rounded-2xl p-1">
+          <div className="flex justify-between items-center mb-1 bg-white rounded-2xl p-1">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</h1>
               <p className="text-gray-600 text-lg">{quiz.title}</p>
@@ -313,6 +350,116 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
               <h2 className="text-4xl font-bold mb-1">استعدوا للسؤال!</h2>
               <p className="text-6xl font-bold mb-1">{currentQuestion.text}</p>
               <div className="text-2xl">سيظهر الاختيارات خلال {questionOnlyTimeLeft} ثانية</div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    )
+  }
+
+  // Full screen phases
+  if (fullScreenPhase === "question") {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-purple-600 to-blue-700 p-1">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-4 bg-white rounded-2xl p-1">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</h1>
+              <p className="text-gray-600 text-lg">{quiz.title}</p>
+            </div>
+            <div className="flex items-center gap-1 bg-purple-100 p-1 rounded-xl">
+              <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+              </svg>
+              <span className="font-bold text-purple-600">{Math.ceil(timeLeft)} ث</span>
+            </div>
+          </div>
+
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="bg-linear-to-r from-purple-600 to-blue-600 text-white p-1 text-center">
+              <h2 className="text-4xl font-bold mb-1">السؤال</h2>
+              <p className="text-6xl font-bold mb-1">{currentQuestion.text}</p>
+              <div className="text-2xl">سيظهر الاختيارات خلال {Math.ceil(timeLeft)} ثانية</div>
+            </div>
+            <div className="p-1 text-center">
+              <button onClick={handleSkipPhase} className="bg-orange-500 text-white font-bold py-1 px-1 rounded-xl">تخطي السؤال</button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    )
+  }
+
+  if (fullScreenPhase === "stats") {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-blue-600 to-purple-700 p-1">
+        <div className="max-w-7xl mx-auto">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl shadow-2xl p-1">
+            <div className="text-center mb-1">
+              <h2 className="text-4xl font-bold text-gray-900 mb-1">إحصائيات الإجابات</h2>
+              <div className="text-2xl font-bold">{responses.length} / {groups.length} رد</div>
+            </div>
+
+            <div className="space-y-1">
+              {getResponseStats().map((stat, index) => (
+                <div key={index} className="flex items-center gap-1">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl" style={getChoiceStyle(index)}>{getChoiceLabel(index)}</div>
+                  <div className="flex-1">
+                    <div className="flex justify-between">
+                      <div className="font-medium text-gray-900 text-xl">{currentQuestion.choices[index]}</div>
+                      <div className="font-bold text-gray-900 text-xl">{stat.count}</div>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-4 mt-1">
+                      <div className="h-4 rounded-full" style={{ width: `${responses.length > 0 ? (stat.count / responses.length) * 100 : 0}%`, backgroundColor: getChoiceStyle(index).backgroundColor }} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="p-1 text-center">
+              <button onClick={handleSkipPhase} className="bg-orange-500 text-white font-bold py-1 px-1 rounded-xl">تخطي الإحصائيات</button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    )
+  }
+
+  if (fullScreenPhase === "leaderboard") {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-green-600 to-blue-700 p-1">
+        <div className="max-w-7xl mx-auto">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl shadow-2xl p-1">
+            <div className="text-center mb-1">
+              <h2 className="text-4xl font-bold text-gray-900 mb-1">الترتيب الحالي</h2>
+            </div>
+
+            <div className="space-y-1">
+              {leaderboard.map((entry, index) => {
+                const positionChange = getPositionChange(entry.groupId)
+                return (
+                  <motion.div key={entry.groupId} layout initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0, scale: showScoreAnimation ? [1, 1.05, 1] : 1 }} transition={{ delay: index * 0.06 }}>
+                    <div className={`p-1 rounded-lg flex items-center justify-between ${index === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : index === 2 ? "bg-linear-to-r from-orange-300 to-red-400 text-white" : "bg-white"}`}>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${index < 3 ? "bg-white/20" : "bg-blue-500 text-white"}`}>{index + 1}</div>
+                        {entry.saintImage && <img src={entry.saintImage || "/placeholder.svg"} alt={entry.saintName} className="w-12 h-12 rounded-full border-2 border-white object-cover" />}
+                        <div>
+                          <div className="font-bold text-xl">{entry.groupName}</div>
+                          <div className="text-sm opacity-80">{entry.members.join(" • ")}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {positionChange > 0 && <div className="text-green-500 font-bold text-lg">↑{positionChange}</div>}
+                        {positionChange < 0 && <div className="text-red-500 font-bold text-lg">↓{Math.abs(positionChange)}</div>}
+                        <div className="font-bold text-2xl">{entry.score.toLocaleString()}</div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+            <div className="p-1 text-center">
+              <button onClick={handleSkipPhase} className="bg-orange-500 text-white font-bold py-1 px-1 rounded-xl">تخطي اللوحة</button>
             </div>
           </motion.div>
         </div>
@@ -367,76 +514,15 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
         {/* RIGHT: conditional panel */}
         <div className="bg-white rounded-2xl shadow-lg p-1">
           <div className="bg-gray-100 p-1 rounded-lg mb-1">
-            <h2 className="text-2xl font-bold">{displayPhase === "leaderboard" ? "الترتيب الحالي" : displayPhase === "stats" ? "إحصائيات الاختيارات" : "حالة الأسئلة"}</h2>
+            <h2 className="text-2xl font-bold">حالة الأسئلة</h2>
           </div>
 
           <div>
-            <AnimatePresence mode="wait">
-              {displayPhase === "idle" && (
-                <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <div className="text-center mb-1">
-                    <div className="text-4xl font-bold text-gray-700">{responses.length} / {groups.length}</div>
-                    <div className="text-gray-600">رد مستلم</div>
-                  </div>
-                  <div className="text-sm text-gray-600">تفصيل إحصائيات الاختيارات سيظهر بعد انتهاء السؤال.</div>
-                </motion.div>
-              )}
-
-              {displayPhase === "stats" && (
-                <motion.div key="stats" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                  <div className="text-center mb-1">
-                    <div className="text-xl font-bold">{responses.length} / {groups.length} رد</div>
-                    <div className="text-gray-600">إحصائيات الإجابات</div>
-                  </div>
-
-                  <div className="space-y-1">
-                    {getResponseStats().map((stat, index) => (
-                      <div key={index} className="flex items-center gap-1">
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style={getChoiceStyle(index)}>{getChoiceLabel(index)}</div>
-                        <div className="flex-1">
-                          <div className="flex justify-between">
-                            <div className="font-medium text-gray-900">{currentQuestion.choices[index]}</div>
-                            <div className="font-bold text-gray-900">{stat.count}</div>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3 mt-1">
-                            <div className="h-3 rounded-full" style={{ width: `${responses.length > 0 ? (stat.count / responses.length) * 100 : 0}%`, backgroundColor: getChoiceStyle(index).backgroundColor }} />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {displayPhase === "leaderboard" && (
-                <motion.div key="leaderboard" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                  <div className="space-y-1">
-                    {leaderboard.map((entry, index) => {
-                      const positionChange = getPositionChange(entry.groupId)
-                      return (
-                        <motion.div key={entry.groupId} layout initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0, scale: showScoreAnimation ? [1, 1.05, 1] : 1 }} transition={{ delay: index * 0.06 }}>
-                          <div className={`p-1 rounded-lg flex items-center justify-between ${index === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : index === 1 ? "bg-slate-100 text-slate-900" : index === 2 ? "bg-linear-to-r from-orange-300 to-red-400 text-white" : "bg-white"}`}>
-                            <div className="flex items-center gap-3">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${index < 3 ? "bg-white/20" : "bg-blue-500 text-white"}`}>{index + 1}</div>
-                              {entry.saintImage && <img src={entry.saintImage || "/placeholder.svg"} alt={entry.saintName} className="w-8 h-8 rounded-full border-2 border-white object-cover" />}
-                              <div>
-                                <div className="font-bold">{entry.groupName}</div>
-                                <div className="text-sm opacity-80">{entry.members.join(" • ")}</div>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              {positionChange > 0 && <div className="text-green-500 font-bold">↑{positionChange}</div>}
-                              {positionChange < 0 && <div className="text-red-500 font-bold">↓{Math.abs(positionChange)}</div>}
-                              <div className="font-bold text-lg">{entry.score.toLocaleString()}</div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )
-                    })}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="text-center mb-1">
+              <div className="text-4xl font-bold text-gray-700">{responses.length} / {groups.length}</div>
+              <div className="text-gray-600">رد مستلم</div>
+            </div>
+            <div className="text-sm text-gray-600">تفصيل إحصائيات الاختيارات سيظهر بعد انتهاء السؤال.</div>
           </div>
         </div>
       </div>
