@@ -224,6 +224,13 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     return h[index] ?? "hover:bg-gray-600"
   }
 
+  const getChoiceLabel = (i: number) => ["أ", "ب", "ج", "د"][i] ?? `${i + 1}`
+
+  const getChoiceStyle = (index: number) => {
+    const colors = ["#3b82f6", "#eab308", "#22c55e", "#ef4444", "#6b7280"]
+    return { backgroundColor: colors[index] ?? colors[4] }
+  }
+
   const getResponseStats = () => {
     const stats = currentQuestion.choices.map((_, index) => ({
       choice: index,
@@ -333,8 +340,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
             <div className="space-y-1">
               {currentQuestion.choices.map((choice, index) => (
                 <motion.div key={index} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.06 }} className={`p-1 rounded-xl flex items-center gap-1 ${gameState.showResults && index === currentQuestion.correctAnswer ? "ring-1 ring-green-500 bg-green-50 shadow-lg" : "bg-gray-50 hover:bg-gray-100"}`}>
-                  <div className={`w-4 h-4 rounded-full flex items-center justify-center text-white font-bold text-lg ${getChoiceColor(index)}`}>
-                    {String.fromCharCode(65 + index)}
+                  <div className="w-4 h-4 rounded-full flex items-center justify-center text-white font-bold text-lg" style={getChoiceStyle(index)}>
+                    {getChoiceLabel(index)}
                   </div>
                   <div className="text-2xl flex-1 text-gray-900">{choice}</div>
                   {gameState.showResults && index === currentQuestion.correctAnswer && (
@@ -385,14 +392,14 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                   <div className="space-y-1">
                     {getResponseStats().map((stat, index) => (
                       <div key={index} className="flex items-center gap-1">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${getChoiceColor(index)}`}>{String.fromCharCode(65 + index)}</div>
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style={getChoiceStyle(index)}>{getChoiceLabel(index)}</div>
                         <div className="flex-1">
                           <div className="flex justify-between">
                             <div className="font-medium text-gray-900">{currentQuestion.choices[index]}</div>
                             <div className="font-bold text-gray-900">{stat.count}</div>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-3 mt-1">
-                            <div className={`${getChoiceColor(index)} h-3 rounded-full`} style={{ width: `${responses.length > 0 ? (stat.count / responses.length) * 100 : 0}%` }} />
+                            <div className="h-3 rounded-full" style={{ width: `${responses.length > 0 ? (stat.count / responses.length) * 100 : 0}%`, backgroundColor: getChoiceStyle(index).backgroundColor }} />
                           </div>
                         </div>
                       </div>
