@@ -1,2 +1,5 @@
-- [x] Make the background in the play page glassy by adding backdrop-blur and adjusting opacity.
-- [x] Verify the glassy effect looks good.
+- [ ] Make background glassy in QuizHostGame
+- [ ] Ensure choices are visible (change colors or add borders)
+- [ ] Make response stats smaller (reduce font sizes in stats section)
+- [ ] Make current result smaller (reduce font sizes in leaderboard)
+- [ ] Fix skip question: modify handleSkipQuestion to end quiz if last question
