@@ -300,27 +300,27 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5 }}
-              className="mb-8"
+              className="mb-1"
             >
-              <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-2xl">🎉 انتهت المسابقة! 🎉</h1>
+              <h1 className="text-6xl font-bold text-white mb-1 drop-shadow-2xl">🎉 انتهت المسابقة! 🎉</h1>
               <p className="text-2xl text-white/90">الفائزون النهائيون</p>
             </motion.div>
 
-            <div className="flex justify-center items-end gap-4 mb-8">
+            <div className="flex justify-center items-end gap-1 mb-1">
               {/* المركز الثاني */}
               {leaderboard[1] && (
                 <motion.div
                   initial={{ y: 100, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.5, duration: 1, type: "spring", stiffness: 100 }}
-                  className="bg-slate-100 text-slate-900 p-4 rounded-t-2xl shadow-2xl w-64 h-48 flex flex-col justify-end"
+                  className="bg-slate-100 text-slate-900 p-1 rounded-t-2xl shadow-2xl w-64 h-48 flex flex-col justify-end"
                 >
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-2">2</div>
-                    {leaderboard[1].saintImage && <img src={leaderboard[1].saintImage} alt={leaderboard[1].saintName} className="w-12 h-12 rounded-full border-2 border-white object-cover mx-auto mb-2" />}
+                    <div className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-1">2</div>
+                    {leaderboard[1].saintImage && <img src={leaderboard[1].saintImage} alt={leaderboard[1].saintName} className="w-12 h-12 rounded-full border-2 border-white object-cover mx-auto mb-1" />}
                     <h3 className="font-bold text-lg">{leaderboard[1].groupName}</h3>
                     <p className="text-sm opacity-80">{leaderboard[1].members.join(" • ")}</p>
-                    <div className="text-xl font-bold mt-2">{leaderboard[1].score.toLocaleString()}</div>
+                    <div className="text-xl font-bold mt-1">{leaderboard[1].score.toLocaleString()}</div>
                   </div>
                 </motion.div>
               )}
@@ -331,17 +331,17 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                   initial={{ y: 100, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2, duration: 1, type: "spring", stiffness: 100 }}
-                  className="bg-linear-to-r from-yellow-400 to-orange-500 text-white p-4 rounded-t-2xl shadow-2xl w-80 h-64 flex flex-col justify-end relative"
+                  className="bg-linear-to-r from-yellow-400 to-orange-500 text-white p-1 rounded-t-2xl shadow-2xl w-80 h-64 flex flex-col justify-end relative"
                 >
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <div className="text-4xl">👑</div>
                   </div>
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-white/20 text-white rounded-full flex items-center justify-center font-bold text-3xl mx-auto mb-2">1</div>
-                    {leaderboard[0].saintImage && <img src={leaderboard[0].saintImage} alt={leaderboard[0].saintName} className="w-16 h-16 rounded-full border-4 border-white object-cover mx-auto mb-2" />}
+                    <div className="w-20 h-20 bg-white/20 text-white rounded-full flex items-center justify-center font-bold text-3xl mx-auto mb-1">1</div>
+                    {leaderboard[0].saintImage && <img src={leaderboard[0].saintImage} alt={leaderboard[0].saintName} className="w-16 h-16 rounded-full border-4 border-white object-cover mx-auto mb-1" />}
                     <h3 className="font-bold text-xl">{leaderboard[0].groupName}</h3>
                     <p className="text-sm opacity-90">{leaderboard[0].members.join(" • ")}</p>
-                    <div className="text-2xl font-bold mt-2">{leaderboard[0].score.toLocaleString()}</div>
+                    <div className="text-2xl font-bold mt-1">{leaderboard[0].score.toLocaleString()}</div>
                   </div>
                 </motion.div>
               )}
@@ -352,14 +352,14 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                   initial={{ y: 100, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.8, duration: 1, type: "spring", stiffness: 100 }}
-                  className="bg-linear-to-r from-orange-300 to-red-400 text-white p-4 rounded-t-2xl shadow-2xl w-64 h-40 flex flex-col justify-end"
+                  className="bg-linear-to-r from-orange-300 to-red-400 text-white p-1 rounded-t-2xl shadow-2xl w-64 h-40 flex flex-col justify-end"
                 >
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-white/20 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-2">3</div>
-                    {leaderboard[2].saintImage && <img src={leaderboard[2].saintImage} alt={leaderboard[2].saintName} className="w-12 h-12 rounded-full border-2 border-white object-cover mx-auto mb-2" />}
+                    <div className="w-16 h-16 bg-white/20 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-1">3</div>
+                    {leaderboard[2].saintImage && <img src={leaderboard[2].saintImage} alt={leaderboard[2].saintName} className="w-12 h-12 rounded-full border-2 border-white object-cover mx-auto mb-1" />}
                     <h3 className="font-bold text-lg">{leaderboard[2].groupName}</h3>
                     <p className="text-sm opacity-80">{leaderboard[2].members.join(" • ")}</p>
-                    <div className="text-xl font-bold mt-2">{leaderboard[2].score.toLocaleString()}</div>
+                    <div className="text-xl font-bold mt-1">{leaderboard[2].score.toLocaleString()}</div>
                   </div>
                 </motion.div>
               )}
@@ -371,19 +371,19 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5, duration: 0.5 }}
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 max-w-4xl mx-auto"
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-1 max-w-4xl mx-auto"
               >
-                <h3 className="text-xl font-bold text-white mb-4">باقي المشاركين</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <h3 className="text-xl font-bold text-white mb-1">باقي المشاركين</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                   {leaderboard.slice(3).map((entry, index) => (
                     <motion.div
                       key={entry.groupId}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.5 + index * 0.1, duration: 0.3 }}
-                      className="bg-white/20 p-3 rounded-lg flex items-center justify-between"
+                      className="bg-white/20 p-1 rounded-lg flex items-center justify-between"
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">{index + 4}</div>
                         <div>
                           <div className="font-bold text-sm text-white">{entry.groupName}</div>
@@ -597,7 +597,30 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
               <div className="text-4xl font-bold text-gray-700">{responses.length} / {groups.length}</div>
               <div className="text-gray-600">رد مستلم</div>
             </div>
-            <div className="text-sm text-gray-600">تفصيل إحصائيات الاختيارات سيظهر بعد انتهاء السؤال.</div>
+            {responses.length > 0 && (
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">إحصائيات الاختيارات</h3>
+                {getResponseStats().map((stat, index) => (
+                  <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style={getChoiceStyle(index)}>
+                      {getChoiceLabel(index)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <div className="text-sm font-medium text-gray-900">{currentQuestion.choices[index]}</div>
+                        <div className="text-lg font-bold text-gray-700">{stat.count}</div>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                        <div className="h-2 rounded-full bg-blue-500 transition-all" style={{ width: `${responses.length > 0 ? (stat.count / responses.length) * 100 : 0}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {responses.length === 0 && (
+              <div className="text-sm text-gray-600">لم يتم استلام أي ردود بعد.</div>
+            )}
           </div>
         </div>
       </div>
