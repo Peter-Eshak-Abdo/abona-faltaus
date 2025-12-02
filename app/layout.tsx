@@ -85,13 +85,28 @@ export default function RootLayout({
           rel="manifest"
           href="/manifest.webmanifest"
         />
-        <meta name="google-site-verification" content="45CwlQo0Fk1QKL796kCc0ZRO2Kd-n9cq2m1JHmzNjnk" />
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap-0.xml" />
         <link
           href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css"
           rel="stylesheet"
         />
+        <meta name="google-site-verification" content="45CwlQo0Fk1QKL796kCc0ZRO2Kd-n9cq2m1JHmzNjnk" />
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-91C82SG0D6"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+        >
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-91C82SG0D6');
+          `}
+        </Script>
 
       </head>
       <body suppressHydrationWarning={true}>
