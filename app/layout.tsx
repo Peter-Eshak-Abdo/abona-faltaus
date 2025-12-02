@@ -92,23 +92,23 @@ export default function RootLayout({
           rel="stylesheet"
         />
         <meta name="google-site-verification" content="45CwlQo0Fk1QKL796kCc0ZRO2Kd-n9cq2m1JHmzNjnk" />
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-91C82SG0D6"
-        />
-        <Script
-          id="google-analytics"
-          strategy="afterInteractive"
-        >
-          {`
+
+      </head>
+      <Script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-91C82SG0D6"
+      />
+      <Script
+        id="google-analytics"
+        strategy="afterInteractive"
+      >
+        {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-91C82SG0D6');
           `}
-        </Script>
-
-      </head>
+      </Script>
       <body suppressHydrationWarning={true}>
         <ServiceWorkerRegister />
         <div className="background-blur" />
