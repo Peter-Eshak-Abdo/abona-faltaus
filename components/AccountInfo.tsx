@@ -136,7 +136,7 @@ export default function AccountInfo() {
         <div className="text-center mb-1">
           <Image
             key={userData?.photoURL}
-            src={userData?.photoURL || "/images/logo.jpg"}
+            src={userData?.photoURL || "/images/logo.webp"}
             alt="الصورة الشخصية"
             width={100}
             height={100}

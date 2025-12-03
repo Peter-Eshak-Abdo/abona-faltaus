@@ -1,16 +1,14 @@
-import React from "react";
-
 const CONTACT_EMAIL = "petereshak11@gmail.com";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://abona-faltaus.vercel.app";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div dir="rtl" lang="ar" className="min-h-screen flex items-center justify-center bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 p-1">
+    <div dir="rtl" lang="ar" className="min-h-screen flex items-center justify-center from-slate-900 via-slate-800 to-slate-900 p-1">
       <main className="w-full max-w-7xl p-1 rounded-2xl backdrop-blur-md bg-white/6 border border-white/10 shadow-2xl">
         {/* Header */}
         <header className="flex items-start gap-1 mb-2">
           <div className="shrink-0 w-16 h-16 rounded-xl flex items-center justify-center bg-white/8 border border-white/8">
-            <img src="/images/logo.jpg" alt="لوغو ابونا فلتاؤس" className="w-12 h-12 object-contain" />
+            <img src="/images/logo.webp" alt="لوغو ابونا فلتاؤس" className="w-12 h-12 object-contain" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">سياسة الخصوصية — موقع ابونا فلتاؤس</h1>
@@ -73,7 +71,7 @@ export default function PrivacyPolicyPage() {
             <p className="mt-2">لك الحق في الوصول لبياناتك، طلب تصحيحها، طلب حذفها، وطلب تقييد معالجتها. لو عايز تمارس أي من الحقوق دي، ابعتلنا رسالة على البريد التالي:</p>
             <div className="mt-1 p-1 rounded-md bg-white/4 border border-white/6">
               <strong>البريد الإلكتروني للتواصل:</strong>
-              <p className="mt-1">{CONTACT_EMAIL} <span className="text-sm opacity-80 mr-2">(استبدل البريد ده بالبريد الرسمي للموقع)</span></p>
+              <p className="mt-1"><a href={"mailto:" + CONTACT_EMAIL} className="underline">{CONTACT_EMAIL}</a></p>
             </div>
           </article>
 
@@ -91,14 +89,13 @@ export default function PrivacyPolicyPage() {
             <h2 className="font-semibold text-lg">١١. تواصل معنا</h2>
             <p className="mt-2">لو عندك أي استفسار، أو طلب حذف بيانات، أو ملاحظة على سياسة الخصوصية تواصل معنا:</p>
             <ul className="list-disc mr-1 mt-2">
-              <li><strong>البريد الإلكتروني:</strong> {CONTACT_EMAIL}</li>
+              <li><strong>البريد الإلكتروني:</strong><a href={"mailto:" + CONTACT_EMAIL} className="underline">{CONTACT_EMAIL}</a></li>
               <li className="mt-1"><strong>الموقع الرسمي:</strong> <a href={SITE_URL} className="underline">{SITE_URL}</a></li>
               <li className="mt-1">لو عايز تشوف الكود المصدري أو تساهم: <a href="https://github.com/Peter-Eshak-Abdo/abona-faltaus" className="underline">مستودع GitHub</a></li>
             </ul>
           </article>
 
           <footer className="mt-1 text-sm opacity-80">
-            <p>صياغة مصرية أرثوذكسية — تم إعداد هذه السياسة لتناسب موقع كنسي واحتياجات مجتمعنا. لو حابب تعديل في الأسلوب (أدبي، قانوني رسمي، أو مبسط للشباب) أقدر أعدّ لك نسخة مخصّصة.</p>
             <p className="mt-2">آخر تحديث: {new Date().toLocaleDateString('ar-EG')}</p>
           </footer>
         </section>

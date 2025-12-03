@@ -164,7 +164,7 @@ export default function HostQuizPage() {
 
   if (loading || !quiz) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700">
+      <div className="min-h-screen flex items-center justify-center from-blue-600 to-purple-700">
         <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white"></div>
       </div>
     )
@@ -177,7 +177,7 @@ export default function HostQuizPage() {
   const joinUrl = typeof window !== "undefined" ? `${window.location.origin}/exam/quiz/quiz/${quizId}/join` : `abona-faltaus.vercel.app/exam/quiz/quiz/${quizId}/join`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-300 to-purple-300 p-1">
+    <div className="min-h-screen from-blue-300 to-purple-300 p-1">
       <div className="max-w-8xl mx-auto">
         <div className="mb-3 text-center md:text-right px-2 sm:px-0">
           <div className="flex flex-col-reverse md:flex-row">
@@ -185,7 +185,7 @@ export default function HostQuizPage() {
               <h1 className="text-7xl font-bold text-white mb-3 drop-shadow-xl text-center md:text-9xl">{quiz.title}</h1>
               <p className="text-white/80 text-3xl mb-2 text-center">{quiz.description}</p>
             </div>
-            <img src={"/images/alnosor/logo.jpeg"} alt="Logo" className="rounded-lg shadow-lg mb-2 w-20 " />
+            <img src={"/images/alnosor/logo.jpeg"} alt="Logo" className="rounded-lg shadow-lg mb-2 w-20" />
           </div>
           <div className="bg-blue-100 text-blue-800 p-1 rounded-full font-bold shadow-2xl break-normall">
             <p className="text-center text-3xl "> ملحوظات </p>
@@ -242,7 +242,7 @@ export default function HostQuizPage() {
             <Button
               onClick={handleStartQuiz}
               disabled={groups.length === 0 || isStarting || gameState?.isActive}
-              className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold rounded-2xl transition-all duration-300 text-xl sm:text-2xl shadow-2xl flex items-center mx-auto bg-primary text-primary-foreground p-1"
+              className="from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold rounded-2xl transition-all duration-300 text-xl sm:text-2xl shadow-2xl flex items-center mx-auto bg-primary text-primary-foreground p-1"
               type="button"
             >
               <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">

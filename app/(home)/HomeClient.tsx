@@ -22,6 +22,7 @@ const sections = [
   { name: "حول", href: "/about", icon: <FaInfoCircle /> },
   { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },
+  { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
   { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
   { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
@@ -50,10 +51,9 @@ export default function HomeClient() {
   };
 
   return (
-    <motion.div className="min-h-screen relative overflow-hidden bg-gradient-to-b">
+    <motion.div className="min-h-screen relative overflow-hidden">
       <LogoHeader />
       <UserHeader />
-      {/* <div className="mt-8 pt-8 mx-auto flex justify-bottom items-end-safe relative w-full h-[70vh]"> */}
 
       {/* اللوجو الأساسي */}
       <motion.div
@@ -84,7 +84,7 @@ export default function HomeClient() {
           style={{ outline: "none" }}
         >
           <Image
-            src="/images/logo.jpg"
+            src="/images/logo.webp"
             alt="Logo"
             width={250}
             height={250}
@@ -114,11 +114,10 @@ export default function HomeClient() {
               }}
             >
               <Image
-                src="/images/eagle.png"
+                src="/images/eagle.webp"
                 alt="Eagle"
                 width={230}
                 height={250}
-                priority
               />
             </motion.div>
           </motion.div>
