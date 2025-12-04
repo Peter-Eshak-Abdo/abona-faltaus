@@ -5,6 +5,7 @@
   "hints": {
     "disown-opener": "off",
     "apple-touch-icons": "off",
+    // "inline-styles": "off",
     "axe/aria": [
       "default",
       {

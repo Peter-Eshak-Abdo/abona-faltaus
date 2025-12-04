@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState, useCallback } from "react"
+import React, { useEffect, useState, useCallback, useMemo } from "react"
 import { useParams, useRouter } from "next/navigation"
 import {
   getQuiz,
@@ -154,7 +154,7 @@ export default function PlayQuizPageTailwind() {
     }, 100)
 
     return () => clearInterval(t)
-  }, [gameState?.questionStartTime, gameState?.showResults, gameState?.currentQuestionTimeLimit, gameState?.showQuestionOnly, hasAnswered])
+  }, [gameState?.questionStartTime, gameState?.showResults, gameState?.currentQuestionTimeLimit, gameState?.showQuestionOnly])
 
   // auto switch to leaderboard after showing results
   useEffect(() => {
@@ -312,7 +312,9 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
-  const currentQuestion = gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState?.currentQuestionIndex]
+  const currentQuestion = useMemo(() => {
+    return gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState?.currentQuestionIndex]
+  }, [gameState?.shuffledQuestions, gameState?.currentQuestionIndex, quiz?.questions])
 
   // question-only view
   if (gameState.showQuestionOnly) {
