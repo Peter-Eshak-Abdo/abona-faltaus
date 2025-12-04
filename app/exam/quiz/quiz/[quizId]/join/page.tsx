@@ -7,6 +7,8 @@ import { SAINTS_DATA } from "@/lib/saints-data"
 import type { Quiz, GameState, Saint } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/lib/firebase";
 
 export default function JoinQuizPage() {
   const params = useParams()
@@ -23,6 +25,8 @@ export default function JoinQuizPage() {
   const [hasJoined, setHasJoined] = useState(false)
   const quizId = params.quizId as string
   const memberCountRef = useRef<HTMLDivElement>(null)
+  const [user] = useAuthState(auth);
+  // const groupId = await joinQuizAsGroup(quizId, groupData, user?.uid);
 
   useEffect(() => {
     if (quizId) {
@@ -122,6 +126,8 @@ export default function JoinQuizPage() {
       )
 
       setHasJoined(true)
+      router.push(`/exam/quiz/quiz/${quizId}/play`)
+
     } catch (error) {
       console.error("Error joining quiz:", error)
       const errorMessage = (error as Error).message || "فشل في الانضمام للمسابقة"
@@ -142,18 +148,18 @@ export default function JoinQuizPage() {
 
   if (gameState?.isActive) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700 p-4">
-        <div className="w-full max-w-md text-center bg-white rounded-2xl shadow-2xl p-8">
-          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl p-1">
+        <div className="w-full max-w-md text-center bg-white rounded-2xl shadow-2xl p-1">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
             <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold mb-4 text-gray-900">بدأ المسابقة بالفعل</h2>
-          <p className="text-gray-600 mb-6 text-lg">هذة المسابقة بدأ بالفعل. لا يمكنك الانضمام الآن.</p>
+          <h2 className="text-2xl font-bold mb-2 text-gray-900">بدأ المسابقة بالفعل</h2>
+          <p className="text-gray-600 mb-1 text-lg">هذة المسابقة بدأ بالفعل. لا يمكنك الانضمام الآن.</p>
           <button
             onClick={() => router.push("/")}
-            className="w-full py-3 text-lg bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-colors font-bold"
+            className="w-full py-1 text-lg bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-colors font-bold"
             type="button"
           >
             العودة للرئيسية
@@ -197,6 +203,7 @@ export default function JoinQuizPage() {
   }
 
   return (
+
     <div className="min-h-screen bg-linear-to-br flex items-center justify-center">
       <div className="w-full max-w-8xl space-y-2 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
         <div className="text-center mb-2">

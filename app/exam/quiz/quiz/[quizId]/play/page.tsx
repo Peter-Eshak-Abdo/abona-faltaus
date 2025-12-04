@@ -1,30 +1,25 @@
 "use client"
 
-import React, { useEffect, useState, useCallback, useMemo, useRef } from "react"
+import React, { useEffect, useState, useCallback, useMemo } from "react"
 import { useParams, useRouter } from "next/navigation"
+import {
+  getQuiz,
+  subscribeToGameState,
+  submitResponse,
+  getQuizGroups,
+  getQuestionResponses,
+  deleteGroup,
+  checkAndResetQuizIfNeeded,
+} from "@/lib/firebase-utils"
 import type { Quiz, GameState, Group, LeaderboardEntry, QuizResponse } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
-// Small helper: safe millis (if you already have /lib/utils/time.ts use that instead)
-const toMillisSafe = (t?: any) => {
-  if (!t) return undefined
-  if (typeof t === "number") return t
-  if (t?.toDate && typeof t.toDate === "function") {
-    const d = t.toDate()
-    return isNaN(d.getTime()) ? undefined : d.getTime()
-  }
-  const d = new Date(t)
-  return isNaN(d.getTime()) ? undefined : d.getTime()
-}
-
 export default function PlayQuizPageTailwind() {
   const params = useParams()
   const router = useRouter()
-  const quizId = params?.quizId as string
-
   const [quiz, setQuiz] = useState<Quiz | null>(null)
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [groups, setGroups] = useState<Group[]>([])
@@ -39,132 +34,132 @@ export default function PlayQuizPageTailwind() {
   const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState<number>(3)
   const [showExitConfirm, setShowExitConfirm] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
-  const [loadingMsg, setLoadingMsg] = useState<string | null>("جارٍ التحميل...")
-  const [fatalError, setFatalError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // refs for unsubscribes
-  const unsubRefs = useRef<{ unsubState?: Function; unsubGroups?: Function; unsubResponses?: Function }>({})
+  const quizId = params?.quizId as string
 
-  // IMPORTANT: avoid top-level imports of modules that might reference `process`.
-  // Do a small browser polyfill for `process` before any dynamic import runs.
-  useEffect(() => {
-    if (typeof window !== "undefined" && typeof (globalThis as any).process === "undefined") {
-      // lightweight polyfill just so modules that reference `process` don't throw.
-      ; (globalThis as any).process = { env: {} }
-      // Note: this is a safe temporary polyfill for the browser runtime.
-      // If you prefer, remove later and fix server/client modules to not reference process at top-level.
-      console.info("Injected lightweight process polyfill for browser.")
+  // helper: normalize various timestamp/date formats -> milliseconds
+  const getStartMillis = (ts: any): number | null => {
+    if (!ts) return null
+    // Firestore Timestamp (has toDate)
+    if (typeof ts?.toDate === "function") {
+      return ts.toDate().getTime()
     }
-  }, [])
+    // number (already ms) or seconds
+    if (typeof ts === "number") {
+      // heuristics: if ts looks like seconds (10 digits), convert to ms
+      return ts > 1e12 ? ts : ts * 1000
+    }
+    // string or Date-like
+    const d = new Date(ts)
+    if (!isNaN(d.getTime())) return d.getTime()
+    return null
+  }
 
-  // load quiz metadata (dynamic import prevents early evaluation of firebase-utils)
-  const loadQuiz = useCallback(async () => {
-    if (!quizId) return
-    setLoadingMsg("جارٍ تحميل بيانات المسابقة...")
+  // read currentGroup from localStorage (important so user can answer)
+  useEffect(() => {
+    setLoading(true)
+    const groupData = localStorage.getItem("currentGroup")
+    if (!groupData) {
+      router.push(`/exam/quiz/quiz/${quizId}/join`)
+      return
+    }
     try {
-      const mod = await import("@/lib/firebase-utils")
-      const data = await mod.getQuiz(quizId)
-      if (!data) {
-        setFatalError("المسابقة غير موجودة أو انتهت صلاحيتها.")
-        return
-      }
-      setQuiz(data)
-    } catch (err: any) {
-      console.error("loadQuiz error:", err)
-      setFatalError("فشل في تحميل المسابقة. تأكد من الاتصال أو تهيئة Firebase.")
-    } finally {
-      setLoadingMsg(null)
+      setCurrentGroup(JSON.parse(groupData))
+    } catch (e) {
+      console.warn("Invalid currentGroup in localStorage, removing it.", e)
+      localStorage.removeItem("currentGroup")
+      router.push(`/exam/quiz/quiz/${quizId}/join`)
+      return
     }
-  }, [quizId])
-
-  // subscribe to game state + groups (dynamic import)
-  useEffect(() => {
-    if (!quizId) return
-    let mounted = true
-    ;(async () => {
-        try {
-          const mod = await import("@/lib/firebase-utils")
-          // groups
-          const unsubGroups = mod.getQuizGroups(quizId, (updatedGroups: Group[]) => {
-            if (!mounted) return
-            setGroups(updatedGroups || [])
-            // build leaderboard snapshot
-            const lb = (updatedGroups || []).map((g) => ({
-              groupId: g.id,
-              groupName: g.groupName,
-              members: g.members,
-              score: g.score || 0,
-              saintName: g.saintName,
-              saintImage: g.saintImage,
-            })).sort((a, b) => b.score - a.score)
-            setLeaderboard(lb)
-          })
-          // game state
-          const unsubState = mod.subscribeToGameState(quizId, (state: GameState | null) => {
-            if (!mounted) return
-            // normalize questionStartTime if Firestore Timestamp
-            if (state?.questionStartTime) {
-              const ms = toMillisSafe((state as any).questionStartTime)
-              if (ms) (state as any).questionStartTime = new Date(ms)
-            }
-            setGameState(state || null)
-            if (!state?.isActive) {
-              setShowResults(true)
-              setShowLeaderboard(true)
-            }
-            // set timeLeft when question starts
-            if (state?.questionStartTime && !state.showResults && !state.showQuestionOnly) {
-              setHasAnswered(false)
-              setSelectedAnswer(null)
-              setShowResults(false)
-              setShowLeaderboard(false)
-              setTimeLeft(state.currentQuestionTimeLimit || 20)
-            }
-          })
-
-            unsubRefs.current.unsubGroups = unsubGroups
-            unsubRefs.current.unsubState = unsubState
-          } catch (err) {
-            console.error("subscribe error:", err)
-            setFatalError("فشل في الاشتراك لتحديث حالة المسابقة. تحقق من تهيئة firebase-utils.")
-          }
-      })()
-
-    return () => {
-      mounted = false
-      try { if (typeof unsubRefs.current.unsubGroups === "function") unsubRefs.current.unsubGroups() } catch { }
-      try { if (typeof unsubRefs.current.unsubState === "function") unsubRefs.current.unsubState() } catch { }
-    }
+    loadQuiz()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizId])
 
-  // subscribe to question responses (when currentQuestionIndex is set)
+  // subscribe to gameState
+  useEffect(() => {
+    if (!quizId) return
+    const unsubState = subscribeToGameState(quizId, (state) => {
+      console.debug("gameState update:", state)
+      setGameState(state)
+      // if quiz not active -> show final results or waiting screen (handled by render)
+      if (!state?.isActive) {
+        setShowResults(true)
+        setShowLeaderboard(true)
+        return
+      }
+
+      // new question started
+      if (state.questionStartTime && !state.showResults && !state.showQuestionOnly) {
+        // reset answer UI
+        setSelectedAnswer(null)
+        setHasAnswered(false)
+        setShowResults(false)
+        setShowLeaderboard(false)
+
+        const startMillis = getStartMillis(state.questionStartTime)
+        const timeLimit = state.currentQuestionTimeLimit || 20
+        if (startMillis) {
+          const elapsed = (Date.now() - startMillis) / 1000
+          const remaining = Math.max(0, timeLimit - elapsed)
+          setTimeLeft(Math.ceil(remaining))
+        } else {
+          // fallback
+          setTimeLeft(timeLimit)
+        }
+      }
+
+      if (state.showResults) {
+        setShowResults(true)
+        setShowLeaderboard(false)
+      }
+    })
+    return () => {
+      if (typeof unsubState === "function") unsubState()
+    }
+  }, [quizId])
+
+  // groups subscription -> leaderboard
+  useEffect(() => {
+    if (!quizId) return
+    const unsubGroups = getQuizGroups(quizId, (updatedGroups) => {
+      setGroups(updatedGroups)
+      const lb = (updatedGroups || [])
+        .map((g) => ({
+          groupId: g.id,
+          groupName: g.groupName,
+          members: g.members,
+          score: g.score || 0,
+          saintName: g.saintName,
+          saintImage: g.saintImage,
+        }))
+        .sort((a, b) => b.score - a.score)
+      setLeaderboard(lb)
+    })
+    return () => {
+      if (typeof unsubGroups === "function") unsubGroups()
+    }
+  }, [quizId])
+
+  // question responses subscription
   useEffect(() => {
     if (!quizId || gameState?.currentQuestionIndex === undefined) return
-    let mounted = true
-    ;(async () => {
-      try {
-        const mod = await import("@/lib/firebase-utils")
-        const unsub = mod.getQuestionResponses(quizId, gameState.currentQuestionIndex, (updatedResponses: QuizResponse[]) => {
-          if (!mounted) return
-          setResponses(updatedResponses)
-        })
-        unsubRefs.current.unsubResponses = unsub
-      } catch (err) {
-        console.error("getQuestionResponses subscription error:", err)
+    const unsubResponses = getQuestionResponses(
+      quizId,
+      gameState.currentQuestionIndex,
+      (updatedResponses) => {
+        setResponses(updatedResponses)
       }
-    })()
-
+    )
     return () => {
-      mounted = false
-      try { if (typeof unsubRefs.current.unsubResponses === "function") unsubRefs.current.unsubResponses() } catch { }
+      if (typeof unsubResponses === "function") unsubResponses()
     }
   }, [quizId, gameState?.currentQuestionIndex])
 
-  // question-only timer (client side)
+  // question-only timer (short)
   useEffect(() => {
     if (gameState?.showQuestionOnly && gameState.isActive) {
-      setQuestionOnlyTimeLeft(3) // quick show for players
+      setQuestionOnlyTimeLeft(3)
       const t = setInterval(() => {
         setQuestionOnlyTimeLeft((p) => {
           if (p <= 1) {
@@ -180,19 +175,33 @@ export default function PlayQuizPageTailwind() {
     }
   }, [gameState?.showQuestionOnly, gameState?.isActive, gameState?.currentQuestionIndex])
 
-  // answer timer (client)
+  // answer timer (robust with different timestamp shapes)
   useEffect(() => {
     if (!gameState?.questionStartTime || gameState.showResults || hasAnswered || gameState?.showQuestionOnly) return
-    const start = toMillisSafe((gameState as any).questionStartTime) || Date.now()
+
+    const startMillis = getStartMillis(gameState.questionStartTime)
     const timeLimit = gameState?.currentQuestionTimeLimit || 20
+
+    if (!startMillis) {
+      // fallback: set default and don't auto-timeout immediately
+      setTimeLeft(timeLimit)
+      return
+    }
+
     const t = setInterval(() => {
-      const elapsed = (Date.now() - start) / 1000
+      const elapsed = (Date.now() - startMillis) / 1000
       const remaining = Math.max(0, timeLimit - elapsed)
-      setTimeLeft(Math.ceil(remaining))
-      if (remaining <= 0) setHasAnswered(true)
+      // protect from NaN / invalid values
+      if (!isFinite(remaining)) {
+        setTimeLeft(timeLimit)
+      } else {
+        setTimeLeft(Math.ceil(remaining))
+        if (remaining <= 0) setHasAnswered(true)
+      }
     }, 250)
+
     return () => clearInterval(t)
-  }, [gameState?.questionStartTime, gameState?.showResults, gameState?.currentQuestionTimeLimit, hasAnswered, gameState?.showQuestionOnly])
+  }, [gameState?.questionStartTime, gameState?.showResults, gameState?.currentQuestionTimeLimit, gameState?.showQuestionOnly, hasAnswered])
 
   // auto switch to leaderboard after showing results
   useEffect(() => {
@@ -202,127 +211,124 @@ export default function PlayQuizPageTailwind() {
     }
   }, [showResults, showLeaderboard, gameState?.isActive])
 
-  useEffect(() => {
-    if (!gameState?.isActive) {
-      // clear stored group on quiz end
-      localStorage.removeItem("currentGroup")
-    }
-  }, [gameState?.isActive])
+  // IMPORTANT: don't auto-remove currentGroup on transient isActive changes.
+  // Removal happens only when user explicitly exits (handleExitQuiz).
+  // (previous code removed localStorage when !gameState?.isActive — that kicked users out)
 
-  // load quiz metadata once
-  useEffect(() => {
-    loadQuiz()
-  }, [loadQuiz])
-
-  // helper: currentQuestion
-  const currentQuestion = useMemo(() => {
-    if (gameState?.currentQuestionIndex === undefined) return null
-    return gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions?.[gameState.currentQuestionIndex] || null
-  }, [gameState?.shuffledQuestions, gameState?.currentQuestionIndex, quiz?.questions])
-
-  // handle submit answer (dynamic import)
-  const handleAnswerSelect = async (answerIndex: number) => {
-    if (!gameState || !currentGroup || !gameState.questionStartTime || hasAnswered || gameState.showQuestionOnly) return
-    setSelectedAnswer(answerIndex)
-    setHasAnswered(true)
-    const responseTime = ((Date.now() - (toMillisSafe((gameState as any).questionStartTime) || Date.now())) / 1000) || 0
+  const loadQuiz = async () => {
     try {
-      const mod = await import("@/lib/firebase-utils")
-      const currentQuestionLocal = gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState.currentQuestionIndex]
-      await mod.submitResponse(quizId, {
-        groupId: currentGroup.id,
-        questionIndex: gameState.currentQuestionIndex,
-        answer: answerIndex,
-        isCorrect: answerIndex === currentQuestionLocal?.correctAnswer,
-        responseTime,
-      })
+      const data = await getQuiz(quizId)
+      if (!data) {
+        router.push("/")
+        return
+      }
+      setQuiz(data)
     } catch (err) {
-      console.error("submitResponse error:", err)
+      console.error("loadQuiz", err)
+      router.push("/")
+    } finally {
+      setLoading(false)
     }
   }
 
-  // exit & reset handlers (dynamic import)
+  const handleAnswerSelect = async (answerIndex: number) => {
+    // guard: require currentGroup and question started
+    if (hasAnswered || !gameState?.questionStartTime || !currentGroup || gameState.showQuestionOnly) return
+
+    setSelectedAnswer(answerIndex)
+    setHasAnswered(true)
+
+    const startMillis = getStartMillis(gameState.questionStartTime)
+    const responseTime = startMillis ? (Date.now() - startMillis) / 1000 : 0
+    const currentQuestion = gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState?.currentQuestionIndex]
+    if (!currentQuestion) {
+      console.warn("No currentQuestion to submit to.")
+      return
+    }
+
+    try {
+      await submitResponse(quizId, {
+        groupId: currentGroup.id,
+        questionIndex: gameState.currentQuestionIndex,
+        answer: answerIndex,
+        isCorrect: answerIndex === currentQuestion.correctAnswer,
+        responseTime,
+      })
+    } catch (err) {
+      console.error("submitResponse", err)
+      // keep UI responsively showing answer sent; you can show a toast to retry if needed
+    }
+  }
+
+  const choiceColors = ["bg-red-600", "bg-green-600", "bg-blue-600", "bg-yellow-400"]
+  const choiceTextColors = ["text-white", "text-white", "text-white", "text-black"] // yellow bg -> black text
+
+  const currentQuestion = useMemo(() => {
+    if (gameState?.currentQuestionIndex === undefined) return null
+    return gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions?.[gameState?.currentQuestionIndex] || null
+  }, [gameState?.shuffledQuestions, gameState?.currentQuestionIndex, quiz?.questions])
+
   const handleExitQuiz = async () => {
     if (!currentGroup) return
     try {
-      const mod = await import("@/lib/firebase-utils")
-      await mod.deleteGroup(quizId, currentGroup.id)
+      await deleteGroup(quizId, currentGroup.id)
       localStorage.removeItem("currentGroup")
       router.push(`/exam/quiz/quiz/${quizId}/join`)
     } catch (err) {
       console.error("Error exiting quiz:", err)
-      alert("حدث خطأ أثناء الخروج. حاول مجددًا.")
+      alert("حدث خطأ أثناء الخروج.")
     }
   }
 
   const handleResetQuiz = async () => {
     try {
-      const mod = await import("@/lib/firebase-utils")
-      await mod.checkAndResetQuizIfNeeded(quizId)
+      await checkAndResetQuizIfNeeded(quizId)
       setShowResetConfirm(false)
-      alert("تمت إعادة التعيين (إن وُجدت حاجة لإعادة التعيين).")
+      alert("تمت محاولة إعادة التعيين.")
     } catch (err) {
       console.error("Error resetting quiz:", err)
       alert("فشل في إعادة التعيين.")
     }
   }
 
-  // --- render / fallbacks ---
-
-  if (fatalError) {
+  if (loading || !quiz || !gameState || !currentGroup) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="max-w-lg bg-white p-4 rounded shadow text-center">
-          <h2 className="text-xl font-bold mb-2">حدث خطأ</h2>
-          <p className="mb-4">{fatalError}</p>
-          <div className="flex justify-center gap-2">
-            <Button onClick={() => window.location.reload()}>إعادة تحميل</Button>
-            <Button onClick={() => router.push("/")}>العودة للرئيسية</Button>
-          </div>
-          <pre className="text-xs mt-4 text-left bg-gray-50 p-2 rounded">{JSON.stringify({ quizId, gameState }, null, 2)}</pre>
-        </div>
-      </div>
-    )
-  }
-
-  if (!quiz || !gameState) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-white text-center">
-          <div className="mb-2">{loadingMsg || "جارٍ التحميل..."}</div>
+          <div className="mb-1">جارٍ التحميل ...</div>
           <div className="w-16 h-16 rounded-full border-b-4 border-white animate-spin mx-auto" />
         </div>
       </div>
     )
   }
 
-  // If quiz ended
   if (!gameState.isActive) {
     if (gameState.currentQuestionIndex !== undefined) {
       // final results
       return (
-        <div className="min-h-screen p-4 bg-linear-to-br from-yellow-400 via-orange-500 to-red-600">
-          <div className="max-w-4xl mx-auto text-center text-white">
-            <h1 className="text-4xl font-extrabold mb-2">🎉 انتهت المسابقة!</h1>
-            <p className="mb-4">شكراً لمشاركتكم — النتائج النهائية أدناه</p>
-            <div className="space-y-2">
+        <div className="min-h-screen p-1 ">
+          <div className="max-w-6xl mx-auto text-center text-white">
+            <h1 className="text-4xl font-extrabold mb-1">🎉 انتهت المسابقة!</h1>
+            <p className="mb-1">شكراً لمشاركتكم — النتائج النهائية أدناه</p>
+            <div className="space-y-1">
               {leaderboard.slice(0, 3).map((entry, idx) => (
-                <Card key={entry.groupId} className={cn("p-2 rounded-2xl", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : "bg-linear-to-r from-orange-300 to-red-400 text-white")}>
+                <div key={entry.groupId} className={`p-1 rounded-2xl ${idx === 0 ? "bg-white/20" : "bg-white/10"}`}>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <div className="text-2xl font-bold">{idx + 1}</div>
                       {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-12 h-12 rounded-full border-2 border-white" />}
                       <div>
-                        <div className="font-bold">{entry.groupName}</div>
+                        <div className="text-2xl font-bold">{entry.groupName}</div>
                         <div className="text-sm opacity-80">{entry.members.join(" || ")}</div>
                       </div>
                     </div>
                     <div className="text-3xl font-extrabold">{entry.score.toLocaleString()}</div>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
-            <div className="mt-4">
+
+            <div className="mt-1">
               <Button onClick={() => router.push("/")}>العودة للرئيسية</Button>
             </div>
           </div>
@@ -331,13 +337,16 @@ export default function PlayQuizPageTailwind() {
     } else {
       // waiting to start
       return (
-        <div className="min-h-screen p-4 bg-linear-to-br from-blue-600 to-purple-700 text-white">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl font-extrabold mb-2">⏳ في انتظار بدء المسابقة</h1>
+        <div className="min-h-screen p-1 ">
+          <div className="max-w-6xl mx-auto text-center">
+            <h1 className="text-3xl font-extrabold mb-1">⏳ في انتظار بدء المسابقة</h1>
             <p>يرجى الانتظار حتى يبدأ المضيف المسابقة</p>
-            <div className="mt-4">
-              <div className="font-bold text-lg">{currentGroup?.groupName}</div>
-              <div className="text-sm">{currentGroup?.members.join(" || ")}</div>
+            <div className="mt-1">
+              <div className="font-bold text-lg">{currentGroup.groupName}</div>
+              <div className="text-sm">{currentGroup.members.join(" || ")}</div>
+            </div>
+            <div className="mt-1">
+              <Button onClick={() => router.push(`/exam/quiz/quiz/${quizId}/join`)}>العودة لصفحة الانضمام</Button>
             </div>
           </div>
         </div>
@@ -348,43 +357,41 @@ export default function PlayQuizPageTailwind() {
   // question-only view
   if (gameState.showQuestionOnly) {
     return (
-      <div className="min-h-screen p-4 bg-linear-to-br from-purple-600 to-blue-700">
-        <div className="max-w-3xl mx-auto text-center bg-white/10 backdrop-blur-md rounded p-4">
+      <div className="min-h-screen p-1 bg-white/5 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto bg-white/10 rounded-2xl p-1 text-center">
           <div className="text-lg font-bold">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
-          <h2 className="text-2xl font-bold mt-2">{currentQuestion?.text || "لم يتم تحميل نص السؤال"}</h2>
-          <div className="mt-3">ستظهر الاختيارات بعد {questionOnlyTimeLeft} ثانية</div>
+          <h2 className="text-3xl font-extrabold mt-1">{currentQuestion?.text}</h2>
+          <div className="mt-1">ستظهر الاختيارات بعد {questionOnlyTimeLeft} ثانية</div>
         </div>
       </div>
     )
   }
 
-  // results (stats only)
+  // results stats (showResults && !showLeaderboard)
   if (showResults && !showLeaderboard) {
-    const stats = (currentQuestion?.choices || []).map((_: any, i: number) => ({ choice: i, count: responses.filter((r) => r.answer === i).length }))
+    const stats = (currentQuestion?.choices || []).map((_, i) => ({ choice: i, count: responses.filter((r) => r.answer === i).length }))
     return (
-      <div className="min-h-screen p-4 bg-linear-to-br from-blue-600 to-purple-700">
-        <div className="max-w-3xl mx-auto text-white">
-          <h1 className="text-3xl font-bold mb-2">نتائج السؤال</h1>
-          <div className="bg-white/20 p-4 rounded">
-            <div className="text-xl font-semibold mb-2">{currentQuestion?.text}</div>
-            <div className="space-y-2">
-              {(currentQuestion?.choices || []).map((choice: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined, idx: React.Key | null | undefined) => {
+      <div className="min-h-screen p-1 bg-gradient-to-br from-blue-600 to-purple-700">
+        <div className="max-w-6xl mx-auto text-center text-white">
+          <h1 className="text-3xl font-bold mb-1">نتائج السؤال</h1>
+          <div className="bg-white/10 p-1 rounded">
+            <div className="text-xl font-semibold mb-1">{currentQuestion?.text}</div>
+            <div className="space-y-1">
+              {(currentQuestion?.choices || []).map((choice, idx) => {
                 const isCorrect = idx === currentQuestion?.correctAnswer
-                const count = stats.find((s: { choice: any }) => s.choice === idx)?.count || 0
+                const count = stats.find((s) => s.choice === idx)?.count || 0
                 return (
-                  <div key={idx} className={cn("p-2 rounded flex items-center justify-between", isCorrect ? "bg-green-50" : "bg-slate-50")}>
-                    <div className="flex gap-3 items-center">
-                      <div className={cn("w-10 h-10 rounded-full flex items-center justify-center font-bold", typeof idx === "number" && idx < 2 ? "bg-blue-500 text-white" : "bg-gray-300")}>
-                        {typeof idx === "number" && idx >= 0 && idx < 4 ? ["أ", "ب", "ج", "د"][idx] : (typeof idx === "number" ? idx + 1 : "")}
-                      </div>
-                      <div>{choice}</div>
+                  <div key={idx} className={`p-1 rounded flex items-center justify-between ${isCorrect ? "bg-green-50" : "bg-white/20"}`}>
+                    <div className="flex items-center gap-1">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${choiceColors[idx] || "bg-gray-400"} ${choiceTextColors[idx]}`}>{["أ", "ب", "ج", "د"][idx]}</div>
+                      <div className="font-medium">{choice}</div>
                     </div>
                     <div className="text-2xl font-bold">{count}</div>
                   </div>
                 )
               })}
             </div>
-            <div className="text-center mt-3 text-slate-200">في انتظار عرض الترتيب الحالي...</div>
+            <div className="text-center mt-1 text-white/80">في انتظار عرض الترتيب الحالي...</div>
           </div>
         </div>
       </div>
@@ -394,17 +401,17 @@ export default function PlayQuizPageTailwind() {
   // full leaderboard
   if (showResults && showLeaderboard) {
     return (
-      <div className="min-h-screen p-4 bg-linear-to-br from-purple-600 to-blue-700 text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-3xl font-bold mb-2">الترتيب الحالي</h1>
-          <div className="space-y-2">
+      <div className="min-h-screen p-1 bg-gradient-to-br from-purple-600 to-blue-700 text-white">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-3xl font-bold mb-1">الترتيب الحالي</h1>
+          <div className="space-y-1">
             {leaderboard.map((entry, idx) => (
-              <div key={entry.groupId} className={cn("p-3 rounded-2xl flex items-center justify-between", idx === 0 ? "bg-yellow-400 text-black" : idx === 1 ? "bg-slate-100 text-black" : "bg-white/20")}>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold">{idx + 1}</div>
-                  {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-12 h-12 rounded-full border-2" />}
+              <div key={entry.groupId} className={`p-1 rounded-2xl flex items-center justify-between ${idx === 0 ? "bg-yellow-400 text-black" : "bg-white/10"}`}>
+                <div className="flex items-center gap-1">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center font-bold">{idx + 1}</div>
+                  {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-14 h-14 rounded-full border-2" />}
                   <div>
-                    <div className="font-bold">{entry.groupName}</div>
+                    <div className="font-bold text-xl">{entry.groupName}</div>
                     <div className="text-sm opacity-80">{entry.members.join(" || ")}</div>
                   </div>
                 </div>
@@ -417,90 +424,90 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
-  // if no currentQuestion (safety)
+  // safety: no currentQuestion
   if (!currentQuestion) {
     return (
-      <div className="min-h-screen p-4 bg-linear-to-br from-blue-600 to-purple-700 text-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl font-extrabold mb-2">⏳ في انتظار السؤال التالي</h1>
+      <div className="min-h-screen p-1 bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-3xl font-extrabold mb-1">⏳ في انتظار السؤال التالي</h1>
           <p>لا يوجد سؤال حالي — إذا استمر هذا، تواصل مع المضيف.</p>
-          <pre className="text-xs mt-3 bg-black/20 p-2 rounded text-left">{JSON.stringify({ gameState }, null, 2)}</pre>
+          <pre className="text-xs mt-1 bg-black/20 p-2 rounded text-left">{JSON.stringify({ gameState }, null, 2)}</pre>
         </div>
       </div>
     )
   }
 
-  // main playing UI
+  // --- main playing UI: glassy, large fonts, colored choices ---
   return (
-    <div className="min-h-screen p-4 bg-linear-to-br from-blue-600/80 to-purple-700/80 backdrop-blur-md">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-4">
-          <div className="bg-white/20 rounded p-2 inline-block">{`السؤال ${gameState.currentQuestionIndex + 1} من ${quiz.questions.length}`}</div>
-          <div className="mt-2 font-bold text-white">{currentGroup?.groupName}</div>
+    <div className="min-h-screen p-1 bg-white/5 backdrop-blur-md">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-1">
+          <div className="bg-white/10 rounded p-1 inline-block text-lg font-bold">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
+          <div className="mt-1 font-bold text-white text-2xl">{currentGroup.groupName}</div>
+          <div className="text-white/80 text-sm">{currentGroup.members.join(" || ")}</div>
         </div>
 
-        <div className="bg-white/20 rounded p-4 mb-4">
-          <h2 className="text-xl font-bold mb-2">{currentQuestion.text}</h2>
+        <div className="bg-white/10 rounded-2xl p-1 mb-1 backdrop-blur-sm">
+          <h2 className="text-4xl font-extrabold mb-1 text-white text-center">{currentQuestion.text}</h2>
 
-          <div className="grid gap-2">
-            {((currentQuestion.choices && currentQuestion.choices.length > 0) ? currentQuestion.choices : ["لا توجد اختيارات"]).map((choice: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined, idx: React.Key | null | undefined) => (
+          <div className="grid gap-1">
+            {(currentQuestion.choices && currentQuestion.choices.length > 0 ? currentQuestion.choices : ["لا توجد اختيارات"]).map((choice, idx) => (
               <motion.button
                 key={idx}
-                onClick={() => {
-                  if (typeof idx === "number") handleAnswerSelect(idx)
-                }}
+                onClick={() => handleAnswerSelect(idx)}
                 disabled={hasAnswered || timeLeft === 0}
-                className={cn("p-3 rounded text-right w-full font-semibold", hasAnswered || timeLeft === 0 ? "opacity-60 cursor-not-allowed" : "hover:scale-105")}
-                style={{ background: selectedAnswer === idx ? "#4f46e5" : undefined, color: selectedAnswer === idx ? "white" : undefined }}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.03 }}
+                className={cn("p-1 rounded-lg text-right w-full font-bold text-lg shadow-md", hasAnswered || timeLeft === 0 ? "opacity-70 cursor-not-allowed" : "hover:scale-105 active:scale-95")}
+                style={{ backgroundColor: ["#ef4444", "#16a34a", "#3b82f6", "#f59e0b"][idx] || "#6b7280", color: idx === 3 ? "black" : "white" }}
+                aria-pressed={selectedAnswer === idx}
+                aria-disabled={hasAnswered || timeLeft === 0}
               >
                 <div className="flex justify-between items-center">
-                  <div>{choice}</div>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/20">
-                    {typeof idx === "number" && idx >= 0 && idx < 4
-                      ? ["أ", "ب", "ج", "د"][idx]
-                      : typeof idx === "number"
-                        ? idx + 1
-                        : ""}
-                  </div>
+                  <div className="text-2xl">{choice}</div>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center font-extrabold">{["أ", "ب", "ج", "د"][idx] ?? idx + 1}</div>
                 </div>
               </motion.button>
             ))}
           </div>
 
-          {hasAnswered && <div className="mt-2 text-center text-sm text-white/80">تم إرسال الإجابة — في انتظار النتائج...</div>}
+          {hasAnswered && (
+            <div className="mt-1 p-1 rounded bg-white/10 text-center text-lg font-semibold text-white">تم إرسال الإجابة — في انتظار النتائج...</div>
+          )}
         </div>
 
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex justify-between items-center gap-1">
           <Button variant="outline" onClick={() => setShowExitConfirm(true)} className="bg-red-500 text-white">خروج</Button>
-          <div className="bg-orange-500 text-white p-2 rounded font-bold">{Math.ceil(timeLeft)} ث</div>
+          <div className="bg-orange-500 text-white p-1 rounded font-bold">{Math.ceil(timeLeft)} ث</div>
           <Button variant="outline" onClick={() => setShowResetConfirm(true)} className="bg-blue-500 text-white">إعادة تعيين</Button>
         </div>
       </div>
 
-      {/* Exit confirm modal (omitted for brevity) */}
       <AnimatePresence>
         {showExitConfirm && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center">
-            <div className="bg-white p-4 rounded max-w-sm">
-              <h3 className="font-bold mb-2">تأكيد الخروج</h3>
-              <p className="mb-4">هل تريد الخروج من المسابقة؟</p>
-              <div className="flex gap-2">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowExitConfirm(false)}>
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white p-1 rounded max-w-sm" onClick={(e) => e.stopPropagation()}>
+              <h3 className="font-bold mb-1">تأكيد الخروج</h3>
+              <p className="mb-4">هل أنت متأكد من رغبتك في الخروج من المسابقة؟</p>
+              <div className="flex gap-1">
                 <Button onClick={() => setShowExitConfirm(false)}>إلغاء</Button>
-                <Button onClick={handleExitQuiz}>خروج</Button>
+                <Button onClick={handleExitQuiz} className="bg-red-500 text-white">خروج</Button>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
+
         {showResetConfirm && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center">
-            <div className="bg-white p-4 rounded max-w-sm">
-              <h3 className="font-bold mb-2">تأكيد إعادة التعيين</h3>
-              <p className="mb-4">هل أنت متأكد؟ سيتم حذف الإجابات والنقاط.</p>
-              <div className="flex gap-2">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowResetConfirm(false)}>
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white p-1 rounded max-w-sm" onClick={(e) => e.stopPropagation()}>
+              <h3 className="font-bold mb-1">تأكيد إعادة التعيين</h3>
+              <p className="mb-1">هل أنت متأكد؟ سيتم حذف الإجابات والنقاط.</p>
+              <div className="flex gap-1">
                 <Button onClick={() => setShowResetConfirm(false)}>إلغاء</Button>
-                <Button onClick={handleResetQuiz}>إعادة تعيين</Button>
+                <Button onClick={handleResetQuiz} className="bg-blue-500 text-white">إعادة تعيين</Button>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

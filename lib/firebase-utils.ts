@@ -192,7 +192,8 @@ export const getUserQuizzes = async (userId: string) => {
 // Group operations - محسن مع تنظيف تلقائي وإعادة تعيين المسابقة
 export const joinQuizAsGroup = async (
   quizId: string,
-  groupData: Omit<Group, "id" | "joinedAt" | "score" | "lastActivity">
+  groupData: Omit<Group, "id" | "joinedAt" | "score" | "lastActivity">,
+  creatorUid?: string
 ) => {
   try {
     // تحقق من الأمان: quizId يجب أن يكون string صالح
@@ -240,6 +241,7 @@ export const joinQuizAsGroup = async (
       joinedAt: serverTimestamp(),
       lastActivity: serverTimestamp(),
       score: 0,
+      ...(creatorUid ? { ownerUid: creatorUid } : {}),
     });
 
     console.log("Group joined successfully:", docRef.id, "for quiz:", quizId);

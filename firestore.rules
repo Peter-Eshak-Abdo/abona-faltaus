@@ -26,10 +26,14 @@ service cloud.firestore {
       match /groups/{groupId} {
         // Allow anyone to join a quiz (create a group) and read group data.
         allow read, create: if true;
-        // IMPORTANT: This is the rule that fixes the error.
-        // It allows a user to update or delete a group if their UID matches
-        // the 'createdBy' field on the parent quiz document.
-        allow update, delete: if request.auth.uid == get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy;
+        allow read, create: if true;
+        // Allow updates/deletes by either the quiz owner or the group owner.
+        allow update, delete: if request.auth != null &&
+         (
+           request.auth.uid == get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy ||
+            request.auth.uid == resource.data.ownerUid
+          );
+        // allow update, delete: if request.auth.uid == get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy;
       }
 
       // حالة اللعبة (gameState)
