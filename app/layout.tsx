@@ -12,6 +12,7 @@ import OneSignal from "@/components/OneSignal";
 import { Toaster } from "@/components/ui/sonner";
 import LazyLoadOnInteraction from "@/components/LazyLoadOnInteraction";
 import "./globals.css";
+import FixProcess from "@/components/FixProcess";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -112,6 +113,7 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning={true}>
         <ServiceWorkerRegister />
+        <FixProcess />
         <div className="background-blur" />
         <GlobalLoadingProvider>
           <LoadingProvider>

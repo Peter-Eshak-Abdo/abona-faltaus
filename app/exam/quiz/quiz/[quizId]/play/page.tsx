@@ -1,26 +1,30 @@
 "use client"
 
-import React, { useEffect, useState, useCallback, useMemo } from "react"
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
-import {
-  getQuiz,
-  subscribeToGameState,
-  submitResponse,
-  getQuizGroups,
-  getQuestionResponses,
-  deleteGroup,
-  checkAndResetQuizIfNeeded,
-} from "@/lib/firebase-utils"
 import type { Quiz, GameState, Group, LeaderboardEntry, QuizResponse } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Avatar } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
+
+// Small helper: safe millis (if you already have /lib/utils/time.ts use that instead)
+const toMillisSafe = (t?: any) => {
+  if (!t) return undefined
+  if (typeof t === "number") return t
+  if (t?.toDate && typeof t.toDate === "function") {
+    const d = t.toDate()
+    return isNaN(d.getTime()) ? undefined : d.getTime()
+  }
+  const d = new Date(t)
+  return isNaN(d.getTime()) ? undefined : d.getTime()
+}
 
 export default function PlayQuizPageTailwind() {
   const params = useParams()
   const router = useRouter()
+  const quizId = params?.quizId as string
+
   const [quiz, setQuiz] = useState<Quiz | null>(null)
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [groups, setGroups] = useState<Group[]>([])
@@ -32,98 +36,135 @@ export default function PlayQuizPageTailwind() {
   const [timeLeft, setTimeLeft] = useState<number>(20)
   const [showResults, setShowResults] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
-  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState<number>(5)
+  const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState<number>(3)
   const [showExitConfirm, setShowExitConfirm] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [loadingMsg, setLoadingMsg] = useState<string | null>("جارٍ التحميل...")
+  const [fatalError, setFatalError] = useState<string | null>(null)
 
-  const quizId = params?.quizId as string
+  // refs for unsubscribes
+  const unsubRefs = useRef<{ unsubState?: Function; unsubGroups?: Function; unsubResponses?: Function }>({})
 
+  // IMPORTANT: avoid top-level imports of modules that might reference `process`.
+  // Do a small browser polyfill for `process` before any dynamic import runs.
   useEffect(() => {
-    const groupData = localStorage.getItem("currentGroup")
-    if (!groupData) {
-      router.push(`/exam/quiz/quiz/${quizId}/join`)
-      return
-    }
-
-    setCurrentGroup(JSON.parse(groupData))
-    loadQuiz()
-  }, [quizId])
-
-  const handleGameStateUpdate = useCallback((state: GameState | null) => {
-    setGameState(state)
-
-    if (!state?.isActive) {
-      setShowResults(true)
-      setShowLeaderboard(true)
-      return
-    }
-
-    if (state.questionStartTime && !state.showResults && !state.showQuestionOnly) {
-      setSelectedAnswer(null)
-      setHasAnswered(false)
-      setShowResults(false)
-      setShowLeaderboard(false)
-      setTimeLeft(state.currentQuestionTimeLimit || 20)
-    }
-
-    if (state.showResults) {
-      setShowResults(true)
-      setShowLeaderboard(false)
+    if (typeof window !== "undefined" && typeof (globalThis as any).process === "undefined") {
+      // lightweight polyfill just so modules that reference `process` don't throw.
+      ; (globalThis as any).process = { env: {} }
+      // Note: this is a safe temporary polyfill for the browser runtime.
+      // If you prefer, remove later and fix server/client modules to not reference process at top-level.
+      console.info("Injected lightweight process polyfill for browser.")
     }
   }, [])
 
-  useEffect(() => {
+  // load quiz metadata (dynamic import prevents early evaluation of firebase-utils)
+  const loadQuiz = useCallback(async () => {
     if (!quizId) return
-
-    const unsubState = subscribeToGameState(quizId, handleGameStateUpdate)
-
-    return () => {
-      if (typeof unsubState === "function") unsubState()
-    }
-  }, [quizId, handleGameStateUpdate])
-
-  useEffect(() => {
-    if (!quizId) return
-
-    const unsubGroups = getQuizGroups(quizId, (updatedGroups) => {
-      setGroups(updatedGroups)
-      const lb = updatedGroups
-        .map((g) => ({
-          groupId: g.id,
-          groupName: g.groupName,
-          members: g.members,
-          score: g.score || 0,
-          saintName: g.saintName,
-          saintImage: g.saintImage,
-        }))
-        .sort((a, b) => b.score - a.score)
-      setLeaderboard(lb)
-    })
-
-    return () => {
-      if (typeof unsubGroups === "function") unsubGroups()
+    setLoadingMsg("جارٍ تحميل بيانات المسابقة...")
+    try {
+      const mod = await import("@/lib/firebase-utils")
+      const data = await mod.getQuiz(quizId)
+      if (!data) {
+        setFatalError("المسابقة غير موجودة أو انتهت صلاحيتها.")
+        return
+      }
+      setQuiz(data)
+    } catch (err: any) {
+      console.error("loadQuiz error:", err)
+      setFatalError("فشل في تحميل المسابقة. تأكد من الاتصال أو تهيئة Firebase.")
+    } finally {
+      setLoadingMsg(null)
     }
   }, [quizId])
 
+  // subscribe to game state + groups (dynamic import)
   useEffect(() => {
-    if (!quizId || gameState?.currentQuestionIndex === undefined) return
+    if (!quizId) return
+    let mounted = true
+    ;(async () => {
+        try {
+          const mod = await import("@/lib/firebase-utils")
+          // groups
+          const unsubGroups = mod.getQuizGroups(quizId, (updatedGroups: Group[]) => {
+            if (!mounted) return
+            setGroups(updatedGroups || [])
+            // build leaderboard snapshot
+            const lb = (updatedGroups || []).map((g) => ({
+              groupId: g.id,
+              groupName: g.groupName,
+              members: g.members,
+              score: g.score || 0,
+              saintName: g.saintName,
+              saintImage: g.saintImage,
+            })).sort((a, b) => b.score - a.score)
+            setLeaderboard(lb)
+          })
+          // game state
+          const unsubState = mod.subscribeToGameState(quizId, (state: GameState | null) => {
+            if (!mounted) return
+            // normalize questionStartTime if Firestore Timestamp
+            if (state?.questionStartTime) {
+              const ms = toMillisSafe((state as any).questionStartTime)
+              if (ms) (state as any).questionStartTime = new Date(ms)
+            }
+            setGameState(state || null)
+            if (!state?.isActive) {
+              setShowResults(true)
+              setShowLeaderboard(true)
+            }
+            // set timeLeft when question starts
+            if (state?.questionStartTime && !state.showResults && !state.showQuestionOnly) {
+              setHasAnswered(false)
+              setSelectedAnswer(null)
+              setShowResults(false)
+              setShowLeaderboard(false)
+              setTimeLeft(state.currentQuestionTimeLimit || 20)
+            }
+          })
 
-    const unsubResponses = getQuestionResponses(
-      quizId,
-      gameState.currentQuestionIndex,
-      (updatedResponses) => {
-        setResponses(updatedResponses)
-      }
-    )
+            unsubRefs.current.unsubGroups = unsubGroups
+            unsubRefs.current.unsubState = unsubState
+          } catch (err) {
+            console.error("subscribe error:", err)
+            setFatalError("فشل في الاشتراك لتحديث حالة المسابقة. تحقق من تهيئة firebase-utils.")
+          }
+      })()
 
     return () => {
-      if (typeof unsubResponses === "function") unsubResponses()
+      mounted = false
+      try { if (typeof unsubRefs.current.unsubGroups === "function") unsubRefs.current.unsubGroups() } catch { }
+      try { if (typeof unsubRefs.current.unsubState === "function") unsubRefs.current.unsubState() } catch { }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizId])
+
+  // subscribe to question responses (when currentQuestionIndex is set)
+  useEffect(() => {
+    if (!quizId || gameState?.currentQuestionIndex === undefined) return
+    let mounted = true
+    ;(async () => {
+      try {
+        const mod = await import("@/lib/firebase-utils")
+        const unsub = mod.getQuestionResponses(quizId, gameState.currentQuestionIndex, (updatedResponses: QuizResponse[]) => {
+          if (!mounted) return
+          setResponses(updatedResponses)
+        })
+        unsubRefs.current.unsubResponses = unsub
+      } catch (err) {
+        console.error("getQuestionResponses subscription error:", err)
+      }
+    })()
+
+    return () => {
+      mounted = false
+      try { if (typeof unsubRefs.current.unsubResponses === "function") unsubRefs.current.unsubResponses() } catch { }
     }
   }, [quizId, gameState?.currentQuestionIndex])
 
-  // question-only timer - تسريع لـ 3 ثوان بدلاً من 5
+  // question-only timer (client side)
   useEffect(() => {
     if (gameState?.showQuestionOnly && gameState.isActive) {
+      setQuestionOnlyTimeLeft(3) // quick show for players
       const t = setInterval(() => {
         setQuestionOnlyTimeLeft((p) => {
           if (p <= 1) {
@@ -139,22 +180,19 @@ export default function PlayQuizPageTailwind() {
     }
   }, [gameState?.showQuestionOnly, gameState?.isActive, gameState?.currentQuestionIndex])
 
-  // answer timer
+  // answer timer (client)
   useEffect(() => {
-    if (!gameState?.questionStartTime || gameState.showResults || hasAnswered || gameState.showQuestionOnly) return
-
-    const start = gameState.questionStartTime.getTime()
-    const timeLimit = gameState.currentQuestionTimeLimit || 20
-
+    if (!gameState?.questionStartTime || gameState.showResults || hasAnswered || gameState?.showQuestionOnly) return
+    const start = toMillisSafe((gameState as any).questionStartTime) || Date.now()
+    const timeLimit = gameState?.currentQuestionTimeLimit || 20
     const t = setInterval(() => {
       const elapsed = (Date.now() - start) / 1000
       const remaining = Math.max(0, timeLimit - elapsed)
-      setTimeLeft(remaining)
-      if (remaining === 0) setHasAnswered(true)
-    }, 100)
-
+      setTimeLeft(Math.ceil(remaining))
+      if (remaining <= 0) setHasAnswered(true)
+    }, 250)
     return () => clearInterval(t)
-  }, [gameState?.questionStartTime, gameState?.showResults, gameState?.currentQuestionTimeLimit, gameState?.showQuestionOnly])
+  }, [gameState?.questionStartTime, gameState?.showResults, gameState?.currentQuestionTimeLimit, hasAnswered, gameState?.showQuestionOnly])
 
   // auto switch to leaderboard after showing results
   useEffect(() => {
@@ -165,218 +203,189 @@ export default function PlayQuizPageTailwind() {
   }, [showResults, showLeaderboard, gameState?.isActive])
 
   useEffect(() => {
-    if (!gameState) return
-    if (!gameState.isActive) {
-      // نعيد تأكيد الترتيب النهائي عند الانتهاء
-      const lb = groups
-        .map((g) => ({
-          groupId: g.id,
-          groupName: g.groupName,
-          members: g.members,
-          score: g.score || 0,
-          saintName: g.saintName,
-          saintImage: g.saintImage,
-        }))
-        .sort((a, b) => b.score - a.score)
-      setLeaderboard(lb)
-    }
-  }, [gameState?.isActive, groups])
-
-  const loadQuiz = async () => {
-    try {
-      const data = await getQuiz(quizId)
-      if (!data) {
-        router.push("/")
-        return
-      }
-      setQuiz(data)
-    } catch (err) {
-      console.error("loadQuiz", err)
-      router.push("/")
-    }
-  }
-
-  const handleAnswerSelect = async (answerIndex: number) => {
-    if (hasAnswered || !gameState?.questionStartTime || !currentGroup || gameState.showQuestionOnly) return
-
-    setSelectedAnswer(answerIndex)
-    setHasAnswered(true)
-
-    const responseTime = (Date.now() - gameState.questionStartTime.getTime()) / 1000
-    const currentQuestion = gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState?.currentQuestionIndex]
-    if (!currentQuestion) return
-
-    try {
-      await submitResponse(quizId, {
-        groupId: currentGroup.id,
-        questionIndex: gameState.currentQuestionIndex,
-        answer: answerIndex,
-        isCorrect: answerIndex === currentQuestion.correctAnswer,
-        responseTime,
-      })
-    } catch (err) {
-      console.error("submitResponse", err)
-    }
-  }
-
-  const getChoiceColor = (index: number) => {
-    const base = ["bg-blue-500", "bg-yellow-500", "bg-green-500", "bg-red-500"]
-    return base[index] ?? "bg-gray-500"
-  }
-
-  const getChoiceHover = (index: number) => {
-    const h = ["hover:bg-blue-600", "hover:bg-yellow-600", "hover:bg-green-600", "hover:bg-red-600"]
-    return h[index] ?? "hover:bg-gray-600"
-  }
-
-  const getChoiceLabel = (i: number) => ["أ", "ب", "ج", "د"][i] ?? `${i + 1}`
-
-  const handleExitQuiz = async () => {
-    if (!currentGroup) return
-
-    try {
-      await deleteGroup(quizId, currentGroup.id)
-      localStorage.removeItem("currentGroup")
-      router.push(`/exam/quiz/quiz/${quizId}/join`)
-    } catch (err) {
-      console.error("Error exiting quiz:", err)
-    }
-  }
-
-  const handleResetQuiz = async () => {
-    if (!currentGroup) return
-
-    try {
-      await checkAndResetQuizIfNeeded(quizId)
-      setShowResetConfirm(false)
-      // Optionally, you can add a toast or notification here
-    } catch (err) {
-      console.error("Error resetting quiz:", err)
-    }
-  }
-
-  if (!quiz || !gameState || !currentGroup) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
-        <div className="w-16 h-16 rounded-full border-4 border-white border-t-transparent animate-spin" />
-      </div>
-    )
-  }
-
-  useEffect(() => {
     if (!gameState?.isActive) {
+      // clear stored group on quiz end
       localStorage.removeItem("currentGroup")
     }
   }, [gameState?.isActive])
 
-  if (!gameState.isActive) {
+  // load quiz metadata once
+  useEffect(() => {
+    loadQuiz()
+  }, [loadQuiz])
+
+  // helper: currentQuestion
+  const currentQuestion = useMemo(() => {
+    if (gameState?.currentQuestionIndex === undefined) return null
+    return gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions?.[gameState.currentQuestionIndex] || null
+  }, [gameState?.shuffledQuestions, gameState?.currentQuestionIndex, quiz?.questions])
+
+  // handle submit answer (dynamic import)
+  const handleAnswerSelect = async (answerIndex: number) => {
+    if (!gameState || !currentGroup || !gameState.questionStartTime || hasAnswered || gameState.showQuestionOnly) return
+    setSelectedAnswer(answerIndex)
+    setHasAnswered(true)
+    const responseTime = ((Date.now() - (toMillisSafe((gameState as any).questionStartTime) || Date.now())) / 1000) || 0
+    try {
+      const mod = await import("@/lib/firebase-utils")
+      const currentQuestionLocal = gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState.currentQuestionIndex]
+      await mod.submitResponse(quizId, {
+        groupId: currentGroup.id,
+        questionIndex: gameState.currentQuestionIndex,
+        answer: answerIndex,
+        isCorrect: answerIndex === currentQuestionLocal?.correctAnswer,
+        responseTime,
+      })
+    } catch (err) {
+      console.error("submitResponse error:", err)
+    }
+  }
+
+  // exit & reset handlers (dynamic import)
+  const handleExitQuiz = async () => {
+    if (!currentGroup) return
+    try {
+      const mod = await import("@/lib/firebase-utils")
+      await mod.deleteGroup(quizId, currentGroup.id)
+      localStorage.removeItem("currentGroup")
+      router.push(`/exam/quiz/quiz/${quizId}/join`)
+    } catch (err) {
+      console.error("Error exiting quiz:", err)
+      alert("حدث خطأ أثناء الخروج. حاول مجددًا.")
+    }
+  }
+
+  const handleResetQuiz = async () => {
+    try {
+      const mod = await import("@/lib/firebase-utils")
+      await mod.checkAndResetQuizIfNeeded(quizId)
+      setShowResetConfirm(false)
+      alert("تمت إعادة التعيين (إن وُجدت حاجة لإعادة التعيين).")
+    } catch (err) {
+      console.error("Error resetting quiz:", err)
+      alert("فشل في إعادة التعيين.")
+    }
+  }
+
+  // --- render / fallbacks ---
+
+  if (fatalError) {
     return (
-      <div className="min-h-screen p-1 bg-linear-to-br from-yellow-400 via-orange-500 to-red-600">
-        <div className="max-w-8xl mx-auto">
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-1">
-            <h1 className="text-5xl font-extrabold text-white mb-1">🎉 انتهت المسابقة!</h1>
-            <p className="text-lg text-white/90">شكراً لمشاركتكم — النتائج النهائية أدناه</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 gap-1">
-            {leaderboard.slice(0, 3).map((entry, idx) => (
-              <Card key={entry.groupId} className={cn("backdrop-blur-md p-1 rounded-2xl border-white/30 shadow-2xl", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : "bg-linear-to-r from-orange-300 to-red-400 text-white")}>
-                <div className="flex items-center gap-1">
-                  <div className="text-4xl font-bold">{idx + 1}</div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-1">
-                      {entry.saintImage && (
-                        <img
-                          src={entry.saintImage}
-                          alt={entry.saintName}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-white"
-                        />
-                      )}
-                      <div>
-                        <div className="text-2xl font-bold">{entry.groupName}</div>
-                        <div className="text-sm opacity-80">{entry.members.join(" || ")}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-3xl font-extrabold">{entry.score.toLocaleString()}</div>
-                </div>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-1 text-center">
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="max-w-lg bg-white p-4 rounded shadow text-center">
+          <h2 className="text-xl font-bold mb-2">حدث خطأ</h2>
+          <p className="mb-4">{fatalError}</p>
+          <div className="flex justify-center gap-2">
+            <Button onClick={() => window.location.reload()}>إعادة تحميل</Button>
             <Button onClick={() => router.push("/")}>العودة للرئيسية</Button>
           </div>
+          <pre className="text-xs mt-4 text-left bg-gray-50 p-2 rounded">{JSON.stringify({ quizId, gameState }, null, 2)}</pre>
         </div>
       </div>
     )
   }
 
-  const currentQuestion = useMemo(() => {
-    return gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState?.currentQuestionIndex]
-  }, [gameState?.shuffledQuestions, gameState?.currentQuestionIndex, quiz?.questions])
+  if (!quiz || !gameState) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
+        <div className="text-white text-center">
+          <div className="mb-2">{loadingMsg || "جارٍ التحميل..."}</div>
+          <div className="w-16 h-16 rounded-full border-b-4 border-white animate-spin mx-auto" />
+        </div>
+      </div>
+    )
+  }
+
+  // If quiz ended
+  if (!gameState.isActive) {
+    if (gameState.currentQuestionIndex !== undefined) {
+      // final results
+      return (
+        <div className="min-h-screen p-4 bg-linear-to-br from-yellow-400 via-orange-500 to-red-600">
+          <div className="max-w-4xl mx-auto text-center text-white">
+            <h1 className="text-4xl font-extrabold mb-2">🎉 انتهت المسابقة!</h1>
+            <p className="mb-4">شكراً لمشاركتكم — النتائج النهائية أدناه</p>
+            <div className="space-y-2">
+              {leaderboard.slice(0, 3).map((entry, idx) => (
+                <Card key={entry.groupId} className={cn("p-2 rounded-2xl", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : "bg-linear-to-r from-orange-300 to-red-400 text-white")}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="text-2xl font-bold">{idx + 1}</div>
+                      {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-12 h-12 rounded-full border-2 border-white" />}
+                      <div>
+                        <div className="font-bold">{entry.groupName}</div>
+                        <div className="text-sm opacity-80">{entry.members.join(" || ")}</div>
+                      </div>
+                    </div>
+                    <div className="text-3xl font-extrabold">{entry.score.toLocaleString()}</div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            <div className="mt-4">
+              <Button onClick={() => router.push("/")}>العودة للرئيسية</Button>
+            </div>
+          </div>
+        </div>
+      )
+    } else {
+      // waiting to start
+      return (
+        <div className="min-h-screen p-4 bg-linear-to-br from-blue-600 to-purple-700 text-white">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-3xl font-extrabold mb-2">⏳ في انتظار بدء المسابقة</h1>
+            <p>يرجى الانتظار حتى يبدأ المضيف المسابقة</p>
+            <div className="mt-4">
+              <div className="font-bold text-lg">{currentGroup?.groupName}</div>
+              <div className="text-sm">{currentGroup?.members.join(" || ")}</div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  }
 
   // question-only view
   if (gameState.showQuestionOnly) {
     return (
-      <div className="min-h-screen p-1 bg-linear-to-br from-purple-600 to-blue-700">
-        <div className="max-w-8xl mx-auto">
-          <div className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl flex items-center justify-between mb-1">
-            <div>
-              <div className="text-lg font-bold">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
-              <div className="text-sm text-slate-600">{currentGroup.groupName}</div>
-            </div>
-            <div className="flex items-center gap-1 bg-purple-100 p-1 rounded-lg">
-              <svg className="w-5 h-5 text-purple-600" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" /></svg>
-              <div className="font-bold text-purple-600">{questionOnlyTimeLeft} ث</div>
-            </div>
-          </div>
-
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl text-center">
-            <h2 className="text-3xl font-bold mb-1">استعدوا للسؤال</h2>
-            <p className="text-2xl font-semibold">{currentQuestion.text}</p>
-            <p className="text-sm text-slate-500 mt-1">ستظهر الاختيارات بعد {questionOnlyTimeLeft} ثانية</p>
-          </motion.div>
+      <div className="min-h-screen p-4 bg-linear-to-br from-purple-600 to-blue-700">
+        <div className="max-w-3xl mx-auto text-center bg-white/10 backdrop-blur-md rounded p-4">
+          <div className="text-lg font-bold">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
+          <h2 className="text-2xl font-bold mt-2">{currentQuestion?.text || "لم يتم تحميل نص السؤال"}</h2>
+          <div className="mt-3">ستظهر الاختيارات بعد {questionOnlyTimeLeft} ثانية</div>
         </div>
       </div>
     )
   }
 
-  // response stats
+  // results (stats only)
   if (showResults && !showLeaderboard) {
-    const stats = currentQuestion.choices.map((_, i) => ({ choice: i, count: responses.filter((r) => r.answer === i).length }))
-
+    const stats = (currentQuestion?.choices || []).map((_: any, i: number) => ({ choice: i, count: responses.filter((r) => r.answer === i).length }))
     return (
-      <div className="min-h-screen p-1 bg-linear-to-br from-blue-600 to-purple-700">
-        <div className="max-w-8xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-1">
-            <div className="inline-block bg-white/90 p-1 rounded-full font-bold">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
-            <h1 className="text-3xl font-bold text-white mt-1">نتائج السؤال</h1>
-          </motion.div>
-
-          <Card className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl">
-            <div className="space-y-1">
-              <div className="text-xl font-semibold text-slate-800">{currentQuestion.text}</div>
-
-              <div className="grid grid-cols-1 gap-1">
-                {currentQuestion.choices.map((choice, idx) => {
-                  const isCorrect = idx === currentQuestion.correctAnswer
-                  const count = stats.find((s) => s.choice === idx)?.count || 0
-                  return (
-                    <motion.div key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.06 }} className={cn("p-1 rounded-lg flex items-center justify-between", isCorrect ? "bg-green-50 border border-green-300" : "bg-slate-50 border border-slate-200")}>
-                      <div className="flex items-center gap-4">
-                        <div className={cn("w-12 h-12 rounded-full flex items-center justify-center font-bold text-white", getChoiceColor(idx))}>{getChoiceLabel(idx)}</div>
-                        <div className="font-medium text-slate-800">{choice}</div>
+      <div className="min-h-screen p-4 bg-linear-to-br from-blue-600 to-purple-700">
+        <div className="max-w-3xl mx-auto text-white">
+          <h1 className="text-3xl font-bold mb-2">نتائج السؤال</h1>
+          <div className="bg-white/20 p-4 rounded">
+            <div className="text-xl font-semibold mb-2">{currentQuestion?.text}</div>
+            <div className="space-y-2">
+              {(currentQuestion?.choices || []).map((choice: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined, idx: React.Key | null | undefined) => {
+                const isCorrect = idx === currentQuestion?.correctAnswer
+                const count = stats.find((s: { choice: any }) => s.choice === idx)?.count || 0
+                return (
+                  <div key={idx} className={cn("p-2 rounded flex items-center justify-between", isCorrect ? "bg-green-50" : "bg-slate-50")}>
+                    <div className="flex gap-3 items-center">
+                      <div className={cn("w-10 h-10 rounded-full flex items-center justify-center font-bold", typeof idx === "number" && idx < 2 ? "bg-blue-500 text-white" : "bg-gray-300")}>
+                        {typeof idx === "number" && idx >= 0 && idx < 4 ? ["أ", "ب", "ج", "د"][idx] : (typeof idx === "number" ? idx + 1 : "")}
                       </div>
-                      <div className="text-2xl font-bold">{count}</div>
-                    </motion.div>
-                  )
-                })}
-              </div>
-
-              <div className="text-center text-slate-600">في انتظار عرض الترتيب الحالي...</div>
+                      <div>{choice}</div>
+                    </div>
+                    <div className="text-2xl font-bold">{count}</div>
+                  </div>
+                )
+              })}
             </div>
-          </Card>
+            <div className="text-center mt-3 text-slate-200">في انتظار عرض الترتيب الحالي...</div>
+          </div>
         </div>
       </div>
     )
@@ -385,184 +394,116 @@ export default function PlayQuizPageTailwind() {
   // full leaderboard
   if (showResults && showLeaderboard) {
     return (
-      <div className="min-h-screen p-1 bg-linear-to-br from-purple-600 to-blue-700">
-        <div className="max-w-8xl mx-auto">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center mb-1">
-            <h1 className="text-4xl font-bold text-white">الترتيب الحالي</h1>
-            <p className="text-white/80 mt-1">بعد السؤال {gameState.currentQuestionIndex + 1}</p>
-          </motion.div>
-
-          <div className="space-y-1">
+      <div className="min-h-screen p-4 bg-linear-to-br from-purple-600 to-blue-700 text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-3xl font-bold mb-2">الترتيب الحالي</h1>
+          <div className="space-y-2">
             {leaderboard.map((entry, idx) => (
-              <motion.div key={entry.groupId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.06 }} className={cn("backdrop-blur-md p-1 rounded-2xl border-white/30 shadow-2xl flex items-center justify-between", idx === 0 ? "bg-linear-to-r from-yellow-400 to-orange-500 text-white" : idx === 1 ? "bg-slate-100 text-slate-900" : idx === 2 ? "bg-linear-to-r from-orange-300 to-red-400 text-white" : "bg-white/20")}>
-                <div className="flex items-center gap-1">
-                  <div className={cn("w-14 h-14 rounded-full flex items-center justify-center font-bold text-2xl", idx < 3 ? "bg-white/20" : "bg-blue-500 text-white")}>{idx + 1}</div>
-                  {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-16 h-16 rounded-full object-cover border-2 border-white" />}
+              <div key={entry.groupId} className={cn("p-3 rounded-2xl flex items-center justify-between", idx === 0 ? "bg-yellow-400 text-black" : idx === 1 ? "bg-slate-100 text-black" : "bg-white/20")}>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold">{idx + 1}</div>
+                  {entry.saintImage && <img src={entry.saintImage} alt={entry.saintName} className="w-12 h-12 rounded-full border-2" />}
                   <div>
-                    <div className="font-bold text-xl">{entry.groupName}</div>
+                    <div className="font-bold">{entry.groupName}</div>
                     <div className="text-sm opacity-80">{entry.members.join(" || ")}</div>
                   </div>
                 </div>
                 <div className="text-3xl font-extrabold">{entry.score.toLocaleString()}</div>
-              </motion.div>
+              </div>
             ))}
           </div>
-
-          <div className="text-center mt-1 text-white/80">في انتظار السؤال التالي...</div>
         </div>
       </div>
     )
   }
 
-  // main playing UI - تصميم أصغر
+  // if no currentQuestion (safety)
+  if (!currentQuestion) {
+    return (
+      <div className="min-h-screen p-4 bg-linear-to-br from-blue-600 to-purple-700 text-white">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1 className="text-3xl font-extrabold mb-2">⏳ في انتظار السؤال التالي</h1>
+          <p>لا يوجد سؤال حالي — إذا استمر هذا، تواصل مع المضيف.</p>
+          <pre className="text-xs mt-3 bg-black/20 p-2 rounded text-left">{JSON.stringify({ gameState }, null, 2)}</pre>
+        </div>
+      </div>
+    )
+  }
+
+  // main playing UI
   return (
-    <div className="min-h-screen p-1 bg-linear-to-br from-blue-600/80 to-purple-700/80 backdrop-blur-md">
-      <div className="max-w-8xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-1">
-          <div className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-1 mb-1">
-            <div className="bg-white p-1 rounded-full font-bold text-sm">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
-            <div className="flex items-center gap-1">
-              <Button
-                onClick={() => setShowExitConfirm(true)}
-                variant="outline"
-                size="sm"
-                className="bg-red-500 hover:bg-red-600 text-white border-red-500"
-              >
-                خروج
-              </Button>
-              <Button
-                onClick={() => setShowResetConfirm(true)}
-                variant="outline"
-                size="sm"
-                className="bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
-              >
-                إعادة تعيين
-              </Button>
-              <div className="flex items-center gap-1 bg-orange-500 text-white p-1 rounded-full font-bold text-sm">
-                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" /></svg>
-                {Math.ceil(timeLeft)} ث
-              </div>
-            </div>
-          </div>
-
-          <div className="text-white text-lg font-bold">{currentGroup.groupName}</div>
-          <div className="text-white/80 text-sm">{currentGroup.members.join(" || ")}</div>
-        </motion.div>
-
-        {/* Progress */}
-        <div className="backdrop-blur-md bg-white/20 rounded-2xl p-1 border-white/30 shadow-2xl mb-1">
-          <div className="w-full bg-white/20 rounded-full h-2">
-            <div className="h-2 rounded-full bg-orange-500 transition-all" style={{ width: hasAnswered ? "100%" : `${((gameState.currentQuestionTimeLimit - timeLeft) / gameState.currentQuestionTimeLimit) * 100}%` }} />
-          </div>
+    <div className="min-h-screen p-4 bg-linear-to-br from-blue-600/80 to-purple-700/80 backdrop-blur-md">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-4">
+          <div className="bg-white/20 rounded p-2 inline-block">{`السؤال ${gameState.currentQuestionIndex + 1} من ${quiz.questions.length}`}</div>
+          <div className="mt-2 font-bold text-white">{currentGroup?.groupName}</div>
         </div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
-          <Card className="backdrop-blur-md bg-white/20 rounded-2xl border-white/30 shadow-2xl overflow-hidden">
-            <div className="bg-linear-to-r from-purple-600 to-blue-600 text-white p-1 text-center">
-              <h2 className="text-lg font-bold">{currentQuestion.text}</h2>
-            </div>
-            <div className="p-1">
-              <div className="grid grid-cols-1 gap-1">
-                <AnimatePresence>
-                  {currentQuestion.choices.map((choice, idx) => (
-                    <motion.button key={idx} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.04 }} onClick={() => handleAnswerSelect(idx)} disabled={hasAnswered || timeLeft === 0} className={cn("p-1 rounded-lg flex items-center gap-1 text-right w-full text-white font-semibold shadow-md transition-transform transform text-sm", (hasAnswered || timeLeft === 0) ? "cursor-not-allowed scale-100" : `${getChoiceHover(idx)} hover:scale-105 active:scale-95`, selectedAnswer === idx ? "ring-4 ring-white" : "", getChoiceColor(idx))}>
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg">{getChoiceLabel(idx)}</div>
-                      <div className="flex-1 text-right">{choice}</div>
-                    </motion.button>
-                  ))}
-                </AnimatePresence>
-              </div>
+        <div className="bg-white/20 rounded p-4 mb-4">
+          <h2 className="text-xl font-bold mb-2">{currentQuestion.text}</h2>
 
-              {hasAnswered && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-1 p-1 bg-blue-50 rounded-lg text-center">
-                  <div className="text-blue-800 font-bold text-sm">تم إرسال الإجابة!</div>
-                  <div className="text-blue-600 text-xs">في انتظار النتائج...</div>
-                </motion.div>
-              )}
-            </div>
-          </Card>
-        </motion.div>
-
-        {/* Exit Confirmation Dialog */}
-        <AnimatePresence>
-          {showExitConfirm && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-              onClick={() => setShowExitConfirm(false)}
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="backdrop-blur-md bg-white/20 rounded-2xl p-1 max-w-sm mx-4 text-center border-white/30 shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
+          <div className="grid gap-2">
+            {((currentQuestion.choices && currentQuestion.choices.length > 0) ? currentQuestion.choices : ["لا توجد اختيارات"]).map((choice: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined, idx: React.Key | null | undefined) => (
+              <motion.button
+                key={idx}
+                onClick={() => {
+                  if (typeof idx === "number") handleAnswerSelect(idx)
+                }}
+                disabled={hasAnswered || timeLeft === 0}
+                className={cn("p-3 rounded text-right w-full font-semibold", hasAnswered || timeLeft === 0 ? "opacity-60 cursor-not-allowed" : "hover:scale-105")}
+                style={{ background: selectedAnswer === idx ? "#4f46e5" : undefined, color: selectedAnswer === idx ? "white" : undefined }}
               >
-                <h3 className="text-xl font-bold text-slate-800 mb-1">تأكيد الخروج</h3>
-                <p className="text-slate-600 mb-1">هل أنت متأكد من رغبتك في الخروج من المسابقة؟</p>
-                <div className="flex gap-1">
-                  <Button
-                    onClick={() => setShowExitConfirm(false)}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    إلغاء
-                  </Button>
-                  <Button
-                    onClick={handleExitQuiz}
-                    className="flex-1 bg-red-500 hover:bg-red-600 text-white"
-                  >
-                    خروج
-                  </Button>
+                <div className="flex justify-between items-center">
+                  <div>{choice}</div>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/20">
+                    {typeof idx === "number" && idx >= 0 && idx < 4
+                      ? ["أ", "ب", "ج", "د"][idx]
+                      : typeof idx === "number"
+                        ? idx + 1
+                        : ""}
+                  </div>
                 </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.button>
+            ))}
+          </div>
 
-        {/* Reset Confirmation Dialog */}
-        <AnimatePresence>
-          {showResetConfirm && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-              onClick={() => setShowResetConfirm(false)}
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="backdrop-blur-md bg-white/20 rounded-2xl p-1 max-w-sm mx-1 text-center border-white/30 shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <h3 className="text-xl font-bold text-slate-800 mb-1">تأكيد إعادة التعيين</h3>
-                <p className="text-slate-600 mb-1">هل أنت متأكد من رغبتك في إعادة تعيين المسابقة؟ سيتم حذف جميع الإجابات والنقاط.</p>
-                <div className="flex gap-1">
-                  <Button
-                    onClick={() => setShowResetConfirm(false)}
-                    variant="outline"
-                    className="flex-1"
-                    size="normal"
-                  >
-                    إلغاء
-                  </Button>
-                  <Button
-                    onClick={handleResetQuiz}
-                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
-                    size="normal"
-                  >
-                    إعادة تعيين
-                  </Button>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          {hasAnswered && <div className="mt-2 text-center text-sm text-white/80">تم إرسال الإجابة — في انتظار النتائج...</div>}
+        </div>
+
+        <div className="flex justify-between items-center gap-2">
+          <Button variant="outline" onClick={() => setShowExitConfirm(true)} className="bg-red-500 text-white">خروج</Button>
+          <div className="bg-orange-500 text-white p-2 rounded font-bold">{Math.ceil(timeLeft)} ث</div>
+          <Button variant="outline" onClick={() => setShowResetConfirm(true)} className="bg-blue-500 text-white">إعادة تعيين</Button>
+        </div>
       </div>
+
+      {/* Exit confirm modal (omitted for brevity) */}
+      <AnimatePresence>
+        {showExitConfirm && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center">
+            <div className="bg-white p-4 rounded max-w-sm">
+              <h3 className="font-bold mb-2">تأكيد الخروج</h3>
+              <p className="mb-4">هل تريد الخروج من المسابقة؟</p>
+              <div className="flex gap-2">
+                <Button onClick={() => setShowExitConfirm(false)}>إلغاء</Button>
+                <Button onClick={handleExitQuiz}>خروج</Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+        {showResetConfirm && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center">
+            <div className="bg-white p-4 rounded max-w-sm">
+              <h3 className="font-bold mb-2">تأكيد إعادة التعيين</h3>
+              <p className="mb-4">هل أنت متأكد؟ سيتم حذف الإجابات والنقاط.</p>
+              <div className="flex gap-2">
+                <Button onClick={() => setShowResetConfirm(false)}>إلغاء</Button>
+                <Button onClick={handleResetQuiz}>إعادة تعيين</Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

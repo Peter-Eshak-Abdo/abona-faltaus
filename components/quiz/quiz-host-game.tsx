@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponsesOnce, updateGroupScores } from "@/lib/firebase-utils"
 import type { Quiz, Group, GameState, QuizResponse, LeaderboardEntry } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
+import { toMillis, safeCeil } from "@/lib/utils/time"
 
 interface QuizHostGameProps {
   quiz: Quiz
@@ -13,7 +14,7 @@ interface QuizHostGameProps {
 
 export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [responses, setResponses] = useState<QuizResponse[]>([])
-  const [timeLeft, setTimeLeft] = useState(20)
+  const [timeLeft, setTimeLeft] = useState<number>(20)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [previousLeaderboard, setPreviousLeaderboard] = useState<LeaderboardEntry[]>([])
   const [showScoreAnimation, setShowScoreAnimation] = useState(false)
@@ -21,10 +22,6 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [questionOnlyTimeLeft, setQuestionOnlyTimeLeft] = useState(5)
 
-  // fullScreenPhase: controls full screen display for each phase
-  // 'question' -> full screen question
-  // 'stats' -> full screen stats
-  // 'leaderboard' -> full screen leaderboard
   const [fullScreenPhase, setFullScreenPhase] = useState<"question" | "stats" | "leaderboard" | null>(null)
   const questionTimerRef = useRef<NodeJS.Timeout | null>(null)
   const statsTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -33,7 +30,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const currentQuestion = gameState.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz.questions[gameState.currentQuestionIndex]
   const isLastQuestion = gameState.currentQuestionIndex >= quiz.questions.length - 1
 
-  // مؤقت إظهار السؤال فقط لمدة 5 ثوان
+  // question-only timer
   useEffect(() => {
     if (gameState.showQuestionOnly && gameState.isActive) {
       const timer = setInterval(() => {
@@ -52,30 +49,33 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }, [gameState.showQuestionOnly, gameState.isActive, gameState.currentQuestionIndex])
 
-  // Full screen phases sequence
+  // Full screen phases sequence (safe durations)
   useEffect(() => {
+    const questionDuration = Number(currentQuestion?.timeLimit ?? 20)
+
     if (gameState.isActive && !gameState.showQuestionOnly && !gameState.showResults) {
-      // Start with full screen question for the duration of the question timer
       setFullScreenPhase("question")
-      const questionDuration = currentQuestion?.timeLimit || 20
+      if (questionTimerRef.current) clearTimeout(questionTimerRef.current)
       questionTimerRef.current = setTimeout(() => {
-        setFullScreenPhase(null) // Back to normal view after question time
-      }, questionDuration * 1000)
+        setFullScreenPhase(null)
+      }, Math.max(1, questionDuration) * 1000)
+
       return () => {
         if (questionTimerRef.current) clearTimeout(questionTimerRef.current)
       }
     } else if (gameState.showResults) {
-      // Show stats full screen for 5 seconds
       setFullScreenPhase("stats")
+      if (statsTimerRef.current) clearTimeout(statsTimerRef.current)
       statsTimerRef.current = setTimeout(() => {
         calculateLeaderboard()
         setFullScreenPhase("leaderboard")
         setShowScoreAnimation(true)
-        // Show leaderboard for 5 seconds then auto next
+        if (leaderboardTimerRef.current) clearTimeout(leaderboardTimerRef.current)
         leaderboardTimerRef.current = setTimeout(() => {
           handleNextQuestion()
         }, 5000)
       }, 5000)
+
       return () => {
         if (statsTimerRef.current) clearTimeout(statsTimerRef.current)
         if (leaderboardTimerRef.current) clearTimeout(leaderboardTimerRef.current)
@@ -88,15 +88,20 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }, [gameState.isActive, gameState.showQuestionOnly, gameState.showResults, gameState.currentQuestionIndex, currentQuestion?.timeLimit])
 
-  // مؤقت الإجابة (host) — يعتمد على الوقت بالبداية
+  // host timer — use toMillis to avoid Firestore Timestamp issues
   useEffect(() => {
     if (!gameState.questionStartTime || gameState.showResults || gameState.showQuestionOnly) return
 
-    const startTime = gameState.questionStartTime.getTime()
-    const timeLimit = currentQuestion?.timeLimit || 20
+    const startMs = toMillis(gameState.questionStartTime as any)
+    const timeLimit = Number(currentQuestion?.timeLimit ?? 20)
+
+    if (!startMs || !isFinite(timeLimit) || timeLimit <= 0) {
+      setTimeLeft(timeLimit)
+      return
+    }
 
     const timer = setInterval(() => {
-      const elapsed = (Date.now() - startTime) / 1000
+      const elapsed = (Date.now() - startMs) / 1000
       const remaining = Math.max(0, timeLimit - elapsed)
       setTimeLeft(remaining)
 
@@ -108,7 +113,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     return () => clearInterval(timer)
   }, [gameState.questionStartTime, gameState.showResults, gameState.showQuestionOnly, currentQuestion?.timeLimit])
 
-  // Poll responses (server-side firestore read) — poll to update count & end early if all groups answered
+  // Poll responses
   useEffect(() => {
     if (!gameState.isActive || gameState.showQuestionOnly) return
 
@@ -119,7 +124,6 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
         if (cancelled) return
         setResponses(questionResponses)
 
-        // إذا أجاب جميع الفرق، أنهِ السؤال مبكراً
         if (questionResponses.length >= groups.length && !gameState.showResults) {
           handleTimeUp()
         }
@@ -137,8 +141,6 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }, [gameState.quizId, gameState.currentQuestionIndex, gameState.isActive, gameState.showQuestionOnly, groups.length, gameState.showResults])
 
-  // This effect is now handled in the full screen phases useEffect above
-
   const handleTimeUp = async () => {
     if (gameState.showResults) return
 
@@ -147,7 +149,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       await showQuestionResults(gameState.quizId)
     } catch (error: any) {
       console.error("Error showing results:", error)
-      setError(error.message || "فشل في إظهار النتائج")
+      setError(error?.message || "فشل في إظهار النتائج")
     } finally {
       setIsLoading(false)
     }
@@ -159,7 +161,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       await showQuestionResults(gameState.quizId)
     } catch (error: any) {
       console.error("Error forcing next:", error)
-      setError(error.message || "فشل في الانتقال للسؤال التالي")
+      setError(error?.message || "فشل في الانتقال للسؤال التالي")
     } finally {
       setIsLoading(false)
     }
@@ -174,12 +176,13 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       groupScores.set(group.id, group.score || 0)
     })
 
-    // نظام النقاط: 1000 تقل مع الزمن (كما عندك) — نطبق على الإجابات الصحيحة فقط
-    const correctResponses = responses.filter((r) => r.isCorrect).sort((a, b) => a.responseTime - b.responseTime)
+    // Apply points for correct responses — ensure responseTime is seconds
+    const correctResponses = responses.filter((r) => r.isCorrect).sort((a, b) => (a.responseTime ?? 0) - (b.responseTime ?? 0))
     const newScores: { groupId: string; score: number }[] = []
 
     correctResponses.forEach((response) => {
-      const points = Math.max(Math.round(1000 - (response.responseTime * 100)), 100)
+      const respTime = Number(response.responseTime ?? 0)
+      const points = Math.max(Math.round(1000 - respTime * 100), 100)
       const currentScore = groupScores.get(response.groupId) || 0
       const newScore = currentScore + points
       groupScores.set(response.groupId, newScore)
@@ -210,7 +213,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
         setIsLoading(true)
         await endQuiz(gameState.quizId)
       } catch (error: any) {
-        setError(error.message || "فشل في إنهاء المسابقة")
+        setError(error?.message || "فشل في إنهاء المسابقة")
       } finally {
         setIsLoading(false)
       }
@@ -226,13 +229,13 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       setFullScreenPhase(null)
     } catch (error: any) {
       console.error("Error moving to next question:", error)
-      setError(error.message || "فشل في الانتقال للسؤال التالي")
+      setError(error?.message || "فشل في الانتقال للسؤال التالي")
     } finally {
       setIsLoading(false)
     }
   }
 
-  // ألوان الاختيارات: ترتيب ثابت (أزرق، أصفر، أخضر، أحمر)
+  // UI helpers (unchanged)
   const getChoiceColor = (index: number) => {
     const base = ["bg-blue-500", "bg-yellow-500", "bg-green-500", "bg-red-500"]
     return base[index] ?? "bg-gray-500"
@@ -259,8 +262,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   }
 
   const getPositionChange = (groupId: string) => {
-    const currentPos = leaderboard.findIndex(g => g.groupId === groupId)
-    const previousPos = previousLeaderboard.findIndex(g => g.groupId === groupId)
+    const currentPos = leaderboard.findIndex((g) => g.groupId === groupId)
+    const previousPos = previousLeaderboard.findIndex((g) => g.groupId === groupId)
 
     if (previousPos === -1) return 0
     return previousPos - currentPos
@@ -279,6 +282,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       calculateLeaderboard()
       setFullScreenPhase("leaderboard")
       setShowScoreAnimation(true)
+      if (leaderboardTimerRef.current) clearTimeout(leaderboardTimerRef.current)
       leaderboardTimerRef.current = setTimeout(() => {
         handleNextQuestion()
       }, 5000)
@@ -288,33 +292,41 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }
 
+  // Error modal to prevent accidental exit
+  const ErrorModal = () => (
+    <AnimatePresence>
+      {error && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-white p-4 rounded-lg max-w-md w-full">
+            <h3 className="font-bold mb-2">حدث خطأ</h3>
+            <p className="text-sm mb-4">{error}</p>
+            <div className="flex gap-2">
+              <button onClick={() => setError(null)} className="flex-1 border p-2 rounded">ابقَ في الصفحة</button>
+              <button onClick={() => { setError(null); window.location.reload() }} className="flex-1 bg-blue-500 text-white p-2 rounded">إعادة تحميل</button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+
   // --- UI ---
   if (!gameState.isActive) {
-    // عرض النتائج النهائية على شاشة الـ Host (podium) مثل Kahoot
     return (
       <div className="min-h-screen bg-linear-to-br from-purple-600 to-blue-700 p-1 relative overflow-hidden">
-
+        <ErrorModal />
+        {/* Final podium UI (unchanged) */}
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="mb-1"
-            >
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5 }} className="mb-1">
               <h1 className="text-6xl font-bold text-white mb-1 drop-shadow-2xl">🎉 انتهت المسابقة! 🎉</h1>
               <p className="text-2xl text-white/90">الفائزون النهائيون</p>
             </motion.div>
 
             <div className="flex justify-center items-end gap-1 mb-1">
-              {/* المركز الثاني */}
+              {/* second, first, third cards (same as before) */}
               {leaderboard[1] && (
-                <motion.div
-                  initial={{ y: 100, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 1, type: "spring", stiffness: 100 }}
-                  className="bg-slate-100 text-slate-900 p-1 rounded-t-2xl shadow-2xl w-64 h-48 flex flex-col justify-end"
-                >
+                <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5, duration: 1, type: "spring", stiffness: 100 }} className="bg-slate-100 text-slate-900 p-1 rounded-t-2xl shadow-2xl w-64 h-48 flex flex-col justify-end">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-1">2</div>
                     {leaderboard[1].saintImage && <img src={leaderboard[1].saintImage} alt={leaderboard[1].saintName} className="w-12 h-12 rounded-full border-2 border-white object-cover mx-auto mb-1" />}
@@ -325,14 +337,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                 </motion.div>
               )}
 
-              {/* المركز الأول */}
               {leaderboard[0] && (
-                <motion.div
-                  initial={{ y: 100, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2, duration: 1, type: "spring", stiffness: 100 }}
-                  className="bg-linear-to-r from-yellow-400 to-orange-500 text-white p-1 rounded-t-2xl shadow-2xl w-80 h-64 flex flex-col justify-end relative"
-                >
+                <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 1, type: "spring", stiffness: 100 }} className="bg-linear-to-r from-yellow-400 to-orange-500 text-white p-1 rounded-t-2xl shadow-2xl w-80 h-64 flex flex-col justify-end relative">
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <div className="text-4xl">👑</div>
                   </div>
@@ -346,14 +352,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
                 </motion.div>
               )}
 
-              {/* المركز الثالث */}
               {leaderboard[2] && (
-                <motion.div
-                  initial={{ y: 100, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.8, duration: 1, type: "spring", stiffness: 100 }}
-                  className="bg-linear-to-r from-orange-300 to-red-400 text-white p-1 rounded-t-2xl shadow-2xl w-64 h-40 flex flex-col justify-end"
-                >
+                <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.8, duration: 1, type: "spring", stiffness: 100 }} className="bg-linear-to-r from-orange-300 to-red-400 text-white p-1 rounded-t-2xl shadow-2xl w-64 h-40 flex flex-col justify-end">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-white/20 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-1">3</div>
                     {leaderboard[2].saintImage && <img src={leaderboard[2].saintImage} alt={leaderboard[2].saintName} className="w-12 h-12 rounded-full border-2 border-white object-cover mx-auto mb-1" />}
@@ -365,24 +365,12 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
               )}
             </div>
 
-            {/* باقي المشاركين */}
             {leaderboard.length > 3 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.5, duration: 0.5 }}
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-1 max-w-4xl mx-auto"
-              >
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 0.5 }} className="bg-white/10 backdrop-blur-md rounded-2xl p-1 max-w-4xl mx-auto">
                 <h3 className="text-xl font-bold text-white mb-1">باقي المشاركين</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                   {leaderboard.slice(3).map((entry, index) => (
-                    <motion.div
-                      key={entry.groupId}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 1.5 + index * 0.1, duration: 0.3 }}
-                      className="bg-white/20 p-1 rounded-lg flex items-center justify-between"
-                    >
+                    <motion.div key={entry.groupId} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.5 + index * 0.1, duration: 0.3 }} className="bg-white/20 p-1 rounded-lg flex items-center justify-between">
                       <div className="flex items-center gap-1">
                         <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">{index + 4}</div>
                         <div>
@@ -545,6 +533,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   // العرض الطبيعي: يمين الصفحة إما إحصائيات (stats) أو اللوحة (leaderboard)
   return (
     <div className="min-h-screen bg-gray-50 p-1">
+      <ErrorModal />
       <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-1">
         {/* LEFT: سؤال + اختيارات */}
         <div className="bg-white rounded-2xl shadow-lg p-1">
