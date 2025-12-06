@@ -1,0 +1,2 @@
+# Google AdSense (required)
+google.com, pub-2001723283376739, DIRECT, f08c47fec0942fa0
