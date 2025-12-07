@@ -31,11 +31,11 @@ export default async function BibleHomePage() {
   const newBooks = getBooks(newTestament);
 
   return (
-    <div className="m-4">
+    <div className="m-1">
       <h1 className="text-4xl font-bold text-center text-gray-800">الكتاب المقدس</h1>
-      <div className="mb-4">
-        <h2 className="text-2xl font-semibold mb-2">العهد القديم</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
+      <div className="mb-1">
+        <h2 className="text-2xl font-semibold mb-1">العهد القديم</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-1">
           {oldBooks.map((book, index) => (
             <Link
               key={book.abbrev}
@@ -49,8 +49,8 @@ export default async function BibleHomePage() {
         </div>
       </div>
       <div>
-        <h2 className="text-2xl font-semibold mb-2">العهد الجديد</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
+        <h2 className="text-2xl font-semibold mb-1">العهد الجديد</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-1">
           {newBooks.map((book, index) => (
             <Link
               key={book.abbrev}

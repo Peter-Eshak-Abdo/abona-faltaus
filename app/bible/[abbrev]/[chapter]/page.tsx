@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ abbrev: s
   const { abbrev, chapter } = await params;
   const bookName = (bookNames as Record<string, string>)[abbrev] || `سفر ${abbrev.toUpperCase()}`;
   return {
-    title: `${bookName} - إصحاح ${chapter} | الكتاب المقدس تفاحة`,
+    title: `${bookName} - إصحاح ${chapter} | الكتاب المقدس تفاحة `,
     description: `قراءة ${bookName} - إصحاح ${chapter} من الكتاب المقدس مع إمكانية تكبير الخط.`,
     keywords: [bookName, `إصحاح ${chapter}`, "الكتاب المقدس", "قراءة الإنجيل"],
   };

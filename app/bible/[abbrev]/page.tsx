@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ abbrev: s
   const { abbrev } = await params;
   const bookName = bookNames[abbrev as keyof typeof bookNames] || `سفر ${abbrev.toUpperCase()}`;
   return {
-    title: `${bookName} - الكتاب المقدس تفاحة`,
+    title: `${bookName} - الكتاب المقدس تفاحة `,
     description: `قراءة ${bookName} من الكتاب المقدس مع تقسيم الإصحاحات.`,
     keywords: [bookName, "الكتاب المقدس", "أسفار", "قراءة الإنجيل"],
   };
@@ -37,13 +37,13 @@ export default async function BookPage({ params }: { params: Promise<{ abbrev: s
   const bookName = bookNames[abbrev as keyof typeof bookNames] || `سفر ${abbrev.toUpperCase()}`;
 
   if (!book)
-    return <div className="p-6 text-red-600">❌ لم يتم العثور على السفر</div>;
+    return <div className="p-1 text-red-600">❌ لم يتم العثور على السفر</div>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-3xl font-bold mb-2 text-center text-gray-800">{bookName}</h1>
+    <div className="p-1">
+      <h1 className="text-3xl font-bold mb-1 text-center text-gray-800">{bookName}</h1>
       <p className="mb-1 text-center text-lg text-gray-600">عدد الإصحاحات: {book.chapters.length}</p>
-      <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-1">
         {book.chapters.map((_, idx) => (
           <Link
             key={idx}

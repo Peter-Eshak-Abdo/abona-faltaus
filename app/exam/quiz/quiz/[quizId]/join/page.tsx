@@ -148,7 +148,7 @@ export default function JoinQuizPage() {
 
   if (gameState?.isActive) {
     return (
-      <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl p-1">
+      <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
         <div className="w-full max-w-md text-center bg-white rounded-2xl shadow-2xl p-1">
           <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
             <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -172,7 +172,7 @@ export default function JoinQuizPage() {
   if (hasJoined) {
     return (
       <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md ">
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
           <div className="text-center bg-white rounded-2xl shadow-2xl">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
               <svg className="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20">
