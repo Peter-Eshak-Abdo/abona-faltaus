@@ -161,6 +161,9 @@ export default function HomeClient() {
         <svg width="32" height="32" fill="currentColor"><circle cx="16" cy="16" r="16" /></svg>
       </button> */}
       {/* </div> */}
+      <footer className="absolute text-start mt-1 text-sm opacity-80 bottom-1">
+        <p className="mt-2">آخر تحديث: {new Date().toLocaleDateString('ar-EG')}</p>
+      </footer> 
     </motion.div>
   );
 }

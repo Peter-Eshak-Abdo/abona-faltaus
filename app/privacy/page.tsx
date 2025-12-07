@@ -6,7 +6,7 @@ export default function PrivacyPolicyPage() {
     <div dir="rtl" lang="ar" className="min-h-screen flex items-center justify-center from-slate-900 via-slate-800 to-slate-900 p-1">
       <main className="w-full max-w-7xl p-1 rounded-2xl backdrop-blur-md bg-white/6 border border-white/10 shadow-2xl">
         {/* Header */}
-        <header className="flex items-start gap-1 mb-2">
+        <header className="flex items-center md:flex-row flex-col gap-1 mb-2">
           <div className="shrink-0 w-16 h-16 rounded-xl flex items-center justify-center bg-white/8 border border-white/8">
             <img src="/images/logo.webp" alt="لوغو ابونا فلتاؤس" className="w-12 h-12 object-contain" />
           </div>
