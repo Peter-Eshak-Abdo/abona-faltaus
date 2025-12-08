@@ -28,6 +28,7 @@ const sections = [
   { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
   { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
+  { name: "الخولاجي", href: "/kholagi", icon: <FaBook /> },
 ];
 
 export default function HomeClient() {
@@ -163,7 +164,7 @@ export default function HomeClient() {
       {/* </div> */}
       <footer className="absolute text-start mt-1 text-sm opacity-80 bottom-1">
         <p className="mt-2">آخر تحديث: {new Date().toLocaleDateString('ar-EG')}</p>
-      </footer> 
+      </footer>
     </motion.div>
   );
 }

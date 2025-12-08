@@ -4,7 +4,6 @@ Allow: /
 Disallow: /api/*
 Disallow: /admin/*
 Disallow: /private/*
-Disallow: /auth/*
 
 # Host
 Host: https://abona-faltaus.vercel.app

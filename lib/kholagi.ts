@@ -43,14 +43,27 @@ export async function loadAllKholagiItems(): Promise<KholagiItem[]> {
 export async function loadKholagiItem(
   slug: string
 ): Promise<KholagiItem | null> {
-  const dataDir = path.join(
-    process.cwd(),
-    "data",
-    "coptish-datastore",
-    "output"
-  );
-  const filePath = path.join(dataDir, `${slug}.json`);
+  // const dataDir = path.join(
+  //   process.cwd(),
+  //   "data",
+  //   "coptish-datastore",
+  //   "output"
+  // );
+  // const filePath = path.join(dataDir, `${slug}.json`);
+  // try {
+  //   const raw = await fs.readFile(filePath, "utf8");
+  //   const obj = JSON.parse(raw);
+  //   return normalizeItem(slug, obj);
+  // } catch (err) {
+  //   console.warn("loadKholagiItem:", slug, err);
+  //   return null;
+  // }
+  
+  // مؤقت — للطباعة debug
+  const dataDir = path.join(process.cwd(), "data", "coptish-datastore", "output");
+  console.log("Kholagi: reading dataDir ->", dataDir);
   try {
+    const filePath = path.join(dataDir, `${slug}.json`);
     const raw = await fs.readFile(filePath, "utf8");
     const obj = JSON.parse(raw);
     return normalizeItem(slug, obj);
