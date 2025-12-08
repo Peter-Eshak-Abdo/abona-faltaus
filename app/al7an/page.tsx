@@ -1,6 +1,7 @@
 import Al7anClient from "./Al7anClient";
 import { Metadata } from "next";
 import al7anData from "@/public/al7an-all.json";
+import { monasbat } from "@/lib/al7an";
 
 type Al7anItem = { name: string;[key: string]: unknown };
 type Al7anCategory = { [category: string]: Al7anItem[] };
@@ -17,8 +18,8 @@ export const metadata: Metadata = {
 
 export default function Al7anPage() {
   return (
-    <main className="max-w-7xl mx-auto p-4">
-      <Al7anClient />
+    <main className="max-w-8xl mx-auto p-1">
+      <Al7anClient params={Promise.resolve({ mons: monasbat as unknown as string || "" })} />
     </main>
   );
 }

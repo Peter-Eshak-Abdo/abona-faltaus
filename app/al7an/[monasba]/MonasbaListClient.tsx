@@ -7,7 +7,7 @@ import slugify from "slugify";
 type Hymn = { name: string; duration?: string };
 export default function MonasbaListClient({ hymns, monasba }: { hymns: Hymn[]; monasba: string }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-1">
       {hymns.map((h) => {
         const slug = slugify(h.name, { lower: true, strict: true });
         return (
@@ -17,15 +17,15 @@ export default function MonasbaListClient({ hymns, monasba }: { hymns: Hymn[]; m
             animate={{ opacity: 1, y: 0 }}
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.18 }}
-            className="bg-white border rounded-lg p-4 shadow-sm flex items-center justify-between"
+            className="bg-white border rounded-lg p-1 shadow-sm flex items-center justify-between"
           >
             <div>
               <div className="font-medium">{h.name}</div>
               {h.duration && <div className="text-xs text-muted-foreground">المدة: {h.duration}</div>}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <Link href={`/al7an/${encodeURIComponent(monasba)}/${slug}`}>
-                <Button size="sm">تفاصيل</Button>
+                <Button size="normal">تفاصيل</Button>
               </Link>
             </div>
           </motion.div>

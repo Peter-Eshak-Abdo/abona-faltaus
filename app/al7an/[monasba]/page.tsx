@@ -25,8 +25,8 @@ export default async function MonasbaPage({ params }: { params: Promise<{ monasb
   const hymns = typedAl7anData.find((c) => c[monasba])?.[monasba] || [];
 
   return (
-    <main className="max-w-7xl mx-auto mt-6 p-4">
-      <div className="mb-4">
+    <main className="max-w-8xl mx-auto p-1">
+      <div className="mb-1">
         <h1 className="text-2xl font-bold">ألحان مناسبة {monasba}</h1>
         <p className="text-sm text-muted-foreground">عدد الألحان: {hymns.length}</p>
       </div>

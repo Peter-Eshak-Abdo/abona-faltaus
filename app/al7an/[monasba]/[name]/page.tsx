@@ -90,8 +90,8 @@ export default async function L7nDetailsPage({ params }: { params: Promise<{ mon
     "";
 
   return (
-    <main className="max-w-4xl mx-auto mt-6 p-4">
-      <nav className="text-sm text-muted-foreground mb-3 flex flex-wrap gap-2">
+    <main className="max-w-8xl mx-auto p-1">
+      <nav className="text-sm text-muted-foreground mb-1 flex flex-wrap gap-1">
         <Link href="/">الرئيسية</Link>
         <span>/</span>
         <Link href="/al7an">الألحان</Link>
@@ -101,7 +101,7 @@ export default async function L7nDetailsPage({ params }: { params: Promise<{ mon
         <span className="font-medium">{hymn.name}</span>
       </nav>
 
-      <header className="mb-4">
+      <header className="mb-1">
         <h1 className="text-3xl font-extrabold">{hymn.name}</h1>
         {hymn.duration && <p className="text-sm text-muted-foreground">المدة: {hymn.duration}</p>}
       </header>
@@ -115,7 +115,7 @@ export default async function L7nDetailsPage({ params }: { params: Promise<{ mon
 
       {/* صور الهزّات */}
       {images.length > 0 && (
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-1">
           {images.map((src, i) => (
             <div key={i} className="rounded overflow-hidden shadow">
               <Image src={src} alt={`${hymn.name} - صورة ${i + 1}`} width={600} height={400} className="object-cover" />

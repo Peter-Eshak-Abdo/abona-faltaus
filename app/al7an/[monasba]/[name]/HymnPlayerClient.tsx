@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 // import { toast } from "@/components/ui/use-toast"; // لو عندك toast; لو مش موجود احذف
-// يمكنك استبدال toast بـ alert بسيطة
 
 type Props = {
   finalSrc: string;
@@ -98,8 +97,8 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
   }
 
   return (
-    <section className="bg-white rounded-lg shadow p-4">
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+    <section className="bg-white rounded-lg shadow p-1">
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-1">
         <div className="flex-1">
           <h2 className="text-xl font-semibold">{pageTitle}</h2>
           {lyrics ? (
@@ -108,19 +107,16 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
             <p className="text-sm text-muted-foreground mt-1">لا توجد كلمات مُدرجة لهذا اللحن.</p>
           )}
 
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-1 flex flex-wrap gap-1">
             <Button onClick={togglePlay} variant="default">
               {playing ? "إيقاف" : "تشغيل"}
             </Button>
-
             <Button onClick={() => speak(lyrics || pageTitle)} variant="outline">
               نطق الاسم / الكلمات
             </Button>
-
             <Button onClick={sharePage} variant="secondary">
               مشاركة الصفحة
             </Button>
-
             <Button onClick={downloadPageLink} variant="ghost">
               نسخ رابط الصفحة
             </Button>
@@ -132,7 +128,7 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
             initial={{ scale: 1 }}
             animate={playing ? { scale: 1.02, boxShadow: "0 8px 30px rgba(0,0,0,0.12)" } : { scale: 1 }}
             transition={{ duration: 0.35 }}
-            className="bg-slate-50 p-3 rounded"
+            className="bg-slate-50 p-1 rounded"
           >
             <audio
               ref={audioRef}
@@ -142,11 +138,11 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
               src={finalSrc || undefined}
             />
             {finalSrc ? (
-              <div className="text-xs text-muted-foreground mt-2">
+              <div className="text-xs text-muted-foreground mt-1">
                 مصدر الصوت: {finalSrc.startsWith('http') ? new URL(finalSrc).hostname : 'محلي'}
               </div>
             ) : (
-              <div className="text-sm text-red-500 mt-2">❌ لا يوجد ملف صوتي متاح</div>
+              <div className="text-sm text-red-500 mt-1">❌ لا يوجد ملف صوتي متاح</div>
             )}
           </motion.div>
         </div>
@@ -154,14 +150,14 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
 
       {/* اختيار صوت (إن وُجدت) */}
       {availableVoices.length > 0 && (
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-1 flex items-center gap-1">
           <label className="text-sm text-muted-foreground">اختر صوتاً:</label>
           <select
             name="voice"
             title="voice"
             value={selectedVoiceURI ?? ""}
             onChange={(e) => setSelectedVoiceURI(e.target.value || null)}
-            className="rounded border px-2 py-1"
+            className="rounded border p-1"
           >
             <option value="">افتراضي</option>
             {availableVoices.map((v) => (
