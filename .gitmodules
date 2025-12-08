@@ -1,0 +1,3 @@
+[submodule "data/coptish-datastore"]
+	path = data/coptish-datastore
+	url = https://github.com/markrofail/coptish-datastore
