@@ -13,7 +13,7 @@ const nextConfig = withPWA({
         cacheName: "google-fonts-stylesheets",
         expiration: {
           maxEntries: 20,
-          maxAgeSeconds: 60 * 60 * 24 * 365,
+          maxAgeSeconds: 365 * 24 * 60 * 60,
         },
       },
     },
@@ -24,7 +24,47 @@ const nextConfig = withPWA({
         cacheName: "google-fonts-webfonts",
         expiration: {
           maxEntries: 20,
-          maxAgeSeconds: 60 * 60 * 24 * 365,
+          maxAgeSeconds: 365 * 24 * 60 * 60,
+        },
+      },
+    },
+    {
+      urlPattern: /\/api\/.*/,
+      handler: "NetworkOnly",
+      options: {
+        cacheName: "api-calls",
+      },
+    },
+    {
+      urlPattern: ({ request }) => request.mode === 'navigate',
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'pages-cache',
+        expiration: {
+          maxEntries: 60,
+          maxAgeSeconds: 365 * 24 * 60 * 60, // 365 Days
+        },
+      },
+    },
+    {
+      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|ico|webp|avif|mp3|wav|ogg|m4a|json|pdf)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'static-assets-cache',
+        expiration: {
+          maxEntries: 200,
+          maxAgeSeconds: 365 * 24 * 60 * 60, // 365 Days
+        },
+      },
+    },
+     {
+      urlPattern: /_next\/static\/.+/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'next-static-cache',
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 365 * 24 * 60 * 60, // 365 Days
         },
       },
     },

@@ -13,9 +13,21 @@ import {
   writeBatch,
   setDoc,
   deleteDoc,
+  enableIndexedDbPersistence,
+  CACHE_SIZE_UNLIMITED,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type { Quiz, Group, QuizResponse, GameState } from "@/types/quiz";
+
+enableIndexedDbPersistence(db, {
+  cacheSizeBytes: CACHE_SIZE_UNLIMITED,
+})
+  .then(() => {
+    console.log("Offline persistence enabled");
+  })
+  .catch((err) => {
+    console.error("Error enabling offline persistence: ", err);
+  });
 
 // Quiz operations
 export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt">) => {

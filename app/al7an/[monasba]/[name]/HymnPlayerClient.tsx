@@ -1,9 +1,8 @@
-// app/al7an/HymnPlayerClient.tsx
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-// import { toast } from "@/components/ui/use-toast"; // لو عندك toast; لو مش موجود احذف
+import { toast } from "@/hooks/use-toast";
 
 type Props = {
   finalSrc: string;
@@ -14,15 +13,34 @@ type Props = {
 export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceURI, setSelectedVoiceURI] = useState<string | null>(null);
 
+  const CACHE_NAME = 'offline-audio';
+
+  // التحقق مما إذا كان الملف متاحًا في وضع عدم الاتصال عند تحميل المكون
   useEffect(() => {
-    // Detect TTS voices (async)
+    async function checkCache() {
+      if (!finalSrc || typeof caches === 'undefined') return;
+      try {
+        const cache = await caches.open(CACHE_NAME);
+        const response = await cache.match(finalSrc);
+        if (response) {
+          setIsOffline(true);
+        }
+      } catch (error) {
+        console.error("Error checking cache:", error);
+      }
+    }
+    checkCache();
+  }, [finalSrc]);
+
+  useEffect(() => {
     function loadVoices() {
       const voices = speechSynthesis.getVoices();
       setAvailableVoices(voices);
-      // حاول نلاقي صوت قبطي أولًا (نادرا ما يكون موجود)، بعدها أصوات عربية
       const coptic = voices.find((v) => /copt|coptic/i.test(v.name || v.lang));
       const arabic = voices.find((v) => /^ar/.test(v.lang || v.name));
       const fallback = voices[0];
@@ -50,34 +68,36 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
     setPlaying(false);
   }
 
+  async function downloadForOffline() {
+    if (!finalSrc || typeof caches === 'undefined') {
+      toast({ title: "خطأ", description: "المتصفح لا يدعم التخزين." });
+      return;
+    }
+    setIsDownloading(true);
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.add(finalSrc);
+      setIsOffline(true);
+      toast({ title: "نجاح", description: "تم تحميل اللحن بنجاح وهو متاح الآن للاستماع بدون انترنت." });
+    } catch (error) {
+      console.error("Failed to cache audio file:", error);
+      toast({ title: "فشل التحميل", description: "لم نتمكن من تحميل الملف، قد يكون هناك مشكلة في الشبكة.", variant: "destructive" });
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+
   function sharePage() {
     const url = window.location.href;
     const title = pageTitle;
     if (navigator.share) {
-      navigator
-        .share({ title, text: `اسمع لحن ${title}`, url })
-        .catch(() => { });
+      navigator.share({ title, text: `اسمع لحن ${title}`, url }).catch(() => {});
     } else {
-      // fall back: copy to clipboard + open whatsapp
       navigator.clipboard?.writeText(url);
       const wa = `https://wa.me/?text=${encodeURIComponent(`${title} - ${url}`)}`;
       window.open(wa, "_blank");
     }
-    // optional toast
-    try {
-      alert?.({ title: "تم مشاركة رابط الصفحة" });
-    } catch { }
-  }
-
-  function downloadPageLink() {
-    const url = window.location.href;
-    // افتح رابط التنزيل للصفحة (لا يمكن "تحميل" صفحة html مباشرة لكن ننسخ الرابط)
-    navigator.clipboard?.writeText(url);
-    try {
-      alert?.({ title: "رابط الصفحة نُسخ للحافظة" });
-    } catch {
-      alert("نسخ رابط الصفحة");
-    }
+    toast?.({ title: "تم مشاركة رابط الصفحة" });
   }
 
   function speak(text?: string) {
@@ -87,18 +107,16 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
       return;
     }
     const utter = new SpeechSynthesisUtterance(content);
-    // اختر صوت إذا متاح
     const voice = availableVoices.find((v) => v.voiceURI === selectedVoiceURI) || availableVoices.find((v) => /^ar/.test(v.lang));
     if (voice) utter.voice = voice;
-    // احاول ضبط اللغة للعربية افتراضيًا
     utter.lang = (utter.voice?.lang || "ar-EG");
     speechSynthesis.cancel();
     speechSynthesis.speak(utter);
   }
 
   return (
-    <section className="bg-white rounded-lg shadow p-1">
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-1">
+    <section className="bg-white rounded-lg shadow p-4">
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
         <div className="flex-1">
           <h2 className="text-xl font-semibold">{pageTitle}</h2>
           {lyrics ? (
@@ -107,18 +125,22 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
             <p className="text-sm text-muted-foreground mt-1">لا توجد كلمات مُدرجة لهذا اللحن.</p>
           )}
 
-          <div className="mt-1 flex flex-wrap gap-1">
+          <div className="mt-4 flex flex-wrap gap-2">
             <Button onClick={togglePlay} variant="default">
               {playing ? "إيقاف" : "تشغيل"}
             </Button>
+            <Button
+              onClick={downloadForOffline}
+              variant="outline"
+              disabled={isOffline || isDownloading}
+            >
+              {isOffline ? "تم التحميل أوفلاين" : isDownloading ? "جاري التحميل..." : "تحميل أوفلاين"}
+            </Button>
             <Button onClick={() => speak(lyrics || pageTitle)} variant="outline">
-              نطق الاسم / الكلمات
+              نطق الكلمات
             </Button>
             <Button onClick={sharePage} variant="secondary">
-              مشاركة الصفحة
-            </Button>
-            <Button onClick={downloadPageLink} variant="ghost">
-              نسخ رابط الصفحة
+              مشاركة
             </Button>
           </div>
         </div>
@@ -128,7 +150,7 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
             initial={{ scale: 1 }}
             animate={playing ? { scale: 1.02, boxShadow: "0 8px 30px rgba(0,0,0,0.12)" } : { scale: 1 }}
             transition={{ duration: 0.35 }}
-            className="bg-slate-50 p-1 rounded"
+            className="bg-slate-50 p-2 rounded-lg"
           >
             <audio
               ref={audioRef}
@@ -138,26 +160,25 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
               src={finalSrc || undefined}
             />
             {finalSrc ? (
-              <div className="text-xs text-muted-foreground mt-1">
+              <div className="text-xs text-muted-foreground mt-1 text-center">
                 مصدر الصوت: {finalSrc.startsWith('http') ? new URL(finalSrc).hostname : 'محلي'}
               </div>
             ) : (
-              <div className="text-sm text-red-500 mt-1">❌ لا يوجد ملف صوتي متاح</div>
+              <div className="text-sm text-red-500 mt-1 p-4 text-center">❌ لا يوجد ملف صوتي متاح</div>
             )}
           </motion.div>
         </div>
       </div>
 
-      {/* اختيار صوت (إن وُجدت) */}
       {availableVoices.length > 0 && (
-        <div className="mt-1 flex items-center gap-1">
-          <label className="text-sm text-muted-foreground">اختر صوتاً:</label>
+        <div className="mt-4 flex items-center gap-2 border-t pt-4">
+          <label className="text-sm text-muted-foreground">اختر صوتاً للنطق:</label>
           <select
             name="voice"
             title="voice"
             value={selectedVoiceURI ?? ""}
             onChange={(e) => setSelectedVoiceURI(e.target.value || null)}
-            className="rounded border p-1"
+            className="rounded border bg-gray-50 p-1 text-sm"
           >
             <option value="">افتراضي</option>
             {availableVoices.map((v) => (
