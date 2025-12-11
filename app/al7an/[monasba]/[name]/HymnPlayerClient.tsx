@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast"; // تم التعديل لاستخدام الـ custom hook
 
 type Props = {
   finalSrc: string;
