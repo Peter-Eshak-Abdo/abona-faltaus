@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { promises as fs } from "fs";
 import path from "path";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); // تم نقل هذا السطر
 
 interface BibleVerseResult {
   verse: string;
@@ -21,96 +21,6 @@ interface Quote {
   source: string;
   topic: string;
 }
-
-// const keywordMap = {
-//   محبة: [
-//     "محبة",
-//     "محب",
-//     "محبتي",
-//     "محبتك",
-//     "محبتهم",
-//     "محبتنا",
-//     "محبتكم",
-//     "محبة الله",
-//     "محبة الرب",
-//     "محبة المسيح",
-//     "المحبة",
-//   ],
-//   إيمان: [
-//     "ايمان",
-//     "إيماني",
-//     "إيمانك",
-//     "إيمانهم",
-//     "إيماننا",
-//     "إيمانكم",
-//     "إيمان الله",
-//     "إيمان الرب",
-//     "إيمان المسيح",
-//     "الايمان",
-//   ],
-//   صلاة: [
-//     "صلاة",
-//     "صلات",
-//     "صلاتي",
-//     "صلاتك",
-//     "صلاتهم",
-//     "صلاتنا",
-//     "صلاتكم",
-//     "صلاة الله",
-//     "صلاة الرب",
-//     "صلاة المسيح",
-//     "الصلاة",
-//   ],
-//   صبر: [
-//     "صبر",
-//     "صبري",
-//     "صبرك",
-//     "صبرهم",
-//     "صبرنا",
-//     "صبركم",
-//     "صبر الله",
-//     "صبر الرب",
-//     "صبر المسيح",
-//     "الصبر",
-//   ],
-//   عقيدة: [
-//     "عقيدة",
-//     "عقيدتي",
-//     "عقيدتك",
-//     "عقيدتهم",
-//     "عقيدتنا",
-//     "عقيدتكم",
-//     "عقيدة الله",
-//     "عقيدة الرب",
-//     "عقيدة المسيح",
-//     "العقيدة",
-//   ],
-//   رجاء: [
-//     "رجاء",
-//     "رجائي",
-//     "رجاؤك",
-//     "رجاؤهم",
-//     "رجاؤنا",
-//     "رجاؤكم",
-//     "رجاء الله",
-//     "رجاء الرب",
-//     "رجاء المسيح",
-//     "الرجاء",
-//   ],
-//   غضب: [
-//     "غضب",
-//     "غاضب",
-//     "غضبك",
-//     "غضبي",
-//     "غضبهم",
-//     "غضبنا",
-//     "غضبكم",
-//     "غضب الله",
-//     "غضب الرب",
-//     "الغضب",
-//   ],
-//   // Add more keywords and their corresponding search results here
-// };
 
 const synonymMap: Record<string, string> = {
   الايمان: "إيمان",
@@ -187,6 +97,7 @@ function searchQuotes(quotes: Quote[], query: string): Quote[] {
 }
 
 export async function POST(request: Request) {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); // تم نقل التهيئة إلى هنا
   const { messages, mode } = await request.json();
   const searchType = mode; // "keyword" أو "concept"
   const booksModule = await import("@/lib/books.js");
@@ -274,8 +185,8 @@ export async function POST(request: Request) {
         const ref = v.ref;
         // آيات مختارة من verses_topics
         if (
-          ref.match(/^[^ ]+ \\d+:\\d+(-\\d+)?$/) ||
-          ref.match(/^.+ \\d+:\\d+(-\\d+)?$/)
+          ref.match(/^[^ ]+ \d+:\d+(-\d+)?$/) ||
+          ref.match(/^.+ \d+:\d+(-\d+)?$/)
         ) {
           // صيغة: "أفسس 4:26-27"
           return `<b>${idx + 1}. ${

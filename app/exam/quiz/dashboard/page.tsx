@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { auth, db } from "@/lib/firebase"
+import { getFirebaseServices } from "@/lib/firebase"
 import { getUserQuizzes } from "@/lib/firebase-utils"
 import { Plus, Play, Users, Calendar, AlertCircle, Edit, Trash2, Trash } from "lucide-react"
 import type { Quiz } from "@/types/quiz"
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import TrashSection from "@/components/quiz/trash-section"
 
 export default function DashboardPage() {
+  const { auth, db } = getFirebaseServices();
   const [user, loading, authError] = useAuthState(auth)
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)

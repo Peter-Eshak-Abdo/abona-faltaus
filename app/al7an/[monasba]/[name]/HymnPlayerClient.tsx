@@ -1,8 +1,9 @@
+// app/al7an/HymnPlayerClient.tsx
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast"; // تم التعديل لاستخدام الـ custom hook
+import { Toaster, toast } from "sonner";
 
 type Props = {
   finalSrc: string;
@@ -20,7 +21,6 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
 
   const CACHE_NAME = 'offline-audio';
 
-  // التحقق مما إذا كان الملف متاحًا في وضع عدم الاتصال عند تحميل المكون
   useEffect(() => {
     async function checkCache() {
       if (!finalSrc || typeof caches === 'undefined') return;
@@ -70,7 +70,7 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
 
   async function downloadForOffline() {
     if (!finalSrc || typeof caches === 'undefined') {
-      toast({ title: "خطأ", description: "المتصفح لا يدعم التخزين." });
+      toast.error("المتصفح لا يدعم التخزين.");
       return;
     }
     setIsDownloading(true);
@@ -78,10 +78,10 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
       const cache = await caches.open(CACHE_NAME);
       await cache.add(finalSrc);
       setIsOffline(true);
-      toast({ title: "نجاح", description: "تم تحميل اللحن بنجاح وهو متاح الآن للاستماع بدون انترنت." });
+      toast.success("تم تحميل اللحن بنجاح وهو متاح الآن للاستماع بدون انترنت.");
     } catch (error) {
       console.error("Failed to cache audio file:", error);
-      toast({ title: "فشل التحميل", description: "لم نتمكن من تحميل الملف، قد يكون هناك مشكلة في الشبكة.", variant: "destructive" });
+      toast.error("لم نتمكن من تحميل الملف، قد يكون هناك مشكلة في الشبكة.");
     } finally {
       setIsDownloading(false);
     }
@@ -97,13 +97,13 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
       const wa = `https://wa.me/?text=${encodeURIComponent(`${title} - ${url}`)}`;
       window.open(wa, "_blank");
     }
-    toast?.({ title: "تم مشاركة رابط الصفحة" });
+    toast.info("تم مشاركة رابط الصفحة");
   }
 
   function speak(text?: string) {
     const content = text?.trim() ? text : pageTitle;
     if (!("speechSynthesis" in window)) {
-      alert("المتصفح لا يدعم التحويل إلى كلام");
+      toast.error("المتصفح لا يدعم التحويل إلى كلام");
       return;
     }
     const utter = new SpeechSynthesisUtterance(content);
@@ -115,80 +115,83 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
   }
 
   return (
-    <section className="bg-white rounded-lg shadow p-4">
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-        <div className="flex-1">
-          <h2 className="text-xl font-semibold">{pageTitle}</h2>
-          {lyrics ? (
-            <p className="text-sm text-muted-foreground mt-1 line-clamp-3">{lyrics}</p>
-          ) : (
-            <p className="text-sm text-muted-foreground mt-1">لا توجد كلمات مُدرجة لهذا اللحن.</p>
-          )}
+    <>
+      <Toaster richColors />
+      <section className="bg-white rounded-lg shadow p-4">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div className="flex-1">
+            <h2 className="text-xl font-semibold">{pageTitle}</h2>
+            {lyrics ? (
+              <p className="text-sm text-muted-foreground mt-1 line-clamp-3">{lyrics}</p>
+            ) : (
+              <p className="text-sm text-muted-foreground mt-1">لا توجد كلمات مُدرجة لهذا اللحن.</p>
+            )}
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Button onClick={togglePlay} variant="default">
-              {playing ? "إيقاف" : "تشغيل"}
-            </Button>
-            <Button
-              onClick={downloadForOffline}
-              variant="outline"
-              disabled={isOffline || isDownloading}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button onClick={togglePlay} variant="default">
+                {playing ? "إيقاف" : "تشغيل"}
+              </Button>
+              <Button
+                onClick={downloadForOffline}
+                variant="outline"
+                disabled={isOffline || isDownloading}
+              >
+                {isOffline ? "تم التحميل أوفلاين" : isDownloading ? "جاري التحميل..." : "تحميل أوفلاين"}
+              </Button>
+              <Button onClick={() => speak(lyrics || pageTitle)} variant="outline">
+                نطق الكلمات
+              </Button>
+              <Button onClick={sharePage} variant="secondary">
+                مشاركة
+              </Button>
+            </div>
+          </div>
+
+          <div className="w-full md:w-80">
+            <motion.div
+              initial={{ scale: 1 }}
+              animate={playing ? { scale: 1.02, boxShadow: "0 8px 30px rgba(0,0,0,0.12)" } : { scale: 1 }}
+              transition={{ duration: 0.35 }}
+              className="bg-slate-50 p-2 rounded-lg"
             >
-              {isOffline ? "تم التحميل أوفلاين" : isDownloading ? "جاري التحميل..." : "تحميل أوفلاين"}
-            </Button>
-            <Button onClick={() => speak(lyrics || pageTitle)} variant="outline">
-              نطق الكلمات
-            </Button>
-            <Button onClick={sharePage} variant="secondary">
-              مشاركة
-            </Button>
+              <audio
+                ref={audioRef}
+                onEnded={handleEnded}
+                className="w-full"
+                controls
+                src={finalSrc || undefined}
+              />
+              {finalSrc ? (
+                <div className="text-xs text-muted-foreground mt-1 text-center">
+                  مصدر الصوت: {finalSrc.startsWith('http') ? new URL(finalSrc).hostname : 'محلي'}
+                </div>
+              ) : (
+                <div className="text-sm text-red-500 mt-1 p-4 text-center">❌ لا يوجد ملف صوتي متاح</div>
+              )}
+            </motion.div>
           </div>
         </div>
 
-        <div className="w-full md:w-80">
-          <motion.div
-            initial={{ scale: 1 }}
-            animate={playing ? { scale: 1.02, boxShadow: "0 8px 30px rgba(0,0,0,0.12)" } : { scale: 1 }}
-            transition={{ duration: 0.35 }}
-            className="bg-slate-50 p-2 rounded-lg"
-          >
-            <audio
-              ref={audioRef}
-              onEnded={handleEnded}
-              className="w-full"
-              controls
-              src={finalSrc || undefined}
-            />
-            {finalSrc ? (
-              <div className="text-xs text-muted-foreground mt-1 text-center">
-                مصدر الصوت: {finalSrc.startsWith('http') ? new URL(finalSrc).hostname : 'محلي'}
-              </div>
-            ) : (
-              <div className="text-sm text-red-500 mt-1 p-4 text-center">❌ لا يوجد ملف صوتي متاح</div>
-            )}
-          </motion.div>
-        </div>
-      </div>
-
-      {availableVoices.length > 0 && (
-        <div className="mt-4 flex items-center gap-2 border-t pt-4">
-          <label className="text-sm text-muted-foreground">اختر صوتاً للنطق:</label>
-          <select
-            name="voice"
-            title="voice"
-            value={selectedVoiceURI ?? ""}
-            onChange={(e) => setSelectedVoiceURI(e.target.value || null)}
-            className="rounded border bg-gray-50 p-1 text-sm"
-          >
-            <option value="">افتراضي</option>
-            {availableVoices.map((v) => (
-              <option key={v.voiceURI} value={v.voiceURI}>
-                {v.name} — {v.lang}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-    </section>
+        {availableVoices.length > 0 && (
+          <div className="mt-4 flex items-center gap-2 border-t pt-4">
+            <label className="text-sm text-muted-foreground">اختر صوتاً للنطق:</label>
+            <select
+              name="voice"
+              title="voice"
+              value={selectedVoiceURI ?? ""}
+              onChange={(e) => setSelectedVoiceURI(e.target.value || null)}
+              className="rounded border bg-gray-50 p-1 text-sm"
+            >
+              <option value="">افتراضي</option>
+              {availableVoices.map((v) => (
+                <option key={v.voiceURI} value={v.voiceURI}>
+                  {v.name} — {v.lang}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </section>
+    </>
   );
 }

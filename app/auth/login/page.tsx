@@ -11,7 +11,7 @@ import {
   GithubAuthProvider,
   updateProfile,
 } from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
+import { getFirebaseServices } from "@/lib/firebase"; // 수정됨
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ButtonGroup } from "@/components/ui/button-group";
 
 export default function LoginPage() {
+  const { auth, db } = getFirebaseServices(); // 수정됨
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
@@ -30,7 +31,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (auth.currentUser) router.push("/");
-  }, [router]);
+  }, [router, auth.currentUser]);
 
   const saveUser = async (
     uid: string,

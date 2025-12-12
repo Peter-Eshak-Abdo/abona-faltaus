@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import { useState } from "react";
-import { auth } from "@/lib/firebase";
+import { getFirebaseServices } from "@/lib/firebase";
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 export default function SignInPage() {
+  const { auth } = getFirebaseServices();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

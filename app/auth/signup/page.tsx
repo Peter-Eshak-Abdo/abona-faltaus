@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import { useState } from "react";
-import { auth, db } from "@/lib/firebase";
+import { getFirebaseServices } from "@/lib/firebase";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
+  const { auth, db } = getFirebaseServices();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
