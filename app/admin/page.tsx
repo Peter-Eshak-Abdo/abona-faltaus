@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { doc, updateDoc, collection, getDocs, addDoc, deleteDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { doc, updateDoc, collection, getDocs, addDoc, deleteDoc, Firestore } from "firebase/firestore";
+import { getFirebaseServices } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,15 +32,19 @@ export default function AdminPage() {
   const [newSchedule, setNewSchedule] = useState({ time: "08:00", enabled: true, daysOfWeek: [1, 2, 3, 4, 5] }); // Monday to Friday
   const [editingVerse, setEditingVerse] = useState<Verse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [db, setDb] = useState<Firestore | null>(null);
 
   useEffect(() => {
-    loadData();
+    const { db: firestoreDb } = getFirebaseServices();
+    setDb(firestoreDb);
+    loadData(firestoreDb);
   }, []);
 
-  const loadData = async () => {
+  const loadData = async (firestoreDb: Firestore) => {
+    if (!firestoreDb) return;
     try {
       // Load verses
-      const versesSnapshot = await getDocs(collection(db, "verses"));
+      const versesSnapshot = await getDocs(collection(firestoreDb, "verses"));
       const versesData = versesSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
@@ -49,7 +53,7 @@ export default function AdminPage() {
       setVerses(versesData);
 
       // Load schedules
-      const schedulesSnapshot = await getDocs(collection(db, "notificationSchedules"));
+      const schedulesSnapshot = await getDocs(collection(firestoreDb, "notificationSchedules"));
       const schedulesData = schedulesSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
@@ -64,7 +68,7 @@ export default function AdminPage() {
   };
 
   const addVerse = async () => {
-    if (!newVerse.text.trim() || !newVerse.reference.trim()) return;
+    if (!db || !newVerse.text.trim() || !newVerse.reference.trim()) return;
 
     try {
       await addDoc(collection(db, "verses"), {
@@ -72,14 +76,14 @@ export default function AdminPage() {
         createdAt: new Date()
       });
       setNewVerse({ text: "", reference: "" });
-      loadData();
+      loadData(db);
     } catch (error) {
       console.error("Error adding verse:", error);
     }
   };
 
   const updateVerse = async () => {
-    if (!editingVerse) return;
+    if (!db || !editingVerse) return;
 
     try {
       await updateDoc(doc(db, "verses", editingVerse.id), {
@@ -87,47 +91,51 @@ export default function AdminPage() {
         reference: editingVerse.reference
       });
       setEditingVerse(null);
-      loadData();
+      loadData(db);
     } catch (error) {
       console.error("Error updating verse:", error);
     }
   };
 
   const deleteVerse = async (id: string) => {
+    if (!db) return;
     try {
       await deleteDoc(doc(db, "verses", id));
-      loadData();
+      loadData(db);
     } catch (error) {
       console.error("Error deleting verse:", error);
     }
   };
 
   const addSchedule = async () => {
+    if (!db) return;
     try {
       await addDoc(collection(db, "notificationSchedules"), {
         ...newSchedule,
         createdAt: new Date()
       });
       setNewSchedule({ time: "08:00", enabled: true, daysOfWeek: [1, 2, 3, 4, 5] });
-      loadData();
+      loadData(db);
     } catch (error) {
       console.error("Error adding schedule:", error);
     }
   };
 
   const toggleSchedule = async (id: string, enabled: boolean) => {
+    if (!db) return;
     try {
       await updateDoc(doc(db, "notificationSchedules", id), { enabled });
-      loadData();
+      loadData(db);
     } catch (error) {
       console.error("Error toggling schedule:", error);
     }
   };
 
   const deleteSchedule = async (id: string) => {
+    if (!db) return;
     try {
       await deleteDoc(doc(db, "notificationSchedules", id));
-      loadData();
+      loadData(db);
     } catch (error) {
       console.error("Error deleting schedule:", error);
     }

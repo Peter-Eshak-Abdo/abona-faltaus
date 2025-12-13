@@ -19,10 +19,26 @@ import { Button } from "@/components/ui/button"
 import { QRCodeSection } from "@/components/quiz/qr-code-section"
 import { GroupsSection } from "@/components/quiz/groups-section"
 import { QuizStats } from "@/components/quiz/quiz-stats"
-import { toMillis } from "@/lib/utils/time"
+import { Auth } from "firebase/auth"
 
-export default function HostQuizPage() {
-  const { auth } = getFirebaseServices();
+// Helper function to convert various timestamp formats to milliseconds
+const toMillis = (ts: any): number | null => {
+  if (!ts) return null;
+  if (typeof ts.toMillis === 'function') {
+    return ts.toMillis();
+  }
+  if (typeof ts.toDate === 'function') {
+    return ts.toDate().getTime();
+  }
+  if (typeof ts === 'number') {
+    return ts > 1e12 ? ts : ts * 1000;
+  }
+  const d = new Date(ts);
+  if (!isNaN(d.getTime())) return d.getTime();
+  return null;
+};
+
+function HostQuizView({ auth }: { auth: Auth }) {
   const params = useParams()
   const router = useRouter()
   const [user, loading] = useAuthState(auth)
@@ -37,7 +53,6 @@ export default function HostQuizPage() {
   const [deletingGroupId, setDeletingGroupId] = useState<string | null>(null)
   const quizId = params?.quizId as string
 
-  // protect route: redirect to login if not signed in
   useEffect(() => {
     if (!loading && !user) {
       router.push("/auth/login")
@@ -50,7 +65,6 @@ export default function HostQuizPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading, quizId])
 
-  // listeners for groups & game state
   useEffect(() => {
     if (!quizId) return
 
@@ -68,10 +82,9 @@ export default function HostQuizPage() {
 
     try {
       unsubGameState = subscribeToGameState(quizId, (state) => {
-        // normalize Firestore timestamps if present
         if (state?.questionStartTime) {
           try {
-            const ms = toMillis((state as any).questionStartTime)
+            const ms = toMillis(state.questionStartTime);
             if (ms) (state as any).questionStartTime = new Date(ms)
           } catch (e) {
             // ignore - leave as-is
@@ -144,8 +157,7 @@ export default function HostQuizPage() {
     setStartSuccess(false)
 
     try {
-      await startQuiz(quizId, quiz)
-      // small delay to allow realtime listeners to update
+      await startQuiz(quizId)
       setTimeout(() => {
         setStartSuccess(true)
       }, 800)
@@ -297,4 +309,23 @@ export default function HostQuizPage() {
       </div>
     </div>
   )
+}
+
+export default function HostQuizPage() {
+  const [auth, setAuth] = useState<Auth | null>(null);
+
+  useEffect(() => {
+    const { auth } = getFirebaseServices();
+    setAuth(auth);
+  }, []);
+
+  if (!auth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center from-blue-600 to-purple-700">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white" />
+      </div>
+    );
+  }
+
+  return <HostQuizView auth={auth} />;
 }

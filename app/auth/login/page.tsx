@@ -10,9 +10,10 @@ import {
   GoogleAuthProvider,
   GithubAuthProvider,
   updateProfile,
+  Auth,
 } from "firebase/auth";
-import { getFirebaseServices } from "@/lib/firebase"; // 수정됨
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { getFirebaseServices } from "@/lib/firebase";
+import { doc, setDoc, getDoc, serverTimestamp, Firestore } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,23 +21,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ButtonGroup } from "@/components/ui/button-group";
 
 export default function LoginPage() {
-  const { auth, db } = getFirebaseServices(); // 수정됨
+  const [auth, setAuth] = useState<Auth | null>(null);
+  const [db, setDb] = useState<Firestore | null>(null);
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const { auth, db } = getFirebaseServices();
+    setAuth(auth);
+    setDb(db);
     if (auth.currentUser) router.push("/");
-  }, [router, auth.currentUser]);
+    setIsLoading(false);
+  }, [router]);
 
   const saveUser = async (
     uid: string,
     displayName?: string | null
   ) => {
+    if (!db) return;
     const ref = doc(db, "users", uid);
     const snap = await getDoc(ref);
     if (!snap.exists()) {
@@ -52,6 +59,7 @@ export default function LoginPage() {
   const handleSocialLogin = async (
     provider: GoogleAuthProvider | GithubAuthProvider
   ) => {
+    if (!auth) return;
     try {
       setIsLoading(true);
       const res = await signInWithPopup(auth, provider);
@@ -73,6 +81,7 @@ export default function LoginPage() {
   };
 
   const handleEmailAuth = async () => {
+    if (!auth) return;
     setError("");
     if (!email || !password || (mode === "signup" && !name)) {
       setError("الرجاء ملء جميع الحقول المطلوبة");
@@ -124,6 +133,10 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center min-h-screen">جاري التحميل...</div>;
+  }
 
   return (
     <div className="max-w-7xl mx-auto flex items-center justify-center min-h-screen bg-gray-100">

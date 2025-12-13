@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { db, auth } from "@/lib/firebase";
+import { getFirebaseServices } from "@/lib/firebase";
 import {
   collection,
   onSnapshot,
@@ -33,6 +33,7 @@ interface Mkalat {
 export default function MkalatFeed() {
 
   const [mkalat, setMkalat] = useState<Mkalat[]>([]);
+  const {db, auth} = getFirebaseServices();
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "articles"), (snapshot) => {

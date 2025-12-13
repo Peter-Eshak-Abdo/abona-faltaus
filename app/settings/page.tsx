@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getFirebaseServices } from "@/lib/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, Firestore } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Bell, Moon, Sun, Volume2, VolumeX, Globe, User, Shield } from "lucide-react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import { Auth } from 'firebase/auth';
 
 interface UserSettings {
   notificationsEnabled: boolean;
@@ -23,8 +24,7 @@ interface UserSettings {
   email: string;
 }
 
-export default function SettingsPage() {
-  const { auth, db } = getFirebaseServices();
+function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
   const [user] = useAuthState(auth);
   const { theme, setTheme } = useTheme();
   const [settings, setSettings] = useState<UserSettings>({
@@ -296,4 +296,26 @@ export default function SettingsPage() {
       </div>
     </div>
   );
+}
+
+
+export default function SettingsPage() {
+  const [auth, setAuth] = useState<Auth | null>(null);
+  const [db, setDb] = useState<Firestore | null>(null);
+
+  useEffect(() => {
+    const { auth, db } = getFirebaseServices();
+    setAuth(auth);
+    setDb(db);
+  }, []);
+
+  if (!auth || !db) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return <SettingsView auth={auth} db={db} />;
 }

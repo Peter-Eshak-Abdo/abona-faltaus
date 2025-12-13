@@ -9,13 +9,13 @@ import { Plus, Play, Users, Calendar, AlertCircle, Edit, Trash2, Trash } from "l
 import type { Quiz } from "@/types/quiz"
 import { motion } from "framer-motion"
 import { CreateQuizDialog } from "@/components/quiz/create-quiz-dialog-old"
-import { getDoc, doc } from "firebase/firestore"
+import { getDoc, doc, Firestore } from "firebase/firestore"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import TrashSection from "@/components/quiz/trash-section"
+import { Auth } from "firebase/auth"
 
-export default function DashboardPage() {
-  const { auth, db } = getFirebaseServices();
+function DashboardView({ auth, db }: { auth: Auth, db: Firestore }) {
   const [user, loading, authError] = useAuthState(auth)
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -34,11 +34,9 @@ export default function DashboardPage() {
   }, [user, loading, router])
 
   useEffect(() => {
-    if (user) {
+    if (user && db) {
       loadUserQuizzes()
-    }
-    const loadCustomName = async () => {
-      if (user) {
+      const loadCustomName = async () => {
         try {
           const userDoc = await getDoc(doc(db, "users", user.uid));
           if (userDoc.exists()) {
@@ -48,11 +46,10 @@ export default function DashboardPage() {
         } catch (error) {
           console.error("Error loading custom name:", error);
         }
-      }
-    };
-    loadCustomName();
-
-  }, [user])
+      };
+      loadCustomName();
+    }
+  }, [user, db])
 
   const loadUserQuizzes = async () => {
     if (!user) return
@@ -318,4 +315,25 @@ export default function DashboardPage() {
       </div>
     </div>
   )
+}
+
+export default function DashboardPage() {
+  const [auth, setAuth] = useState<Auth | null>(null);
+  const [db, setDb] = useState<Firestore | null>(null);
+
+  useEffect(() => {
+    const { auth, db } = getFirebaseServices();
+    setAuth(auth);
+    setDb(db);
+  }, []);
+
+  if (!auth || !db) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  return <DashboardView auth={auth} db={db} />;
 }

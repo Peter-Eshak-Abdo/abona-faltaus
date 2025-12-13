@@ -405,5 +405,130 @@ export const getQuizGroups = (
     }
   );
 };
+export const startQuiz = async (quizId: string) => {
+  const db = initializeDb();
+  const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+  await setDoc(gameStateRef, {
+    isActive: true,
+    currentQuestionIndex: 0,
+    questionStartTime: serverTimestamp(),
+    showResults: false,
+    startedAt: serverTimestamp(),
+  }, { merge: true });
+};
 
-// Many more functions follow the same pattern of using db...
+export const nextQuestion = async (quizId: string, newIndex: number) => {
+  const db = initializeDb();
+  const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+  await setDoc(gameStateRef, {
+    currentQuestionIndex: newIndex,
+    questionStartTime: serverTimestamp(),
+    showResults: false,
+  }, { merge: true });
+};
+
+export const showQuestionResults = async (quizId: string) => {
+  const db = initializeDb();
+  const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+  await setDoc(gameStateRef, { showResults: true }, { merge: true });
+};
+
+export const endQuiz = async (quizId: string) => {
+  const db = initializeDb();
+  const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+  await setDoc(gameStateRef, { isActive: false, showResults: true }, { merge: true });
+};
+
+export const subscribeToGameState = (quizId: string, callback: (gameState: GameState) => void) => {
+  const db = initializeDb();
+  const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+  return onSnapshot(gameStateRef, (doc) => {
+    if (doc.exists()) {
+      callback(doc.data() as GameState);
+    }
+  });
+};
+
+export const submitResponse = async (quizId: string, groupId: string, questionIndex: number, choiceIndex: number, isCorrect: boolean, timeTaken: number) => {
+  const db = initializeDb();
+  const responseRef = collection(db, "quizzes", quizId, "responses");
+  await addDoc(responseRef, {
+    groupId,
+    questionIndex,
+    choiceIndex,
+    isCorrect,
+    timeTaken,
+    timestamp: serverTimestamp(),
+  });
+};
+
+export const getQuestionResponses = async (quizId: string, questionIndex: number) => {
+  const db = initializeDb();
+  const responsesRef = collection(db, "quizzes", quizId, "responses");
+  const q = query(responsesRef, where("questionIndex", "==", questionIndex));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map(doc => doc.data() as QuizResponse);
+};
+
+export const updateGroupScores = async (quizId: string, scores: Record<string, number>) => {
+  const db = initializeDb();
+  const batch = writeBatch(db);
+  for (const groupId in scores) {
+    const groupRef = doc(db, "quizzes", quizId, "groups", groupId);
+    batch.update(groupRef, { score: scores[groupId] });
+  }
+  await batch.commit();
+};
+
+export const getTrashedQuizzes = async (userId: string) => {
+    const db = initializeDb();
+    const q = query(
+        collection(db, "trashedQuizzes"),
+        where("createdBy", "==", userId),
+        orderBy("deletedAt", "desc")
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        deletedAt: doc.data().deletedAt?.toDate(),
+        expiresAt: doc.data().expiresAt?.toDate(),
+    })) as (Quiz & { originalId: string; deletedAt: Date; expiresAt: Date })[];
+};
+
+export const cleanupExpiredTrash = async () => {
+    const db = initializeDb();
+    const q = query(
+        collection(db, "trashedQuizzes"),
+        where("expiresAt", "<=", new Date())
+    );
+    const snapshot = await getDocs(q);
+    const batch = writeBatch(db);
+    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+    return snapshot.size;
+};
+
+export const restoreQuiz = async (trashId: string) => {
+    const db = initializeDb();
+    const trashDocRef = doc(db, "trashedQuizzes", trashId);
+    const trashDoc = await getDoc(trashDocRef);
+
+    if (!trashDoc.exists()) {
+        throw new Error("Trashed quiz not found");
+    }
+
+    const quizData = trashDoc.data();
+    const { originalId, ...rest } = quizData;
+
+    // Restore to the original ID
+    await setDoc(doc(db, "quizzes", originalId), rest);
+    // Delete from trash
+    await deleteDoc(trashDocRef);
+};
+
+export const permanentlyDeleteQuiz = async (trashId: string) => {
+    const db = initializeDb();
+    const trashDocRef = doc(db, "trashedQuizzes", trashId);
+    await deleteDoc(trashDocRef);
+};

@@ -9,9 +9,9 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getFirebaseServices } from "@/lib/firebase";
+import { Auth } from "firebase/auth"
 
-export default function JoinQuizPage() {
-  const { auth } = getFirebaseServices();
+function JoinQuizView({ auth }: { auth: Auth }) {
   const params = useParams()
   const router = useRouter()
   const [quiz, setQuiz] = useState<Quiz | null>(null)
@@ -27,7 +27,6 @@ export default function JoinQuizPage() {
   const quizId = params.quizId as string
   const memberCountRef = useRef<HTMLDivElement>(null)
   const [user] = useAuthState(auth);
-  // const groupId = await joinQuizAsGroup(quizId, groupData, user?.uid);
 
   useEffect(() => {
     if (quizId) {
@@ -42,7 +41,7 @@ export default function JoinQuizPage() {
 
       return unsubscribe
     }
-  }, [quizId, hasJoined])
+  }, [quizId, hasJoined, router])
 
   useEffect(() => {
     const newNames = [...memberNames]
@@ -54,7 +53,7 @@ export default function JoinQuizPage() {
       newNames.splice(memberCount)
     }
     setMemberNames(newNames)
-  }, [memberCount])
+  }, [memberCount, memberNames])
 
   const loadQuiz = async () => {
     try {
@@ -396,4 +395,23 @@ export default function JoinQuizPage() {
       </div>
     </div>
   )
+}
+
+export default function JoinQuizPage() {
+  const [auth, setAuth] = useState<Auth | null>(null);
+
+  useEffect(() => {
+    const { auth } = getFirebaseServices();
+    setAuth(auth);
+  }, []);
+
+  if (!auth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white"></div>
+      </div>
+    );
+  }
+
+  return <JoinQuizView auth={auth} />;
 }

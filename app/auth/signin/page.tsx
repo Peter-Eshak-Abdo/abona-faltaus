@@ -1,7 +1,7 @@
 "use client";
 export const dynamic = "force-dynamic";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getFirebaseServices } from "@/lib/firebase";
 import {
   signInWithEmailAndPassword,
@@ -9,6 +9,7 @@ import {
   GoogleAuthProvider,
   signInWithPhoneNumber,
   RecaptchaVerifier,
+  Auth,
 } from "firebase/auth";
 import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
@@ -19,15 +20,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 export default function SignInPage() {
-  const { auth } = getFirebaseServices();
+  const [auth, setAuth] = useState<Auth | null>(null);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const { auth } = getFirebaseServices();
+    setAuth(auth);
+    setLoading(false);
+  }, []);
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (!auth) return;
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/auth/profile");
@@ -37,6 +46,7 @@ export default function SignInPage() {
   };
 
   const handleGoogleSignIn = async () => {
+    if (!auth) return;
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
@@ -55,6 +65,7 @@ export default function SignInPage() {
   };
 
   const handlePhoneSignIn = async () => {
+    if (!auth) return;
     const phoneNumber = prompt("ادخل رقم هاتفك (مثال: +201234567890)");
     if (!phoneNumber) return;
 
@@ -78,6 +89,10 @@ export default function SignInPage() {
       setError("فشل تسجيل الدخول برقم الهاتف");
     }
   };
+
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen">جاري التحميل...</div>;
+  }
 
   return (
     <>

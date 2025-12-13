@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponsesOnce, updateGroupScores, checkAndResetQuizIfNeeded } from "@/lib/firebase-utils"
+import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponses, updateGroupScores, checkAndResetQuizIfNeeded } from "@/lib/firebase-utils"
 import type { Quiz, Group, GameState, QuizResponse, LeaderboardEntry } from "@/types/quiz"
 import { motion } from "framer-motion"
 
@@ -116,7 +116,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
     const pollResponses = async () => {
       try {
-        const questionResponses = await getQuestionResponsesOnce(gameState.quizId, gameState.currentQuestionIndex)
+        const questionResponses = await getQuestionResponses(quiz.id, gameState.currentQuestionIndex)
         if (cancelled) return
         setResponses(questionResponses || [])
         if (questionResponses.length >= groups.length && !gameState.showResults) {
@@ -141,7 +141,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
     try {
       setIsLoading(true)
-      await showQuestionResults(gameState.quizId)
+      await showQuestionResults(quiz.id)
     } catch (error: any) {
       console.error("Error showing results:", error)
       setError(error?.message || "فشل في إظهار النتائج")
@@ -153,7 +153,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const handleForceNext = async () => {
     try {
       setIsLoading(true)
-      await showQuestionResults(gameState.quizId)
+      await showQuestionResults(quiz.id)
     } catch (error: any) {
       console.error("Error forcing next:", error)
       setError(error?.message || "فشل في الانتقال للسؤال التالي")
@@ -170,11 +170,11 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       groupScores.set(g.id, g.score || 0)
     })
 
-    const correctResponses = (responses || []).filter((r) => r.isCorrect).sort((a, b) => a.responseTime - b.responseTime)
+    const correctResponses = (responses || []).filter((r) => r.isCorrect).sort((a, b) => a.timeTaken - b.timeTaken)
     const newScores: { groupId: string; score: number }[] = []
 
     correctResponses.forEach((response) => {
-      const points = Math.max(Math.round(1000 - (response.responseTime * 100)), 100)
+      const points = Math.max(Math.round(1000 - (response.timeTaken * 100)), 100)
       const currentScore = groupScores.get(response.groupId) || 0
       const newScore = currentScore + points
       groupScores.set(response.groupId, newScore)
@@ -182,7 +182,8 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     })
 
     if (newScores.length > 0) {
-      updateGroupScores(gameState.quizId, newScores).catch(console.error)
+      const scoresToUpdate = Object.fromEntries(groupScores.entries());
+      updateGroupScores(quiz.id, scoresToUpdate).catch(console.error)
     }
 
     const leaderboardEntries: LeaderboardEntry[] = groups
@@ -203,7 +204,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     if (isLastQuestion) {
       try {
         setIsLoading(true)
-        await endQuiz(gameState.quizId)
+        await endQuiz(quiz.id)
       } catch (error: any) {
         setError(error?.message || "فشل في إنهاء المسابقة")
       } finally {
@@ -215,7 +216,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     try {
       setIsLoading(true)
       setError(null)
-      await nextQuestion(gameState.quizId, gameState.currentQuestionIndex + 1)
+      await nextQuestion(quiz.id, gameState.currentQuestionIndex + 1)
       setResponses([])
       setTimeLeft(quiz.questions[gameState.currentQuestionIndex + 1]?.timeLimit || 20)
       setFullScreenPhase(null)
@@ -238,7 +239,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   const getResponseStats = () => {
     const stats = (currentQuestion?.choices || []).map((_, index) => ({
       choice: index,
-      count: (responses || []).filter((r) => r.answer === index).length,
+      count: (responses || []).filter((r) => r.choiceIndex === index).length,
     }))
     return stats
   }
@@ -256,7 +257,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     if (!confirm("هل تريد إنهاء المسابقة الآن؟")) return
     setIsEnding(true)
     try {
-      await endQuiz(gameState.quizId)
+      await endQuiz(quiz.id)
     } catch (err) {
       console.error("End quiz failed:", err)
       setError("فشل في إنهاء المسابقة")
@@ -269,7 +270,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     if (!confirm("هل أنت متأكد من إعادة تعيين المسابقة؟ سيتم حذف الإجابات والنقاط.")) return
     setIsResetting(true)
     try {
-      await checkAndResetQuizIfNeeded(gameState.quizId)
+      await checkAndResetQuizIfNeeded(quiz.id)
       alert("تمت محاولة إعادة التعيين (إن كان مطلوب).")
     } catch (err) {
       console.error("Reset failed:", err)
@@ -288,7 +289,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     if (fullScreenPhase === "question") {
       if (questionTimerRef.current) clearTimeout(questionTimerRef.current)
       if (isLastQuestion) {
-        await endQuiz(gameState.quizId)
+        await endQuiz(quiz.id)
       } else {
         setFullScreenPhase(null)
       }

@@ -12,8 +12,14 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp,
+  Firestore,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  FirebaseStorage,
+} from "firebase/storage";
 import { Copy, Share2, LogOut, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -27,7 +33,9 @@ type UserData = {
 };
 
 export default function AccountInfo() {
-  const { auth, db, storage } = getFirebaseServices();
+  const [auth, setAuth] = useState<any>(null);
+  const [db, setDb] = useState<Firestore | null>(null);
+  const [storage, setStorage] = useState<FirebaseStorage | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,26 +45,31 @@ export default function AccountInfo() {
   const router = useRouter();
 
   useEffect(() => {
+    const { auth, db, storage } = getFirebaseServices();
+    setAuth(auth);
+    setDb(db);
+    setStorage(storage);
+
     const unsub = onAuthStateChanged(auth, async (user) => {
       setFirebaseUser(user);
       if (user) {
+        if (!db) return;
         const snap = await getDoc(doc(db, "users", user.uid));
         if (snap.exists()) {
           setUserData({ ...(snap.data() as UserData), uid: user.uid });
         }
       } else {
         router.push("/auth/login");
-        // router.push("/auth/signin");
       }
       setLoading(false);
     });
     return () => unsub();
-  }, [router, auth, db]);
+  }, [router, db]);
 
   const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (!e.target.files || !firebaseUser) return;
+    if (!e.target.files || !firebaseUser || !storage || !db) return;
     setUploading(true);
     const file = e.target.files[0];
     const storageRef = ref(storage, `users/${firebaseUser.uid}/photoUrl`);
@@ -99,9 +112,9 @@ export default function AccountInfo() {
   };
 
   const handleLogout = async () => {
+    if (!auth) return;
     await signOut(auth);
     router.push("/auth/login");
-    // router.push("/auth/signin");
   };
 
   if (loading)

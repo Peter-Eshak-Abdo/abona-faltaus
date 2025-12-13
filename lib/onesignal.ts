@@ -1,5 +1,5 @@
 import { doc, updateDoc, getDoc, onSnapshot } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseServices } from "@/lib/firebase";
 import { loveVerses } from "./daily-verses";
 
 declare global {
@@ -109,6 +109,7 @@ export const updateBadge = async (count: number) => {
 // Get unread notifications count from Firestore
 export const getUnreadNotificationsCount = async (userId: string): Promise<number> => {
   try {
+    const { db } = getFirebaseServices();
     const userDoc = await getDoc(doc(db, "users", userId));
     if (!userDoc.exists()) return 0;
 
@@ -123,6 +124,7 @@ export const getUnreadNotificationsCount = async (userId: string): Promise<numbe
 // Update unread notifications count in Firestore
 export const updateUnreadNotificationsCount = async (userId: string, count: number) => {
   try {
+    const { db } = getFirebaseServices();
     await updateDoc(doc(db, "users", userId), {
       unreadNotificationsCount: count,
       lastUpdated: new Date(),
@@ -134,6 +136,7 @@ export const updateUnreadNotificationsCount = async (userId: string, count: numb
 
 // Listen for real-time updates to unread count
 export const listenToUnreadCount = (userId: string, callback: (count: number) => void) => {
+  const { db } = getFirebaseServices();
   const userRef = doc(db, "users", userId);
   return onSnapshot(userRef, (doc) => {
     if (doc.exists()) {

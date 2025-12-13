@@ -1,28 +1,40 @@
 "use client";
 export const dynamic = "force-dynamic";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getFirebaseServices } from "@/lib/firebase";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
+  Auth,
 } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, Firestore } from "firebase/firestore";
 import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
-  const { auth, db } = getFirebaseServices();
+  const [auth, setAuth] = useState<Auth | null>(null);
+  const [db, setDb] = useState<Firestore | null>(null);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const { auth, db } = getFirebaseServices();
+    setAuth(auth);
+    setDb(db);
+    setLoading(false);
+  }, []);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!auth || !db) return;
 
     if (!email || !password || !name) {
       setError("جميع الحقول مطلوبة.");
@@ -73,6 +85,10 @@ export default function SignUpPage() {
       }
     }
   };
+
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen">جاري التحميل...</div>;
+  }
 
   return (
     <>

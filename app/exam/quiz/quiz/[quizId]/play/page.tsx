@@ -38,25 +38,19 @@ export default function PlayQuizPageTailwind() {
 
   const quizId = params?.quizId as string
 
-  // helper: normalize various timestamp/date formats -> milliseconds
   const getStartMillis = (ts: any): number | null => {
     if (!ts) return null
-    // Firestore Timestamp (has toDate)
     if (typeof ts?.toDate === "function") {
       return ts.toDate().getTime()
     }
-    // number (already ms) or seconds
     if (typeof ts === "number") {
-      // heuristics: if ts looks like seconds (10 digits), convert to ms
       return ts > 1e12 ? ts : ts * 1000
     }
-    // string or Date-like
     const d = new Date(ts)
     if (!isNaN(d.getTime())) return d.getTime()
     return null
   }
 
-  // read currentGroup from localStorage (important so user can answer)
   useEffect(() => {
     setLoading(true)
     const groupData = localStorage.getItem("currentGroup")
@@ -74,24 +68,20 @@ export default function PlayQuizPageTailwind() {
     }
     loadQuiz()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [quizId])
+  }, [quizId, router])
 
-  // subscribe to gameState
   useEffect(() => {
     if (!quizId) return
     const unsubState = subscribeToGameState(quizId, (state) => {
       console.debug("gameState update:", state)
       setGameState(state)
-      // if quiz not active -> show final results or waiting screen (handled by render)
       if (!state?.isActive) {
         setShowResults(true)
         setShowLeaderboard(true)
         return
       }
 
-      // new question started
       if (state.questionStartTime && !state.showResults && !state.showQuestionOnly) {
-        // reset answer UI
         setSelectedAnswer(null)
         setHasAnswered(false)
         setShowResults(false)
@@ -104,7 +94,6 @@ export default function PlayQuizPageTailwind() {
           const remaining = Math.max(0, timeLimit - elapsed)
           setTimeLeft(Math.ceil(remaining))
         } else {
-          // fallback
           setTimeLeft(timeLimit)
         }
       }
@@ -119,7 +108,6 @@ export default function PlayQuizPageTailwind() {
     }
   }, [quizId])
 
-  // groups subscription -> leaderboard
   useEffect(() => {
     if (!quizId) return
     const unsubGroups = getQuizGroups(quizId, (updatedGroups) => {
@@ -141,22 +129,15 @@ export default function PlayQuizPageTailwind() {
     }
   }, [quizId])
 
-  // question responses subscription
   useEffect(() => {
-    if (!quizId || gameState?.currentQuestionIndex === undefined) return
-    const unsubResponses = getQuestionResponses(
-      quizId,
-      gameState.currentQuestionIndex,
-      (updatedResponses) => {
-        setResponses(updatedResponses)
-      }
-    )
-    return () => {
-      if (typeof unsubResponses === "function") unsubResponses()
+    if (showResults && quizId && gameState?.currentQuestionIndex !== undefined) {
+      getQuestionResponses(quizId, gameState.currentQuestionIndex)
+        .then(setResponses)
+        .catch(err => console.error("Failed to get question responses", err))
     }
-  }, [quizId, gameState?.currentQuestionIndex])
+  }, [showResults, quizId, gameState?.currentQuestionIndex])
 
-  // question-only timer (short)
+
   useEffect(() => {
     if (gameState?.showQuestionOnly && gameState.isActive) {
       setQuestionOnlyTimeLeft(3)
@@ -175,7 +156,6 @@ export default function PlayQuizPageTailwind() {
     }
   }, [gameState?.showQuestionOnly, gameState?.isActive, gameState?.currentQuestionIndex])
 
-  // answer timer (robust with different timestamp shapes)
   useEffect(() => {
     if (!gameState?.questionStartTime || gameState.showResults || hasAnswered || gameState?.showQuestionOnly) return
 
@@ -183,7 +163,6 @@ export default function PlayQuizPageTailwind() {
     const timeLimit = gameState?.currentQuestionTimeLimit || 20
 
     if (!startMillis) {
-      // fallback: set default and don't auto-timeout immediately
       setTimeLeft(timeLimit)
       return
     }
@@ -191,7 +170,6 @@ export default function PlayQuizPageTailwind() {
     const t = setInterval(() => {
       const elapsed = (Date.now() - startMillis) / 1000
       const remaining = Math.max(0, timeLimit - elapsed)
-      // protect from NaN / invalid values
       if (!isFinite(remaining)) {
         setTimeLeft(timeLimit)
       } else {
@@ -203,17 +181,12 @@ export default function PlayQuizPageTailwind() {
     return () => clearInterval(t)
   }, [gameState?.questionStartTime, gameState?.showResults, gameState?.currentQuestionTimeLimit, gameState?.showQuestionOnly, hasAnswered])
 
-  // auto switch to leaderboard after showing results
   useEffect(() => {
     if (showResults && !showLeaderboard && gameState?.isActive) {
       const t = setTimeout(() => setShowLeaderboard(true), 5000)
       return () => clearTimeout(t)
     }
   }, [showResults, showLeaderboard, gameState?.isActive])
-
-  // IMPORTANT: don't auto-remove currentGroup on transient isActive changes.
-  // Removal happens only when user explicitly exits (handleExitQuiz).
-  // (previous code removed localStorage when !gameState?.isActive — that kicked users out)
 
   const loadQuiz = async () => {
     try {
@@ -232,14 +205,13 @@ export default function PlayQuizPageTailwind() {
   }
 
   const handleAnswerSelect = async (answerIndex: number) => {
-    // guard: require currentGroup and question started
     if (hasAnswered || !gameState?.questionStartTime || !currentGroup || gameState.showQuestionOnly) return
 
     setSelectedAnswer(answerIndex)
     setHasAnswered(true)
 
     const startMillis = getStartMillis(gameState.questionStartTime)
-    const responseTime = startMillis ? (Date.now() - startMillis) / 1000 : 0
+    const timeTaken = startMillis ? (Date.now() - startMillis) / 1000 : 0
     const currentQuestion = gameState?.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz?.questions[gameState?.currentQuestionIndex]
     if (!currentQuestion) {
       console.warn("No currentQuestion to submit to.")
@@ -247,21 +219,21 @@ export default function PlayQuizPageTailwind() {
     }
 
     try {
-      await submitResponse(quizId, {
-        groupId: currentGroup.id,
-        questionIndex: gameState.currentQuestionIndex,
-        answer: answerIndex,
-        isCorrect: answerIndex === currentQuestion.correctAnswer,
-        responseTime,
-      })
+        await submitResponse(
+            quizId,
+            currentGroup.id,
+            gameState.currentQuestionIndex,
+            answerIndex,
+            answerIndex === currentQuestion.correctAnswer,
+            timeTaken
+        );
     } catch (err) {
       console.error("submitResponse", err)
-      // keep UI responsively showing answer sent; you can show a toast to retry if needed
     }
   }
 
   const choiceColors = ["bg-red-600", "bg-green-600", "bg-blue-600", "bg-yellow-400"]
-  const choiceTextColors = ["text-white", "text-white", "text-white", "text-black"] // yellow bg -> black text
+  const choiceTextColors = ["text-white", "text-white", "text-white", "text-black"]
 
   const currentQuestion = useMemo(() => {
     if (gameState?.currentQuestionIndex === undefined) return null
@@ -304,7 +276,6 @@ export default function PlayQuizPageTailwind() {
 
   if (!gameState.isActive) {
     if (gameState.currentQuestionIndex !== undefined) {
-      // final results
       return (
         <div className="min-h-screen p-1 ">
           <div className="max-w-6xl mx-auto text-center text-white">
@@ -335,7 +306,6 @@ export default function PlayQuizPageTailwind() {
         </div>
       )
     } else {
-      // waiting to start
       return (
         <div className="min-h-screen p-1 ">
           <div className="max-w-6xl mx-auto text-center">
@@ -354,7 +324,6 @@ export default function PlayQuizPageTailwind() {
     }
   }
 
-  // question-only view
   if (gameState.showQuestionOnly) {
     return (
       <div className="min-h-screen p-1 bg-white/5 backdrop-blur-md">
@@ -367,9 +336,8 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
-  // results stats (showResults && !showLeaderboard)
   if (showResults && !showLeaderboard) {
-    const stats = (currentQuestion?.choices || []).map((_, i) => ({ choice: i, count: responses.filter((r) => r.answer === i).length }))
+    const stats = (currentQuestion?.choices || []).map((_, i) => ({ choice: i, count: responses.filter((r) => r.choiceIndex === i).length }))
     return (
       <div className="min-h-screen p-1 bg-gradient-to-br from-blue-600 to-purple-700">
         <div className="max-w-6xl mx-auto text-center text-white">
@@ -398,7 +366,6 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
-  // full leaderboard
   if (showResults && showLeaderboard) {
     return (
       <div className="min-h-screen p-1 bg-gradient-to-br from-purple-600 to-blue-700 text-white">
@@ -424,7 +391,6 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
-  // safety: no currentQuestion
   if (!currentQuestion) {
     return (
       <div className="min-h-screen p-1 bg-gradient-to-br from-blue-600 to-purple-700 text-white">
@@ -437,7 +403,6 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
-  // --- main playing UI: glassy, large fonts, colored choices ---
   return (
     <div className="min-h-screen p-1 bg-white/5 backdrop-blur-md">
       <div className="max-w-6xl mx-auto">

@@ -43,6 +43,8 @@ export interface GameState {
 }
 
 export interface QuizResponse {
+  timeTaken: any;
+  choiceIndex: number;
   id: string;
   groupId: string;
   questionIndex: number;

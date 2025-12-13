@@ -5,15 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "start": "node server.js",
     "build": "next build",
     "export": "next export",
     "lint": "next lint",
     "predeploy": "rd /s /q out",
+    "type-check": "tsc --noEmit",
     "deploy": "npm run build && firebase deploy",
+    "start": "node server.js",
     "server": "nodemon server.js",
     "postbuild": "next-sitemap",
-    "type-check": "tsc --noEmit",
     "test": "jest --watchAll=false --passWithNoTests"
   },
   "dependencies": {
