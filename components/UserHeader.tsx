@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { auth, db } from "@/lib/firebase";
+import { getFirebaseServices } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
 export default function UserHeader() {
+  const { auth, db } = getFirebaseServices();
   const [user, setUser] = useState<User | null>(null);
   const [customDisplayName, setCustomDisplayName] = useState<string | null>(null);
 
@@ -14,7 +15,7 @@ export default function UserHeader() {
       setUser(u);
     });
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     const loadCustomName = async () => {
@@ -31,7 +32,7 @@ export default function UserHeader() {
       }
     };
     loadCustomName();
-  }, [user]);
+  }, [user, db]);
 
   const href = user ? "/auth/profile" : "/auth/login";
   const displayName = customDisplayName || user?.displayName || "اهلا بك";

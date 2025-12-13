@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth, db, storage } from "@/lib/firebase";
+import { getFirebaseServices } from "@/lib/firebase";
 import {
   onAuthStateChanged,
   signOut,
@@ -27,6 +27,7 @@ type UserData = {
 };
 
 export default function AccountInfo() {
+  const { auth, db, storage } = getFirebaseServices();
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,7 @@ export default function AccountInfo() {
       setLoading(false);
     });
     return () => unsub();
-  }, [router]);
+  }, [router, auth, db]);
 
   const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>

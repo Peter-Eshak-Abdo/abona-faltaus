@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
@@ -12,10 +12,11 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-let app;
-let auth;
-let db;
-let storage;
+let app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+let auth = getAuth(app);
+let db = getFirestore(app);
+let storage = getStorage(app);
+let provider = new GoogleAuthProvider();
 let persistenceEnabled = false;
 
 function initializeFirebase() {
@@ -52,7 +53,7 @@ function getFirebaseServices() {
   if (!app) {
     initializeFirebase();
   }
-  return { app, auth, db, storage };
+  return { app, auth, db, storage, provider };
 }
 
 export { getFirebaseServices };

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { auth } from "@/lib/firebase"
+import { getFirebaseServices } from "@/lib/firebase"
 import {
   getQuiz,
   getQuizGroups,
@@ -22,6 +22,7 @@ import { QuizStats } from "@/components/quiz/quiz-stats"
 import { toMillis } from "@/lib/utils/time"
 
 export default function HostQuizPage() {
+  const { auth } = getFirebaseServices();
   const params = useParams()
   const router = useRouter()
   const [user, loading] = useAuthState(auth)

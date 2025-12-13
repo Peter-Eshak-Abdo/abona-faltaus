@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "@/lib/firebase";
+import { getFirebaseServices } from "@/lib/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,7 @@ interface UserSettings {
 }
 
 export default function SettingsPage() {
+  const { auth, db } = getFirebaseServices();
   const [user] = useAuthState(auth);
   const { theme, setTheme } = useTheme();
   const [settings, setSettings] = useState<UserSettings>({
