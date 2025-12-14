@@ -230,7 +230,7 @@ export default function ClientChapterViewer({
                 <div className="flex gap-1">
                   <button onClick={() => copyVerse(idx)} className="p-0.5 text-sm border rounded shadow-sm" type="button">نسخ</button>
                   <button onClick={() => {
-                    const text = `${verses[idx]} (${shortBookName} ${chapter}:${idx + 1})`;
+                    const text = `${verses[idx]} (${shortBookNames[abbrev as keyof typeof shortBookNames]} ${chapter}:${idx + 1})`;
                     const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
                     window.open(wa, "_blank");
                   }} className="p-0.5 text-sm border rounded shadow-sm" type="button">واتساب</button>

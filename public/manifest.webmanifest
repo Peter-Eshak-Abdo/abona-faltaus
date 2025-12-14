@@ -4,8 +4,8 @@
   "description": "تطبيق ابونا فلتاؤس السرياني هو تطبيق فيه الحان وعظات وترانيم والكتاب المقدس.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#E8CFAE",
+  "theme_color": "#5C4538",
   "orientation": "portrait",
   "prefer_related_applications": false,
   "icons": [
@@ -52,10 +52,24 @@
       "sizes": "360x640"
     }
   ],
-    "categories": [
-      "productivity",
-      "social"
-    ],
-    "lang": "ar",
-    "dir": "rtl"
+  "categories": [
+    "productivity",
+    "social"
+  ],
+  "shortcuts": [
+    {
+      "name": "الكتاب المقدس",
+      "url": "/bible"
+    },
+    {
+      "name": "كاهوت",
+      "url": "/exam/quiz/dashboard"
+    },
+    {
+      "name": "الحان",
+      "url": "/al7an"
+    }
+  ],
+  "lang": "ar",
+  "dir": "rtl"
 }
