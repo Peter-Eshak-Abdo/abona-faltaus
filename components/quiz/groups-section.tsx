@@ -34,7 +34,7 @@ export function GroupsSection({
 
   return (
     <Card className="shadow-2xl overflow-hidden p-0">
-      <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-0.5 rounded-4xl shadow-2xl">
+      <CardHeader className="bg-linear-to-r from-green-500 to-emerald-600 text-white p-0.5 rounded-4xl shadow-2xl">
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-center text-2xl font-bold">
             <svg className="w-5" fill="currentColor" viewBox="0 0 20 20">
@@ -84,7 +84,7 @@ export function GroupsSection({
                   <div className="p-0.5 flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-0.5 mb-1">
-                        <div className="w-3 h-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                        <div className="w-3 h-3 bg-linear-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
                           {index + 1}
                         </div>
                         <div>

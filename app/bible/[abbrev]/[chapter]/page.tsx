@@ -1,17 +1,12 @@
-import fs from "fs/promises";
-import path from "path";
-import Link from "next/link";
+import { loadBible } from "@/lib/bible-utils";
 import ClientChapterViewer from "@/components/ChapterViewerClient";
 import { bookNames, oldTestament, newTestament } from "@/lib/books";
 
 export async function generateStaticParams() {
-  const filePath = path.join(process.cwd(), "public", "ar_svd.json");
-  const fileData = await fs.readFile(filePath, "utf-8");
-  const bible = JSON.parse(fileData.replace(/^\uFEFF/, ""));
-
-  const params = [];
+  const bible = await loadBible();
+  const params: { abbrev: string; chapter: string }[] = [];
   for (const book of bible) {
-    for (let i = 0; i < book.chapters.length; i++) {
+    for (let i = 0; i < (book.chapters || []).length; i++) {
       params.push({
         abbrev: book.abbrev,
         chapter: `${i + 1}`,
@@ -42,20 +37,16 @@ export default async function ChapterPage({
   const awaitedSearchParams = await searchParams;
   const font = awaitedSearchParams?.font || "base";
 
-  const filePath = path.join(process.cwd(), "public", "ar_svd.json");
-  const fileData = await fs.readFile(filePath, "utf-8");
-  const bible = JSON.parse(fileData.replace(/^\uFEFF/, ""));
-
-  const book = bible.find((b: { abbrev: string }) => b.abbrev === abbrev);
+  const bible = await loadBible();
+  const book = bible.find((b) => b.abbrev === abbrev);
   if (!book) return <div>❌ لم يتم العثور على السفر</div>;
 
   const chapterIndex = parseInt(chapter, 10) - 1;
   const verses = book.chapters[chapterIndex];
   if (!verses) return <div>❌ لم يتم العثور على الإصحاح</div>;
 
-  const bookName = bookNames[abbrev as keyof typeof bookNames] || `سفر ${abbrev.toUpperCase()}`;
+  const bookName = bookNames[abbrev as keyof typeof bookNames] || book.name || `سفر ${abbrev.toUpperCase()}`;
 
-  // نمرّر كل البيانات اللازمة للمكوّن التفاعلي
   return (
     <div className="min-h-screen flex animate-fade-in">
       <ClientChapterViewer

@@ -105,7 +105,7 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br flex items-center justify-center">
+    <div className="min-h-screen bg-linear-to-br flex items-center justify-center">
       <div className="w-full max-w-2xl space-y-2 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
         <div className="text-center mb-3">
           <h1 className="text-3xl font-bold mb-2 text-black drop-shadow-lg">الإعدادات</h1>

@@ -9,7 +9,7 @@ interface QuizStatsProps {
 export function QuizStats({ quiz, groups }: QuizStatsProps) {
   return (
     <Card className="shadow-2xl mb-1 overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+      <CardHeader className="bg-linear-to-r from-purple-600 to-pink-600 text-white">
         <CardTitle className="text-2xl font-bold">تفاصيل الامتحان</CardTitle>
       </CardHeader>
       <CardContent className="p-1">

@@ -128,10 +128,10 @@ export default function KholagiClientViewer({ slug, title, chapter, chaptersCoun
 
       <div className="flex justify-between gap-1">
         {chapter > 1 ? (
-          <Link href={`/kholagi/${slug}/${chapter - 1}`} className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-1 rounded-lg shadow">← السابق</Link>
+          <Link href={`/kholagi/${slug}/${chapter - 1}`} className="bg-linear-to-r from-blue-500 to-blue-600 text-white p-1 rounded-lg shadow">← السابق</Link>
         ) : <div />}
         {chapter < chaptersCount ? (
-          <Link href={`/kholagi/${slug}/${chapter + 1}`} className="bg-gradient-to-r from-green-500 to-green-600 text-white p-1 rounded-lg shadow">التالي →</Link>
+          <Link href={`/kholagi/${slug}/${chapter + 1}`} className="bg-linear-to-r from-green-500 to-green-600 text-white p-1 rounded-lg shadow">التالي →</Link>
         ) : <div />}
       </div>
     </div>

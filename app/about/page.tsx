@@ -10,7 +10,7 @@ export default function AboutPage() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br flex items-center justify-center p-1">
+    <div className="min-h-screen bg-linear-to-br flex items-center justify-center p-1">
       <div className="w-full max-w-4xl space-y-1 backdrop-blur-md bg-white/10 dark:bg-black/10 rounded-2xl shadow-2xl">
         {/* Header */}
         <div className="text-center">

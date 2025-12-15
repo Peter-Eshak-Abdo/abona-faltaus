@@ -12,7 +12,7 @@ interface QRCodeSectionProps {
 export function QRCodeSection({ joinUrl, qrSize, setQrSize }: QRCodeSectionProps) {
   return (
     <Card className="shadow-2xl overflow-hidden shrink-3 grow">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-black">
+      <CardHeader className="bg-linear-to-r from-blue-600 to-purple-600 text-black">
         <CardTitle className="flex items-center gap-1 text-2xl font-bold text-center">
           الانضمام للمسابقة
         </CardTitle>
@@ -52,7 +52,7 @@ export function QRCodeSection({ joinUrl, qrSize, setQrSize }: QRCodeSectionProps
                 </Button>
               </div>
               <div className="relative mb-1">
-                <div className="absolute inset-0 bg-gradient-to-l from-blue-600 to-purple-600 h-2 rounded-full" />
+                <div className="absolute inset-0 bg-linear-to-l from-blue-600 to-purple-600 h-2 rounded-full" />
                 <Slider
                   value={[qrSize]}
                   onValueChange={(value) => setQrSize(value[0])}
@@ -75,7 +75,7 @@ export function QRCodeSection({ joinUrl, qrSize, setQrSize }: QRCodeSectionProps
             </div>
             {/* <div className="w-full bg-gray-200 rounded-full h-3">
               <div
-                className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full transition-all duration-300"
+                className="bg-linear-to-r from-blue-600 to-purple-600 h-3 rounded-full transition-all duration-300"
                 style={{ width: `${((qrSize - 250) / (1000 - 250)) * 100}%` }}
               />
             </div> */}

@@ -219,14 +219,14 @@ export default function PlayQuizPageTailwind() {
     }
 
     try {
-        await submitResponse(
-            quizId,
-            currentGroup.id,
-            gameState.currentQuestionIndex,
-            answerIndex,
-            answerIndex === currentQuestion.correctAnswer,
-            timeTaken
-        );
+      await submitResponse(
+        quizId,
+        currentGroup.id,
+        gameState.currentQuestionIndex,
+        answerIndex,
+        answerIndex === currentQuestion.correctAnswer,
+        timeTaken
+      );
     } catch (err) {
       console.error("submitResponse", err)
     }
@@ -339,7 +339,7 @@ export default function PlayQuizPageTailwind() {
   if (showResults && !showLeaderboard) {
     const stats = (currentQuestion?.choices || []).map((_, i) => ({ choice: i, count: responses.filter((r) => r.choiceIndex === i).length }))
     return (
-      <div className="min-h-screen p-1 bg-gradient-to-br from-blue-600 to-purple-700">
+      <div className="min-h-screen p-1 bg-linear-to-br from-blue-600 to-purple-700">
         <div className="max-w-6xl mx-auto text-center text-white">
           <h1 className="text-3xl font-bold mb-1">نتائج السؤال</h1>
           <div className="bg-white/10 p-1 rounded">
@@ -368,7 +368,7 @@ export default function PlayQuizPageTailwind() {
 
   if (showResults && showLeaderboard) {
     return (
-      <div className="min-h-screen p-1 bg-gradient-to-br from-purple-600 to-blue-700 text-white">
+      <div className="min-h-screen p-1 bg-linear-to-br from-purple-600 to-blue-700 text-white">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-3xl font-bold mb-1">الترتيب الحالي</h1>
           <div className="space-y-1">
@@ -393,7 +393,7 @@ export default function PlayQuizPageTailwind() {
 
   if (!currentQuestion) {
     return (
-      <div className="min-h-screen p-1 bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+      <div className="min-h-screen p-1 bg-linear-to-br from-blue-600 to-purple-700 text-white">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-3xl font-extrabold mb-1">⏳ في انتظار السؤال التالي</h1>
           <p>لا يوجد سؤال حالي — إذا استمر هذا، تواصل مع المضيف.</p>
