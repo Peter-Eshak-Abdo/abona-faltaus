@@ -13,6 +13,7 @@ import { Toaster } from "@/components/ui/sonner";
 import LazyLoadOnInteraction from "@/components/LazyLoadOnInteraction";
 import "./globals.css";
 import FixProcess from "@/components/FixProcess";
+import OfflineNotification from "@/components/OfflineNotification";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -117,6 +118,7 @@ export default function RootLayout({
         <FixProcess />
         <div className="background-blur" />
         <GlobalLoadingProvider>
+          <OfflineNotification />
           <LoadingProvider>
             {/* <ChatFab /> */}
             {process.env.NODE_ENV === "production" && <LazyLoadOnInteraction src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" id="onesignal-sdk" />}
