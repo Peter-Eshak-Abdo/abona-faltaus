@@ -2,10 +2,12 @@ import { notFound } from "next/navigation";
 import KholagiClientViewer from "@/components/kholagi/KholagiClientViewer";
 import { loadKholagiItem } from "@/lib/kholagi";
 
-type Props = { params: { slug: string; chapter: string; } };
+type Props = { params: Promise<{ slug: string; chapter: string }> };
 
-export default async function ChapterPage({ params }: Props) {
+export default async function ChapterPage(props: Props) {
+  const params = await props.params; 
   const { slug, chapter } = params;
+
   const item = await loadKholagiItem(slug);
   if (!item) return notFound();
 

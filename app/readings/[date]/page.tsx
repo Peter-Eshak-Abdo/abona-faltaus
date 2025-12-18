@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import ReadingViewer from "@/components/readings/ReadingViewer";
 import { loadReadingByDate } from "@/lib/readings";
 
-type Props = { params: { date: string } };
+type Props = { params: Promise<{ date: string }> };
 
-export default async function DatePage({ params }: Props) {
+export default async function DatePage(props: Props) {
+  const params = await props.params;
   const { date } = params;
   const reading = await loadReadingByDate(date);
   if (!reading) return notFound();

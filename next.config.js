@@ -1,91 +1,76 @@
-import withPWA from "next-pwa";
+import withPWAInit from "@ducanh2912/next-pwa";
 
-const nextConfig = withPWA({
+const withPWA = withPWAInit({
   dest: "public",
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === "development",
-  runtimeCaching: [
-    {
-      urlPattern: /^https:\/\/fonts\.googleapis\.com/,
-      handler: "CacheFirst",
-      options: {
-        cacheName: "google-fonts-stylesheets",
-        expiration: {
-          maxEntries: 20,
-          maxAgeSeconds: 365 * 24 * 60 * 60,
+  disable: process.env.NODE_ENV === "development", // تعطيل في وضع التطوير
+
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+
+  workboxOptions: {
+    disableDevLogs: true,
+    runtimeCaching: [
+      {
+        urlPattern: /^https:\/\/fonts\.googleapis\.com/,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "google-fonts-stylesheets",
+          expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
         },
       },
-    },
-    {
-      urlPattern: /^https:\/\/fonts\.gstatic\.com/,
-      handler: "CacheFirst",
-      options: {
-        cacheName: "google-fonts-webfonts",
-        expiration: {
-          maxEntries: 20,
-          maxAgeSeconds: 365 * 24 * 60 * 60,
+      {
+        urlPattern: /^https:\/\/fonts\.gstatic\.com/,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "google-fonts-webfonts",
+          expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
         },
       },
-    },
-    {
-      urlPattern: /\/api\/.*/,
-      handler: "NetworkOnly",
-      options: {
-        cacheName: "api-calls",
-      },
-    },
-    {
-      urlPattern: ({ request }) => request.mode === 'navigate',
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'pages-cache',
-        expiration: {
-          maxEntries: 60,
-          maxAgeSeconds: 365 * 24 * 60 * 60, // 365 Days
+      {
+        urlPattern: /\/api\/.*/,
+        handler: "NetworkOnly", // الـ API لا يُحفظ في الكاش عشان البيانات تكون طازجة
+        options: {
+          cacheName: "api-calls",
         },
       },
-    },
-    {
-      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|ico|webp|avif|mp3|wav|ogg|m4a|json|pdf)$/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'static-assets-cache',
-        expiration: {
-          maxEntries: 200,
-          maxAgeSeconds: 365 * 24 * 60 * 60, // 365 Days
+      // قاعدة مهمة جداً لصفحات الموقع نفسه (App Router)
+      {
+        urlPattern: ({ request }) => request.mode === "navigate",
+        handler: "NetworkFirst", // حاول تجيب الصفحة من النت، لو مفيش هات من الكاش
+        options: {
+          cacheName: "pages-cache",
+          expiration: { maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: {
+            statuses: [0, 200], 
+          },
         },
       },
-    },
-     {
-      urlPattern: /_next\/static\/.+/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'next-static-cache',
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 365 * 24 * 60 * 60, // 365 Days
+      {
+        urlPattern:
+          /\.(?:png|jpg|jpeg|svg|gif|ico|webp|avif|mp3|wav|ogg|m4a|json|pdf)$/,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "static-assets-cache",
+          expiration: { maxEntries: 200, maxAgeSeconds: 365 * 24 * 60 * 60 },
         },
       },
-    },
-  ],
-  exclude: ["/api/v1/auth/login"],
-  // turbo: {
-  //   resolveAlias: {},
-  // },
-  // webpack: (config, { isServer }) => {
-  //   if (!isServer) {
-  //     config.resolve.fallback = {
-  //       ...config.resolve.fallback,
-  //       fs: false,
-  //     };
-  //   }
-  //   return config;
-  // },
+      {
+        urlPattern: /_next\/static\/.+/,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "next-static-cache",
+          expiration: { maxEntries: 100, maxAgeSeconds: 365 * 24 * 60 * 60 },
+        },
+      },
+    ],
+  },
 });
 
-export default {
-  ...nextConfig,
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -94,11 +79,11 @@ export default {
       },
       {
         protocol: "https",
-        hostname: "firebasestorage.googleapis.com", // لو بتستخدم صور من Firebase
+        hostname: "firebasestorage.googleapis.com",
       },
       {
         protocol: "https",
-        hostname: "lh3.googleusercontent.com", // For Google profile images
+        hostname: "lh3.googleusercontent.com",
       },
     ],
   },
@@ -116,3 +101,5 @@ export default {
     ];
   },
 };
+
+export default withPWA(nextConfig);

@@ -26,7 +26,6 @@ type Props = {
 export default function ClientChapterViewer({
   abbrev,
   bookName,
-  shortBookName,
   chapter,
   verses,
   font = "base",
@@ -68,7 +67,7 @@ export default function ClientChapterViewer({
     const verseObj = verses[idx];
     const verseText = verseObj?.text_vocalized ?? "";
     const verseNum = verseObj?.verse ?? idx + 1;
-    const text = `${verseText} (${shortBookNames[abbrev as keyof typeof shortBookNames]} ${chapter}:${verseNum})`;
+    const text = `${verseText} (${shortBookNames[abbrev as keyof typeof shortBookNames]} ${verseNum}:${chapter})`;
     try {
       await navigator.clipboard.writeText(text);
       toast("تم نسخ الآية");
@@ -81,10 +80,10 @@ export default function ClientChapterViewer({
     const verseObj = verses[idx];
     const verseText = verseObj?.text_vocalized ?? "";
     const verseNum = verseObj?.verse ?? idx + 1;
-    const text = `${verseText} (${shortBookNames[abbrev as keyof typeof shortBookNames]} ${chapter}:${verseNum})`;
+    const text = `${verseText} (${shortBookNames[abbrev as keyof typeof shortBookNames]} ${verseNum}:${chapter})`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: `${shortBookNames[abbrev as keyof typeof shortBookNames]} ${chapter}:${verseNum}`, text });
+        await navigator.share({ title: `${shortBookNames[abbrev as keyof typeof shortBookNames]} ${verseNum}:${chapter}`, text });
       } catch {
         // user cancelled or error
       }
@@ -234,7 +233,7 @@ export default function ClientChapterViewer({
                 <div className="flex gap-1">
                   <button onClick={() => copyVerse(idx)} className="p-0.5 text-sm border rounded shadow-sm" type="button">نسخ</button>
                   <button onClick={() => {
-                    const text = `${verseText} (${shortBookNames[abbrev as keyof typeof shortBookNames]} ${chapter}:${verseNum})`;
+                    const text = `${verseText} (${shortBookNames[abbrev as keyof typeof shortBookNames]} ${verseNum}:${chapter})`;
                     const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
                     window.open(wa, "_blank");
                   }} className="p-0.5 text-sm border rounded shadow-sm" type="button">واتساب</button>
