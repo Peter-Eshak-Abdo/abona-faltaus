@@ -1,100 +1,122 @@
-// app/prayers/page.tsx
 import { explorePath } from '@/lib/coptic-service';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import PrayerViewer from '@/components/PrayerViewer'; // استيراد المكون الجديد
+import PrayerViewer from '@/components/PrayerViewer';
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 };
 
+// مكون بسيط للتقويم (Calendar) داخل الصفحة
+function SimpleCalendar() {
+  return (
+    <div className="max-w-md mx-auto bg-white p-1 rounded-xl shadow mt-1 text-center">
+      <h2 className="text-2xl font-bold mb-1 text-blue-900">📅 القراءات اليومية</h2>
+      <p className="mb-1 text-gray-600">اختر التاريخ لعرض قراءات اليوم</p>
+      <form action="/prayers" method="get">
+        <input type="hidden" name="path" value="readings/annual" /> {/* تعديل المسار حسب المجلد الفعلي */}
+        <div className="flex gap-1">
+          <input
+            type="date"
+            name="date_selector" // خدعة بسيطة، سنعتمد على JS أو نوجه يدوياً
+            className="border p-1 rounded flex-1"
+            onChange={(e) => {
+              // في بيئة حقيقية يفضل استخدام Client Component للتوجيه
+              // لكن هنا سنعرض مثال للتوجيه اليدوي
+              window.location.href = `/prayers?path=readings/annual/${e.target.value}.json`;
+            }}
+          /* ملاحظة: بسبب أن هذا Server Component، التفاعل المباشر محدود.
+             الأفضل استخدام Client Component للتقويم، لكن سأضع زرار للتوجيه للمجلد */
+          />
+        </div>
+        <div className="mt-1 grid grid-cols-1 gap-1">
+          <Link href="/prayers?path=readings/annual" className="bg-blue-600 text-white py-1 rounded hover:bg-blue-700 block">
+            تصفح كل الأيام
+          </Link>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 export default async function PrayersPage({ searchParams }: Props) {
   const resolvedParams = await searchParams;
   const currentPath = resolvedParams.path || '';
 
-  // 1. جلب البيانات
+  // 1. حالة خاصة: صفحة القراءات الرئيسية
+  if (currentPath === 'readings') {
+    // نقوم بتحويله لمجلد الـ annual مباشرة أو نعرض التقويم
+    // للأمان، سنعرض المجلدات
+    const result = await explorePath('readings');
+    // ... سيتم التعامل معه بالأسفل كـ Directory
+  }
+
+  // 2. جلب البيانات
   const result = await explorePath(currentPath);
 
-  // 2. التحويل التلقائي (Auto Redirect)
-  // لو دخلت فولدر وفيه ملفات، هوديك لأول ملف علطول
+  // 3. التحويل التلقائي (Redirect)
   if (result.type === 'redirect') {
     redirect(`/prayers?path=${result.path}`);
   }
 
-  // حساب الـ Breadcrumbs
+  // حساب مسار العودة (Breadcrumbs)
   const pathParts = currentPath.split('/').filter(Boolean);
   const parentPath = pathParts.slice(0, -1).join('/');
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans" dir="rtl">
+    <div className="min-h-screen bg-gray-100 font-sans p-0 m-0" dir="rtl">
 
-      {/* Navbar simple */}
-      <nav className="bg-white shadow p-1 flex items-center gap-1 text-sm z-30 relative">
-        <Link href="/prayers" className="text-blue-600 font-bold hover:underline">الرئيسية</Link>
-        {pathParts.map((part, index) => {
-          const href = pathParts.slice(0, index + 1).join('/');
-          // لو إحنا في آخر حتة (اسم الملف)، منعرضوش في الـ Breadcrumb عشان منكررش العنوان
-          const isLast = index === pathParts.length - 1;
-          if (isLast && result.type === 'file') return null;
-
-          return (
-            <span key={index} className="flex items-center gap-1">
-              <span className="text-gray-400">/</span>
-              <Link href={`/prayers?path=${href}`} className="hover:text-blue-600 truncate max-w-[100px] md:max-w-none">
-                {part.replace('.json', '')}
-              </Link>
-            </span>
-          );
-        })}
+      {/* Navbar Simple */}
+      <nav className="bg-white p-1 shadow-sm mb-1 flex gap-1 items-center text-sm">
+        <Link href="/prayers" className="font-bold text-blue-600 hover:underline">الرئيسية</Link>
+        {pathParts.map((part, idx) => (
+          <span key={idx} className="flex gap-1 text-gray-500">
+            <span>/</span>
+            <Link href={`/prayers?path=${pathParts.slice(0, idx + 1).join('/')}`} className="hover:text-black truncate max-w-[100px]">
+              {part.replace('.json', '')}
+            </Link>
+          </span>
+        ))}
       </nav>
 
-      {/* Error View */}
+      {/* --- Error View --- */}
       {result.type === 'error' && (
-        <div className="p-1 text-center">
-          <div className="bg-red-100 text-red-700 p-1 rounded inline-block border border-red-300">
-            {result.message}
-          </div>
+        <div className="p-1 text-center text-red-600 bg-red-50 border border-red-200 m-1 rounded">
+          ⚠️ {result.message}
         </div>
       )}
 
-      {/* Directory View (Folder Grid) */}
+      {/* --- Directory View --- */}
       {result.type === 'directory' && (
         <div className="max-w-8xl mx-auto p-1">
-          <h1 className="text-2xl font-bold mb-1 text-gray-700">المجلدات:</h1>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-1">
-            {/* زر الرجوع */}
-            {currentPath && (
-              <Link
-                href={`/prayers?path=${parentPath}`}
-                className="flex flex-col items-center justify-center p-1 bg-gray-200 rounded-xl hover:bg-gray-300 transition"
-              >
-                <span className="text-3xl mb-1">↩️</span>
-                <span className="font-bold">عودة</span>
-              </Link>
-            )}
+          {currentPath && (
+            <Link href={`/prayers?path=${parentPath}`} className="inline-block mb-1 p-1 bg-gray-200 rounded hover:bg-gray-300">
+              ↩️ عودة
+            </Link>
+          )}
 
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-1">
             {result.items.map((item) => (
               <Link
                 key={item.path}
                 href={`/prayers?path=${item.path}`}
-                className="flex flex-col items-center justify-center p-1 bg-white rounded-xl shadow hover:shadow-lg hover:translate-y-0.5 transition border border-gray-100 text-center"
+                className="bg-white p-1 rounded-xl shadow hover:shadow-lg transition text-center border border-gray-100 flex flex-col items-center gap-1"
               >
-                <div className="mb-1 text-4xl">
-                  {item.type === 'directory' ? '📁' : '📄'}
-                </div>
-                <span className="text-sm font-bold text-gray-700 wrap-break-words w-full">
+                <div className="text-4xl">{item.type === 'directory' ? '📁' : '📜'}</div>
+                <div className="font-bold text-gray-700 text-sm break-words w-full">
                   {item.name}
-                </span>
+                </div>
               </Link>
             ))}
           </div>
         </div>
       )}
 
-      {/* File View (The Prayer Viewer) */}
+      {/* --- File View --- */}
       {result.type === 'file' && (
         <PrayerViewer context={result.context} />
       )}
+
     </div>
   );
 }

@@ -44,7 +44,7 @@ const withPWA = withPWAInit({
           cacheName: "pages-cache",
           expiration: { maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 },
           cacheableResponse: {
-            statuses: [0, 200], 
+            statuses: [0, 200],
           },
         },
       },
@@ -72,6 +72,7 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: "https",

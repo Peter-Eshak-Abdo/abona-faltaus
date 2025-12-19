@@ -10,22 +10,26 @@ export interface Verse {
   english?: string;
   arabic?: string;
   coptic?: string;
-  coptic_english?: string; // النطق القبطي المعرب/المأنجلش
-  coptic_arabic?: string;
+  coptic_english?: string;
+}
+
+export interface Reading {
+  title?: string;
+  introduction?: string; // مقدمة القراءة (مثل: من رسالة معلمنا بولس...)
+  text?: string | Verse[]; // النص قد يكون نصاً عادياً أو مصفوفة آيات
+  ref?: string; // الشاهد (مثل: رومية 1: 1-5)
 }
 
 export interface Section {
-  speaker?: string;
+  title?: string;
+  speaker?: string; // الكاهن، الشماس، الشعب
   type?: string;
-  verses: Verse[];
+  verses?: Verse[]; // اجعلناها اختيارية ؟
 }
 
-// الواجهة الرئيسية لملف الصلاة/الذكصولوجية
 export interface PrayerDocument {
-  title: CopticTitle | string; // قد يكون نصاً في بعض الملفات وكائناً في أخرى
-  type: string;
+  type?: string; // reading, prayer, etc.
+  title: CopticTitle | string;
   sections?: Section[];
-  // حقول أخرى قد تكون موجودة في أنواع أخرى مثل القطمارس
-  coptic_date?: any;
-  readings?: any;
+  readings?: Reading[]; // إضافة دعم للقراءات المباشرة
 }

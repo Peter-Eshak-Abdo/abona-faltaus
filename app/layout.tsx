@@ -76,6 +76,19 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={vazirmatn.variable}>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": baseUrl,
+              "@type": "ReligiousOrganization",
+              "name": "أبونا فلتاؤس السرياني",
+              "url": baseUrl,
+              "image": "https://abona-faltaus.vercel.app/images/logo.webp",
+              "description": "الحان وترانيم وعظات والكتاب المقدس ومقالات و امتحانات اسئلة دينية فردية و مجموعات وكل ما يخص الكنيسة الارثوذكسية"
+            })
+          }}
+        />
         <link
           href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"
           rel="stylesheet"
