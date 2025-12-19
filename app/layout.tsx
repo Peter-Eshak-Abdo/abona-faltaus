@@ -99,6 +99,13 @@ export default function RootLayout({
         <meta name="google-site-verification" content={process.env.GOOGLE_SITE_VERIFICATION} />
         <script async src={"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + process.env.GOOGLE_ADSENSE_CLIENT_ID}
           crossOrigin="anonymous" />
+        <Script
+          id="adsense-init"
+          async
+          src={"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + process.env.GOOGLE_ADSENSE_CLIENT_ID}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         {/* Google tag (gtag.js) */}
         <Script
           src={"https://www.googletagmanager.com/gtag/js?id=" + process.env.GOOGLE_TAG_ID}

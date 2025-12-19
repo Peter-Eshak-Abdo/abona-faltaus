@@ -28,7 +28,7 @@ const sections = [
   { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
   { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
-  { name: "الخولاجي", href: "/kholagi", icon: <FaBook /> },
+  { name: "الخولاجي", href: "/prayers", icon: <FaBook /> },
 ];
 
 export default function HomeClient() {
