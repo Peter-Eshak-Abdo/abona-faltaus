@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 export const dynamic = "force-dynamic";
-import HomeClient from "./HomeClient";
+import HomeClient from "@/components/HomeClient";
 
 export const metadata: Metadata = {
   title: "ابونا فلتاؤس تفاحة",

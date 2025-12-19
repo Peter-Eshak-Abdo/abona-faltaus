@@ -18,13 +18,13 @@ import LogoHeader from "@/components/LogoHeader";
 import UserHeader from "@/components/UserHeader";
 
 const sections = [
-  { name: "العظات", href: "/3zat", icon: <FaChurch /> },
+  { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
   { name: "حول", href: "/about", icon: <FaInfoCircle /> },
   { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },
   // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
-  { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
+  { name: "العظات", href: "/3zat", icon: <FaChurch /> },
   { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
   { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
@@ -130,20 +130,25 @@ export default function HomeClient() {
         {showMenu &&
           sections.map((section, index) => {
             const angle = (index / sections.length) * 2 * Math.PI;
-            const x = Math.cos(angle) * 140 - 60;
-            const y = Math.sin(angle) * 165 - 60 + 24;
+            const x = Math.cos(angle) * 140 - 37;
+            const y = Math.sin(angle) * 165 - 40;
             return (
               <motion.div
                 key={section.name}
                 initial={{ x: 0, y: 0, opacity: 0 }}
                 animate={{ x, y, opacity: 1 }}
                 exit={{ x: 0, y: 0, opacity: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.08 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 120,
+                  damping: 15,
+                  delay: index * 0.04,
+                }}
                 className="absolute left-1/2 top-1/2 mx-auto"
                 style={{ transform: "translate(-50%, -50%)" }}
               >
                 <Link href={section.href}>
-                  <div className="bg-purple-700 hover:bg-purple-500 rounded-full w-6 h-5 flex flex-col items-center justify-center text-center shadow-xl shadow-xl/30 inset-shadow-sm border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[10px] sm:text-[12px]">
+                  <div className="bg-purple-700 hover:bg-purple-500 rounded-full w-5 h-4 flex flex-col items-center justify-center text-center shadow-xl shadow-xl/30 inset-shadow-sm border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[8px] sm:text-[10px]">
                     <div className="text-sm">{section.icon}</div>
                     <div className="leading-tight text-sm font-bold">{section.name}</div>
                   </div>
