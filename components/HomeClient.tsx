@@ -148,7 +148,7 @@ export default function HomeClient() {
                 style={{ transform: "translate(-50%, -50%)" }}
               >
                 <Link href={section.href}>
-                  <div className="bg-purple-700 hover:bg-purple-500 rounded-full w-5 h-4 flex flex-col items-center justify-center text-center shadow-xl shadow-xl/30 inset-shadow-sm border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[8px] sm:text-[10px]">
+                  <div className="hover:bg-purple-500 rounded-full w-5 h-4 flex flex-col items-center justify-center text-center shadow-xl shadow-xl/30 inset-shadow-sm border-white transition-all duration-300 cursor-pointer hover:scale-110 text-[8px] sm:text-[10px]">
                     <div className="text-sm">{section.icon}</div>
                     <div className="leading-tight text-sm font-bold">{section.name}</div>
                   </div>
