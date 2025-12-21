@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import LazyLoadOnInteraction from "@/components/LazyLoadOnInteraction";
 import FixProcess from "@/components/FixProcess";
 import OfflineNotification from "@/components/OfflineNotification";
+import PwaManager from "@/components/PwaManager";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -130,7 +131,8 @@ export default function RootLayout({
         <GlobalLoadingProvider>
           <OfflineNotification />
           <LoadingProvider>
-            {process.env.NODE_ENV === "production" && <LazyLoadOnInteraction src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" id="onesignal-sdk" />}
+            <PwaManager/>
+            {/* {process.env.NODE_ENV === "production" && <LazyLoadOnInteraction src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" id="onesignal-sdk" />} */}
             <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
           </LoadingProvider>
         </GlobalLoadingProvider>

@@ -6,6 +6,7 @@ import { FileContext } from '@/lib/coptic-service';
 
 type Props = {
   context: FileContext;
+  nextDirectoryLink: string | null;
 };
 
 // ترتيب القراءات الطقسي
@@ -27,7 +28,7 @@ const LITURGY_KEYS = [
   { key: 'jonah-prayer', label: 'صلاة يونان' }
 ];
 
-export default function PrayerViewer({ context }: Props) {
+export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
   const { data, siblings, currentIndex, prev, next, parentPath } = context;
   const router = useRouter();
 
@@ -60,11 +61,10 @@ export default function PrayerViewer({ context }: Props) {
 
     const endX = e.changedTouches[0].clientX;
     const endY = e.changedTouches[0].clientY;
-
     const diffX = touchStart.x - endX;
     const diffY = touchStart.y - endY;
 
-    // If vertical scroll is more than horizontal, ignore the swipe
+    // إلغاء السحب إذا كان التمرير عمودياً
     if (Math.abs(diffY) > Math.abs(diffX)) {
       setTouchStart(null);
       return;
@@ -72,14 +72,26 @@ export default function PrayerViewer({ context }: Props) {
 
     // Threshold check for horizontal swipe
     if (Math.abs(diffX) > 50) {
-      // Correct RTL navigation logic
-      if (diffX > 0 && next) { // Swipe Left (R->L) -> NEXT
-        const targetPath = parentPath ? `${parentPath}/${next}` : next;
-        router.push(`?path=${targetPath}`);
-      } else if (diffX < 0 && prev) { // Swipe Right (L->R) -> PREVIOUS
-        const targetPath = parentPath ? `${parentPath}/${prev}` : prev;
-        router.push(`?path=${targetPath}`);
+      if (diffX > 0) {
+        // سحب لليسار (التالي)
+        if (next) {
+          router.push(`?path=${parentPath ? `${parentPath}/${next}` : next}`);
+        } else if (nextDirectoryLink) {
+          // 🔥 هنا السحر: إذا لم يوجد ملف تالي، ولكن يوجد مجلد تالي، اذهب إليه
+          router.push(`?path=${nextDirectoryLink}`);
+        }
+      } else if (diffX < 0 && prev) {
+        // سحب لليمين (السابق)
+        router.push(`?path=${parentPath ? `${parentPath}/${prev}` : prev}`);
       }
+      // // Correct RTL navigation logic
+      // if (diffX > 0 && next) { // Swipe Left (R->L) -> NEXT
+      //   const targetPath = parentPath ? `${parentPath}/${next}` : next;
+      //   router.push(`?path=${targetPath}`);
+      // } else if (diffX < 0 && prev) { // Swipe Right (L->R) -> PREVIOUS
+      //   const targetPath = parentPath ? `${parentPath}/${prev}` : prev;
+      //   router.push(`?path=${targetPath}`);
+      // }
     }
 
     setTouchStart(null);
