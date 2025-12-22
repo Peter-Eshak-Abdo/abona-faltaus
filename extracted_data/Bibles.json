@@ -1,0 +1,57 @@
+[
+    {
+        "Id": 1,
+        "Name": "Louis Segond 1910 (LSG) - 1910, Deutérocanonique : Bible de Jérusalem (JER) - 1973",
+        "LanguageId": 1
+    },
+    {
+        "Id": 2,
+        "Name": "NKJV",
+        "LanguageId": 2
+    },
+    {
+        "Id": 3,
+        "Name": "Arabic",
+        "LanguageId": 3
+    },
+    {
+        "Id": 4,
+        "Name": "CEI 1974",
+        "LanguageId": 4
+    },
+    {
+        "Id": 5,
+        "Name": "CEI 2008 (Psalms RIV)",
+        "LanguageId": 4
+    },
+    {
+        "Id": 6,
+        "Name": "Coptic Bible",
+        "LanguageId": 5
+    },
+    {
+        "Id": 7,
+        "Name": "Einheitsübersetzung der Heiligen Schrift (1980) [Quadro-Bibel 5.0]",
+        "LanguageId": 6
+    },
+    {
+        "Id": 8,
+        "Name": "Uwspółcześniona Biblia gdańska",
+        "LanguageId": 7
+    },
+    {
+        "Id": 9,
+        "Name": "Reina Valera 1865",
+        "LanguageId": 8
+    },
+    {
+        "Id": 10,
+        "Name": "Stichting Herziening Statenvertaling (HSV)",
+        "LanguageId": 9
+    },
+    {
+        "Id": 11,
+        "Name": "الكتاب المقدس باللغة العربية، فان دايك",
+        "LanguageId": 3
+    }
+]

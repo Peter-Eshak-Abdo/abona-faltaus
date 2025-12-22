@@ -1,0 +1,956 @@
+[
+    {
+        "ReadingId": 1,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 1,
+        "Text": "Psaume"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 1,
+        "Text": "Psalm"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 1,
+        "Text": "مزمور"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 1,
+        "Text": "Salmo"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 1,
+        "Text": "Psalm"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 2,
+        "Text": "Psaume de notre père David le prophète et le roi, que sa bénédiction soit avec nous tous, Amen."
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 2,
+        "Text": "From the Psalms of our father David the prophet and the king, may his blessings be with us all. Amen."
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 2,
+        "Text": "من مزامير أبينا داود النبي والملك ، بركاته يكون معنا أمين"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 2,
+        "Text": "Dai salmi del nostro maestro il profeta Davide, che la sua benedizione sia su tutti noi Amen."
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 2,
+        "Text": "Aus den Psalmen unseres Lehrers David, des Propheten und Königs. Sein Segen sei mit uns. Amen."
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 3,
+        "Text": "Alléluia"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 3,
+        "Text": "Alleluia"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 3,
+        "Text": "هللويا!"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 3,
+        "Text": "Alleluia"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 3,
+        "Text": "Halleluja"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 1,
+        "Text": "Evangile"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 1,
+        "Text": "Gospel"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 1,
+        "Text": "الإنجيل"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 1,
+        "Text": "Vangelo"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 1,
+        "Text": "Evangelium"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 2,
+        "Text": "Béni soit celui qui vient au Nom du Seigneur, notre Seigneur, notre Dieu et Sauveur Jésus-Christ, le fils du Dieu Vivant, Gloire à Lui éternellement Amen."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 2,
+        "Text": "Blessed is he who comes in the Name of the Lord. Our Lord, God and Savior Jesus Christ, Son of the Living God, unto Him be the glory forever, Amen."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 2,
+        "Text": "مبارك الآتي باسم الرب إله القوات ، ربنا وإلهنا ومخلصنا وملكنا كلنا، يسوع المسيح ابن الله الحي، الذي له المجد للأبد آمين."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 2,
+        "Text": "Sia Benedetto colui che viene nel nome del Signore degli eserciti, nostro Signore, nostro Dio, nostro Salvatore e nostro Re, Gesù Cristo, Figlio del Dio vivente; sia a lui l'eterna gloria per l'eterno Amen."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 2,
+        "Text": "Gesegnet sei der, der kommt im Namen des Herrn. Unser Herr, unser Gott, unser Erlöser und unser aller König, Jesus Christus, der Sohn des lebendigen Gottes, ihm gebührt Ehre in Ewigkeit. Amen."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 3,
+        "Text": "Gloire à Dieu éternellement Amen."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 3,
+        "Text": "Glory be to God forever."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 3,
+        "Text": "ولله المجد لله الى الابد آمين."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 3,
+        "Text": "Gloria a Dio nei secoli dei secoli. Amen."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 3,
+        "Text": "Ehre sei Gott in Ewigkeit."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 1,
+        "Text": "Épitre de Saint Paul"
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 1,
+        "Text": "Pauline Epistle"
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 1,
+        "Text": "القداس الإلهي"
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 1,
+        "Text": "San Paolo"
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 1,
+        "Text": "Paulusbrief"
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 2,
+        "Text": "[Première][Deuxième][Troisième] Épître de Saint Paul [à][aux] $ que sa bénédiction soit avec nous tous, Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 2,
+        "Text": "Paul, the servant of our Lord Jesus Christ, called to be an apostle, appointed to the Gospel of God. A reading from the [First][Second][Third] Epistle of our teacher Paul to [][the] $. May his blessings be with us. Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 2,
+        "Text": "فصل من رسالة معلمنا بولس الرسول [الأولى][الثانية][الثالثة] إلى [ ][ ] $ بركاته تكون معنا آمين."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 2,
+        "Text": "Dalla [Prima][Seconda][Terza] lettera di San Paolo [a][ai] $ che la sua benedizione sia su tutti noi, Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 2,
+        "Text": "Lesung aus dem [ersten][zweiten][dritte] Brief unseres Lehrers Paulus, des Apostels, [an][an die] $. Sein Segen sei mit uns. Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 3,
+        "Text": "La grâce de Dieu le Père soit avec vous tous mes pères et mes frères, Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 3,
+        "Text": "The grace of God the Father be with you all. Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 3,
+        "Text": "نعمة الله الآب تكون مع جميعكم. آمين."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 3,
+        "Text": "Che grazia e tempi pacifici siano con noi. Amen. Così sia."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 3,
+        "Text": "Die Gnade Gottes des Vaters sei mit euch, meine Väter und Brüder. Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 1,
+        "Text": "Épitre universelle"
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 1,
+        "Text": "Catholic Epistle"
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 1,
+        "Text": "الكاثوليكيه رسالة بولس الرسول"
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 1,
+        "Text": "Katholicon"
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 1,
+        "Text": "Katholikon"
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 2,
+        "Text": "Katholicon, [Première][Deuxième][Troisième] Épître de Saint $ que sa bénédiction soit sur nous tous, Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 2,
+        "Text": "A Reading from the [First][Second][Third] Epistle of Saint $. May his blessings be upon us. Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 2,
+        "Text": "الكاثوليكون من رسالة $ الرسول [الأولى][الثانية][الثالثة] . بركاته تكون معنى أمين"
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 2,
+        "Text": "Dalla [Prima][Seconda][Terza] lettera di San $ che la sua benedizione sia su tutti noi, Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 2,
+        "Text": "Lesung aus dem [ersten][zweiten][dritte] katholischen Brief unseres Lehrers $, des Apostels. Sein Segen sei mit uns. Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 3,
+        "Text": "N'aimez pas le monde, ni les choses de ce monde, car le monde aurait une fin ainsi que ses convoitises, mais celui qui fait la volonté de Dieu demeure éternellement, Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 3,
+        "Text": "Do not love the world or the things in the world. The world passes away, and its desires; but he who does the will of God abides forever. Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 3,
+        "Text": "لا تحبوا العالم ولا الأشياء التي في العالم؛ لأن العالم يمضي وشهوته. أما الذي يصنع إرادة الله فيثبت إلى الأبد. آمين."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 3,
+        "Text": "Non amate il mondo né le cose che sono nel mondo.Perché il mondo passa con la sua concupiscenza, ma chi fa la volontà di Dio rimane in eterno.Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 3,
+        "Text": "Liebt nicht die Welt und was in der Welt ist. Die Welt und ihre Begierde vergeht; wer aber den Willen Gottes tut, bleibt in Ewigkeit. Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 1,
+        "Text": "Actes des Apôtres"
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 1,
+        "Text": "Acts of the Apostles"
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 1,
+        "Text": "اعمال"
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 1,
+        "Text": "Atti degli Apostoli"
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 1,
+        "Text": "Apostelgeschichte"
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 2,
+        "Text": "Praxis, Actes de nos Saints Pères les apôtres que leurs bénédictions soient sur nous tous Amen. "
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 2,
+        "Text": "The Acts of our fathers the apostles, may their blessings be with us. Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 2,
+        "Text": "فصل من اعمال آبائنأ الرسل الأطهار المشمولين بنعمة الروح القدس، بركتهم تكون معنا. آمين."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 2,
+        "Text": "Dagli Atti dei nostri padri Apostoli, che la loro santa benedizione sia su tutti noi. Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 2,
+        "Text": "Ein Kapitel aus der Geschichte unserer Väter, der reinen Apostel. Ihr Segen sei mit uns. Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 3,
+        "Text": "Que la parole de Dieu croisse et se multiplie dans cette église et dans toutes les églises, Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 3,
+        "Text": "The word of the Lord shall grow, multiply, be mighty, and be confirmed, in the holy Church of God. Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 3,
+        "Text": "لم تزل كلمة الرب تنمو وتعتز وتثبت في كنيسة الله المقدسة. آمين."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 3,
+        "Text": "Che la parola del Signore si accresca, si diffonda, si rafforzi e si consolidi nella santa Chiesa di Dio. Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 3,
+        "Text": "Das Wort Gottes wächst noch in dieser Kirche und in jeder Kirche. Amen."
+    },
+    {
+        "ReadingId": 6,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 1,
+        "Text": "Synaxaire"
+    },
+    {
+        "ReadingId": 6,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 1,
+        "Text": "Synaxarium"
+    },
+    {
+        "ReadingId": 6,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 1,
+        "Text": "السنكسار"
+    },
+    {
+        "ReadingId": 6,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 1,
+        "Text": "Sinassario"
+    },
+    {
+        "ReadingId": 6,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 1,
+        "Text": "Synaxär"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 1,
+        "Text": "Prophétie"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 1,
+        "Text": "Prophecy"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 1,
+        "Text": "النبوة"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 1,
+        "Text": "Profezia"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 1,
+        "Text": "Prophezeiung"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 3,
+        "Text": "Gloire à la Sainte Trinité, Amen."
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 3,
+        "Text": "Glory to the Holy Trinity our God into the ages of ages."
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 3,
+        "Text": "مجداً للثالوث القدوس الهنا إلى أبد الأبدين كلها أمين."
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 3,
+        "Text": "Gloria alla Santissima Trinità, Amen."
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 3,
+        "Text": "Ehre sei der Heiligen Dreifaltigkeit, Amen."
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 1,
+        "Text": "Salmo"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 2,
+        "Text": "Salmo de nuestro padre David el profeta y rey, que su bendición esté con todos nosotros, Amén."
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 3,
+        "Text": "Aleluya"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 1,
+        "Text": "Evangelio"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 2,
+        "Text": "Bendito el que viene en el Nombre del Señor, nuestro Señor, nuestro Dios y Salvador Jesucristo, el Hijo único del Dios Viviente, Gloria a Él eternamente Amén."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 3,
+        "Text": "Gloria a Dios eternamente Amén."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 1,
+        "Text": "Epístola de San Pablo"
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 2,
+        "Text": "[Primera][Segunda][Tercera] Epístola de San Pablo [a][a los] $ que su bendición esté con todos nosotros, Amén."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 3,
+        "Text": "La gracia de Dios el Padre esté con todos ustedes mis padres y hermanos, Amén."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 1,
+        "Text": "Epístola universal"
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 2,
+        "Text": "Katholicon, [Primera][Segunda][Tercera] Epístola de San $ que su bendición esté sobre todos nosotros, Amén."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 3,
+        "Text": "No améis al mundo, ni las cosas de este mundo, porque el mundo tendrá un fin así como sus deseos, pero el que hace la voluntad de Dios permanece eternamente, Amén."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 1,
+        "Text": "Hechos de los Apóstoles"
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 2,
+        "Text": "Praxis, Hechos de nuestros Santos Padres los apóstoles que sus bendiciones estén sobre todos nosotros Amén."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 3,
+        "Text": "Que la palabra de Dios crezca y se multiplique en esta iglesia y en todas las iglesias, Amén."
+    },
+    {
+        "ReadingId": 6,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 1,
+        "Text": "Sinaxario"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 1,
+        "Text": "Profecía"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 3,
+        "Text": "Gloria a la Santa Trinidad, Amén."
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 1,
+        "Text": "Psalm"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 2,
+        "Text": "Psalm naszego ojca Dawida, proroka i króla, niech błogosławieństwo będzie z nami wszystkimi, Amen."
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 3,
+        "Text": "Alleluja"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 1,
+        "Text": "Ewangelia"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 2,
+        "Text": "Błogosławiony ten, który przychodzi w imieniu Pana, nasz Pan, nasz Bóg i Zbawiciel Jezus Chrystus, jedyny Syn Boga Żywego, Chwała Jemu na wieki, Amen."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 3,
+        "Text": "Chwała Bogu na wieki, Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 1,
+        "Text": "List Świętego Pawła"
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 2,
+        "Text": "[Pierwszy][Drugi][Trzeci] List Świętego Pawła [do][do] $ niech błogosławieństwo będzie z nami wszystkimi, Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 3,
+        "Text": "Łaska Boga Ojca niech będzie z wami wszystkimi, ojcowie i bracia, Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 1,
+        "Text": "List powszechny"
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 2,
+        "Text": "Katholikon, [Pierwszy][Drugi][Trzeci] List Świętego $ niech błogosławieństwo będzie nad nami wszystkimi, Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 3,
+        "Text": "Nie kochajcie świata ani rzeczy tego świata, bo świat ma swój kres, podobnie jak jego pożądania, ale ten, kto czyni wolę Boga, będzie żył wiecznie, Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 1,
+        "Text": "Dzieje Apostolskie"
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 2,
+        "Text": "Praxis, Dzieje naszych Świętych Ojców Apostołów, niech ich błogosławieństwo będzie z nami wszystkimi, Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 3,
+        "Text": "Niech słowo Boże rośnie i rozmnaża się w tym kościele i we wszystkich kościołach, Amen."
+    },
+    {
+        "ReadingId": 6,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 1,
+        "Text": "Synaksarion"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 1,
+        "Text": "Proroctwo"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 3,
+        "Text": "Chwała Świętej Trójcy, Amen."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 2,
+        "Text": "Ô Dieu, sois compatissant envers nous, écoute-nous et aide-nous et rends-nous dignes d'écouter ton Saint Évangile. Lecture du Saint Évangile selon Saint $, que sa bénédiction soit sur nous tous. Amen."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 1,
+        "ReadingsMetadatasId": 3,
+        "Text": "Gloire à Dieu éternellement."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 2,
+        "Text": "اللهم تراءف علينا وارحمنا واجعلنا مستحقين\nلسماع إنجيل َك المقدس فص ٌل من إنجي ِل معلمنا\n$ البشير بركاته علينا آمين. "
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 3,
+        "ReadingsMetadatasId": 3,
+        "Text": "والمجد هلل دائما"
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 2,
+        "Text": "O God have mercy and compassion upon us, and make us worthy to hear the Holy Gospel. A reading according to Saint $. May his blessings be with us all. Amen"
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 2,
+        "ReadingsMetadatasId": 3,
+        "Text": "Glory be to God forever."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 2,
+        "Text": "Dio, abbi pietà di noi e rendici degni di ascoltare il tuo santo vangelo. Un brano del Santo Vangelo del nostro maestro San $ evangelista, che le sue benedizioni siano su di noi. Amen."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 4,
+        "ReadingsMetadatasId": 3,
+        "Text": "Gloria a Dio nei secoli. Amen."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 2,
+        "Text": "Wir bitten unseren Gott, dass wir würdig werden, das heilige Evangelium zu hören. Lasst und in Weisheit das heilige Evangelium hören Lesung nach $ dem Evangelisten, sein Segen sei mit uns. Amen."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 6,
+        "ReadingsMetadatasId": 3,
+        "Text": "Ehre sei Gott in Ewigkeit."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 2,
+        "Text": "Oh Dios, ten compasión de nosotros, escúchanos y ayúdanos, y haznos dignos de escuchar tu Santo Evangelio. Lectura del Santo Evangelio según San $, que su bendición sea con todos nosotros. Amén."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 8,
+        "ReadingsMetadatasId": 3,
+        "Text": "Gloria a Dios eternamente Amén."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 2,
+        "Text": "O Boże, zmiłuj się nad nami, wysłuchaj nas i pomóż nam, i uczyń nas godnymi słuchania Twojej Świętej Ewangelii. Czytanie Świętej Ewangelii według Świętego $, niech Jego błogosławieństwo będzie z nami wszystkimi. Amen."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 7,
+        "ReadingsMetadatasId": 3,
+        "Text": "Chwała Bogu na wieki, Amen."
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 3,
+        "Text": "Halleluja"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 1,
+        "Text": "Psalm"
+    },
+    {
+        "ReadingId": 1,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 2,
+        "Text": "Uit de psalmen van onze vader David de profeet. Zijn zegen, zij met ons Amen."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 1,
+        "Text": "Evangelie"
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 2,
+        "Text": "Gezegend Hij die komt in de naam des Heren, onze Heer, onze God, onze Verlosser en ons aller Koning, Jezus Christus, Zoon van de levende God, aan wie alle eer en glorie in eeuwigheid. Amen."
+    },
+    {
+        "ReadingId": 2,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 3,
+        "Text": "Glorie zij aan God tot in eeuwigheid Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 1,
+        "Text": "Brief van Sint Paulus"
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 2,
+        "Text": "De Paulinische brieven, een lezing uit de [eerste][tweede][derde] brief van St. Paulus [aan][aan de] $, zijn zegen zij met ons allen, Amen."
+    },
+    {
+        "ReadingId": 3,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 3,
+        "Text": "De genade en de vrede van de Heer zij met ons. Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 1,
+        "Text": "Universele brief"
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 2,
+        "Text": "De Katholieke brieven, een lezing uit de [eerste][tweede][derde] brief van de Heilige $, zijn zegen zij met ons allen, Amen."
+    },
+    {
+        "ReadingId": 4,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 3,
+        "Text": "Bemint de wereld niet, noch de dingen die in de wereld zijn. De wereld gaat voorbij en haar begeerlijkheid. Doch wie de wil van God doet blijft in eeuwigheid. Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 2,
+        "Text": "De Praxis, een lezing uit de Handelingen van onze vaders, de reine Apostelen die met de genade van de Heilige Geest vervuld zijn. Hun zegen zij met ons. Amen."
+    },
+    {
+        "ReadingId": 5,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 3,
+        "Text": "Het woord Gods vermeerdert zich, verspreidt zich, neemt toe in kracht en slaat diepe wortelen in de Heilige Kerk Gods. Amen."
+    },
+    {
+        "ReadingId": 6,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 1,
+        "Text": "Synaxarium"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 1,
+        "Text": "Profetie"
+    },
+    {
+        "ReadingId": 7,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 3,
+        "Text": "Eer aan de Heilige Drie-eenheid, Amen."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 2,
+        "Text": "O God, wees ons genadig, hoor ons en help ons en maak ons waardig om Uw Heilig Evangelie te horen. Een lezing uit het Heilig Evangelie volgens de Heilige $, zijn zegen zij met ons allen. Amen."
+    },
+    {
+        "ReadingId": 8,
+        "LanguageId": 9,
+        "ReadingsMetadatasId": 3,
+        "Text": "Glorie zij aan God tot in eeuwigheid."
+    }
+]

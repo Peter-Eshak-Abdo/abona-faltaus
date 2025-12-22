@@ -1,0 +1,2852 @@
+[
+    {
+        "BookId": 1,
+        "LanguageId": 1,
+        "Text": "Genèse"
+    },
+    {
+        "BookId": 1,
+        "LanguageId": 2,
+        "Text": "Genesis"
+    },
+    {
+        "BookId": 1,
+        "LanguageId": 3,
+        "Text": "تكوين"
+    },
+    {
+        "BookId": 1,
+        "LanguageId": 4,
+        "Text": "Genesi"
+    },
+    {
+        "BookId": 1,
+        "LanguageId": 6,
+        "Text": "Das Buch Genesis"
+    },
+    {
+        "BookId": 2,
+        "LanguageId": 1,
+        "Text": "Exode"
+    },
+    {
+        "BookId": 2,
+        "LanguageId": 2,
+        "Text": "Exodus"
+    },
+    {
+        "BookId": 2,
+        "LanguageId": 3,
+        "Text": "خروج"
+    },
+    {
+        "BookId": 2,
+        "LanguageId": 4,
+        "Text": "Esodo"
+    },
+    {
+        "BookId": 2,
+        "LanguageId": 6,
+        "Text": "Das Buch Exodus"
+    },
+    {
+        "BookId": 3,
+        "LanguageId": 1,
+        "Text": "Lévitique"
+    },
+    {
+        "BookId": 3,
+        "LanguageId": 2,
+        "Text": "Leviticus"
+    },
+    {
+        "BookId": 3,
+        "LanguageId": 3,
+        "Text": "لاويين"
+    },
+    {
+        "BookId": 3,
+        "LanguageId": 4,
+        "Text": "Levitico"
+    },
+    {
+        "BookId": 3,
+        "LanguageId": 6,
+        "Text": "Das Buch Levitikus"
+    },
+    {
+        "BookId": 4,
+        "LanguageId": 1,
+        "Text": "Nombres"
+    },
+    {
+        "BookId": 4,
+        "LanguageId": 2,
+        "Text": "Numbers"
+    },
+    {
+        "BookId": 4,
+        "LanguageId": 3,
+        "Text": "عدد"
+    },
+    {
+        "BookId": 4,
+        "LanguageId": 4,
+        "Text": "Numeri"
+    },
+    {
+        "BookId": 4,
+        "LanguageId": 6,
+        "Text": "Das Buch Numeri"
+    },
+    {
+        "BookId": 5,
+        "LanguageId": 1,
+        "Text": "Deutéronome"
+    },
+    {
+        "BookId": 5,
+        "LanguageId": 2,
+        "Text": "Deuteronomy"
+    },
+    {
+        "BookId": 5,
+        "LanguageId": 3,
+        "Text": "تثنية"
+    },
+    {
+        "BookId": 5,
+        "LanguageId": 4,
+        "Text": "Deuteronomio"
+    },
+    {
+        "BookId": 5,
+        "LanguageId": 6,
+        "Text": "Das Buch Deuteronomium"
+    },
+    {
+        "BookId": 6,
+        "LanguageId": 1,
+        "Text": "Josué"
+    },
+    {
+        "BookId": 6,
+        "LanguageId": 2,
+        "Text": "Joshua"
+    },
+    {
+        "BookId": 6,
+        "LanguageId": 3,
+        "Text": "يشوع"
+    },
+    {
+        "BookId": 6,
+        "LanguageId": 4,
+        "Text": "Giosue"
+    },
+    {
+        "BookId": 6,
+        "LanguageId": 6,
+        "Text": "Das Buch Josua"
+    },
+    {
+        "BookId": 7,
+        "LanguageId": 1,
+        "Text": "Juges"
+    },
+    {
+        "BookId": 7,
+        "LanguageId": 2,
+        "Text": "Judges"
+    },
+    {
+        "BookId": 7,
+        "LanguageId": 3,
+        "Text": "قضاة"
+    },
+    {
+        "BookId": 7,
+        "LanguageId": 4,
+        "Text": "Giudici"
+    },
+    {
+        "BookId": 7,
+        "LanguageId": 6,
+        "Text": "Das Buch der Richter"
+    },
+    {
+        "BookId": 8,
+        "LanguageId": 1,
+        "Text": "Ruth"
+    },
+    {
+        "BookId": 8,
+        "LanguageId": 2,
+        "Text": "Ruth"
+    },
+    {
+        "BookId": 8,
+        "LanguageId": 3,
+        "Text": "راعوث"
+    },
+    {
+        "BookId": 8,
+        "LanguageId": 4,
+        "Text": "Rut"
+    },
+    {
+        "BookId": 8,
+        "LanguageId": 6,
+        "Text": "Das Buch Rut"
+    },
+    {
+        "BookId": 9,
+        "LanguageId": 1,
+        "Text": "1 Samuel"
+    },
+    {
+        "BookId": 9,
+        "LanguageId": 2,
+        "Text": "1 Samuel"
+    },
+    {
+        "BookId": 9,
+        "LanguageId": 3,
+        "Text": "1 صموئيل"
+    },
+    {
+        "BookId": 9,
+        "LanguageId": 4,
+        "Text": "1 Samuele"
+    },
+    {
+        "BookId": 9,
+        "LanguageId": 6,
+        "Text": "Das erste Buch Samuel"
+    },
+    {
+        "BookId": 10,
+        "LanguageId": 1,
+        "Text": "2 Samuel"
+    },
+    {
+        "BookId": 10,
+        "LanguageId": 2,
+        "Text": "2 Samuel"
+    },
+    {
+        "BookId": 10,
+        "LanguageId": 3,
+        "Text": "2 صموئيل"
+    },
+    {
+        "BookId": 10,
+        "LanguageId": 4,
+        "Text": "2 Samuele"
+    },
+    {
+        "BookId": 10,
+        "LanguageId": 6,
+        "Text": "Das zweite Buch Samuel"
+    },
+    {
+        "BookId": 11,
+        "LanguageId": 1,
+        "Text": "1 Rois"
+    },
+    {
+        "BookId": 11,
+        "LanguageId": 2,
+        "Text": "1 Kings"
+    },
+    {
+        "BookId": 11,
+        "LanguageId": 3,
+        "Text": "1 ملوك"
+    },
+    {
+        "BookId": 11,
+        "LanguageId": 4,
+        "Text": "1 Re"
+    },
+    {
+        "BookId": 11,
+        "LanguageId": 6,
+        "Text": "Das erste Buch der Könige"
+    },
+    {
+        "BookId": 12,
+        "LanguageId": 1,
+        "Text": "2 Rois"
+    },
+    {
+        "BookId": 12,
+        "LanguageId": 2,
+        "Text": "2 Kings"
+    },
+    {
+        "BookId": 12,
+        "LanguageId": 3,
+        "Text": "2 ملوك"
+    },
+    {
+        "BookId": 12,
+        "LanguageId": 4,
+        "Text": "2 Re"
+    },
+    {
+        "BookId": 12,
+        "LanguageId": 6,
+        "Text": "Das zweite Buch der Könige"
+    },
+    {
+        "BookId": 13,
+        "LanguageId": 1,
+        "Text": "1 Chroniques"
+    },
+    {
+        "BookId": 13,
+        "LanguageId": 2,
+        "Text": "1 Chronicles"
+    },
+    {
+        "BookId": 13,
+        "LanguageId": 3,
+        "Text": "1 اخبار"
+    },
+    {
+        "BookId": 13,
+        "LanguageId": 4,
+        "Text": "1 Cronache"
+    },
+    {
+        "BookId": 13,
+        "LanguageId": 6,
+        "Text": "Das erste Buch der Chronik"
+    },
+    {
+        "BookId": 14,
+        "LanguageId": 1,
+        "Text": "2 Chroniques"
+    },
+    {
+        "BookId": 14,
+        "LanguageId": 2,
+        "Text": "2 Chronicles"
+    },
+    {
+        "BookId": 14,
+        "LanguageId": 3,
+        "Text": "2 اخبار"
+    },
+    {
+        "BookId": 14,
+        "LanguageId": 4,
+        "Text": "2 Cronache"
+    },
+    {
+        "BookId": 14,
+        "LanguageId": 6,
+        "Text": "Das zweite Buch der Chronik"
+    },
+    {
+        "BookId": 15,
+        "LanguageId": 1,
+        "Text": "Esdras"
+    },
+    {
+        "BookId": 15,
+        "LanguageId": 2,
+        "Text": "Ezra"
+    },
+    {
+        "BookId": 15,
+        "LanguageId": 3,
+        "Text": "عزرا"
+    },
+    {
+        "BookId": 15,
+        "LanguageId": 4,
+        "Text": "Esdra"
+    },
+    {
+        "BookId": 15,
+        "LanguageId": 6,
+        "Text": "Das Buch Esra"
+    },
+    {
+        "BookId": 16,
+        "LanguageId": 1,
+        "Text": "Néhémie"
+    },
+    {
+        "BookId": 16,
+        "LanguageId": 2,
+        "Text": "Nehemiah"
+    },
+    {
+        "BookId": 16,
+        "LanguageId": 3,
+        "Text": "نحميا"
+    },
+    {
+        "BookId": 16,
+        "LanguageId": 4,
+        "Text": "Neemia"
+    },
+    {
+        "BookId": 16,
+        "LanguageId": 6,
+        "Text": "Das Buch Nehemia"
+    },
+    {
+        "BookId": 17,
+        "LanguageId": 1,
+        "Text": "Esther"
+    },
+    {
+        "BookId": 17,
+        "LanguageId": 2,
+        "Text": "Esther"
+    },
+    {
+        "BookId": 17,
+        "LanguageId": 3,
+        "Text": "استير"
+    },
+    {
+        "BookId": 17,
+        "LanguageId": 4,
+        "Text": "Ester"
+    },
+    {
+        "BookId": 17,
+        "LanguageId": 6,
+        "Text": "Das Buch Ester"
+    },
+    {
+        "BookId": 18,
+        "LanguageId": 1,
+        "Text": "Job"
+    },
+    {
+        "BookId": 18,
+        "LanguageId": 2,
+        "Text": "Job"
+    },
+    {
+        "BookId": 18,
+        "LanguageId": 3,
+        "Text": "ايوب"
+    },
+    {
+        "BookId": 18,
+        "LanguageId": 4,
+        "Text": "Giobbe"
+    },
+    {
+        "BookId": 18,
+        "LanguageId": 6,
+        "Text": "Das Buch Ijob"
+    },
+    {
+        "BookId": 19,
+        "LanguageId": 1,
+        "Text": "Psaumes"
+    },
+    {
+        "BookId": 19,
+        "LanguageId": 2,
+        "Text": "Psalms"
+    },
+    {
+        "BookId": 19,
+        "LanguageId": 3,
+        "Text": "مزامير"
+    },
+    {
+        "BookId": 19,
+        "LanguageId": 4,
+        "Text": "Salmi"
+    },
+    {
+        "BookId": 19,
+        "LanguageId": 6,
+        "Text": "Die Psalmen"
+    },
+    {
+        "BookId": 20,
+        "LanguageId": 1,
+        "Text": "Proverbes"
+    },
+    {
+        "BookId": 20,
+        "LanguageId": 2,
+        "Text": "Proverbs"
+    },
+    {
+        "BookId": 20,
+        "LanguageId": 3,
+        "Text": "امثال"
+    },
+    {
+        "BookId": 20,
+        "LanguageId": 4,
+        "Text": "Proverbi"
+    },
+    {
+        "BookId": 20,
+        "LanguageId": 6,
+        "Text": "Das Buch der Sprichwörter"
+    },
+    {
+        "BookId": 21,
+        "LanguageId": 1,
+        "Text": "Ecclésiaste"
+    },
+    {
+        "BookId": 21,
+        "LanguageId": 2,
+        "Text": "Ecclesiastes"
+    },
+    {
+        "BookId": 21,
+        "LanguageId": 3,
+        "Text": "جامعة"
+    },
+    {
+        "BookId": 21,
+        "LanguageId": 4,
+        "Text": "Ecclesiaste"
+    },
+    {
+        "BookId": 21,
+        "LanguageId": 6,
+        "Text": "Das Buch Kohelet"
+    },
+    {
+        "BookId": 22,
+        "LanguageId": 1,
+        "Text": "Cantique"
+    },
+    {
+        "BookId": 22,
+        "LanguageId": 2,
+        "Text": "Song of Solomon"
+    },
+    {
+        "BookId": 22,
+        "LanguageId": 3,
+        "Text": "نشيدالانشاد"
+    },
+    {
+        "BookId": 22,
+        "LanguageId": 4,
+        "Text": "Cantico Dei Cantici"
+    },
+    {
+        "BookId": 22,
+        "LanguageId": 6,
+        "Text": "Das Hohelied"
+    },
+    {
+        "BookId": 23,
+        "LanguageId": 1,
+        "Text": "Esaïe"
+    },
+    {
+        "BookId": 23,
+        "LanguageId": 2,
+        "Text": "Isaiah"
+    },
+    {
+        "BookId": 23,
+        "LanguageId": 3,
+        "Text": "اشعياء"
+    },
+    {
+        "BookId": 23,
+        "LanguageId": 4,
+        "Text": "Isaia"
+    },
+    {
+        "BookId": 23,
+        "LanguageId": 6,
+        "Text": "Das Buch Jesaja"
+    },
+    {
+        "BookId": 24,
+        "LanguageId": 1,
+        "Text": "Jérémie"
+    },
+    {
+        "BookId": 24,
+        "LanguageId": 2,
+        "Text": "Jeremiah"
+    },
+    {
+        "BookId": 24,
+        "LanguageId": 3,
+        "Text": "ارميا"
+    },
+    {
+        "BookId": 24,
+        "LanguageId": 4,
+        "Text": "Geremia"
+    },
+    {
+        "BookId": 24,
+        "LanguageId": 6,
+        "Text": "Das Buch Jeremia"
+    },
+    {
+        "BookId": 25,
+        "LanguageId": 1,
+        "Text": "Lamentations"
+    },
+    {
+        "BookId": 25,
+        "LanguageId": 2,
+        "Text": "Lamentations"
+    },
+    {
+        "BookId": 25,
+        "LanguageId": 3,
+        "Text": "مراثي"
+    },
+    {
+        "BookId": 25,
+        "LanguageId": 4,
+        "Text": "Lamentazioni"
+    },
+    {
+        "BookId": 25,
+        "LanguageId": 6,
+        "Text": "Die Klagelieder"
+    },
+    {
+        "BookId": 26,
+        "LanguageId": 1,
+        "Text": "Ezéchiel"
+    },
+    {
+        "BookId": 26,
+        "LanguageId": 2,
+        "Text": "Ezekiel"
+    },
+    {
+        "BookId": 26,
+        "LanguageId": 3,
+        "Text": "حزقيال"
+    },
+    {
+        "BookId": 26,
+        "LanguageId": 4,
+        "Text": "Ezechiele"
+    },
+    {
+        "BookId": 26,
+        "LanguageId": 6,
+        "Text": "Das Buch Ezechiel"
+    },
+    {
+        "BookId": 27,
+        "LanguageId": 1,
+        "Text": "Daniel"
+    },
+    {
+        "BookId": 27,
+        "LanguageId": 2,
+        "Text": "Daniel"
+    },
+    {
+        "BookId": 27,
+        "LanguageId": 3,
+        "Text": "دانيال"
+    },
+    {
+        "BookId": 27,
+        "LanguageId": 4,
+        "Text": "Daniele"
+    },
+    {
+        "BookId": 27,
+        "LanguageId": 6,
+        "Text": "Das Buch Daniel"
+    },
+    {
+        "BookId": 28,
+        "LanguageId": 1,
+        "Text": "Osée"
+    },
+    {
+        "BookId": 28,
+        "LanguageId": 2,
+        "Text": "Hosea"
+    },
+    {
+        "BookId": 28,
+        "LanguageId": 3,
+        "Text": "هوشع"
+    },
+    {
+        "BookId": 28,
+        "LanguageId": 4,
+        "Text": "Osea"
+    },
+    {
+        "BookId": 28,
+        "LanguageId": 6,
+        "Text": "Das Buch Hosea"
+    },
+    {
+        "BookId": 29,
+        "LanguageId": 1,
+        "Text": "Joël"
+    },
+    {
+        "BookId": 29,
+        "LanguageId": 2,
+        "Text": "Joel"
+    },
+    {
+        "BookId": 29,
+        "LanguageId": 3,
+        "Text": "يوئيل"
+    },
+    {
+        "BookId": 29,
+        "LanguageId": 4,
+        "Text": "Gioele"
+    },
+    {
+        "BookId": 29,
+        "LanguageId": 6,
+        "Text": "Das Buch Joel"
+    },
+    {
+        "BookId": 30,
+        "LanguageId": 1,
+        "Text": "Amos"
+    },
+    {
+        "BookId": 30,
+        "LanguageId": 2,
+        "Text": "Amos"
+    },
+    {
+        "BookId": 30,
+        "LanguageId": 3,
+        "Text": "عاموس"
+    },
+    {
+        "BookId": 30,
+        "LanguageId": 4,
+        "Text": "Amos"
+    },
+    {
+        "BookId": 30,
+        "LanguageId": 6,
+        "Text": "Das Buch Amos"
+    },
+    {
+        "BookId": 31,
+        "LanguageId": 1,
+        "Text": "Abdias"
+    },
+    {
+        "BookId": 31,
+        "LanguageId": 2,
+        "Text": "Obadiah"
+    },
+    {
+        "BookId": 31,
+        "LanguageId": 3,
+        "Text": "عوبديا"
+    },
+    {
+        "BookId": 31,
+        "LanguageId": 4,
+        "Text": "Abdia"
+    },
+    {
+        "BookId": 31,
+        "LanguageId": 6,
+        "Text": "Das Buch Obadja"
+    },
+    {
+        "BookId": 32,
+        "LanguageId": 1,
+        "Text": "Jonas"
+    },
+    {
+        "BookId": 32,
+        "LanguageId": 2,
+        "Text": "Jonah"
+    },
+    {
+        "BookId": 32,
+        "LanguageId": 3,
+        "Text": "يونان"
+    },
+    {
+        "BookId": 32,
+        "LanguageId": 4,
+        "Text": "Giona"
+    },
+    {
+        "BookId": 32,
+        "LanguageId": 6,
+        "Text": "Das Buch Jona"
+    },
+    {
+        "BookId": 33,
+        "LanguageId": 1,
+        "Text": "Michée"
+    },
+    {
+        "BookId": 33,
+        "LanguageId": 2,
+        "Text": "Micah"
+    },
+    {
+        "BookId": 33,
+        "LanguageId": 3,
+        "Text": "ميخا"
+    },
+    {
+        "BookId": 33,
+        "LanguageId": 4,
+        "Text": "Michea"
+    },
+    {
+        "BookId": 33,
+        "LanguageId": 6,
+        "Text": "Das Buch Micha"
+    },
+    {
+        "BookId": 34,
+        "LanguageId": 1,
+        "Text": "Nahum"
+    },
+    {
+        "BookId": 34,
+        "LanguageId": 2,
+        "Text": "Nahum"
+    },
+    {
+        "BookId": 34,
+        "LanguageId": 3,
+        "Text": "ناحوم"
+    },
+    {
+        "BookId": 34,
+        "LanguageId": 4,
+        "Text": "Nahum"
+    },
+    {
+        "BookId": 34,
+        "LanguageId": 6,
+        "Text": "Das Buch Nahum"
+    },
+    {
+        "BookId": 35,
+        "LanguageId": 1,
+        "Text": "Habakuk"
+    },
+    {
+        "BookId": 35,
+        "LanguageId": 2,
+        "Text": "Habakkuk"
+    },
+    {
+        "BookId": 35,
+        "LanguageId": 3,
+        "Text": "حبقوق"
+    },
+    {
+        "BookId": 35,
+        "LanguageId": 4,
+        "Text": "Abacuc"
+    },
+    {
+        "BookId": 35,
+        "LanguageId": 6,
+        "Text": "Das Buch Habakuk"
+    },
+    {
+        "BookId": 36,
+        "LanguageId": 1,
+        "Text": "Sophonie"
+    },
+    {
+        "BookId": 36,
+        "LanguageId": 2,
+        "Text": "Zephaniah"
+    },
+    {
+        "BookId": 36,
+        "LanguageId": 3,
+        "Text": "صفنيا"
+    },
+    {
+        "BookId": 36,
+        "LanguageId": 4,
+        "Text": "Sofonia"
+    },
+    {
+        "BookId": 36,
+        "LanguageId": 6,
+        "Text": "Das Buch Zefanja"
+    },
+    {
+        "BookId": 37,
+        "LanguageId": 1,
+        "Text": "Aggée"
+    },
+    {
+        "BookId": 37,
+        "LanguageId": 2,
+        "Text": "Haggai"
+    },
+    {
+        "BookId": 37,
+        "LanguageId": 3,
+        "Text": "حجى"
+    },
+    {
+        "BookId": 37,
+        "LanguageId": 4,
+        "Text": "Aggeo"
+    },
+    {
+        "BookId": 37,
+        "LanguageId": 6,
+        "Text": "Das Buch Haggai"
+    },
+    {
+        "BookId": 38,
+        "LanguageId": 1,
+        "Text": "Zacharie"
+    },
+    {
+        "BookId": 38,
+        "LanguageId": 2,
+        "Text": "Zechariah"
+    },
+    {
+        "BookId": 38,
+        "LanguageId": 3,
+        "Text": "زكريا"
+    },
+    {
+        "BookId": 38,
+        "LanguageId": 4,
+        "Text": "Zaccaria"
+    },
+    {
+        "BookId": 38,
+        "LanguageId": 6,
+        "Text": "Das Buch Sacharja"
+    },
+    {
+        "BookId": 39,
+        "LanguageId": 1,
+        "Text": "Malachie"
+    },
+    {
+        "BookId": 39,
+        "LanguageId": 2,
+        "Text": "Malachi"
+    },
+    {
+        "BookId": 39,
+        "LanguageId": 3,
+        "Text": "ملاخي"
+    },
+    {
+        "BookId": 39,
+        "LanguageId": 4,
+        "Text": "Malachia"
+    },
+    {
+        "BookId": 39,
+        "LanguageId": 6,
+        "Text": "Das Buch Maleachi"
+    },
+    {
+        "BookId": 40,
+        "LanguageId": 1,
+        "Text": "Matthieu"
+    },
+    {
+        "BookId": 40,
+        "LanguageId": 2,
+        "Text": "Matthew"
+    },
+    {
+        "BookId": 40,
+        "LanguageId": 3,
+        "Text": "متى"
+    },
+    {
+        "BookId": 40,
+        "LanguageId": 4,
+        "Text": "Matteo"
+    },
+    {
+        "BookId": 40,
+        "LanguageId": 6,
+        "Text": "Matthäus"
+    },
+    {
+        "BookId": 41,
+        "LanguageId": 1,
+        "Text": "Marc"
+    },
+    {
+        "BookId": 41,
+        "LanguageId": 2,
+        "Text": "Mark"
+    },
+    {
+        "BookId": 41,
+        "LanguageId": 3,
+        "Text": "مرقس"
+    },
+    {
+        "BookId": 41,
+        "LanguageId": 4,
+        "Text": "Marco"
+    },
+    {
+        "BookId": 41,
+        "LanguageId": 6,
+        "Text": "Markus"
+    },
+    {
+        "BookId": 42,
+        "LanguageId": 1,
+        "Text": "Luc"
+    },
+    {
+        "BookId": 42,
+        "LanguageId": 2,
+        "Text": "Luke"
+    },
+    {
+        "BookId": 42,
+        "LanguageId": 3,
+        "Text": "لوقا"
+    },
+    {
+        "BookId": 42,
+        "LanguageId": 4,
+        "Text": "Luca"
+    },
+    {
+        "BookId": 42,
+        "LanguageId": 6,
+        "Text": "Lukas"
+    },
+    {
+        "BookId": 43,
+        "LanguageId": 1,
+        "Text": "Jean"
+    },
+    {
+        "BookId": 43,
+        "LanguageId": 2,
+        "Text": "John"
+    },
+    {
+        "BookId": 43,
+        "LanguageId": 3,
+        "Text": "يوحنا"
+    },
+    {
+        "BookId": 43,
+        "LanguageId": 4,
+        "Text": "Giovanni"
+    },
+    {
+        "BookId": 43,
+        "LanguageId": 6,
+        "Text": "Johannes"
+    },
+    {
+        "BookId": 44,
+        "LanguageId": 1,
+        "Text": "Actes"
+    },
+    {
+        "BookId": 44,
+        "LanguageId": 2,
+        "Text": "Acts"
+    },
+    {
+        "BookId": 44,
+        "LanguageId": 3,
+        "Text": "اعمال"
+    },
+    {
+        "BookId": 44,
+        "LanguageId": 4,
+        "Text": "Atti"
+    },
+    {
+        "BookId": 44,
+        "LanguageId": 6,
+        "Text": "Die Apostelgeschichte"
+    },
+    {
+        "BookId": 45,
+        "LanguageId": 1,
+        "Text": "Romains"
+    },
+    {
+        "BookId": 45,
+        "LanguageId": 2,
+        "Text": "Romans"
+    },
+    {
+        "BookId": 45,
+        "LanguageId": 3,
+        "Text": "رومية"
+    },
+    {
+        "BookId": 45,
+        "LanguageId": 4,
+        "Text": "Romani"
+    },
+    {
+        "BookId": 45,
+        "LanguageId": 6,
+        "Text": "Der Brief an die Römer"
+    },
+    {
+        "BookId": 46,
+        "LanguageId": 1,
+        "Text": "1 Corinthiens"
+    },
+    {
+        "BookId": 46,
+        "LanguageId": 2,
+        "Text": "1 Corinthians"
+    },
+    {
+        "BookId": 46,
+        "LanguageId": 3,
+        "Text": "1 كورنثوس"
+    },
+    {
+        "BookId": 46,
+        "LanguageId": 4,
+        "Text": "1 Corinzi"
+    },
+    {
+        "BookId": 46,
+        "LanguageId": 6,
+        "Text": "Der erste Brief an die Korinther"
+    },
+    {
+        "BookId": 47,
+        "LanguageId": 1,
+        "Text": "2 Corinthiens"
+    },
+    {
+        "BookId": 47,
+        "LanguageId": 2,
+        "Text": "2 Corinthians"
+    },
+    {
+        "BookId": 47,
+        "LanguageId": 3,
+        "Text": "2 كورنثوس"
+    },
+    {
+        "BookId": 47,
+        "LanguageId": 4,
+        "Text": "2 Corinzi"
+    },
+    {
+        "BookId": 47,
+        "LanguageId": 6,
+        "Text": "Der zweite Brief an die Korinther"
+    },
+    {
+        "BookId": 48,
+        "LanguageId": 1,
+        "Text": "Galates"
+    },
+    {
+        "BookId": 48,
+        "LanguageId": 2,
+        "Text": "Galatians"
+    },
+    {
+        "BookId": 48,
+        "LanguageId": 3,
+        "Text": "غلاطية"
+    },
+    {
+        "BookId": 48,
+        "LanguageId": 4,
+        "Text": "Galati"
+    },
+    {
+        "BookId": 48,
+        "LanguageId": 6,
+        "Text": "Galater"
+    },
+    {
+        "BookId": 49,
+        "LanguageId": 1,
+        "Text": "Ephésiens"
+    },
+    {
+        "BookId": 49,
+        "LanguageId": 2,
+        "Text": "Ephesians"
+    },
+    {
+        "BookId": 49,
+        "LanguageId": 3,
+        "Text": "افسس"
+    },
+    {
+        "BookId": 49,
+        "LanguageId": 4,
+        "Text": "Efesini"
+    },
+    {
+        "BookId": 49,
+        "LanguageId": 6,
+        "Text": "Epheser"
+    },
+    {
+        "BookId": 50,
+        "LanguageId": 1,
+        "Text": "Philippiens"
+    },
+    {
+        "BookId": 50,
+        "LanguageId": 2,
+        "Text": "Philippians"
+    },
+    {
+        "BookId": 50,
+        "LanguageId": 3,
+        "Text": "فيلبي"
+    },
+    {
+        "BookId": 50,
+        "LanguageId": 4,
+        "Text": "Filippesi"
+    },
+    {
+        "BookId": 50,
+        "LanguageId": 6,
+        "Text": "Philipper"
+    },
+    {
+        "BookId": 51,
+        "LanguageId": 1,
+        "Text": "Colossiens"
+    },
+    {
+        "BookId": 51,
+        "LanguageId": 2,
+        "Text": "Colossians"
+    },
+    {
+        "BookId": 51,
+        "LanguageId": 3,
+        "Text": "كولوسي"
+    },
+    {
+        "BookId": 51,
+        "LanguageId": 4,
+        "Text": "Colossesi"
+    },
+    {
+        "BookId": 51,
+        "LanguageId": 6,
+        "Text": "Kolosser"
+    },
+    {
+        "BookId": 52,
+        "LanguageId": 1,
+        "Text": "1 Thessaloniciens"
+    },
+    {
+        "BookId": 52,
+        "LanguageId": 2,
+        "Text": "1 Thessalonians"
+    },
+    {
+        "BookId": 52,
+        "LanguageId": 3,
+        "Text": "1 تسالونيكي"
+    },
+    {
+        "BookId": 52,
+        "LanguageId": 4,
+        "Text": "1 Tessalonicesi"
+    },
+    {
+        "BookId": 52,
+        "LanguageId": 6,
+        "Text": "1 Thessalonicher"
+    },
+    {
+        "BookId": 53,
+        "LanguageId": 1,
+        "Text": "2 Thessaloniciens"
+    },
+    {
+        "BookId": 53,
+        "LanguageId": 2,
+        "Text": "2 Thessalonians"
+    },
+    {
+        "BookId": 53,
+        "LanguageId": 3,
+        "Text": "2 تسالونيكي"
+    },
+    {
+        "BookId": 53,
+        "LanguageId": 4,
+        "Text": "2 Tessalonicesi"
+    },
+    {
+        "BookId": 53,
+        "LanguageId": 6,
+        "Text": "2Thessalonicher"
+    },
+    {
+        "BookId": 54,
+        "LanguageId": 1,
+        "Text": "1 Timothée"
+    },
+    {
+        "BookId": 54,
+        "LanguageId": 2,
+        "Text": "1 Timothy"
+    },
+    {
+        "BookId": 54,
+        "LanguageId": 3,
+        "Text": "1 تيموثاوس"
+    },
+    {
+        "BookId": 54,
+        "LanguageId": 4,
+        "Text": "1 Timoteo"
+    },
+    {
+        "BookId": 54,
+        "LanguageId": 6,
+        "Text": "1 Timotheus"
+    },
+    {
+        "BookId": 55,
+        "LanguageId": 1,
+        "Text": "2 Timothée"
+    },
+    {
+        "BookId": 55,
+        "LanguageId": 2,
+        "Text": "2 Timothy"
+    },
+    {
+        "BookId": 55,
+        "LanguageId": 3,
+        "Text": "2 تيموثاوس"
+    },
+    {
+        "BookId": 55,
+        "LanguageId": 4,
+        "Text": "2 Timoteo"
+    },
+    {
+        "BookId": 55,
+        "LanguageId": 6,
+        "Text": "2 Timotheus"
+    },
+    {
+        "BookId": 56,
+        "LanguageId": 1,
+        "Text": "Tite"
+    },
+    {
+        "BookId": 56,
+        "LanguageId": 2,
+        "Text": "Titus"
+    },
+    {
+        "BookId": 56,
+        "LanguageId": 3,
+        "Text": "تيطس"
+    },
+    {
+        "BookId": 56,
+        "LanguageId": 4,
+        "Text": "Tito"
+    },
+    {
+        "BookId": 56,
+        "LanguageId": 6,
+        "Text": "Titus"
+    },
+    {
+        "BookId": 57,
+        "LanguageId": 1,
+        "Text": "Philémon"
+    },
+    {
+        "BookId": 57,
+        "LanguageId": 2,
+        "Text": "Philemon"
+    },
+    {
+        "BookId": 57,
+        "LanguageId": 3,
+        "Text": "فليمون"
+    },
+    {
+        "BookId": 57,
+        "LanguageId": 4,
+        "Text": "Filemone"
+    },
+    {
+        "BookId": 57,
+        "LanguageId": 6,
+        "Text": "Philemon"
+    },
+    {
+        "BookId": 58,
+        "LanguageId": 1,
+        "Text": "Hébreux"
+    },
+    {
+        "BookId": 58,
+        "LanguageId": 2,
+        "Text": "Hebrews"
+    },
+    {
+        "BookId": 58,
+        "LanguageId": 3,
+        "Text": "عبرانيين"
+    },
+    {
+        "BookId": 58,
+        "LanguageId": 4,
+        "Text": "Ebrei"
+    },
+    {
+        "BookId": 58,
+        "LanguageId": 6,
+        "Text": "Hebräer"
+    },
+    {
+        "BookId": 59,
+        "LanguageId": 1,
+        "Text": "Jacques"
+    },
+    {
+        "BookId": 59,
+        "LanguageId": 2,
+        "Text": "James"
+    },
+    {
+        "BookId": 59,
+        "LanguageId": 3,
+        "Text": "يعقوب"
+    },
+    {
+        "BookId": 59,
+        "LanguageId": 4,
+        "Text": "Giacomo"
+    },
+    {
+        "BookId": 59,
+        "LanguageId": 6,
+        "Text": "Jakobus"
+    },
+    {
+        "BookId": 60,
+        "LanguageId": 1,
+        "Text": "1 Pierre"
+    },
+    {
+        "BookId": 60,
+        "LanguageId": 2,
+        "Text": "1 Peter"
+    },
+    {
+        "BookId": 60,
+        "LanguageId": 3,
+        "Text": "1 بطرس"
+    },
+    {
+        "BookId": 60,
+        "LanguageId": 4,
+        "Text": "1 Pietro"
+    },
+    {
+        "BookId": 60,
+        "LanguageId": 6,
+        "Text": "1 Petrus"
+    },
+    {
+        "BookId": 61,
+        "LanguageId": 1,
+        "Text": "2 Pierre"
+    },
+    {
+        "BookId": 61,
+        "LanguageId": 2,
+        "Text": "2 Peter"
+    },
+    {
+        "BookId": 61,
+        "LanguageId": 3,
+        "Text": "2 بطرس"
+    },
+    {
+        "BookId": 61,
+        "LanguageId": 4,
+        "Text": "2 Pietro"
+    },
+    {
+        "BookId": 61,
+        "LanguageId": 6,
+        "Text": "2 Petrus"
+    },
+    {
+        "BookId": 62,
+        "LanguageId": 1,
+        "Text": "1 Jean"
+    },
+    {
+        "BookId": 62,
+        "LanguageId": 2,
+        "Text": "1 John"
+    },
+    {
+        "BookId": 62,
+        "LanguageId": 3,
+        "Text": "1 يوحنا"
+    },
+    {
+        "BookId": 62,
+        "LanguageId": 4,
+        "Text": "1 Giovanni"
+    },
+    {
+        "BookId": 62,
+        "LanguageId": 6,
+        "Text": "1 Johannes"
+    },
+    {
+        "BookId": 63,
+        "LanguageId": 1,
+        "Text": "2 Jean"
+    },
+    {
+        "BookId": 63,
+        "LanguageId": 2,
+        "Text": "2 John"
+    },
+    {
+        "BookId": 63,
+        "LanguageId": 3,
+        "Text": "2 يوحنا"
+    },
+    {
+        "BookId": 63,
+        "LanguageId": 4,
+        "Text": "2 Giovanni"
+    },
+    {
+        "BookId": 63,
+        "LanguageId": 6,
+        "Text": "2 Johannes"
+    },
+    {
+        "BookId": 64,
+        "LanguageId": 1,
+        "Text": "3 Jean"
+    },
+    {
+        "BookId": 64,
+        "LanguageId": 2,
+        "Text": "3 John"
+    },
+    {
+        "BookId": 64,
+        "LanguageId": 3,
+        "Text": "3 يوحنا"
+    },
+    {
+        "BookId": 64,
+        "LanguageId": 4,
+        "Text": "3 Giovanni"
+    },
+    {
+        "BookId": 64,
+        "LanguageId": 6,
+        "Text": "3 Johannes"
+    },
+    {
+        "BookId": 65,
+        "LanguageId": 1,
+        "Text": "Jude"
+    },
+    {
+        "BookId": 65,
+        "LanguageId": 2,
+        "Text": "Jude"
+    },
+    {
+        "BookId": 65,
+        "LanguageId": 3,
+        "Text": "يهوذا"
+    },
+    {
+        "BookId": 65,
+        "LanguageId": 4,
+        "Text": "Giuda"
+    },
+    {
+        "BookId": 65,
+        "LanguageId": 6,
+        "Text": "Judas"
+    },
+    {
+        "BookId": 66,
+        "LanguageId": 1,
+        "Text": "Apocalypse"
+    },
+    {
+        "BookId": 66,
+        "LanguageId": 2,
+        "Text": "Revelation"
+    },
+    {
+        "BookId": 66,
+        "LanguageId": 3,
+        "Text": "رؤيا"
+    },
+    {
+        "BookId": 66,
+        "LanguageId": 4,
+        "Text": "Apocalisse"
+    },
+    {
+        "BookId": 66,
+        "LanguageId": 6,
+        "Text": "Die Offenbarung des Johannes"
+    },
+    {
+        "BookId": 67,
+        "LanguageId": 1,
+        "Text": "Baruch"
+    },
+    {
+        "BookId": 67,
+        "LanguageId": 2,
+        "Text": "Baruch"
+    },
+    {
+        "BookId": 67,
+        "LanguageId": 3,
+        "Text": "سفر باروخ"
+    },
+    {
+        "BookId": 67,
+        "LanguageId": 6,
+        "Text": "Das Buch Baruch"
+    },
+    {
+        "BookId": 68,
+        "LanguageId": 1,
+        "Text": "Tobie"
+    },
+    {
+        "BookId": 68,
+        "LanguageId": 2,
+        "Text": "Tobit"
+    },
+    {
+        "BookId": 68,
+        "LanguageId": 3,
+        "Text": "سفر طوبيا"
+    },
+    {
+        "BookId": 68,
+        "LanguageId": 6,
+        "Text": "Das Buch Tobit"
+    },
+    {
+        "BookId": 69,
+        "LanguageId": 1,
+        "Text": "Judith"
+    },
+    {
+        "BookId": 69,
+        "LanguageId": 2,
+        "Text": "Judith"
+    },
+    {
+        "BookId": 69,
+        "LanguageId": 3,
+        "Text": "سفر يهوديت"
+    },
+    {
+        "BookId": 69,
+        "LanguageId": 6,
+        "Text": "Das Buch Judit"
+    },
+    {
+        "BookId": 70,
+        "LanguageId": 1,
+        "Text": "1 Maccabées"
+    },
+    {
+        "BookId": 70,
+        "LanguageId": 2,
+        "Text": "1 Maccabees"
+    },
+    {
+        "BookId": 70,
+        "LanguageId": 3,
+        "Text": "1 سفر المكابيين الأول"
+    },
+    {
+        "BookId": 70,
+        "LanguageId": 6,
+        "Text": "Das erste Buch der Makkabäer"
+    },
+    {
+        "BookId": 71,
+        "LanguageId": 1,
+        "Text": "2 Maccabées"
+    },
+    {
+        "BookId": 71,
+        "LanguageId": 2,
+        "Text": "2 Maccabees"
+    },
+    {
+        "BookId": 71,
+        "LanguageId": 3,
+        "Text": "2 سفر المكابيين الأول"
+    },
+    {
+        "BookId": 71,
+        "LanguageId": 6,
+        "Text": "Das zweite Buch der Makkabäer"
+    },
+    {
+        "BookId": 72,
+        "LanguageId": 1,
+        "Text": "Sagesse"
+    },
+    {
+        "BookId": 72,
+        "LanguageId": 2,
+        "Text": "Wisdom of Solomon"
+    },
+    {
+        "BookId": 72,
+        "LanguageId": 3,
+        "Text": "سفر الحكمة"
+    },
+    {
+        "BookId": 72,
+        "LanguageId": 6,
+        "Text": "Das Buch der Weisheit"
+    },
+    {
+        "BookId": 73,
+        "LanguageId": 1,
+        "Text": "Ecclésiastique"
+    },
+    {
+        "BookId": 73,
+        "LanguageId": 2,
+        "Text": "Sirach"
+    },
+    {
+        "BookId": 73,
+        "LanguageId": 3,
+        "Text": "سفر يشوع بن سيراخ"
+    },
+    {
+        "BookId": 73,
+        "LanguageId": 6,
+        "Text": "Das Buch Jesus Sirach"
+    },
+    {
+        "BookId": 1,
+        "LanguageId": 7,
+        "Text": "Rodzaju"
+    },
+    {
+        "BookId": 2,
+        "LanguageId": 7,
+        "Text": "Wyjścia"
+    },
+    {
+        "BookId": 3,
+        "LanguageId": 7,
+        "Text": "Kapłańska"
+    },
+    {
+        "BookId": 4,
+        "LanguageId": 7,
+        "Text": "Liczb"
+    },
+    {
+        "BookId": 5,
+        "LanguageId": 7,
+        "Text": "Powtórzonego Prawa"
+    },
+    {
+        "BookId": 6,
+        "LanguageId": 7,
+        "Text": "Jozuego"
+    },
+    {
+        "BookId": 7,
+        "LanguageId": 7,
+        "Text": "Sędziów"
+    },
+    {
+        "BookId": 8,
+        "LanguageId": 7,
+        "Text": "Rut"
+    },
+    {
+        "BookId": 9,
+        "LanguageId": 7,
+        "Text": "1 Samuela"
+    },
+    {
+        "BookId": 10,
+        "LanguageId": 7,
+        "Text": "2 Samuela"
+    },
+    {
+        "BookId": 11,
+        "LanguageId": 7,
+        "Text": "1 Królewska"
+    },
+    {
+        "BookId": 12,
+        "LanguageId": 7,
+        "Text": "2 Królewska"
+    },
+    {
+        "BookId": 13,
+        "LanguageId": 7,
+        "Text": "1 Kronik"
+    },
+    {
+        "BookId": 14,
+        "LanguageId": 7,
+        "Text": "2 Kronik"
+    },
+    {
+        "BookId": 15,
+        "LanguageId": 7,
+        "Text": "Ezdrasza"
+    },
+    {
+        "BookId": 16,
+        "LanguageId": 7,
+        "Text": "Nehemiasza"
+    },
+    {
+        "BookId": 17,
+        "LanguageId": 7,
+        "Text": "Estery"
+    },
+    {
+        "BookId": 18,
+        "LanguageId": 7,
+        "Text": "Hioba"
+    },
+    {
+        "BookId": 19,
+        "LanguageId": 7,
+        "Text": "Psalmów"
+    },
+    {
+        "BookId": 20,
+        "LanguageId": 7,
+        "Text": "Przysłów"
+    },
+    {
+        "BookId": 21,
+        "LanguageId": 7,
+        "Text": "Koheleta"
+    },
+    {
+        "BookId": 22,
+        "LanguageId": 7,
+        "Text": "Pieśń nad Pieśniami"
+    },
+    {
+        "BookId": 23,
+        "LanguageId": 7,
+        "Text": "Izajasza"
+    },
+    {
+        "BookId": 24,
+        "LanguageId": 7,
+        "Text": "Jeremiasza"
+    },
+    {
+        "BookId": 25,
+        "LanguageId": 7,
+        "Text": "Lamentacje"
+    },
+    {
+        "BookId": 26,
+        "LanguageId": 7,
+        "Text": "Ezechiela"
+    },
+    {
+        "BookId": 27,
+        "LanguageId": 7,
+        "Text": "Daniela"
+    },
+    {
+        "BookId": 28,
+        "LanguageId": 7,
+        "Text": "Ozeasza"
+    },
+    {
+        "BookId": 29,
+        "LanguageId": 7,
+        "Text": "Joela"
+    },
+    {
+        "BookId": 30,
+        "LanguageId": 7,
+        "Text": "Amosa"
+    },
+    {
+        "BookId": 31,
+        "LanguageId": 7,
+        "Text": "Abdiasza"
+    },
+    {
+        "BookId": 32,
+        "LanguageId": 7,
+        "Text": "Jonasza"
+    },
+    {
+        "BookId": 33,
+        "LanguageId": 7,
+        "Text": "Micheasza"
+    },
+    {
+        "BookId": 34,
+        "LanguageId": 7,
+        "Text": "Nahuma"
+    },
+    {
+        "BookId": 35,
+        "LanguageId": 7,
+        "Text": "Habakuka"
+    },
+    {
+        "BookId": 36,
+        "LanguageId": 7,
+        "Text": "Sofoniasza"
+    },
+    {
+        "BookId": 37,
+        "LanguageId": 7,
+        "Text": "Aggeusza"
+    },
+    {
+        "BookId": 38,
+        "LanguageId": 7,
+        "Text": "Zachariasza"
+    },
+    {
+        "BookId": 39,
+        "LanguageId": 7,
+        "Text": "Malachiasza"
+    },
+    {
+        "BookId": 40,
+        "LanguageId": 7,
+        "Text": "Mateusza"
+    },
+    {
+        "BookId": 41,
+        "LanguageId": 7,
+        "Text": "Marka"
+    },
+    {
+        "BookId": 42,
+        "LanguageId": 7,
+        "Text": "Łukasza"
+    },
+    {
+        "BookId": 43,
+        "LanguageId": 7,
+        "Text": "Jana"
+    },
+    {
+        "BookId": 44,
+        "LanguageId": 7,
+        "Text": "Dzieje Apostolskie"
+    },
+    {
+        "BookId": 45,
+        "LanguageId": 7,
+        "Text": "Rzymian"
+    },
+    {
+        "BookId": 46,
+        "LanguageId": 7,
+        "Text": "1 Koryntian"
+    },
+    {
+        "BookId": 47,
+        "LanguageId": 7,
+        "Text": "2 Koryntian"
+    },
+    {
+        "BookId": 48,
+        "LanguageId": 7,
+        "Text": "Galatów"
+    },
+    {
+        "BookId": 49,
+        "LanguageId": 7,
+        "Text": "Efezjan"
+    },
+    {
+        "BookId": 50,
+        "LanguageId": 7,
+        "Text": "Filipian"
+    },
+    {
+        "BookId": 51,
+        "LanguageId": 7,
+        "Text": "Kolosan"
+    },
+    {
+        "BookId": 52,
+        "LanguageId": 7,
+        "Text": "1 Tesaloniczan"
+    },
+    {
+        "BookId": 53,
+        "LanguageId": 7,
+        "Text": "2 Tesaloniczan"
+    },
+    {
+        "BookId": 54,
+        "LanguageId": 7,
+        "Text": "1 Tymoteusza"
+    },
+    {
+        "BookId": 55,
+        "LanguageId": 7,
+        "Text": "2 Tymoteusza"
+    },
+    {
+        "BookId": 56,
+        "LanguageId": 7,
+        "Text": "Tytusa"
+    },
+    {
+        "BookId": 57,
+        "LanguageId": 7,
+        "Text": "Filemona"
+    },
+    {
+        "BookId": 58,
+        "LanguageId": 7,
+        "Text": "Hebrajczyków"
+    },
+    {
+        "BookId": 59,
+        "LanguageId": 7,
+        "Text": "Jakuba"
+    },
+    {
+        "BookId": 60,
+        "LanguageId": 7,
+        "Text": "1 Piotra"
+    },
+    {
+        "BookId": 61,
+        "LanguageId": 7,
+        "Text": "2 Piotra"
+    },
+    {
+        "BookId": 62,
+        "LanguageId": 7,
+        "Text": "1 Jana"
+    },
+    {
+        "BookId": 63,
+        "LanguageId": 7,
+        "Text": "2 Jana"
+    },
+    {
+        "BookId": 64,
+        "LanguageId": 7,
+        "Text": "3 Jana"
+    },
+    {
+        "BookId": 65,
+        "LanguageId": 7,
+        "Text": "Judy"
+    },
+    {
+        "BookId": 66,
+        "LanguageId": 7,
+        "Text": "Apokalipsa"
+    },
+    {
+        "BookId": 67,
+        "LanguageId": 7,
+        "Text": "Barucha"
+    },
+    {
+        "BookId": 68,
+        "LanguageId": 7,
+        "Text": "Tobiasza"
+    },
+    {
+        "BookId": 69,
+        "LanguageId": 7,
+        "Text": "Judyty"
+    },
+    {
+        "BookId": 70,
+        "LanguageId": 7,
+        "Text": "1 Machabejska"
+    },
+    {
+        "BookId": 71,
+        "LanguageId": 7,
+        "Text": "2 Machabejska"
+    },
+    {
+        "BookId": 72,
+        "LanguageId": 7,
+        "Text": "Mądrości"
+    },
+    {
+        "BookId": 73,
+        "LanguageId": 7,
+        "Text": "Syracha"
+    },
+    {
+        "BookId": 1,
+        "LanguageId": 8,
+        "Text": "Génesis"
+    },
+    {
+        "BookId": 2,
+        "LanguageId": 8,
+        "Text": "Éxodo"
+    },
+    {
+        "BookId": 3,
+        "LanguageId": 8,
+        "Text": "Levítico"
+    },
+    {
+        "BookId": 4,
+        "LanguageId": 8,
+        "Text": "Números"
+    },
+    {
+        "BookId": 5,
+        "LanguageId": 8,
+        "Text": "Deuteronomio"
+    },
+    {
+        "BookId": 6,
+        "LanguageId": 8,
+        "Text": "Josué"
+    },
+    {
+        "BookId": 7,
+        "LanguageId": 8,
+        "Text": "Jueces"
+    },
+    {
+        "BookId": 8,
+        "LanguageId": 8,
+        "Text": "Rut"
+    },
+    {
+        "BookId": 9,
+        "LanguageId": 8,
+        "Text": "1 Samuel"
+    },
+    {
+        "BookId": 10,
+        "LanguageId": 8,
+        "Text": "2 Samuel"
+    },
+    {
+        "BookId": 11,
+        "LanguageId": 8,
+        "Text": "1 Reyes"
+    },
+    {
+        "BookId": 12,
+        "LanguageId": 8,
+        "Text": "2 Reyes"
+    },
+    {
+        "BookId": 13,
+        "LanguageId": 8,
+        "Text": "1 Crónicas"
+    },
+    {
+        "BookId": 14,
+        "LanguageId": 8,
+        "Text": "2 Crónicas"
+    },
+    {
+        "BookId": 15,
+        "LanguageId": 8,
+        "Text": "Esdras"
+    },
+    {
+        "BookId": 16,
+        "LanguageId": 8,
+        "Text": "Nehemías"
+    },
+    {
+        "BookId": 17,
+        "LanguageId": 8,
+        "Text": "Ester"
+    },
+    {
+        "BookId": 18,
+        "LanguageId": 8,
+        "Text": "Job"
+    },
+    {
+        "BookId": 19,
+        "LanguageId": 8,
+        "Text": "Salmos"
+    },
+    {
+        "BookId": 20,
+        "LanguageId": 8,
+        "Text": "Proverbios"
+    },
+    {
+        "BookId": 21,
+        "LanguageId": 8,
+        "Text": "Eclesiastés"
+    },
+    {
+        "BookId": 22,
+        "LanguageId": 8,
+        "Text": "Cantar de los Cantares"
+    },
+    {
+        "BookId": 23,
+        "LanguageId": 8,
+        "Text": "Isaías"
+    },
+    {
+        "BookId": 24,
+        "LanguageId": 8,
+        "Text": "Jeremías"
+    },
+    {
+        "BookId": 25,
+        "LanguageId": 8,
+        "Text": "Lamentaciones"
+    },
+    {
+        "BookId": 26,
+        "LanguageId": 8,
+        "Text": "Ezequiel"
+    },
+    {
+        "BookId": 27,
+        "LanguageId": 8,
+        "Text": "Daniel"
+    },
+    {
+        "BookId": 28,
+        "LanguageId": 8,
+        "Text": "Oseas"
+    },
+    {
+        "BookId": 29,
+        "LanguageId": 8,
+        "Text": "Joel"
+    },
+    {
+        "BookId": 30,
+        "LanguageId": 8,
+        "Text": "Amós"
+    },
+    {
+        "BookId": 31,
+        "LanguageId": 8,
+        "Text": "Abdías"
+    },
+    {
+        "BookId": 32,
+        "LanguageId": 8,
+        "Text": "Jonás"
+    },
+    {
+        "BookId": 33,
+        "LanguageId": 8,
+        "Text": "Miqueas"
+    },
+    {
+        "BookId": 34,
+        "LanguageId": 8,
+        "Text": "Nahúm"
+    },
+    {
+        "BookId": 35,
+        "LanguageId": 8,
+        "Text": "Habacuc"
+    },
+    {
+        "BookId": 36,
+        "LanguageId": 8,
+        "Text": "Sofonías"
+    },
+    {
+        "BookId": 37,
+        "LanguageId": 8,
+        "Text": "Hageo"
+    },
+    {
+        "BookId": 38,
+        "LanguageId": 8,
+        "Text": "Zacarías"
+    },
+    {
+        "BookId": 39,
+        "LanguageId": 8,
+        "Text": "Malaquías"
+    },
+    {
+        "BookId": 40,
+        "LanguageId": 8,
+        "Text": "Mateo"
+    },
+    {
+        "BookId": 41,
+        "LanguageId": 8,
+        "Text": "Marcos"
+    },
+    {
+        "BookId": 42,
+        "LanguageId": 8,
+        "Text": "Lucas"
+    },
+    {
+        "BookId": 43,
+        "LanguageId": 8,
+        "Text": "Juan"
+    },
+    {
+        "BookId": 44,
+        "LanguageId": 8,
+        "Text": "Hechos"
+    },
+    {
+        "BookId": 45,
+        "LanguageId": 8,
+        "Text": "Romanos"
+    },
+    {
+        "BookId": 46,
+        "LanguageId": 8,
+        "Text": "1 Corintios"
+    },
+    {
+        "BookId": 47,
+        "LanguageId": 8,
+        "Text": "2 Corintios"
+    },
+    {
+        "BookId": 48,
+        "LanguageId": 8,
+        "Text": "Gálatas"
+    },
+    {
+        "BookId": 49,
+        "LanguageId": 8,
+        "Text": "Efesios"
+    },
+    {
+        "BookId": 50,
+        "LanguageId": 8,
+        "Text": "Filipenses"
+    },
+    {
+        "BookId": 51,
+        "LanguageId": 8,
+        "Text": "Colosenses"
+    },
+    {
+        "BookId": 52,
+        "LanguageId": 8,
+        "Text": "1 Tesalonicenses"
+    },
+    {
+        "BookId": 53,
+        "LanguageId": 8,
+        "Text": "2 Tesalonicenses"
+    },
+    {
+        "BookId": 54,
+        "LanguageId": 8,
+        "Text": "1 Timoteo"
+    },
+    {
+        "BookId": 55,
+        "LanguageId": 8,
+        "Text": "2 Timoteo"
+    },
+    {
+        "BookId": 56,
+        "LanguageId": 8,
+        "Text": "Tito"
+    },
+    {
+        "BookId": 57,
+        "LanguageId": 8,
+        "Text": "Filemón"
+    },
+    {
+        "BookId": 58,
+        "LanguageId": 8,
+        "Text": "Hebreos"
+    },
+    {
+        "BookId": 59,
+        "LanguageId": 8,
+        "Text": "Santiago"
+    },
+    {
+        "BookId": 60,
+        "LanguageId": 8,
+        "Text": "1 Pedro"
+    },
+    {
+        "BookId": 61,
+        "LanguageId": 8,
+        "Text": "2 Pedro"
+    },
+    {
+        "BookId": 62,
+        "LanguageId": 8,
+        "Text": "1 Juan"
+    },
+    {
+        "BookId": 63,
+        "LanguageId": 8,
+        "Text": "2 Juan"
+    },
+    {
+        "BookId": 64,
+        "LanguageId": 8,
+        "Text": "3 Juan"
+    },
+    {
+        "BookId": 65,
+        "LanguageId": 8,
+        "Text": "Judas"
+    },
+    {
+        "BookId": 66,
+        "LanguageId": 8,
+        "Text": "Apocalipsis"
+    },
+    {
+        "BookId": 67,
+        "LanguageId": 8,
+        "Text": "Baruc"
+    },
+    {
+        "BookId": 68,
+        "LanguageId": 8,
+        "Text": "Tobías"
+    },
+    {
+        "BookId": 69,
+        "LanguageId": 8,
+        "Text": "Judit"
+    },
+    {
+        "BookId": 70,
+        "LanguageId": 8,
+        "Text": "1 Macabeos"
+    },
+    {
+        "BookId": 71,
+        "LanguageId": 8,
+        "Text": "2 Macabeos"
+    },
+    {
+        "BookId": 72,
+        "LanguageId": 8,
+        "Text": "Sabiduría"
+    },
+    {
+        "BookId": 73,
+        "LanguageId": 8,
+        "Text": "Eclesiástico"
+    },
+    {
+        "BookId": 1,
+        "LanguageId": 9,
+        "Text": "Genesis"
+    },
+    {
+        "BookId": 2,
+        "LanguageId": 9,
+        "Text": "Exodus"
+    },
+    {
+        "BookId": 3,
+        "LanguageId": 9,
+        "Text": "Leviticus"
+    },
+    {
+        "BookId": 4,
+        "LanguageId": 9,
+        "Text": "Numeri"
+    },
+    {
+        "BookId": 5,
+        "LanguageId": 9,
+        "Text": "Deuteronomium"
+    },
+    {
+        "BookId": 6,
+        "LanguageId": 9,
+        "Text": "Jozua"
+    },
+    {
+        "BookId": 7,
+        "LanguageId": 9,
+        "Text": "Richteren"
+    },
+    {
+        "BookId": 8,
+        "LanguageId": 9,
+        "Text": "Ruth"
+    },
+    {
+        "BookId": 9,
+        "LanguageId": 9,
+        "Text": "1 Samuel"
+    },
+    {
+        "BookId": 10,
+        "LanguageId": 9,
+        "Text": "2 Samuel"
+    },
+    {
+        "BookId": 11,
+        "LanguageId": 9,
+        "Text": "1 Koningen"
+    },
+    {
+        "BookId": 12,
+        "LanguageId": 9,
+        "Text": "2 Koningen"
+    },
+    {
+        "BookId": 13,
+        "LanguageId": 9,
+        "Text": "1 Kronieken"
+    },
+    {
+        "BookId": 14,
+        "LanguageId": 9,
+        "Text": "2 Kronieken"
+    },
+    {
+        "BookId": 15,
+        "LanguageId": 9,
+        "Text": "Ezra"
+    },
+    {
+        "BookId": 16,
+        "LanguageId": 9,
+        "Text": "Nehemia"
+    },
+    {
+        "BookId": 17,
+        "LanguageId": 9,
+        "Text": "Esther"
+    },
+    {
+        "BookId": 18,
+        "LanguageId": 9,
+        "Text": "Job"
+    },
+    {
+        "BookId": 19,
+        "LanguageId": 9,
+        "Text": "Psalmen"
+    },
+    {
+        "BookId": 20,
+        "LanguageId": 9,
+        "Text": "Spreuken"
+    },
+    {
+        "BookId": 21,
+        "LanguageId": 9,
+        "Text": "Prediker"
+    },
+    {
+        "BookId": 22,
+        "LanguageId": 9,
+        "Text": "Hooglied"
+    },
+    {
+        "BookId": 23,
+        "LanguageId": 9,
+        "Text": "Jesaja"
+    },
+    {
+        "BookId": 24,
+        "LanguageId": 9,
+        "Text": "Jeremia"
+    },
+    {
+        "BookId": 25,
+        "LanguageId": 9,
+        "Text": "Klaagliederen"
+    },
+    {
+        "BookId": 26,
+        "LanguageId": 9,
+        "Text": "Ezechiël"
+    },
+    {
+        "BookId": 27,
+        "LanguageId": 9,
+        "Text": "Daniël"
+    },
+    {
+        "BookId": 28,
+        "LanguageId": 9,
+        "Text": "Hosea"
+    },
+    {
+        "BookId": 29,
+        "LanguageId": 9,
+        "Text": "Joël"
+    },
+    {
+        "BookId": 30,
+        "LanguageId": 9,
+        "Text": "Amos"
+    },
+    {
+        "BookId": 31,
+        "LanguageId": 9,
+        "Text": "Obadja"
+    },
+    {
+        "BookId": 32,
+        "LanguageId": 9,
+        "Text": "Jona"
+    },
+    {
+        "BookId": 33,
+        "LanguageId": 9,
+        "Text": "Micha"
+    },
+    {
+        "BookId": 34,
+        "LanguageId": 9,
+        "Text": "Nahum"
+    },
+    {
+        "BookId": 35,
+        "LanguageId": 9,
+        "Text": "Habakuk"
+    },
+    {
+        "BookId": 36,
+        "LanguageId": 9,
+        "Text": "Zefanja"
+    },
+    {
+        "BookId": 37,
+        "LanguageId": 9,
+        "Text": "Haggaï"
+    },
+    {
+        "BookId": 38,
+        "LanguageId": 9,
+        "Text": "Zacharia"
+    },
+    {
+        "BookId": 39,
+        "LanguageId": 9,
+        "Text": "Maleachi"
+    },
+    {
+        "BookId": 40,
+        "LanguageId": 9,
+        "Text": "Mattheüs"
+    },
+    {
+        "BookId": 41,
+        "LanguageId": 9,
+        "Text": "Markus"
+    },
+    {
+        "BookId": 42,
+        "LanguageId": 9,
+        "Text": "Lukas"
+    },
+    {
+        "BookId": 43,
+        "LanguageId": 9,
+        "Text": "Johannes"
+    },
+    {
+        "BookId": 44,
+        "LanguageId": 9,
+        "Text": "Handelingen"
+    },
+    {
+        "BookId": 45,
+        "LanguageId": 9,
+        "Text": "Romeinen"
+    },
+    {
+        "BookId": 46,
+        "LanguageId": 9,
+        "Text": "1 Korinthe"
+    },
+    {
+        "BookId": 47,
+        "LanguageId": 9,
+        "Text": "2 Korinthe"
+    },
+    {
+        "BookId": 48,
+        "LanguageId": 9,
+        "Text": "Galaten"
+    },
+    {
+        "BookId": 49,
+        "LanguageId": 9,
+        "Text": "Efeze"
+    },
+    {
+        "BookId": 50,
+        "LanguageId": 9,
+        "Text": "Filippenzen"
+    },
+    {
+        "BookId": 51,
+        "LanguageId": 9,
+        "Text": "Kolossenzen"
+    },
+    {
+        "BookId": 52,
+        "LanguageId": 9,
+        "Text": "1 Thessalonicenzen"
+    },
+    {
+        "BookId": 53,
+        "LanguageId": 9,
+        "Text": "2 Thessalonicenzen"
+    },
+    {
+        "BookId": 54,
+        "LanguageId": 9,
+        "Text": "1 Timotheüs"
+    },
+    {
+        "BookId": 55,
+        "LanguageId": 9,
+        "Text": "2 Timotheüs"
+    },
+    {
+        "BookId": 56,
+        "LanguageId": 9,
+        "Text": "Titus"
+    },
+    {
+        "BookId": 57,
+        "LanguageId": 9,
+        "Text": "Filemon"
+    },
+    {
+        "BookId": 58,
+        "LanguageId": 9,
+        "Text": "Hebreeën"
+    },
+    {
+        "BookId": 59,
+        "LanguageId": 9,
+        "Text": "Jakobus"
+    },
+    {
+        "BookId": 60,
+        "LanguageId": 9,
+        "Text": "1 Petrus"
+    },
+    {
+        "BookId": 61,
+        "LanguageId": 9,
+        "Text": "2 Petrus"
+    },
+    {
+        "BookId": 62,
+        "LanguageId": 9,
+        "Text": "1 Johannes"
+    },
+    {
+        "BookId": 63,
+        "LanguageId": 9,
+        "Text": "2 Johannes"
+    },
+    {
+        "BookId": 64,
+        "LanguageId": 9,
+        "Text": "3 Johannes"
+    },
+    {
+        "BookId": 65,
+        "LanguageId": 9,
+        "Text": "Judas"
+    },
+    {
+        "BookId": 66,
+        "LanguageId": 9,
+        "Text": "Openbaring"
+    }
+]

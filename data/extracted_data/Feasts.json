@@ -1,0 +1,90 @@
+[
+    {
+        "Id": 1,
+        "Name": "Christmas"
+    },
+    {
+        "Id": 2,
+        "Name": "Ascension"
+    },
+    {
+        "Id": 3,
+        "Name": "LazarusSaturday"
+    },
+    {
+        "Id": 4,
+        "Name": "PalmSunday"
+    },
+    {
+        "Id": 5,
+        "Name": "PaschaMonday"
+    },
+    {
+        "Id": 6,
+        "Name": "PaschaTuesday"
+    },
+    {
+        "Id": 7,
+        "Name": "PaschaWednesday"
+    },
+    {
+        "Id": 8,
+        "Name": "PaschaThursday"
+    },
+    {
+        "Id": 9,
+        "Name": "PaschaFriday"
+    },
+    {
+        "Id": 10,
+        "Name": "TempleEntrance"
+    },
+    {
+        "Id": 11,
+        "Name": "EgyptEntrance"
+    },
+    {
+        "Id": 12,
+        "Name": "Annunciation"
+    },
+    {
+        "Id": 13,
+        "Name": "Cross"
+    },
+    {
+        "Id": 14,
+        "Name": "FastOfNinevah"
+    },
+    {
+        "Id": 15,
+        "Name": "Jonas"
+    },
+    {
+        "Id": 16,
+        "Name": "NativityParamoun"
+    },
+    {
+        "Id": 17,
+        "Name": "TheophanyParamoun"
+    },
+    {
+        "Id": 18,
+        "Name": "Theophany"
+    },
+    {
+        "Id": 19,
+        "Name": "WeddingofCana"
+    },
+    {
+        "Id": 20,
+        "Name": "GreatLentPreparationSaturday"
+    },
+    {
+        "Id": 21,
+        "Name": "GreatLentPreparationSunday"
+    },
+    {
+        "Id": 22,
+        "Name": "Easter"
+    }
+]

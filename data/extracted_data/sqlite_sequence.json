@@ -1,0 +1,70 @@
+[
+    {
+        "name": "Bibles",
+        "seq": 11
+    },
+    {
+        "name": "Books",
+        "seq": 73
+    },
+    {
+        "name": "Feasts",
+        "seq": 22
+    },
+    {
+        "name": "Languages",
+        "seq": 9
+    },
+    {
+        "name": "Verses",
+        "seq": 804012
+    },
+    {
+        "name": "AnnualReadings",
+        "seq": 366
+    },
+    {
+        "name": "GreatLentReadings",
+        "seq": 53
+    },
+    {
+        "name": "PentecostReadings",
+        "seq": 50
+    },
+    {
+        "name": "Readings",
+        "seq": 7
+    },
+    {
+        "name": "ReadingsMetadatas",
+        "seq": 3
+    },
+    {
+        "name": "Sections",
+        "seq": 13
+    },
+    {
+        "name": "SectionsMetadatas",
+        "seq": 1
+    },
+    {
+        "name": "Sentences",
+        "seq": 1
+    },
+    {
+        "name": "SubSections",
+        "seq": 10
+    },
+    {
+        "name": "SubSectionsMetadatas",
+        "seq": 2
+    },
+    {
+        "name": "SundayReadings",
+        "seq": 67
+    },
+    {
+        "name": "Synaxarium",
+        "seq": 3078
+    }
+]

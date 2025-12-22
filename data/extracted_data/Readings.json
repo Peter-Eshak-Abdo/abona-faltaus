@@ -1,0 +1,30 @@
+[
+    {
+        "Id": 1,
+        "Name": "Psalm"
+    },
+    {
+        "Id": 2,
+        "Name": "Gospel"
+    },
+    {
+        "Id": 3,
+        "Name": "Pauline"
+    },
+    {
+        "Id": 4,
+        "Name": "Catholic"
+    },
+    {
+        "Id": 5,
+        "Name": "Acts"
+    },
+    {
+        "Id": 6,
+        "Name": "Synaxarium"
+    },
+    {
+        "Id": 7,
+        "Name": "Prophecy"
+    }
+]

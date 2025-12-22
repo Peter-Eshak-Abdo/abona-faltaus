@@ -1,0 +1,54 @@
+[
+    {
+        "Id": 1,
+        "Name": "Vesper"
+    },
+    {
+        "Id": 2,
+        "Name": "Matin"
+    },
+    {
+        "Id": 3,
+        "Name": "Liturgy"
+    },
+    {
+        "Id": 4,
+        "Name": "FirstHour"
+    },
+    {
+        "Id": 5,
+        "Name": "ThirdHour"
+    },
+    {
+        "Id": 6,
+        "Name": "SixthHour"
+    },
+    {
+        "Id": 7,
+        "Name": "NinthHour"
+    },
+    {
+        "Id": 8,
+        "Name": "EleventhHour"
+    },
+    {
+        "Id": 9,
+        "Name": "EveFirstHour"
+    },
+    {
+        "Id": 10,
+        "Name": "EveThirdHour"
+    },
+    {
+        "Id": 11,
+        "Name": "EveSixthHour"
+    },
+    {
+        "Id": 12,
+        "Name": "EveNinthHour"
+    },
+    {
+        "Id": 13,
+        "Name": "EveEleventhHour"
+    }
+]

@@ -1,0 +1,294 @@
+[
+    {
+        "Id": 1,
+        "Name": "Genesis"
+    },
+    {
+        "Id": 2,
+        "Name": "Exodus"
+    },
+    {
+        "Id": 3,
+        "Name": "Leviticus"
+    },
+    {
+        "Id": 4,
+        "Name": "Numbers"
+    },
+    {
+        "Id": 5,
+        "Name": "Deuteronomy"
+    },
+    {
+        "Id": 6,
+        "Name": "Joshua"
+    },
+    {
+        "Id": 7,
+        "Name": "Judges"
+    },
+    {
+        "Id": 8,
+        "Name": "Ruth"
+    },
+    {
+        "Id": 9,
+        "Name": "1 Samuel"
+    },
+    {
+        "Id": 10,
+        "Name": "2 Samuel"
+    },
+    {
+        "Id": 11,
+        "Name": "1 Kings"
+    },
+    {
+        "Id": 12,
+        "Name": "2 Kings"
+    },
+    {
+        "Id": 13,
+        "Name": "1 Chronicles"
+    },
+    {
+        "Id": 14,
+        "Name": "2 Chronicles"
+    },
+    {
+        "Id": 15,
+        "Name": "Ezra"
+    },
+    {
+        "Id": 16,
+        "Name": "Nehemiah"
+    },
+    {
+        "Id": 17,
+        "Name": "Esther"
+    },
+    {
+        "Id": 18,
+        "Name": "Job"
+    },
+    {
+        "Id": 19,
+        "Name": "Psalms"
+    },
+    {
+        "Id": 20,
+        "Name": "Proverbs"
+    },
+    {
+        "Id": 21,
+        "Name": "Ecclesiastes"
+    },
+    {
+        "Id": 22,
+        "Name": "Song of Solomon"
+    },
+    {
+        "Id": 23,
+        "Name": "Isaiah"
+    },
+    {
+        "Id": 24,
+        "Name": "Jeremiah"
+    },
+    {
+        "Id": 25,
+        "Name": "Lamentations"
+    },
+    {
+        "Id": 26,
+        "Name": "Ezekiel"
+    },
+    {
+        "Id": 27,
+        "Name": "Daniel"
+    },
+    {
+        "Id": 28,
+        "Name": "Hosea"
+    },
+    {
+        "Id": 29,
+        "Name": "Joel"
+    },
+    {
+        "Id": 30,
+        "Name": "Amos"
+    },
+    {
+        "Id": 31,
+        "Name": "Obadiah"
+    },
+    {
+        "Id": 32,
+        "Name": "Jonah"
+    },
+    {
+        "Id": 33,
+        "Name": "Micah"
+    },
+    {
+        "Id": 34,
+        "Name": "Nahum"
+    },
+    {
+        "Id": 35,
+        "Name": "Habakkuk"
+    },
+    {
+        "Id": 36,
+        "Name": "Zephaniah"
+    },
+    {
+        "Id": 37,
+        "Name": "Haggai"
+    },
+    {
+        "Id": 38,
+        "Name": "Zechariah"
+    },
+    {
+        "Id": 39,
+        "Name": "Malachi"
+    },
+    {
+        "Id": 40,
+        "Name": "Matthew"
+    },
+    {
+        "Id": 41,
+        "Name": "Mark"
+    },
+    {
+        "Id": 42,
+        "Name": "Luke"
+    },
+    {
+        "Id": 43,
+        "Name": "John"
+    },
+    {
+        "Id": 44,
+        "Name": "Acts"
+    },
+    {
+        "Id": 45,
+        "Name": "Romans"
+    },
+    {
+        "Id": 46,
+        "Name": "1 Corinthians"
+    },
+    {
+        "Id": 47,
+        "Name": "2 Corinthians"
+    },
+    {
+        "Id": 48,
+        "Name": "Galatians"
+    },
+    {
+        "Id": 49,
+        "Name": "Ephesians"
+    },
+    {
+        "Id": 50,
+        "Name": "Philippians"
+    },
+    {
+        "Id": 51,
+        "Name": "Colossians"
+    },
+    {
+        "Id": 52,
+        "Name": "1 Thessalonians"
+    },
+    {
+        "Id": 53,
+        "Name": "2 Thessalonians"
+    },
+    {
+        "Id": 54,
+        "Name": "1 Timothy"
+    },
+    {
+        "Id": 55,
+        "Name": "2 Timothy"
+    },
+    {
+        "Id": 56,
+        "Name": "Titus"
+    },
+    {
+        "Id": 57,
+        "Name": "Philemon"
+    },
+    {
+        "Id": 58,
+        "Name": "Hebrews"
+    },
+    {
+        "Id": 59,
+        "Name": "James"
+    },
+    {
+        "Id": 60,
+        "Name": "1 Peter"
+    },
+    {
+        "Id": 61,
+        "Name": "2 Peter"
+    },
+    {
+        "Id": 62,
+        "Name": "1 John"
+    },
+    {
+        "Id": 63,
+        "Name": "2 John"
+    },
+    {
+        "Id": 64,
+        "Name": "3 John"
+    },
+    {
+        "Id": 65,
+        "Name": "Jude"
+    },
+    {
+        "Id": 66,
+        "Name": "Revelation"
+    },
+    {
+        "Id": 67,
+        "Name": "Baruch"
+    },
+    {
+        "Id": 68,
+        "Name": "Tobit"
+    },
+    {
+        "Id": 69,
+        "Name": "Judith"
+    },
+    {
+        "Id": 70,
+        "Name": "1 Maccabees"
+    },
+    {
+        "Id": 71,
+        "Name": "1 Maccabees"
+    },
+    {
+        "Id": 72,
+        "Name": "Wisdom of Solomon"
+    },
+    {
+        "Id": 73,
+        "Name": "Sirach"
+    }
+]

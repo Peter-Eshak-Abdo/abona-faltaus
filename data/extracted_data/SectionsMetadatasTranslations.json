@@ -1,0 +1,386 @@
+[
+    {
+        "SectionsId": 1,
+        "LanguageId": 1,
+        "SectionsMetadatasId": 1,
+        "Text": "Office de la Veille"
+    },
+    {
+        "SectionsId": 1,
+        "LanguageId": 2,
+        "SectionsMetadatasId": 1,
+        "Text": "Vespers"
+    },
+    {
+        "SectionsId": 1,
+        "LanguageId": 3,
+        "SectionsMetadatasId": 1,
+        "Text": "العشية"
+    },
+    {
+        "SectionsId": 1,
+        "LanguageId": 4,
+        "SectionsMetadatasId": 1,
+        "Text": "Incenso"
+    },
+    {
+        "SectionsId": 1,
+        "LanguageId": 6,
+        "SectionsMetadatasId": 1,
+        "Text": "Abendweihrauchopfer"
+    },
+    {
+        "SectionsId": 2,
+        "LanguageId": 1,
+        "SectionsMetadatasId": 1,
+        "Text": "Office du Matin"
+    },
+    {
+        "SectionsId": 2,
+        "LanguageId": 2,
+        "SectionsMetadatasId": 1,
+        "Text": "Matins"
+    },
+    {
+        "SectionsId": 2,
+        "LanguageId": 3,
+        "SectionsMetadatasId": 1,
+        "Text": "باكر"
+    },
+    {
+        "SectionsId": 2,
+        "LanguageId": 4,
+        "SectionsMetadatasId": 1,
+        "Text": "Mattino"
+    },
+    {
+        "SectionsId": 2,
+        "LanguageId": 6,
+        "SectionsMetadatasId": 1,
+        "Text": "Morgenweihrauchopfer"
+    },
+    {
+        "SectionsId": 3,
+        "LanguageId": 1,
+        "SectionsMetadatasId": 1,
+        "Text": "Messe"
+    },
+    {
+        "SectionsId": 3,
+        "LanguageId": 2,
+        "SectionsMetadatasId": 1,
+        "Text": "Liturgy"
+    },
+    {
+        "SectionsId": 3,
+        "LanguageId": 3,
+        "SectionsMetadatasId": 1,
+        "Text": "قداس"
+    },
+    {
+        "SectionsId": 3,
+        "LanguageId": 4,
+        "SectionsMetadatasId": 1,
+        "Text": "Messa"
+    },
+    {
+        "SectionsId": 3,
+        "LanguageId": 6,
+        "SectionsMetadatasId": 1,
+        "Text": "Die heilige Liturgie"
+    },
+    {
+        "SectionsId": 4,
+        "LanguageId": 1,
+        "SectionsMetadatasId": 1,
+        "Text": "Première Heure"
+    },
+    {
+        "SectionsId": 4,
+        "LanguageId": 2,
+        "SectionsMetadatasId": 1,
+        "Text": "First Hour"
+    },
+    {
+        "SectionsId": 4,
+        "LanguageId": 3,
+        "SectionsMetadatasId": 1,
+        "Text": "الساعة الأولى"
+    },
+    {
+        "SectionsId": 4,
+        "LanguageId": 4,
+        "SectionsMetadatasId": 1,
+        "Text": "Prima ora"
+    },
+    {
+        "SectionsId": 4,
+        "LanguageId": 6,
+        "SectionsMetadatasId": 1,
+        "Text": "Erste Stunde"
+    },
+    {
+        "SectionsId": 5,
+        "LanguageId": 1,
+        "SectionsMetadatasId": 1,
+        "Text": "Troisième Heure"
+    },
+    {
+        "SectionsId": 5,
+        "LanguageId": 2,
+        "SectionsMetadatasId": 1,
+        "Text": "Third Hour"
+    },
+    {
+        "SectionsId": 5,
+        "LanguageId": 3,
+        "SectionsMetadatasId": 1,
+        "Text": "الساعة الثالثة"
+    },
+    {
+        "SectionsId": 5,
+        "LanguageId": 4,
+        "SectionsMetadatasId": 1,
+        "Text": "Terza ora"
+    },
+    {
+        "SectionsId": 5,
+        "LanguageId": 6,
+        "SectionsMetadatasId": 1,
+        "Text": "Dritte Stunde"
+    },
+    {
+        "SectionsId": 6,
+        "LanguageId": 1,
+        "SectionsMetadatasId": 1,
+        "Text": "Sixième Heure"
+    },
+    {
+        "SectionsId": 6,
+        "LanguageId": 2,
+        "SectionsMetadatasId": 1,
+        "Text": "Sixth Hour"
+    },
+    {
+        "SectionsId": 6,
+        "LanguageId": 3,
+        "SectionsMetadatasId": 1,
+        "Text": "الساعة السادسة"
+    },
+    {
+        "SectionsId": 6,
+        "LanguageId": 4,
+        "SectionsMetadatasId": 1,
+        "Text": "Sesta ora"
+    },
+    {
+        "SectionsId": 6,
+        "LanguageId": 6,
+        "SectionsMetadatasId": 1,
+        "Text": "Sechste Stunde"
+    },
+    {
+        "SectionsId": 7,
+        "LanguageId": 1,
+        "SectionsMetadatasId": 1,
+        "Text": "Neuvième Heure"
+    },
+    {
+        "SectionsId": 7,
+        "LanguageId": 2,
+        "SectionsMetadatasId": 1,
+        "Text": "Ninth Hour"
+    },
+    {
+        "SectionsId": 7,
+        "LanguageId": 3,
+        "SectionsMetadatasId": 1,
+        "Text": "الساعة التاسعة"
+    },
+    {
+        "SectionsId": 7,
+        "LanguageId": 4,
+        "SectionsMetadatasId": 1,
+        "Text": "Nona ora"
+    },
+    {
+        "SectionsId": 7,
+        "LanguageId": 6,
+        "SectionsMetadatasId": 1,
+        "Text": "Neunte Stunde"
+    },
+    {
+        "SectionsId": 8,
+        "LanguageId": 1,
+        "SectionsMetadatasId": 1,
+        "Text": "Onzième Heure"
+    },
+    {
+        "SectionsId": 8,
+        "LanguageId": 2,
+        "SectionsMetadatasId": 1,
+        "Text": "Eleventh hour"
+    },
+    {
+        "SectionsId": 8,
+        "LanguageId": 3,
+        "SectionsMetadatasId": 1,
+        "Text": "الساعة الحادية عشر"
+    },
+    {
+        "SectionsId": 8,
+        "LanguageId": 4,
+        "SectionsMetadatasId": 1,
+        "Text": "Undicesima ora"
+    },
+    {
+        "SectionsId": 8,
+        "LanguageId": 6,
+        "SectionsMetadatasId": 1,
+        "Text": "Elfte Stunde"
+    },
+    {
+        "SectionsId": 1,
+        "LanguageId": 7,
+        "SectionsMetadatasId": 1,
+        "Text": "Nieszpory"
+    },
+    {
+        "SectionsId": 2,
+        "LanguageId": 7,
+        "SectionsMetadatasId": 1,
+        "Text": "Jutrznia"
+    },
+    {
+        "SectionsId": 3,
+        "LanguageId": 7,
+        "SectionsMetadatasId": 1,
+        "Text": "Liturgia"
+    },
+    {
+        "SectionsId": 1,
+        "LanguageId": 8,
+        "SectionsMetadatasId": 1,
+        "Text": "Oficio de la Vigilancia"
+    },
+    {
+        "SectionsId": 2,
+        "LanguageId": 8,
+        "SectionsMetadatasId": 1,
+        "Text": "Oficio del Mañana"
+    },
+    {
+        "SectionsId": 3,
+        "LanguageId": 8,
+        "SectionsMetadatasId": 1,
+        "Text": "Misa"
+    },
+    {
+        "SectionsId": 4,
+        "LanguageId": 8,
+        "SectionsMetadatasId": 1,
+        "Text": "Primera Hora"
+    },
+    {
+        "SectionsId": 5,
+        "LanguageId": 8,
+        "SectionsMetadatasId": 1,
+        "Text": "Tercera Hora"
+    },
+    {
+        "SectionsId": 6,
+        "LanguageId": 8,
+        "SectionsMetadatasId": 1,
+        "Text": "Sexta Hora"
+    },
+    {
+        "SectionsId": 7,
+        "LanguageId": 8,
+        "SectionsMetadatasId": 1,
+        "Text": "Novena Hora"
+    },
+    {
+        "SectionsId": 8,
+        "LanguageId": 8,
+        "SectionsMetadatasId": 1,
+        "Text": "Undécima Hora"
+    },
+    {
+        "SectionsId": 4,
+        "LanguageId": 7,
+        "SectionsMetadatasId": 1,
+        "Text": "Pierwsza Godzina"
+    },
+    {
+        "SectionsId": 5,
+        "LanguageId": 7,
+        "SectionsMetadatasId": 1,
+        "Text": "Trzecia Godzina"
+    },
+    {
+        "SectionsId": 6,
+        "LanguageId": 7,
+        "SectionsMetadatasId": 1,
+        "Text": "Szósta Godzina"
+    },
+    {
+        "SectionsId": 7,
+        "LanguageId": 7,
+        "SectionsMetadatasId": 1,
+        "Text": "Dziewiąta Godzina"
+    },
+    {
+        "SectionsId": 8,
+        "LanguageId": 7,
+        "SectionsMetadatasId": 1,
+        "Text": "Jedenasta Godzina"
+    },
+    {
+        "SectionsId": 1,
+        "LanguageId": 9,
+        "SectionsMetadatasId": 1,
+        "Text": "Avond Wierookgebed"
+    },
+    {
+        "SectionsId": 2,
+        "LanguageId": 9,
+        "SectionsMetadatasId": 1,
+        "Text": "Ochtend Wierookgebed"
+    },
+    {
+        "SectionsId": 3,
+        "LanguageId": 9,
+        "SectionsMetadatasId": 1,
+        "Text": "Eucharistieviering"
+    },
+    {
+        "SectionsId": 4,
+        "LanguageId": 9,
+        "SectionsMetadatasId": 1,
+        "Text": "Eerste Uur"
+    },
+    {
+        "SectionsId": 5,
+        "LanguageId": 9,
+        "SectionsMetadatasId": 1,
+        "Text": "Derde Uur"
+    },
+    {
+        "SectionsId": 6,
+        "LanguageId": 9,
+        "SectionsMetadatasId": 1,
+        "Text": "Zesde Uur"
+    },
+    {
+        "SectionsId": 7,
+        "LanguageId": 9,
+        "SectionsMetadatasId": 1,
+        "Text": "Negen Uur"
+    },
+    {
+        "SectionsId": 8,
+        "LanguageId": 9,
+        "SectionsMetadatasId": 1,
+        "Text": "Elfde Uur"
+    }
+]

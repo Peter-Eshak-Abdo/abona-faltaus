@@ -1,0 +1,42 @@
+[
+    {
+        "SentenceId": 1,
+        "LanguageId": 1,
+        "Text": "Veille du"
+    },
+    {
+        "SentenceId": 1,
+        "LanguageId": 2,
+        "Text": "Eve of"
+    },
+    {
+        "SentenceId": 1,
+        "LanguageId": 3,
+        "Text": "عشية"
+    },
+    {
+        "SentenceId": 1,
+        "LanguageId": 4,
+        "Text": "vigilia di"
+    },
+    {
+        "SentenceId": 1,
+        "LanguageId": 6,
+        "Text": "Vorabend von"
+    },
+    {
+        "SentenceId": 1,
+        "LanguageId": 8,
+        "Text": "Vigilancia de"
+    },
+    {
+        "SentenceId": 1,
+        "LanguageId": 7,
+        "Text": "Wieczór"
+    },
+    {
+        "SentenceId": 1,
+        "LanguageId": 9,
+        "Text": "Vooravond van"
+    }
+]
