@@ -87,7 +87,7 @@
     "web-push": "^3.6.7",
     "xlsx": "^0.18.5",
     "yet-another-react-lightbox": "^3.27.0",
-    "zod": "^4.1.13"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
