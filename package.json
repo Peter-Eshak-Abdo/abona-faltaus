@@ -54,7 +54,7 @@
     "framer-motion": "^12.23.25",
     "geist": "^1.5.1",
     "google-auth-library": "^10.5.0",
-    "googleapis": "^167.0.0",
+    "googleapis": "^169.0.0",
     "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.3.8",
     "input-otp": "^1.4.2",
