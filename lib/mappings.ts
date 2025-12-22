@@ -10,6 +10,14 @@ export const TITLES_MAP: Record<string, string> = {
   agpeya: "الأجبية المقدسة",
   psalmody: "التسبحة",
 
+  // -- doxologies --
+  "01-intro": "مقدمة الذكصولوجيات",
+  "02-great-lent-doxology-1": "ذكصولوجية الصوم الكبير 1",
+  "03-st-mary": "ذكصولوجيةالعذراء",
+  "04-archangel-michael": "ذكصولوجية الملاك ميخائيل",
+  "05-st-pishoy-and-st-paul": "ذكصولوجية الانبا يوساب",
+  "06-conclusion": "ختام الذكصولوجيات",
+
   // --- أقسام القداس (St. Basil Structure) ---
   "00-matins-raising-of-incense": "رفع بخور باكر",
   "01-offering-of-the-lamb": "تقديم الحمل",
@@ -43,7 +51,6 @@ export const TITLES_MAP: Record<string, string> = {
   institution: "تأسيس السر",
   "7-litanies": "الأواشي السبع الصغار",
   communion: "الاعتراف والتناول",
-
 };
 
 // دالة مساعدة لجلب الاسم

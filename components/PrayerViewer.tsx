@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileContext } from '@/lib/coptic-service';
+import { getDisplayName } from '@/lib/mappings';
 
 type Props = {
   context: FileContext;
@@ -65,24 +66,24 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
     const diffY = touchStart.y - endY;
 
     // إلغاء السحب إذا كان التمرير عمودياً
-    if (Math.abs(diffY) > Math.abs(diffX)) {
-      setTouchStart(null);
-      return;
-    }
+    // if (Math.abs(diffY) > Math.abs(diffX)) {
+    //   setTouchStart(null);
+    //   return;
+    // }
 
     // Threshold check for horizontal swipe
-    if (Math.abs(diffX) > 50) {
+    if (Math.abs(diffX) > 70) {
       if (diffX > 0) {
         // سحب لليسار (التالي)
-        if (next) {
-          router.push(`?path=${parentPath ? `${parentPath}/${next}` : next}`);
+        if (prev) {
+          router.push(`?path=${parentPath ? prev:`${parentPath}/${prev}`}`);
         } else if (nextDirectoryLink) {
           // 🔥 هنا السحر: إذا لم يوجد ملف تالي، ولكن يوجد مجلد تالي، اذهب إليه
           router.push(`?path=${nextDirectoryLink}`);
         }
-      } else if (diffX < 0 && prev) {
+      } else if (diffX < 70 && next) {
         // سحب لليمين (السابق)
-        router.push(`?path=${parentPath ? `${parentPath}/${prev}` : prev}`);
+        router.push(`?path=${parentPath ?  next : `${parentPath}/${next}`}`);
       }
       // // Correct RTL navigation logic
       // if (diffX > 0 && next) { // Swipe Left (R->L) -> NEXT
@@ -220,13 +221,13 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
         {/* Dropdown File Switcher */}
         <div className="relative">
           <button onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-0.5 p-0.5 bg-gray-100 rounded-lg text-sm font-bold truncate max-w-full">
-            {siblings[currentIndex]?.replace('.json', '')} ▼
+            {getDisplayName(siblings[currentIndex]?.replace('.json', ''))} ▼
           </button>
           {menuOpen && (
             <div className="absolute top-full right-0 md:w-40 w-20 max-h-[60vh] overflow-y-auto bg-white shadow-xl border z-50 rounded mt-1">
               {siblings.map((f, i) => (
                 <button key={f} onClick={() => goToFile(f)} className={`w-full text-right p-0.5 border-b text-sm ${i === currentIndex ? 'bg-blue-50 font-bold border-r-4 border-r-blue-600' : ''}`}>
-                  {f.replace('.json', '')}
+                  {getDisplayName(f.replace('.json', ''))}
                 </button>
               ))}
             </div>
@@ -245,7 +246,7 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
       <div
         className="flex-1 p-0.5 md:p-0.5 bg-gray-100">
         <article
-          className="max-w-8xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden min-h-[600px] touch-pan-y"
+          className="max-w-8xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden min-h-[600px]"
           /* touch-pan-y: يخبر المتصفح أن العنصر يقبل السكرول العمودي، مما يحسن الأداء */
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}

@@ -117,8 +117,8 @@ export default function HomeClient() {
               <Image
                 src="/images/eagle.webp"
                 alt="Eagle"
-                width={230}
-                height={250}
+                width={210}
+                height={220}
               />
             </motion.div>
           </motion.div>
@@ -130,8 +130,8 @@ export default function HomeClient() {
         {showMenu &&
           sections.map((section, index) => {
             const angle = (index / sections.length) * 2 * Math.PI;
-            const x = Math.cos(angle) * 140 - 37;
-            const y = Math.sin(angle) * 165 - 40;
+            const x = Math.cos(angle) * 135 - 37;
+            const y = Math.sin(angle) * 160 - 40;
             return (
               <motion.div
                 key={section.name}
