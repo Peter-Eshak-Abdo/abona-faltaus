@@ -108,7 +108,7 @@
     "@types/react-howler": "^5.2.3",
     "@types/uuid": "^11.0.0",
     "@types/web-push": "^3.6.4",
-    "autoprefixer": "^10.4.22",
+    "autoprefixer": "^10.4.23",
     "baseline-browser-mapping": "^2.9.4",
     "eslint": "^9",
     "eslint-config-next": "16.1.0",
