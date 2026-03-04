@@ -86,7 +86,7 @@
     "vaul": "^1.1.2",
     "web-push": "^3.6.7",
     "xlsx": "^0.18.5",
-    "yet-another-react-lightbox": "^3.27.0",
+    "yet-another-react-lightbox": "^3.29.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {
