@@ -52,7 +52,7 @@
     "express": "^5.2.1",
     "firebase": "^12.6.0",
     "framer-motion": "^12.23.25",
-    "geist": "^1.5.1",
+    "geist": "^1.7.0",
     "google-auth-library": "^10.5.0",
     "googleapis": "^169.0.0",
     "html2canvas": "^1.4.1",
