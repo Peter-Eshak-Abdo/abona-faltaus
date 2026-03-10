@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { getFirebaseServices } from "@/lib/firebase"
+import { db, auth } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase"
 import { getUserQuizzes } from "@/lib/firebase-utils"
 import { Plus, Play, Users, Calendar, AlertCircle, Edit, Trash2, Trash } from "lucide-react"
 import type { Quiz } from "@/types/quiz"
@@ -318,14 +319,27 @@ function DashboardView({ auth, db }: { auth: Auth, db: Firestore }) {
 }
 
 export default function DashboardPage() {
-  const [auth, setAuth] = useState<Auth | null>(null);
-  const [db, setDb] = useState<Firestore | null>(null);
+  // const [auth, setAuth] = useState<Auth | null>(null);
+  // const [db, setDb] = useState<Firestore | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const { auth, db } = getFirebaseServices();
-    setAuth(auth);
-    setDb(db);
+    setIsReady(true);
   }, []);
+
+  if (!isReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // useEffect(() => {
+  //   // const { auth, db } = getFirebaseServices();
+  //   setAuth(auth);
+  //   setDb(db);
+  // }, []);
 
   if (!auth || !db) {
     return (

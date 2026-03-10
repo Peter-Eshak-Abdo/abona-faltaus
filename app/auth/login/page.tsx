@@ -12,7 +12,8 @@ import {
   updateProfile,
   Auth,
 } from "firebase/auth";
-import { getFirebaseServices } from "@/lib/firebase";
+import { db, auth } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp, Firestore } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -32,10 +33,10 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const { auth, db } = getFirebaseServices();
+    // const { auth, db } = getFirebaseServices();
     setAuth(auth);
     setDb(db);
-    if (auth.currentUser) router.push("/");
+    if (auth?.currentUser) router.push("/");
     setIsLoading(false);
   }, [router]);
 

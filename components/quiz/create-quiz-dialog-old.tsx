@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { getFirebaseServices } from "@/lib/firebase"
+import { auth } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase"
 import { createQuiz } from "@/lib/firebase-utils"
 import { Plus, Trash2, Check, Shuffle, Clock, X, Upload, Download } from "lucide-react"
 import type { Question, Quiz } from "@/types/quiz"
@@ -21,7 +22,7 @@ interface CreateQuizDialogProps {
 }
 
 export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }: CreateQuizDialogProps) {
-  const { auth } = getFirebaseServices();
+  // const { auth } = getFirebaseServices();
   const [user] = useAuthState(auth)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -268,8 +269,11 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
       setShuffleChoices(false)
       setIsEditing(false)
       onQuizCreated()
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving quiz:", error)
+      console.dir(error); // سيظهر لك تفاصيل الخطأ كاملة في الكونسول
+      console.error("Error Code:", error?.code); // هذا سيخبرنا إذا كان السبب "permission-denied"
+      alert("حدث خطأ: " + (error?.message || "Unknown error"));
       alert(`حدث خطأ في ${isEditing ? 'تحديث' : 'إنشاء'} المسابقة. حاول مرة أخرى.`)
     } finally {
       setIsSubmitting(false)
@@ -297,7 +301,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
             <label className="block text-sm font-medium mb-1">اسم المسابقة</label>
             <input
               type="text"
-              className="w-full rounded-md border border-input bg-black p-1 text-black placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
+              className="w-full rounded-md border border-input p-1 text-black placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="اضف اسم المسابقة ..."
@@ -306,7 +310,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
           <div className="mb-1">
             <label className="block text-sm font-medium mb-1">وصف المسابقة</label>
             <textarea
-              className="w-full resize-none rounded-md border border-input bg-black p-1 text-black placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
+              className="w-full resize-none rounded-md border border-input p-1 text-black placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}

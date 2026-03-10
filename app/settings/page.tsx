@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { getFirebaseServices } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
 import { doc, getDoc, updateDoc, Firestore } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -304,7 +305,7 @@ export default function SettingsPage() {
   const [db, setDb] = useState<Firestore | null>(null);
 
   useEffect(() => {
-    const { auth, db } = getFirebaseServices();
+    // const { auth, db } = getFirebaseServices();
     setAuth(auth);
     setDb(db);
   }, []);

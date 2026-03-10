@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getFirebaseServices } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
 
 export default function UserHeader() {
-  const { auth, db } = getFirebaseServices();
+  // const { auth, db } = getFirebaseServices();
   const [user, setUser] = useState<User | null>(null);
   const [customDisplayName, setCustomDisplayName] = useState<string | null>(null);
 

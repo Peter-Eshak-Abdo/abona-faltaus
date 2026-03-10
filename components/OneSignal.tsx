@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { getFirebaseServices } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 
 declare global {
   interface Window {
@@ -11,8 +12,8 @@ declare global {
 }
 
 export default function OneSignal() {
-  const {auth} = getFirebaseServices();
-  
+  // const {auth} = getFirebaseServices();
+
   useEffect(() => {
     // Only run on client side
     if (typeof window === "undefined") return;

@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { getFirebaseServices } from "@/lib/firebase"
+import { auth } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase"
 import { createQuiz } from "@/lib/firebase-utils"
 import { Plus, Trash2, Check, Shuffle, X, Upload, Download } from "lucide-react"
 import type { Question, Quiz } from "@/types/quiz"
@@ -20,7 +21,7 @@ interface CreateQuizDialogProps {
 }
 
 export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }: CreateQuizDialogProps) {
-  const {auth} = getFirebaseServices();
+  // const {auth} = getFirebaseServices();
   const [user] = useAuthState(auth)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -263,7 +264,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
             <label className="block text-sm font-medium mb-1">اسم المسابقة</label>
             <input
               type="text"
-              className="w-full rounded-md border border-input bg-background p-2 focus:outline-none"
+              className="w-full rounded-md border border-input text-white bg-background p-2 focus:outline-none"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="اضف اسم المسابقة ..."

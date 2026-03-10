@@ -8,7 +8,8 @@ import type { Quiz, GameState, Saint } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuthState } from "react-firebase-hooks/auth";
-import { getFirebaseServices } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
 import { Auth } from "firebase/auth"
 
 function JoinQuizView({ auth }: { auth: Auth }) {
@@ -398,12 +399,12 @@ function JoinQuizView({ auth }: { auth: Auth }) {
 }
 
 export default function JoinQuizPage() {
-  const [auth, setAuth] = useState<Auth | null>(null);
+  // const [auth, setAuth] = useState<Auth | null>(null);
 
-  useEffect(() => {
-    const { auth } = getFirebaseServices();
-    setAuth(auth);
-  }, []);
+  // useEffect(() => {
+  //   // const { auth } = getFirebaseServices();
+  //   setAuth(auth);
+  // }, []);
 
   if (!auth) {
     return (

@@ -1,19 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { getFirebaseServices } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
 import {
   collection,
   addDoc,
   serverTimestamp
 } from "firebase/firestore";
+import { db,auth,storage } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function CreateMkal() {
   const [text, setText] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const { db, auth, storage } = getFirebaseServices();
+  // const { db, auth, storage } = getFirebaseServices();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

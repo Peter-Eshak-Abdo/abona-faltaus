@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
-import { getFirebaseServices } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -11,6 +11,7 @@ import {
   RecaptchaVerifier,
   Auth,
 } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -28,7 +29,7 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { auth } = getFirebaseServices();
+    // const { auth } = getFirebaseServices();
     setAuth(auth);
     setLoading(false);
   }, []);

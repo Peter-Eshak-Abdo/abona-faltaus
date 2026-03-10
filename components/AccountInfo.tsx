@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getFirebaseServices } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
 import {
   onAuthStateChanged,
   signOut,
@@ -20,6 +20,7 @@ import {
   getDownloadURL,
   FirebaseStorage,
 } from "firebase/storage";
+import { db, auth, storage } from "@/lib/firebase";
 import { Copy, Share2, LogOut, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -45,7 +46,7 @@ export default function AccountInfo() {
   const router = useRouter();
 
   useEffect(() => {
-    const { auth, db, storage } = getFirebaseServices();
+    // const { auth, db, storage } = getFirebaseServices();
     setAuth(auth);
     setDb(db);
     setStorage(storage);

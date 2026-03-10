@@ -1,5 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { getFirebaseServices } from "@/lib/firebase"; // Import the new function
+// import { getFirebaseServices } from "@/lib/firebase"; // Import the new function
+import { db } from "@/lib/firebase";
 import { sendDailyVerseNotification } from "./onesignal";
 
 export interface NotificationSchedule {
@@ -12,7 +13,7 @@ export interface NotificationSchedule {
 
 // Check if current time matches any schedule
 export const checkAndSendScheduledNotifications = async () => {
-  const { db } = getFirebaseServices(); // Initialize Firebase services
+  // const { db } = getFirebaseServices(); // Initialize Firebase services
   try {
     const now = new Date();
     const currentHour = now.getHours();

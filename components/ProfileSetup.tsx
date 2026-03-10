@@ -1,11 +1,12 @@
 "use client";
-import { getFirebaseServices } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "firebase/auth";
 
 export default function ProfileSetup() {
-  const { auth } = getFirebaseServices();
+  // const { auth } = getFirebaseServices();
   const [name, setName] = useState("");
   const router = useRouter();
 

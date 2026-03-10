@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { getFirebaseServices } from "@/lib/firebase"
+// import { getFirebaseServices } from "@/lib/firebase"
 import {
   getQuiz,
   getQuizGroups,
@@ -12,6 +12,7 @@ import {
   deleteGroup,
   cleanupOldGroups,
 } from "@/lib/firebase-utils"
+import { auth } from "@/lib/firebase";
 import type { Quiz, Group, GameState } from "@/types/quiz"
 import { motion } from "framer-motion"
 import { QuizHostGame } from "@/components/quiz/quiz-host-game"
@@ -312,12 +313,12 @@ function HostQuizView({ auth }: { auth: Auth }) {
 }
 
 export default function HostQuizPage() {
-  const [auth, setAuth] = useState<Auth | null>(null);
+  // const [auth, setAuth] = useState<Auth | null>(null);
 
-  useEffect(() => {
-    const { auth } = getFirebaseServices();
-    setAuth(auth);
-  }, []);
+  // useEffect(() => {
+  //   // const { auth } = getFirebaseServices();
+  //   setAuth(auth);
+  // }, []);
 
   if (!auth) {
     return (

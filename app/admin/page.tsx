@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { doc, updateDoc, collection, getDocs, addDoc, deleteDoc, Firestore } from "firebase/firestore";
-import { getFirebaseServices } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,9 +36,9 @@ export default function AdminPage() {
   const [db, setDb] = useState<Firestore | null>(null);
 
   useEffect(() => {
-    const { db: firestoreDb } = getFirebaseServices();
-    setDb(firestoreDb);
-    loadData(firestoreDb);
+    // const { db: firestoreDb } = getFirebaseServices();
+    setDb(db as Firestore);
+    if (db) loadData(db as Firestore);
   }, []);
 
   const loadData = async (firestoreDb: Firestore) => {
