@@ -67,6 +67,7 @@ const EXTRA_NAME_MAP: Record<string, string> = {
   استير: "es",
   أيوب: "job",
   المزامير: "ps",
+  مزمور151: "2ps",
   الأمثال: "pr",
   الجامعة: "ec",
   "نشيد الأنشاد": "so",

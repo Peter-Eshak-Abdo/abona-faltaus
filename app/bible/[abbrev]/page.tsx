@@ -35,7 +35,7 @@ export default async function BookPage({ params }: { params: Promise<{ abbrev: s
           <Link
             key={idx}
             href={`/bible/${abbrev}/${idx + 1}`}
-            className="bg-white/10 backdrop-blur-md text-white text-center p-1 rounded-lg shadow-xl/30 inset-shadow-sm border-gray-300 hover:border-indigo-500 shadow-md hover:shadow-xl/10 transition-all duration-300 transform hover:scale-105 font-bold"
+            className="bg-white/10 backdrop-blur-md text-black text-center p-1 rounded-lg shadow-xl/30 inset-shadow-sm border-gray-300 hover:border-indigo-500 shadow-md hover:shadow-xl/10 transition-all duration-300 transform hover:scale-105 font-bold"
           >
             إصحاح {idx + 1}
           </Link>

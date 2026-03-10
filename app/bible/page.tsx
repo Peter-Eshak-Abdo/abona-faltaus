@@ -36,7 +36,7 @@ export default async function BibleHomePage() {
             <Link
               key={book.abbrev}
               href={`/bible/${book.abbrev}`}
-              className=" bg-white/10 backdrop-blur-md text-white p-1 rounded-lg shadow-xl/30 inset-shadow-sm hover:shadow-xl/0 transition-all duration-300 transform hover:scale-105 text-center font-bold"
+              className=" bg-white/10 backdrop-blur-md text-black p-1 rounded-lg shadow-xl/30 inset-shadow-sm hover:shadow-xl/0 transition-all duration-300 transform hover:scale-105 text-center font-bold"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {book.name}
@@ -51,7 +51,7 @@ export default async function BibleHomePage() {
             <Link
               key={book.abbrev}
               href={`/bible/${book.abbrev}`}
-              className="bg-white/10 backdrop-blur-md text-white p-1 rounded-lg shadow-xl/30 inset-shadow-sm hover:shadow-xl/0 transition-all duration-300 transform hover:scale-105 text-center font-bold"
+              className="bg-white/10 backdrop-blur-md text-black p-1 rounded-lg shadow-xl/30 inset-shadow-sm hover:shadow-xl/0 transition-all duration-300 transform hover:scale-105 text-center font-bold"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {book.name}
