@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
-import { getFirebaseServices } from "@/lib/firebase";
+// import { getFirebaseServices } from "@/lib/firebase";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
@@ -24,7 +24,7 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { auth, db } = getFirebaseServices();
+    // const { auth, db } = getFirebaseServices();
     setAuth(auth);
     setDb(db);
     setLoading(false);
