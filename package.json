@@ -75,7 +75,7 @@
     "react-icons": "^5.5.0",
     "react-pdf": "^10.4.1",
     "react-resizable-panels": "^4.7.2",
-    "recharts": "^3.5.1",
+    "recharts": "^3.8.0",
     "slugify": "^1.6.6",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.1",
