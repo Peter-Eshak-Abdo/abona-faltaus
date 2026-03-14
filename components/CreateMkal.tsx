@@ -73,7 +73,7 @@ export default function CreateMkal() {
 
           <button
             type="submit"
-            className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
+            className="inline-flex items-center rounded-md bg-amber-400 px-4 py-2 text-primary-foreground hover:bg-amber-400/90 disabled:opacity-50 disabled:pointer-events-none"
             disabled={loading}
           >
             {loading ? "جاري النشر..." : "نشر"}

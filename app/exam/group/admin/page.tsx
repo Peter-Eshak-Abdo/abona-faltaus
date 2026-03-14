@@ -172,7 +172,7 @@ export default function ExamSettings() {
       <div className="row justify-center">
         <div className="col-lg-11 col-md-8">
           <Card>
-            <CardHeader className="bg-primary text-white text-center">
+            <CardHeader className="bg-amber-400 text-white text-center">
               <h2 className="h4 mb-0">إعدادات الامتحان</h2>
             </CardHeader>
 

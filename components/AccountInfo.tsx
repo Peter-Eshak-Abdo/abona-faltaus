@@ -195,7 +195,7 @@ export default function AccountInfo() {
         </ul>
 
         <div className="flex justify-center gap-1 mt-1">
-          <button onClick={handleCopy} className="inline-flex items-center rounded-md bg-primary p-1 text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none text-sm" type="button">
+          <button onClick={handleCopy} className="inline-flex items-center rounded-md bg-amber-400 p-1 text-primary-foreground hover:bg-amber-400primary/90 disabled:opacity-50 disabled:pointer-events-none text-sm" type="button">
             <Copy size={16} className="mr-1" />
             {copied ? "تم النسخ!" : "نسخ UID"}
           </button>

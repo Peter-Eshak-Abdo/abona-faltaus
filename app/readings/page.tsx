@@ -113,7 +113,7 @@ export default function ReadingsPage() {
         <div className="space-y-1">
 
           {/* عنوان اليوم */}
-          <Card className="bg-primary/5 border-primary/20">
+            <Card className="bg-amber-400/5 border-amber-400/20">
             <CardHeader>
               <CardTitle className="text-center text-xl text-primary">
                 {data.title}

@@ -218,7 +218,7 @@ export default function PlayPage() {
     <div className="py-5 flex justify-center">
       <div className="w-full max-w-2xl">
         <Card>
-          <CardHeader className="bg-primary text-white text-center">
+          <CardHeader className="bg-amber-400 text-white text-center">
             <h2 className="text-lg font-semibold mb-0">الامتحان</h2>
           </CardHeader>
           <CardContent>

@@ -290,7 +290,7 @@ function HostQuizView({ auth }: { auth: Auth }) {
             <Button
               onClick={handleStartQuiz}
               disabled={groups.length === 0 || isStarting || !!gameState?.isActive}
-              className="from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold rounded-2xl transition-all duration-300 text-xl sm:text-2xl shadow-2xl flex items-center mx-auto bg-primary text-primary-foreground p-1"
+              className="from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold rounded-2xl transition-all duration-300 text-xl sm:text-2xl shadow-2xl flex items-center mx-auto bg-amber-400 text-primary-foreground p-1"
               type="button"
             >
               <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">

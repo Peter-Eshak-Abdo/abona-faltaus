@@ -321,7 +321,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
             <div className="flex gap-1 mb-1">
               <button
                 type="button"
-                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-primary hover:text-primary-foreground"
+                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-amber-400 hover:text-primary-foreground"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload size={16} className="ml-1" />
@@ -329,7 +329,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
               </button>
               <button
                 type="button"
-                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-primary hover:text-primary-foreground"
+                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-amber-400 hover:text-primary-foreground"
                 onClick={downloadTemplate}
               >
                 <Download size={16} className="ml-1" />
@@ -337,7 +337,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
               </button>
               <button
                 type="button"
-                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-primary hover:text-primary-foreground"
+                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-amber-400 hover:text-primary-foreground"
                 onClick={exportQuizToExcel}
               >
                 <Download size={16} className="ml-1" />
@@ -508,7 +508,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
           <button type="button" className="p-1 bg-red-900 border border-red-900 text-red-900 rounded-md hover:text-red-600 hover:border-red-600 hover:font-bold" onClick={() => onOpenChange(false)} title="Cancel">
             الغاء
           </button>
-          <button type="button" className="p-1 bg-blue-600 border border-blue-900 text-blue-800 rounded-lg font-extrabolder text-xl hover:bg-primary/90" onClick={validateAndSubmit} disabled={isSubmitting} title={isEditing ? "Update Quiz" : "Create Quiz"}>
+          <button type="button" className="p-1 bg-blue-600 border border-blue-900 text-blue-800 rounded-lg font-extrabolder text-xl hover:bg-amber-400/90" onClick={validateAndSubmit} disabled={isSubmitting} title={isEditing ? "Update Quiz" : "Create Quiz"}>
             {isSubmitting ? (isEditing ? "جاري التحديث ..." : "جاري الانشاء ...") : (isEditing ? "تحديث المسابقة" : "إنشاء مسابقة")}
           </button>
         </div>

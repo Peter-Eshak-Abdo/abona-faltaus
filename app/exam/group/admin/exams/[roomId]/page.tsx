@@ -193,7 +193,7 @@ export default function AdminExamPage() {
       <div className="flex">
         <div className="w-4/5">
           <Card className="mb-4">
-            <CardHeader className="bg-primary text-white text-center">
+            <CardHeader className="bg-amber-400 text-white text-center">
               <h2 className="text-lg font-semibold mb-0">الامتحان</h2>
             </CardHeader>
             <CardContent>
@@ -248,7 +248,7 @@ export default function AdminExamPage() {
         </div>
         <div className="w-1/5">
           <Card>
-            <CardHeader className="bg-primary text-white text-center">
+            <CardHeader className="bg-amber-400 text-white text-center">
               <h2 className="text-lg font-semibold mb-0">الفرق</h2>
             </CardHeader>
             <CardContent>
