@@ -12,9 +12,9 @@ const withPWA = withPWAInit({
 
   workboxOptions: {
     disableDevLogs: true,
-    globPatterns: [
-      "**/*.{js,css,html,png,jpg,jpeg,svg,ico,webp,json,woff2}", // تحميل كل أنواع الملفات دي فوراً
-    ],
+    // globPatterns: [
+    //   "**/*.{js,css,html,png,jpg,jpeg,svg,ico,webp,json,woff2}", // تحميل كل أنواع الملفات دي فوراً
+    // ],
     // زيادة المساحة المسموح بتخزينها (تجنب مشاكل الملفات الكبيرة)
     maximumFileSizeToCacheInBytes: 150 * 1024 * 1024, // 150 ميجا لكل ملف كحد أقصى
     runtimeCaching: [
@@ -93,7 +93,7 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
@@ -107,6 +107,7 @@ const nextConfig = {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
+      { protocol: "https", hostname: "archive.org" }, // ضيف أرشيف هنا كمان
     ],
   },
   async headers() {
