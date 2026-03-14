@@ -338,7 +338,7 @@ export default function DashboardPage() {
   // useEffect(() => {
   //   // const { auth, db } = getFirebaseServices();
   //   setAuth(auth);
-  //   setDb(db);
+  //   setDb(db);x
   // }, []);
 
   if (!auth || !db) {

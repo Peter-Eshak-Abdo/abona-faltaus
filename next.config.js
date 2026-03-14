@@ -12,20 +12,17 @@ const withPWA = withPWAInit({
 
   workboxOptions: {
     disableDevLogs: true,
+    globPatterns: [
+      "**/*.{js,css,html,png,jpg,jpeg,svg,ico,webp,json,woff2}", // تحميل كل أنواع الملفات دي فوراً
+    ],
+    // زيادة المساحة المسموح بتخزينها (تجنب مشاكل الملفات الكبيرة)
+    maximumFileSizeToCacheInBytes: 150 * 1024 * 1024, // 150 ميجا لكل ملف كحد أقصى
     runtimeCaching: [
       {
-        urlPattern: /^https:\/\/fonts\.googleapis\.com/,
+        urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/,
         handler: "CacheFirst",
         options: {
-          cacheName: "google-fonts-stylesheets",
-          expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
-        },
-      },
-      {
-        urlPattern: /^https:\/\/fonts\.gstatic\.com/,
-        handler: "CacheFirst",
-        options: {
-          cacheName: "google-fonts-webfonts",
+          cacheName: "google-fonts",
           expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
         },
       },
@@ -38,14 +35,13 @@ const withPWA = withPWAInit({
       },
       // قاعدة مهمة جداً لصفحات الموقع نفسه (App Router)
       {
+        // استراتيجية الصفحات: حاول تجيب من النت، لو مفيش هات من الكاش
         urlPattern: ({ request }) => request.mode === "navigate",
         handler: "NetworkFirst", // حاول تجيب الصفحة من النت، لو مفيش هات من الكاش
         options: {
           cacheName: "pages-cache",
-          expiration: { maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 },
-          cacheableResponse: {
-            statuses: [0, 200],
-          },
+          expiration: { maxEntries: 100, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
         },
       },
       {
@@ -63,6 +59,31 @@ const withPWA = withPWAInit({
         options: {
           cacheName: "next-static-cache",
           expiration: { maxEntries: 100, maxAgeSeconds: 365 * 24 * 60 * 60 },
+        },
+      },
+      {
+        // الصور والملفات الخارجية (مثل Firebase)
+        urlPattern:
+          /https:\/\/(?:firebasestorage\.googleapis\.com|lh3\.googleusercontent\.com)\/.*/,
+        handler: "StaleWhileRevalidate", // يعرض الكاش ويحدثه في الخلفية
+        options: {
+          cacheName: "remote-images",
+          expiration: { maxEntries: 100, maxAgeSeconds: 365 * 24 * 60 * 60 },
+        },
+      },
+      {
+        urlPattern: /^https:\/\/archive\.org\/download\/.*/,
+        handler: "CacheFirst", // اسحب من الكاش أولاً لأن الألحان مش هتتغير
+        options: {
+          cacheName: "archive-audio-cache",
+          expiration: {
+            maxEntries: 500, // عدد الألحان القصوى
+            maxAgeSeconds: 60 * 60 * 24 * 365 * 5, // سنة كاملة 5 سنوات عشان الألحان مش هتتغير
+          },
+          cacheableResponse: {
+            statuses: [0, 200], // 0 مهمة جداً لروابط الـ CORS الخارجية
+          },
+          rangeRequests: true, // مهم جداً لملفات الصوت عشان تقدر تقدم وترجع في اللحن
         },
       },
     ],

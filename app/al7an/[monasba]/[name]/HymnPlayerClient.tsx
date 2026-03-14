@@ -117,8 +117,8 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
   return (
     <>
       <Toaster richColors />
-      <section className="bg-white rounded-lg shadow p-4">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+      <section className="bg-white rounded-lg shadow p-1">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-1">
           <div className="flex-1">
             <h2 className="text-xl font-semibold">{pageTitle}</h2>
             {lyrics ? (
@@ -127,7 +127,7 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
               <p className="text-sm text-muted-foreground mt-1">لا توجد كلمات مُدرجة لهذا اللحن.</p>
             )}
 
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-1 flex flex-wrap gap-1">
               <Button onClick={togglePlay} variant="default">
                 {playing ? "إيقاف" : "تشغيل"}
               </Button>
@@ -152,7 +152,7 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
               initial={{ scale: 1 }}
               animate={playing ? { scale: 1.02, boxShadow: "0 8px 30px rgba(0,0,0,0.12)" } : { scale: 1 }}
               transition={{ duration: 0.35 }}
-              className="bg-slate-50 p-2 rounded-lg"
+              className="bg-slate-50 p-1 rounded-lg"
             >
               <audio
                 ref={audioRef}
@@ -160,20 +160,21 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
                 className="w-full"
                 controls
                 src={finalSrc || undefined}
+                crossOrigin="anonymous"
               />
               {finalSrc ? (
                 <div className="text-xs text-muted-foreground mt-1 text-center">
                   مصدر الصوت: {finalSrc.startsWith('http') ? new URL(finalSrc).hostname : 'محلي'}
                 </div>
               ) : (
-                <div className="text-sm text-red-500 mt-1 p-4 text-center">❌ لا يوجد ملف صوتي متاح</div>
+                <div className="text-sm text-red-500 mt-1 p-1 text-center">❌ لا يوجد ملف صوتي متاح</div>
               )}
             </motion.div>
           </div>
         </div>
 
         {availableVoices.length > 0 && (
-          <div className="mt-4 flex items-center gap-2 border-t pt-4">
+          <div className="mt-1 flex items-center gap-1 border-t pt-1">
             <label className="text-sm text-muted-foreground">اختر صوتاً للنطق:</label>
             <select
               name="voice"

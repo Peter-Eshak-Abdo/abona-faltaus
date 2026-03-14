@@ -13,6 +13,7 @@ import {
   writeBatch,
   setDoc,
   deleteDoc,
+  Timestamp,
   // enableIndexedDbPersistence,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -486,7 +487,7 @@ export const updateGroupScores = async (quizId: string, scores: Record<string, n
 export const getTrashedQuizzes = async (userId: string) => {
     // const db = initializeDb();
     const q = query(
-        collection(db, "trashedQuizzes"),
+      collection(db, "trashedQuizzes"),
         where("createdBy", "==", userId),
         orderBy("deletedAt", "desc")
     );
@@ -494,44 +495,41 @@ export const getTrashedQuizzes = async (userId: string) => {
     return snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
-        deletedAt: doc.data().deletedAt?.toDate(),
-        expiresAt: doc.data().expiresAt?.toDate(),
+        deletedAt: (doc.data().deletedAt as Timestamp)?.toDate(),
+        expiresAt: (doc.data().expiresAt as Timestamp)?.toDate(),
     })) as (Quiz & { originalId: string; deletedAt: Date; expiresAt: Date })[];
 };
 
-export const cleanupExpiredTrash = async () => {
-    // const db = initializeDb();
-    const q = query(
-        collection(db, "trashedQuizzes"),
-        where("expiresAt", "<=", new Date())
-    );
-    const snapshot = await getDocs(q);
-    const batch = writeBatch(db);
-    snapshot.docs.forEach(doc => batch.delete(doc.ref));
-    await batch.commit();
-    return snapshot.size;
-};
-
 export const restoreQuiz = async (trashId: string) => {
-    // const db = initializeDb();
-    const trashDocRef = doc(db, "trashedQuizzes", trashId);
-    const trashDoc = await getDoc(trashDocRef);
+  // const db = initializeDb();
+  const trashDocRef = doc(db, "trashedQuizzes", trashId);
+  const trashDoc = await getDoc(trashDocRef);
 
-    if (!trashDoc.exists()) {
-        throw new Error("Trashed quiz not found");
-    }
+  if (!trashDoc.exists()) throw new Error("Trashed quiz not found");
 
-    const quizData = trashDoc.data();
-    const { originalId, ...rest } = quizData;
+  const { originalId, deletedAt, expiresAt, ...quizData } = trashDoc.data();
+  // const { originalId, ...rest } = quizData;
 
-    // Restore to the original ID
-    await setDoc(doc(db, "quizzes", originalId), rest);
-    // Delete from trash
-    await deleteDoc(trashDocRef);
-};
+  // نرجعها لمجموعة quizzes
+  await addDoc(collection(db, "quizzes"), quizData);
+  // نمسحها من السلة
+  await deleteDoc(doc(db, "trashedQuizzes", trashId));
+};;
 
 export const permanentlyDeleteQuiz = async (trashId: string) => {
     // const db = initializeDb();
     const trashDocRef = doc(db, "trashedQuizzes", trashId);
     await deleteDoc(trashDocRef);
+};
+
+export const cleanupExpiredTrash = async () => {
+    // const db = initializeDb();
+  const now = new Date();
+  const q = query(
+    collection(db, "trashedQuizzes"),
+    where("expiresAt", "<=", now),
+  );
+  const snapshot = await getDocs(q);
+  const deletePromises = snapshot.docs.map((d) => deleteDoc(d.ref));
+  await Promise.all(deletePromises);
 };

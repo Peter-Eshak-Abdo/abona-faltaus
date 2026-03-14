@@ -53,8 +53,14 @@ service cloud.firestore {
 
     // سلة المحذوفات (trashedQuizzes)
     match /trashedQuizzes/{trashId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.createdBy;
-      allow create: if request.auth != null;
+      // السماح بالقراءة والحذف فقط لو المستخدم هو صاحب المسابقة
+      allow read, delete: if request.auth != null && request.auth.uid == resource.data.createdBy;
+
+      // السماح بإنشاء ملف محذوف لو المستخدم مسجل دخول وهيسجل نفسه كـ صاحب للملف
+      allow create: if request.auth != null && request.resource.data.createdBy == request.auth.uid;
+
+      // التعديل (Update) غالباً مش هنحتاجه في السلة فممكن نقفله
+      allow update: if false;
     }
 
     // صلاحيات الآيات (verses)
