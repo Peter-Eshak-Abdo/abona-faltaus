@@ -25,8 +25,9 @@ const TrashSection = ({ userId, onClose, onRestore }: TrashSectionProps) => {
       setLoading(true)
       const { getTrashedQuizzes, cleanupExpiredTrash } = await import("@/lib/firebase-utils")
 
+      // نمرر الـ userId هنا
       // Clean up expired items first
-      await cleanupExpiredTrash()
+      await cleanupExpiredTrash(userId);
 
       // Load trashed quizzes
       const trashed = await getTrashedQuizzes(userId)

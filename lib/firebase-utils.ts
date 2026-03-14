@@ -522,14 +522,21 @@ export const permanentlyDeleteQuiz = async (trashId: string) => {
     await deleteDoc(trashDocRef);
 };
 
-export const cleanupExpiredTrash = async () => {
-    // const db = initializeDb();
+export const cleanupExpiredTrash = async (userId: string) => {
+  // const db = initializeDb();
   const now = new Date();
   const q = query(
     collection(db, "trashedQuizzes"),
+    where("createdBy", "==", userId), // إضافة هذا السطر هو السر
     where("expiresAt", "<=", now),
   );
-  const snapshot = await getDocs(q);
-  const deletePromises = snapshot.docs.map((d) => deleteDoc(d.ref));
-  await Promise.all(deletePromises);
+
+  try {
+    const snapshot = await getDocs(q);
+    const deletePromises = snapshot.docs.map((d) => deleteDoc(d.ref));
+    await Promise.all(deletePromises);
+  } catch (error) {
+    console.error("Cleanup failed:", error);
+    // لا نعطل المستخدم إذا فشل التنظيف التلقائي
+  }
 };
