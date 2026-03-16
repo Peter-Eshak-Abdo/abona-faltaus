@@ -103,7 +103,7 @@
     "@types/next": "^9.0.0",
     "@types/next-pwa": "^5.6.9",
     "@types/node": "^25",
-    "@types/open": "^6.1.0",
+    "@types/open": "^6.2.1",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@types/react-howler": "^5.2.3",
