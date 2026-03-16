@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 // import { getFirebaseServices } from "@/lib/firebase";
 import {
@@ -12,13 +11,12 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp,
-  Firestore,
+  Timestamp
 } from "firebase/firestore";
 import {
   ref,
   uploadBytes,
   getDownloadURL,
-  FirebaseStorage,
 } from "firebase/storage";
 import { db, auth, storage } from "@/lib/firebase";
 import { Copy, Share2, LogOut, X } from "lucide-react";
@@ -30,13 +28,13 @@ type UserData = {
   name: string;
   email: string;
   photoURL: string;
-  createdAt: import("firebase/firestore").Timestamp;
+  createdAt: Timestamp;
 };
 
 export default function AccountInfo() {
-  const [auth, setAuth] = useState<any>(null);
-  const [db, setDb] = useState<Firestore | null>(null);
-  const [storage, setStorage] = useState<FirebaseStorage | null>(null);
+  // const [auth, setAuth] = useState<any>(null);
+  // const [db, setDb] = useState<Firestore | null>(null);
+  // const [storage, setStorage] = useState<FirebaseStorage | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,9 +45,9 @@ export default function AccountInfo() {
 
   useEffect(() => {
     // const { auth, db, storage } = getFirebaseServices();
-    setAuth(auth);
-    setDb(db);
-    setStorage(storage);
+    // setAuth(auth);
+    // setDb(db);
+    // setStorage(storage);
 
     const unsub = onAuthStateChanged(auth, async (user) => {
       setFirebaseUser(user);

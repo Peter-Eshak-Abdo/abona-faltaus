@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 export default function SignInPage() {
-  const [auth, setAuth] = useState<Auth | null>(null);
+  // const [auth, setAuth] = useState<Auth | null>(null);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +30,7 @@ export default function SignInPage() {
 
   useEffect(() => {
     // const { auth } = getFirebaseServices();
-    setAuth(auth);
+    // setAuth(auth);
     setLoading(false);
   }, []);
 

@@ -22,8 +22,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ButtonGroup } from "@/components/ui/button-group";
 
 export default function LoginPage() {
-  const [auth, setAuth] = useState<Auth | null>(null);
-  const [db, setDb] = useState<Firestore | null>(null);
+  // const [auth, setAuth] = useState<Auth | null>(null);
+  // const [db, setDb] = useState<Firestore | null>(null);
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
@@ -34,8 +34,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     // const { auth, db } = getFirebaseServices();
-    setAuth(auth);
-    setDb(db);
+    // setAuth(auth);
+    // setDb(db);
     if (auth?.currentUser) router.push("/");
     setIsLoading(false);
   }, [router]);

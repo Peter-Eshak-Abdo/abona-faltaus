@@ -8,14 +8,15 @@ import {
   updateProfile,
   Auth,
 } from "firebase/auth";
+import { db, auth } from "@/lib/firebase";
 import { doc, setDoc, serverTimestamp, Firestore } from "firebase/firestore";
 import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
-  const [auth, setAuth] = useState<Auth | null>(null);
-  const [db, setDb] = useState<Firestore | null>(null);
+  // const [auth, setAuth] = useState<Auth | null>(null);
+  // const [db, setDb] = useState<Firestore | null>(null);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,8 +26,8 @@ export default function SignUpPage() {
 
   useEffect(() => {
     // const { auth, db } = getFirebaseServices();
-    setAuth(auth);
-    setDb(db);
+    // setAuth(auth);
+    // setDb(db);
     setLoading(false);
   }, []);
 
