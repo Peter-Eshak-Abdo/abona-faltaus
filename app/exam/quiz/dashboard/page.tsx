@@ -329,8 +329,8 @@ export default function DashboardPage() {
 
   if (!isReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      <div className="min-h-screen flex items-center w-full justify-center bg-linear-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-b border-blue-600"></div>
       </div>
     );
   }
@@ -343,8 +343,8 @@ export default function DashboardPage() {
 
   if (!auth || !db) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      <div className="min-h-screen flex items-center w-full justify-center bg-linear-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-b border-blue-600"></div>
       </div>
     );
   }
