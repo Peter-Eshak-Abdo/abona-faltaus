@@ -1,6 +1,12 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import DOMPurify from "dompurify";
+import { Send, User, Bot, Loader2 } from "lucide-react"; // أيقونات جميلة
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -8,14 +14,14 @@ interface ChatMessage {
 }
 
 export default function ChatBot() {
-  // const [mode, setMode] = useState<"keyword" | "concept">("keyword");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
+
     const userMsg: ChatMessage = { role: "user", content: input };
     setMessages((m) => [...m, userMsg]);
     setInput("");
@@ -26,108 +32,112 @@ export default function ChatBot() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: [...messages, userMsg] }),
-        // body: JSON.stringify({ messages: [...messages, userMsg], mode }),
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "فشل الاتصال بالسيرفر");
-      }
+      if (!res.ok) throw new Error("فشل الاتصال بالسيرفر");
 
       const data = await res.json();
-      setMessages((m) => [...m, { role: "assistant", content: data.reply.content }]);
+      if (data.reply) {
+        setMessages((m) => [...m, { role: "assistant", content: data.reply.content }]);
+      }
     } catch (err: any) {
-      console.error("Chat Error:", err);
-      setMessages((m) => [...m, { role: "assistant", content: `عذراً، حدث خطأ: ${err.message}` }]);
+      setMessages((m) => [...m, { role: "assistant", content: `<b>خطأ:</b> ${err.message}` }]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    // التمرير التلقائي لأسفل عند وصول رسالة جديدة
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
 
   return (
-    <div className="p-1 flex flex-col h-full border rounded-xl shadow bg-white">
-      {/* أزرار التبديل بين الوضعين */}
-      <div className="flex space-x-1 mb-1">
-        <button
-          className={`p-1 rounded bg-blue-500 text-white`}
-          type="button"
-        >
-          بحث بالكلمة
-        </button>
-        {/* <button
-          onClick={() => setMode("keyword")}
-          className={`p-1 rounded ${mode === "keyword" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          type="button"
-        >
-          بحث بالكلمة
-        </button> */}
-        {/* <button
-          onClick={() => setMode("concept")}
-          className={`p-1 rounded ${mode === "concept" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          type="button"
-        >
-          بحث بالمفهوم
-        </button> */}
-      </div>
+    <Card className="flex flex-col h-full border-none rounded-none shadow-none">
+      {/* رأس الشات */}
+      <CardHeader className="border-b bg-white/50 backdrop-blur-md sticky top-0 z-10 p-1">
+        <CardTitle className="text-xl font-bold text-blue-700 flex items-center gap-1">
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+          مساعدك الروحي
+        </CardTitle>
+      </CardHeader>
 
-      {/* الرسائل */}
-      <div className="flex-1 overflow-auto space-y-1">
-        {messages.map((m, i) =>
-          m.role === "assistant" ? (
-            <div
-              key={i}
-              className="max-w-xs md:max-w-md p-1 my-1 rounded-2xl shadow self-start bg-gray-200 text-black rounded-bl-none mr-auto"
-              style={{ wordBreak: "break-word" }}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(m.content),
-              }}
-            />
-          ) : (
-            <div
-              key={i}
-              className="max-w-xs md:max-w-md p-1 my-1 rounded-2xl shadow self-end bg-blue-500 text-white rounded-br-none text-right ml-auto"
-              style={{ wordBreak: "break-word" }}
-            >
-              {m.content}
-            </div>
-          )
-        )}
+      {/* منطقة الرسائل */}
+      <CardContent className="flex-1 p-0 overflow-hidden">
+        <ScrollArea className="h-full p-1">
+          <div className="space-y-1 pb-1">
+            {messages.length === 0 && (
+              <div className="text-center py-2 text-muted-foreground italic">
+                ابدأ بكتابة سؤالك الروحي هنا...
+              </div>
+            )}
 
-        {loading && (
-          <div className="flex justify-end">
-            <div className="bg-blue-500 text-white p-1 rounded-lg self-end ml-1 animate-pulse">
-              جاري التحميل...
-            </div>
+            {messages.map((m, i) => (
+              <div
+                key={i}
+                className={`flex gap-1 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
+              >
+                <Avatar className="w-8 h-8 border">
+                  {m.role === "user" ? (
+                    <AvatarFallback className="bg-blue-100 text-blue-700"><User size={18} /></AvatarFallback>
+                  ) : (
+                    <AvatarFallback className="bg-slate-100 text-slate-700"><Bot size={18} /></AvatarFallback>
+                  )}
+                </Avatar>
+
+                <div
+                  className={`max-w-[85%] md:max-w-[75%] p-1 rounded-2xl shadow-sm border ${m.role === "user"
+                      ? "bg-blue-600 text-white rounded-tr-none"
+                      : "bg-slate-50 text-slate-900 rounded-tl-none prose-sm sm:prose"
+                    }`}
+                  style={{ wordBreak: "break-word", lineHeight: "1.6" }}
+                  dangerouslySetInnerHTML={{
+                    __html: m.role === "assistant" ? DOMPurify.sanitize(m.content) : m.content,
+                  }}
+                />
+              </div>
+            ))}
+
+            {loading && (
+              <div className="flex gap-1">
+                <Avatar className="w-8 h-8 border animate-spin-slow">
+                  <AvatarFallback><Loader2 className="animate-spin" size={18} /></AvatarFallback>
+                </Avatar>
+                <div className="bg-slate-100 p-1 rounded-2xl rounded-tl-none">
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-.3s]" />
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-.5s]" />
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={endRef} />
           </div>
-        )}
-        <div ref={endRef} />
-      </div>
+        </ScrollArea>
+      </CardContent>
 
-      {/* إدخال الرسالة */}
-      <div className="mt-1 flex">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder="اكتب سؤالك..."
-          className="flex-1 border rounded-lg p-1"
-          title="اكتب سؤالك"
-        />
-        <button
-          onClick={sendMessage}
-          className="ml-1 p-1 bg-blue-500 text-white rounded-lg"
-          type="button"
-          title="ارسال"
+      {/* منطقة الإدخال */}
+      <CardFooter className="p-1 border-t bg-slate-50/50">
+        <form
+          className="flex w-full items-center gap-1"
+          onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
         >
-          إرسال
-        </button>
-      </div>
-    </div>
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="اسأل عن آية أو موضوع روحي..."
+            className="flex-1 bg-white h-12 rounded-full px-1 shadow-inner focus-visible:ring-blue-500"
+          />
+          <Button
+            disabled={loading || !input.trim()}
+            size="icon"
+            className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-700 transition-all shrink-0"
+          >
+            {loading ? <Loader2 className="animate-spin" /> : <Send size={20} className="mr-0.5" />}
+          </Button>
+        </form>
+      </CardFooter>
+    </Card>
   );
 }

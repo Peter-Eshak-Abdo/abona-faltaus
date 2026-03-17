@@ -42,8 +42,12 @@ function normalize(term: string) {
   // const t = term.replace(/[ًٌٍَُِْ]/g, "").toLowerCase();
   // return synonymMap[t] || t;
   // return term.replace(/[ًٌٍَُِْ]/g, "").trim();
+  // return term.replace(/[ًٌٍَُِْ]/g, "").trim().toLowerCase();
+  if (!term) return "";
   return term
-    .replace(/[ًٌٍَُِْ]/g, "")
+    .replace(/[ًٌٍَُِْ]/g, "") // إزالة التشكيل
+    .replace(/[أإآ]/g, "ا") // توحيد الألف
+    .replace(/ة/g, "ه") // توحيد التاء المربوطة
     .trim()
     .toLowerCase();
 }
@@ -241,36 +245,36 @@ function normalize(term: string) {
 
 //   return NextResponse.json({ reply: chatRes.choices[0].message });
 // }
-async function searchBibleVerses(
-  bible: any[],
-  query: string,
-  limit: number = 10,
-) {
-  let results: { verse: string; ref: string }[] = [];
-  const normalizedQuery = normalize(query);
+// async function searchBibleVerses(
+//   bible: any[],
+//   query: string,
+//   limit: number = 10,
+// ) {
+//   let results: { verse: string; ref: string }[] = [];
+//   const normalizedQuery = normalize(query);
 
-  // الحصول على كل الكلمات المفتاحية المرتبطة بالبحث
-  const keywords = synonymMap[normalizedQuery] || [normalizedQuery];
+//   // الحصول على كل الكلمات المفتاحية المرتبطة بالبحث
+//   const keywords = synonymMap[normalizedQuery] || [normalizedQuery];
 
-  for (const book of bible) {
-    if (results.length >= limit) break;
+//   for (const book of bible) {
+//     if (results.length >= limit) break;
 
-    book.chapters.forEach((chapter: string[], chapterIdx: number) => {
-      chapter.forEach((verse: string, verseIdx: number) => {
-        if (results.length < limit) {
-          const normalizedVerse = normalize(verse);
-          if (keywords.some((k) => normalizedVerse.includes(k))) {
-            results.push({
-              verse,
-              ref: `${book.name} ${chapterIdx + 1}:${verseIdx + 1}`,
-            });
-          }
-        }
-      });
-    });
-  }
-  return results;
-}
+//     book.chapters.forEach((chapter: string[], chapterIdx: number) => {
+//       chapter.forEach((verse: string, verseIdx: number) => {
+//         if (results.length < limit) {
+//           const normalizedVerse = normalize(verse);
+//           if (keywords.some((k) => normalizedVerse.includes(k))) {
+//             results.push({
+//               verse,
+//               ref: `${book.name} ${chapterIdx + 1}:${verseIdx + 1}`,
+//             });
+//           }
+//         }
+//       });
+//     });
+//   }
+//   return results;
+// }
 
 // export async function POST(request: Request) {
 //   try {
@@ -363,94 +367,102 @@ async function searchBibleVerses(
 
 export async function POST(request: Request) {
 try {
-    const { messages } = await request.json();
-    const lastUserMessage = messages[messages.length - 1]?.content || "";
-    const searchTerm = normalize(lastUserMessage);
+  const { messages } = await request.json();
+  const lastUserMessage = messages[messages.length - 1]?.content || "";
+  const searchTerm = normalize(lastUserMessage);
 
-    // 1. تحميل كل الملفات في الذاكرة (لو مش موجودة)
-    const publicPath = path.join(process.cwd(), "public");
+  // 1. تحميل كل الملفات (مرة واحدة فقط)
+  const publicPath = path.join(process.cwd(), "public");
+  if (!bibleCache || !quotesCache || !topicsCache) {
+    const [bibleData, quotesData, topicsData] = await Promise.all([
+      fs.readFile(
+        path.join(publicPath, "bible-json", "bible_fixed.json"),
+        "utf8",
+      ),
+      fs.readFile(path.join(publicPath, "quotes.json"), "utf8"),
+      fs.readFile(path.join(publicPath, "verses_topics.json"), "utf8"),
+    ]);
+    bibleCache = JSON.parse(bibleData.replace(/^\uFEFF/, ""));
+    quotesCache = JSON.parse(quotesData.replace(/^\uFEFF/, ""));
+    topicsCache = JSON.parse(topicsData.replace(/^\uFEFF/, ""));
+  }
 
-    if (!bibleCache || !quotesCache || !topicsCache) {
-      const [bibleData, quotesData, topicsData] = await Promise.all([
-        fs.readFile(path.join(publicPath, "bible-json", "bible_fixed.json"), "utf8"),
-        fs.readFile(path.join(publicPath, "quotes.json"), "utf8"),
-        fs.readFile(path.join(publicPath, "verses_topics.json"), "utf8")
-      ]);
+  // 2. البحث الذكي (آيات + مواضيع + أقوال)
+  let foundVerses: any[] = [];
 
-      bibleCache = JSON.parse(bibleData.replace(/^\uFEFF/, ""));
-      quotesCache = JSON.parse(quotesData.replace(/^\uFEFF/, ""));
-      topicsCache = JSON.parse(topicsData.replace(/^\uFEFF/, ""));
-    }
-
-    // 2. البحث عن آيات (Keyword Search)
-    let foundVerses: any[] = [];
-    for (const book of bibleCache) {
-      if (foundVerses.length >= 5) break;
-      for (let cIdx = 0; cIdx < book.chapters.length; cIdx++) {
-        const chapter = book.chapters[cIdx];
-        for (const vObj of chapter) {
-          if (foundVerses.length < 5 && normalize(vObj.text_plain).includes(searchTerm)) {
-            foundVerses.push({
-              text: vObj.text_vocalized,
-              ref: `${book.name} ${cIdx + 1}:${vObj.verse}`
-            });
-          }
+  // أ: بحث الكلمات المفتاحية في الإنجيل الكامل
+  for (const book of bibleCache) {
+    if (foundVerses.length >= 5) break;
+    book.chapters.forEach((chapter: any[], cIdx: number) => {
+      chapter.forEach((vObj: any) => {
+        if (
+          foundVerses.length < 5 &&
+          normalize(vObj.text_plain).includes(searchTerm)
+        ) {
+          foundVerses.push({
+            text: vObj.text_vocalized,
+            ref: `${book.name} ${cIdx + 1}:${vObj.verse}`,
+          });
         }
-      }
-    }
+      });
+    });
+  }
 
-    // 3. البحث عن مواضيع (Concept Search)
-    const conceptVerses = topicsCache
-      .filter((v: any) => normalize(v.topic).includes(searchTerm))
-      .slice(0, 5)
-      .map((v: any) => ({ text: v.verse, ref: v.ref }));
+  // ب: بحث المواضيع (Concept)
+  const topicResults = topicsCache
+    .filter((v: any) => normalize(v.topic).includes(searchTerm))
+    .slice(0, 5)
+    .map((v: any) => ({ text: v.verse, ref: v.ref }));
 
-    // دمج نتائج الآيات ومنع التكرار
-    const allVerses = [...foundVerses, ...conceptVerses].slice(0, 8);
+  // دمج ومنع تكرار الآيات
+  const finalVerses = [...foundVerses, ...topicResults].slice(0, 7);
 
-    // 4. البحث عن أقوال الآباء
-    const foundQuotes = quotesCache
-      .filter((q: any) => normalize(q.quote).includes(searchTerm) || normalize(q.topic).includes(searchTerm))
-      .slice(0, 5);
+  // ج: بحث أقوال الآباء
+  const finalQuotes = quotesCache
+    .filter(
+      (q: any) =>
+        normalize(q.quote).includes(searchTerm) ||
+        normalize(q.topic).includes(searchTerm),
+    )
+    .slice(0, 5);
 
-    // 5. تهيئة Gemini (استخدام الاسم المستقر)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
+  // 3. نداء Gemini (مع محاولة حل مشكلة الـ 404)
+  // نستخدم gemini-1.5-flash كاختيار أساسي
+  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+  // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `
-أنت مساعد ذكي خبير في التراث المسيحي الأرثوذكسي.
-أجب على السؤال التالي: "${lastUserMessage}"
+  const systemPrompt = `
+أنت "مساعد مسيحي أرثوذكسي" ذكي وعميق. مهمتك الإجابة على التساؤلات الروحية.
+السؤال الحالي: "${lastUserMessage}"
 
-لديك هذه المراجع الرسمية (استخدمها في ردك):
+استخدم المراجع التالية فقط (ممنوع تأليف آيات):
+الآيات:
+${finalVerses.map((v) => `- ${v.text} (${v.ref})`).join("\n")}
 
-الآيات المتاحة:
-${allVerses.map(v => `- ${v.text} (شاهد: ${v.ref})`).join("\n")}
+أقوال الآباء:
+${finalQuotes.map((q: { quote: any; author: any; }) => `- "${q.quote}" (${q.author})`).join("\n")}
 
-أقوال الآباء المتاحة:
-${foundQuotes.map((q: { quote: any; author: any; source: any; }) => `- "${q.quote}" (القائل: ${q.author} - المصدر: ${q.source})`).join("\n")}
-
-طريقة تنسيق الرد (إلزامية):
-1. ابدأ بشرح روحي وعقيدي مفصل وعميق للسؤال بأسلوب شيق (ChatGPT style).
-2. استخدم HTML للتنسيق: <br> للسطر الجديد، <b> للكلمات الهامة.
-3. ضع فاصل واكتب عنوان: <h3 style='color:#2563eb; font-size:20px; font-weight:bold;'>آيات من الكتاب المقدس</h3>
-4. اعرض الآيات بنصها الكامل (Bold) وتحتها الشاهد.
-5. ضع فاصل واكتب عنوان: <h3 style='color:#2563eb; font-size:20px; font-weight:bold;'>من أقوال الآباء</h3>
-6. اعرض أقوال الآباء بنصها وتحتها القائل.
+طريقة الرد (HTML):
+1. ابدأ بشرح روحي طويل وعميق (3 فقرات على الأقل) بأسلوب ChatGPT.
+2. استخدم <br> للسطور الجديدة و <b> للتمييز.
+3. ضع فاصل <hr style='border:1px solid #ddd; margin:20px 0;'>
+4. عنوان: <h3 style='color:#1e40af; font-size:22px;'>آيات من الكتاب المقدس</h3>
+5. اعرض الآيات بنصها المشكل (Bold) وتحتها الشاهد.
+6. فاصل آخر <hr>
+7. عنوان: <h3 style='color:#1e40af; font-size:22px;'>من أقوال الآباء</h3>
+8. اعرض الأقوال بنصها وتحتها اسم القائل.
 `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+  const result = await model.generateContent(systemPrompt);
+  const response = await result.response;
+  const text = response.text();
 
-    return NextResponse.json({
-      reply: { role: "assistant", content: text },
-    });
-
-  } catch (error: any) {
-    console.error("Error details:", error);
-    // لو لسه فيه 404، جرب ترجع رد يعلمك لو المشكلة في مفتاح الـ API
-    return NextResponse.json(
-      { error: "عذراً، حدث خطأ في معالجة طلبك: " + error.message },
-      { status: 500 },
-    );
+  return NextResponse.json({ reply: { content: text } });
+} catch (error: any) {
+  console.error("Critical Error:", error);
+  return NextResponse.json(
+    { error: "خطأ في السيرفر: " + error.message },
+    { status: 500 },
+  );
   }
 }
