@@ -104,7 +104,7 @@ export default function ChatBot() {
                   <AvatarFallback><Loader2 className="animate-spin" size={18} /></AvatarFallback>
                 </Avatar>
                 <div className="bg-slate-100 p-1 rounded-2xl rounded-tl-none">
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
                     <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-.3s]" />
                     <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-.5s]" />
@@ -127,12 +127,12 @@ export default function ChatBot() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="اسأل عن آية أو موضوع روحي..."
-            className="flex-1 bg-white h-12 rounded-full px-1 shadow-inner focus-visible:ring-blue-500"
+            className="flex-1 bg-white h-5 rounded-full px-1 shadow-inner focus-visible:ring-blue-500"
           />
           <Button
             disabled={loading || !input.trim()}
             size="icon"
-            className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-700 transition-all shrink-0"
+            className="h-3 w-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-all shrink-0"
           >
             {loading ? <Loader2 className="animate-spin" /> : <Send size={20} className="mr-0.5" />}
           </Button>
