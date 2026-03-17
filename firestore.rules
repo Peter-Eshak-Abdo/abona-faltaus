@@ -43,6 +43,46 @@ service cloud.firestore {
           get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy == request.auth.uid;
       }
 
+      match /quizzes/{quizId}/gameState/state {
+        // الكل يقدر يقرأ الحالة عشان الطلاب يعرفوا السؤال الحالي
+        allow read: if true;
+        // الـ Host فقط (منشئ الكويز) هو اللي يقدر يعدل الحالة
+        allow write: if request.auth != null &&
+                    get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy == request.auth.uid;
+      }
+      // قواعد الفرق (Groups)
+      match /quizzes/{quizId}/groups/{groupId} {
+        // أي طالب يقدر ينضم (create) ويشوف الفرق
+        allow create, read: if true;
+        // الـ Host فقط هو اللي يقدر يمسح فريق أو ينظف الفرق القديمة
+        allow delete: if request.auth != null &&
+                    get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy == request.auth.uid;
+        // الطالب يقدر يحدث نشاطه فقط (Update lastActivity)
+        allow update: if true;
+      }
+      // 1. الإجابات (Responses)
+      match /quizzes/{quizId}/questions/{qIdx}/responses/{groupId} {
+        // الطالب يقدر يبعت إجابته مرة واحدة (Create)
+        // بشرط أن المسابقة نشطة ولسه وقت السؤال ما خلصش
+        allow create: if request.resource.data.groupId == groupId
+                      && get(/databases/$(database)/documents/quizzes/$(quizId)/gameState/state).data.showResults == false;
+
+        // المضيف فقط هو اللي يقدر يشوف كل الإجابات
+        allow read: if request.auth != null &&
+                    get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy == request.auth.uid;
+      }
+
+      // 2. تحديث النقاط (Scores)
+      match /quizzes/{quizId}/groups/{groupId} {
+        // الحماية هنا حرجة: الطالب لااااا يمكنه تعديل نقاطه بنفسه
+        // التعديل فقط للمضيف
+        allow update: if request.auth != null &&
+                      get(/databases/$(database)/documents/quizzes/$(quizId)).data.createdBy == request.auth.uid;
+
+        // الطلاب يقدروا يقرأوا النقاط عشان يشوفوا الـ Leaderboard
+        allow read: if true;
+      }
+      
       // الردود (responses)
       match /responses/{responseId} {
         allow read: if true;

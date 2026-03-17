@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { db, auth } from "@/lib/firebase";
-// import { getFirebaseServices } from "@/lib/firebase"
 import { getUserQuizzes } from "@/lib/firebase-utils"
 import { Plus, Play, Users, Calendar, AlertCircle, Edit, Trash2, Trash } from "lucide-react"
 import type { Quiz } from "@/types/quiz"
@@ -319,13 +318,25 @@ function DashboardView({ auth, db }: { auth: Auth, db: Firestore }) {
 }
 
 export default function DashboardPage() {
-  // const [auth, setAuth] = useState<Auth | null>(null);
-  // const [db, setDb] = useState<Firestore | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setIsReady(true);
   }, []);
+
+  // منع الرندر حتى يتم التأكد من أننا في "العميل"
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-blue-50">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      </div>
+    );
+  }
 
   if (!isReady) {
     return (
@@ -335,16 +346,10 @@ export default function DashboardPage() {
     );
   }
 
-  // useEffect(() => {
-  //   // const { auth, db } = getFirebaseServices();
-  //   setAuth(auth);
-  //   setDb(db);x
-  // }, []);
-
   if (!auth || !db) {
     return (
       <div className="min-h-screen flex items-center w-full justify-center bg-linear-to-br from-blue-50 to-indigo-100">
-        <div className="animate-spin rounded-full h-16 w-16 border-b border-blue-600"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b border-blue-600">خطأ في تهيئة Firebase</div>
       </div>
     );
   }

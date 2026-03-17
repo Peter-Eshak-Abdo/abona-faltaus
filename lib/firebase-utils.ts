@@ -14,35 +14,12 @@ import {
   setDoc,
   deleteDoc,
   Timestamp,
-  // enableIndexedDbPersistence,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-// import { getFirebaseServices } from "@/lib/firebase"; // Import the new function
 import type { Quiz, Group, QuizResponse, GameState } from "@/types/quiz";
-
-// This function will now be called inside other functions
-// function initializeDb() {
-//   const { db } = getFirebaseServices();
-//   if (typeof window !== 'undefined') {
-//     enableIndexedDbPersistence(db)
-//       .catch((err) => {
-//         if (err.code == 'failed-precondition') {
-//           console.log("Persistence failed: Multiple tabs open");
-//           // Multiple tabs open, persistence can only be enabled
-//           // in one tab at a time.
-//         } else if (err.code == 'unimplemented') {
-//           console.log("Persistence is not available in this browser");
-//           // The current browser does not support all of the
-//           // features required to enable persistence.
-//         }
-//       });
-//   }
-//   return db;
-// }
 
 // Quiz operations
 export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt">) => {
-  // const db = initializeDb();
   try {
     const docRef = await addDoc(collection(db, "quizzes"), {
       ...quiz,
@@ -59,7 +36,6 @@ export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt">) => {
 };
 
 export const getQuiz = async (quizId: string): Promise<Quiz | null> => {
-  // const db = initializeDb();
   try {
     if (!quizId || typeof quizId !== "string" || quizId.length < 10) {
       throw new Error("Invalid quiz ID");
@@ -89,7 +65,6 @@ export const updateQuiz = async (
   quizId: string,
   updates: Partial<Omit<Quiz, "id" | "createdAt">>
 ) => {
-  // const db = initializeDb();
   try {
     const quizRef = doc(db, "quizzes", quizId);
     await setDoc(quizRef, updates, { merge: true });
@@ -101,7 +76,6 @@ export const updateQuiz = async (
 };
 
 export const deleteQuiz = async (quizId: string) => {
-  // const db = initializeDb();
   try {
     const quizDoc = await getDoc(doc(db, "quizzes", quizId));
     if (!quizDoc.exists()) {
@@ -126,7 +100,6 @@ export const deleteQuiz = async (quizId: string) => {
 };
 
 export const getUserQuizzes = async (userId: string) => {
-  // const db = initializeDb();
   try {
     console.log("Fetching quizzes for user:", userId);
 
@@ -218,15 +191,14 @@ export const joinQuizAsGroup = async (
   groupData: Omit<Group, "id" | "joinedAt" | "score" | "lastActivity">,
   creatorUid?: string
 ) => {
-  // const db = initializeDb();
   try {
     if (!quizId || typeof quizId !== "string" || quizId.length < 10) {
       throw new Error("Invalid quiz ID");
     }
 
     const groupsRef = collection(db, "quizzes", quizId, "groups");
-    await cleanupOldGroups(quizId);
-    await checkAndResetQuizIfNeeded(quizId);
+    // await cleanupOldGroups(quizId);
+    // await checkAndResetQuizIfNeeded(quizId);
 
     const q = query(groupsRef, where("groupName", "==", groupData.groupName));
     const existingGroups = await getDocs(q);
@@ -272,7 +244,6 @@ export const joinQuizAsGroup = async (
 };
 
 export const deleteGroup = async (quizId: string, groupId: string) => {
-  // const db = initializeDb();
   try {
     console.log("Deleting group:", groupId, "from quiz:", quizId);
     const groupRef = doc(db, "quizzes", quizId, "groups", groupId);
@@ -286,7 +257,6 @@ export const deleteGroup = async (quizId: string, groupId: string) => {
 };
 
 export const cleanupOldGroups = async (quizId: string) => {
-  // const db = initializeDb();
   try {
     const groupsRef = collection(db, "quizzes", quizId, "groups");
     const snapshot = await getDocs(groupsRef);
@@ -324,63 +294,64 @@ export const cleanupOldGroups = async (quizId: string) => {
 };
 
 export const checkAndResetQuizIfNeeded = async (quizId: string) => {
-  // const db = initializeDb();
-  try {
-    const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
-    const gameStateDoc = await getDoc(gameStateRef);
+  // try {
+  //   const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
+  //   const gameStateDoc = await getDoc(gameStateRef);
 
-    if (gameStateDoc.exists()) {
-      const gameState = gameStateDoc.data();
-      const startedAt = gameState.startedAt?.toDate();
+  //   if (gameStateDoc.exists()) {
+  //     const gameState = gameStateDoc.data();
+  //     const startedAt = gameState.startedAt?.toDate();
 
-      if (startedAt) {
-        const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000);
-        if (startedAt < threeHoursAgo) {
-          console.log("Quiz is older than 3 hours, resetting...");
+  //     if (startedAt) {
+  //       const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000);
+  //       if (startedAt < threeHoursAgo) {
+  //         console.log("Quiz is older than 3 hours, resetting...");
 
-          await setDoc(
-            gameStateRef,
-            {
-              currentQuestionIndex: 0,
-              isActive: false,
-              startedAt: null,
-              questionStartTime: null,
-              showResults: false,
-              showQuestionOnly: false,
-              currentQuestionTimeLimit: 30,
-              shuffledQuestions: null,
-            },
-            { merge: true }
-          );
+  //         await setDoc(
+  //           gameStateRef,
+  //           {
+  //             currentQuestionIndex: 0,
+  //             isActive: false,
+  //             startedAt: null,
+  //             questionStartTime: null,
+  //             showResults: false,
+  //             showQuestionOnly: false,
+  //             currentQuestionTimeLimit: 30,
+  //             shuffledQuestions: null,
+  //           },
+  //           { merge: true }
+  //         );
 
-          const responsesRef = collection(db, "quizzes", quizId, "responses");
-          const responsesSnapshot = await getDocs(responsesRef);
-          const batch = writeBatch(db);
-          responsesSnapshot.docs.forEach((doc) => {
-            batch.delete(doc.ref);
-          });
+  //         const responsesRef = collection(db, "quizzes", quizId, "responses");
+  //         const responsesSnapshot = await getDocs(responsesRef);
+  //         const batch = writeBatch(db);
+  //         responsesSnapshot.docs.forEach((doc) => {
+  //           batch.delete(doc.ref);
+  //         });
 
-          const groupsRef = collection(db, "quizzes", quizId, "groups");
-          const groupsSnapshot = await getDocs(groupsRef);
-          groupsSnapshot.docs.forEach((doc) => {
-            batch.set(doc.ref, { score: 0 }, { merge: true });
-          });
+  //         const groupsRef = collection(db, "quizzes", quizId, "groups");
+  //         const groupsSnapshot = await getDocs(groupsRef);
+  //         groupsSnapshot.docs.forEach((doc) => {
+  //           batch.set(doc.ref, { score: 0 }, { merge: true });
+  //         });
 
-          await batch.commit();
-          console.log("Quiz reset successfully");
-        }
-      }
-    }
-  } catch (error) {
-    console.error("Error checking and resetting quiz:", error);
-  }
+  //         await batch.commit();
+  //         console.log("Quiz reset successfully");
+  //       }
+  //     }
+  //   }
+  // } catch (error) {
+  //   console.error("Error checking and resetting quiz:", error);
+  // }
+  // تم تعطيل المسح التلقائي بناءً على الوقت لضمان استقرار المسابقة
+  console.log("Auto-reset disabled to maintain quiz persistence.");
+  return;
 };
 
 export const getQuizGroups = (
   quizId: string,
   callback: (groups: Group[]) => void
 ) => {
-  // const db = initializeDb();
   const groupsRef = collection(db, "quizzes", quizId, "groups");
   const q = query(groupsRef);
 
@@ -410,19 +381,40 @@ export const getQuizGroups = (
   );
 };
 export const startQuiz = async (quizId: string) => {
-  // const db = initializeDb();
   const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
-  await setDoc(gameStateRef, {
-    isActive: true,
-    currentQuestionIndex: 0,
-    questionStartTime: serverTimestamp(),
-    showResults: false,
-    startedAt: serverTimestamp(),
-  }, { merge: true });
-};
+  // 1. تصفير الـ Game State
+  await setDoc(
+    gameStateRef,
+    {
+      isActive: true,
+      currentQuestionIndex: 0,
+      questionStartTime: serverTimestamp(),
+      showResults: false,
+      startedAt: serverTimestamp(),
+    },
+    { merge: true },
+  );
+
+  // 2. تصفير سكور المجموعات عند البدء الفعلي
+  const groupsRef = collection(db, "quizzes", quizId, "groups");
+  const groupsSnapshot = await getDocs(groupsRef);
+  const batch = writeBatch(db);
+
+  groupsSnapshot.docs.forEach((doc) => {
+    batch.update(doc.ref, { score: 0 });
+  });
+
+  // 3. مسح أي إجابات قديمة من محاولات سابقة
+  const responsesRef = collection(db, "quizzes", quizId, "responses");
+  const responsesSnapshot = await getDocs(responsesRef);
+  responsesSnapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+
+  await batch.commit();
+};;
 
 export const nextQuestion = async (quizId: string, newIndex: number) => {
-  // const db = initializeDb();
   const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
   await setDoc(gameStateRef, {
     currentQuestionIndex: newIndex,
@@ -432,19 +424,16 @@ export const nextQuestion = async (quizId: string, newIndex: number) => {
 };
 
 export const showQuestionResults = async (quizId: string) => {
-  // const db = initializeDb();
   const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
   await setDoc(gameStateRef, { showResults: true }, { merge: true });
 };
 
 export const endQuiz = async (quizId: string) => {
-  // const db = initializeDb();
   const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
   await setDoc(gameStateRef, { isActive: false, showResults: true }, { merge: true });
 };
 
 export const subscribeToGameState = (quizId: string, callback: (gameState: GameState) => void) => {
-  // const db = initializeDb();
   const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
   return onSnapshot(gameStateRef, (doc) => {
     if (doc.exists()) {
@@ -454,7 +443,6 @@ export const subscribeToGameState = (quizId: string, callback: (gameState: GameS
 };
 
 export const submitResponse = async (quizId: string, groupId: string, questionIndex: number, choiceIndex: number, isCorrect: boolean, timeTaken: number) => {
-  // const db = initializeDb();
   const responseRef = collection(db, "quizzes", quizId, "responses");
   await addDoc(responseRef, {
     groupId,
@@ -467,7 +455,6 @@ export const submitResponse = async (quizId: string, groupId: string, questionIn
 };
 
 export const getQuestionResponses = async (quizId: string, questionIndex: number) => {
-  // const db = initializeDb();
   const responsesRef = collection(db, "quizzes", quizId, "responses");
   const q = query(responsesRef, where("questionIndex", "==", questionIndex));
   const querySnapshot = await getDocs(q);
@@ -475,7 +462,6 @@ export const getQuestionResponses = async (quizId: string, questionIndex: number
 };
 
 export const updateGroupScores = async (quizId: string, scores: Record<string, number>) => {
-  // const db = initializeDb();
   const batch = writeBatch(db);
   for (const groupId in scores) {
     const groupRef = doc(db, "quizzes", quizId, "groups", groupId);
@@ -485,7 +471,6 @@ export const updateGroupScores = async (quizId: string, scores: Record<string, n
 };
 
 export const getTrashedQuizzes = async (userId: string) => {
-    // const db = initializeDb();
     const q = query(
       collection(db, "trashedQuizzes"),
         where("createdBy", "==", userId),
@@ -501,7 +486,6 @@ export const getTrashedQuizzes = async (userId: string) => {
 };
 
 export const restoreQuiz = async (trashId: string) => {
-  // const db = initializeDb();
   const trashDocRef = doc(db, "trashedQuizzes", trashId);
   const trashDoc = await getDoc(trashDocRef);
 
@@ -517,13 +501,11 @@ export const restoreQuiz = async (trashId: string) => {
 };;
 
 export const permanentlyDeleteQuiz = async (trashId: string) => {
-    // const db = initializeDb();
     const trashDocRef = doc(db, "trashedQuizzes", trashId);
     await deleteDoc(trashDocRef);
 };
 
 export const cleanupExpiredTrash = async (userId: string) => {
-  // const db = initializeDb();
   const now = new Date();
   const q = query(
     collection(db, "trashedQuizzes"),

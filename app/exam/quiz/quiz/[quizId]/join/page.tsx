@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/lib/firebase";
-// import { getFirebaseServices } from "@/lib/firebase";
 import { Auth } from "firebase/auth"
 
 function JoinQuizView({ auth }: { auth: Auth }) {
@@ -45,6 +44,37 @@ function JoinQuizView({ auth }: { auth: Auth }) {
   }, [quizId, hasJoined, router])
 
   useEffect(() => {
+    const savedGroup = localStorage.getItem("currentGroup");
+    if (savedGroup) {
+      try {
+        const parsed = JSON.parse(savedGroup);
+        // التحقق الأهم: هل الفريق المتخزن ده تبع المسابقة اللي فاتحينها دلوقتي؟
+        if (parsed.quizId === quizId) {
+          // استرجاع البيانات عشان الشاشة متظهرش فاضية
+          setGroupName(parsed.groupName || "");
+          setMemberNames(parsed.members || []);
+          setMemberCount(parsed.members?.length || 5);
+
+          if (parsed.saintName) {
+            setUseCustomName(false);
+            setSelectedSaint({ name: parsed.saintName, src: parsed.saintImage || "" });
+          } else {
+            setUseCustomName(true);
+          }
+
+          setHasJoined(true);
+        } else {
+          // لو الفريق تبع مسابقة تانية قديمة، امسح البيانات دي عشان يدخل من جديد
+          localStorage.removeItem("currentGroup");
+        }
+      } catch (e) {
+        console.error("Error parsing saved group", e);
+        localStorage.removeItem("currentGroup");
+      }
+    }
+  }, [quizId]);
+
+  useEffect(() => {
     const newNames = [...memberNames]
     if (memberCount > memberNames.length) {
       for (let i = memberNames.length; i < memberCount; i++) {
@@ -54,7 +84,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
       newNames.splice(memberCount)
     }
     setMemberNames(newNames)
-  }, [memberCount, memberNames])
+  }, [memberCount])
 
   const loadQuiz = async () => {
     try {
@@ -108,6 +138,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
 
     try {
       const groupData = {
+        quizId: quizId,
         groupName: finalGroupName,
         members: validNames.map((name) => name.trim()),
         ...(selectedSaint && !useCustomName && {
@@ -143,6 +174,14 @@ function JoinQuizView({ auth }: { auth: Auth }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
         <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white"></div>
+      </div>
+    )
+  }
+
+  if (gameState?.isActive && !hasJoined) {
+    return (
+      <div className="min-h-screen flex items-center justify-center ...">
+        {/* محتوى "بدأ المسابقة بالفعل" */}
       </div>
     )
   }
@@ -204,7 +243,6 @@ function JoinQuizView({ auth }: { auth: Auth }) {
   }
 
   return (
-
     <div className="min-h-screen bg-linear-to-br flex items-center justify-center">
       <div className="w-full max-w-8xl space-y-2 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
         <div className="text-center mb-2">
@@ -399,13 +437,6 @@ function JoinQuizView({ auth }: { auth: Auth }) {
 }
 
 export default function JoinQuizPage() {
-  // const [auth, setAuth] = useState<Auth | null>(null);
-
-  // useEffect(() => {
-  //   // const { auth } = getFirebaseServices();
-  //   setAuth(auth);
-  // }, []);
-
   if (!auth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">

@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "@/lib/firebase";
-// import { getFirebaseServices } from "@/lib/firebase"
 import { createQuiz } from "@/lib/firebase-utils"
 import { Plus, Trash2, Check, Shuffle, Clock, X, Upload, Download } from "lucide-react"
 import type { Question, Quiz } from "@/types/quiz"
@@ -12,7 +11,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import * as XLSX from "xlsx"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-
 
 interface CreateQuizDialogProps {
   open: boolean
@@ -22,7 +20,6 @@ interface CreateQuizDialogProps {
 }
 
 export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }: CreateQuizDialogProps) {
-  // const { auth } = getFirebaseServices();
   const [user] = useAuthState(auth)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -53,7 +50,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
 
   const addQuestion = () => {
     const newQuestion: Question = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID() || Date.now().toString(),
       type: "multiple-choice",
       text: "",
       choices: ["", "", "", ""],
@@ -201,18 +198,9 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
   }
 
   const validateAndSubmit = async () => {
-    if (!user) {
-      alert("يجب تسجيل الدخول أولاً")
-      return
-    }
-    if (!title.trim()) {
-      alert("يجب إدخال اسم المسابقة")
-      return
-    }
-    if (questions.length === 0) {
-      alert("يجب إضافة سؤال واحد على الأقل")
-      return
-    }
+    if (!user) return alert("يجب تسجيل الدخول أولاً")
+    if (!title.trim()) return alert("يجب إدخال اسم المسابقة")
+    if (questions.length === 0) return alert("يجب إضافة سؤال واحد على الأقل")
 
     // Check for empty question texts
     const emptyTextQuestions = questions
@@ -220,55 +208,62 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
       .filter(({ q }) => !q.text.trim())
       .map(({ index }) => index + 1)
 
-    if (emptyTextQuestions.length > 0) {
-      alert(`يجب إدخال نص للأسئلة التالية: ${emptyTextQuestions.join(', ')}`)
-      return
-    }
+    if (emptyTextQuestions.length > 0) return alert(`يجب إدخال نص للأسئلة التالية: ${emptyTextQuestions.join(', ')}`)
 
     // Check for incomplete multiple choice questions
-    const incompleteChoiceQuestions = questions
-      .map((q, index) => ({ q, index }))
-      .filter(({ q }) => q.type !== "true-false" && !q.choices.every((c) => c.trim()))
-      .map(({ index }) => index + 1)
+    // const incompleteChoiceQuestions = questions
+    //   .map((q, index) => ({ q, index }))
+    //   .filter(({ q }) => q.type !== "true-false" && !q.choices.every((c) => c.trim()))
+    //   .map(({ index }) => index + 1)
 
-    if (incompleteChoiceQuestions.length > 0) {
-      alert(`يجب إدخال جميع الاختيارات للأسئلة متعددة الاختيارات التالية: ${incompleteChoiceQuestions.join(', ')}`)
-      return
+    // if (incompleteChoiceQuestions.length > 0) return alert(`يجب إدخال جميع الاختيارات للأسئلة متعددة الاختيارات التالية: ${incompleteChoiceQuestions.join(', ')}`)
+
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      if (!q.text.trim()) return alert(`السؤال رقم ${i + 1} فارغ!`);
+
+      // تصفية الخيارات الفارغة (كاهوت يقبل 2 خيار على الأقل)
+      const validChoices = q.choices.filter(c => c.trim() !== "");
+      if (q.type === "multiple-choice" && validChoices.length < 2) {
+        return alert(`السؤال رقم ${i + 1} يجب أن يحتوي على خيارين على الأقل`);
+      }
     }
-
     setIsSubmitting(true)
     try {
+      const quizData = {
+        title: title.trim(),
+        description: description.trim(),
+        questions: questions.map(q => ({
+          ...q,
+          // تنظيف الخيارات من المسافات الزائدة قبل الحفظ
+          choices: q.choices.map(c => c.trim())
+        })),
+        shuffleQuestions,
+        shuffleChoices,
+        updatedAt: Date.now(), // مهم للترتيب في الداشبورد
+      };
       if (isEditing && editQuiz) {
         // Update existing quiz
         const { updateQuiz } = await import("@/lib/firebase-utils")
-        await updateQuiz(editQuiz.id, {
-          title: title.trim(),
-          description: description.trim(),
-          questions,
-          shuffleQuestions,
-          shuffleChoices,
-        })
+        await updateQuiz(editQuiz.id, quizData)
         alert("تم تحديث المسابقة بنجاح!")
       } else {
         // Create new quiz
         await createQuiz({
-          title: title.trim(),
-          description: description.trim(),
+          ...quizData,
           createdBy: user.uid,
-          questions,
-          isActive: false,
-          shuffleQuestions,
-          shuffleChoices,
-        })
+          // createdAt: Date.now(),
+          isActive: false, })
       }
 
-      setTitle("")
-      setDescription("")
-      setQuestions([])
-      setShuffleQuestions(false)
-      setShuffleChoices(false)
-      setIsEditing(false)
       onQuizCreated()
+      onOpenChange(false)
+      // setTitle("")
+      // setDescription("")
+      // setQuestions([])
+      // setShuffleQuestions(false)
+      // setShuffleChoices(false)
+      // setIsEditing(false)
     } catch (error: any) {
       console.error("Error saving quiz:", error)
       console.dir(error); // سيظهر لك تفاصيل الخطأ كاملة في الكونسول

@@ -54,18 +54,31 @@ export default function PlayQuizPageTailwind() {
   useEffect(() => {
     setLoading(true)
     const groupData = localStorage.getItem("currentGroup")
+
     if (!groupData) {
       router.push(`/exam/quiz/quiz/${quizId}/join`)
       return
     }
+
     try {
-      setCurrentGroup(JSON.parse(groupData))
+      const parsed = JSON.parse(groupData)
+
+      // تأمين إضافي: لو دخل رابط اللعب ببيانات مسابقة تانية، امسحها ووديه للانضمام
+      if (parsed.quizId !== quizId) {
+        console.warn("Mismatch in quizId, removing old group data.");
+        localStorage.removeItem("currentGroup");
+        router.push(`/exam/quiz/quiz/${quizId}/join`);
+        return;
+      }
+
+      setCurrentGroup(parsed)
     } catch (e) {
       console.warn("Invalid currentGroup in localStorage, removing it.", e)
       localStorage.removeItem("currentGroup")
       router.push(`/exam/quiz/quiz/${quizId}/join`)
       return
     }
+
     loadQuiz()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizId, router])
@@ -232,8 +245,17 @@ export default function PlayQuizPageTailwind() {
     }
   }
 
-  const choiceColors = ["bg-red-600", "bg-green-600", "bg-blue-600", "bg-yellow-400"]
-  const choiceTextColors = ["text-white", "text-white", "text-white", "text-black"]
+  // const choiceColors = ["bg-red-600", "bg-green-600", "bg-blue-600", "bg-yellow-400"]
+  const choiceColors = ["bg-[#e21b3c]", "bg-[#1368ce]", "bg-[#d89e00]", "bg-[#26890c]"]
+  // const choiceTextColors = ["text-white", "text-white", "text-white", "text-black"]
+  const choiceTextColors = ["border-[#b0132b]", "border-[#0e4e9c]", "border-[#a67a00]", "border-[#1d6b08]"]
+
+  const KAHOOT_SHAPES = [
+    <svg key="triangle" viewBox="0 0 32 32" className="w-12 h-12 fill-white"><path d="M16 4L2 28h28L16 4z" /></svg>,
+    <svg key="diamond" viewBox="0 0 32 32" className="w-12 h-12 fill-white"><path d="M16 2l14 14-14 14L2 16 16 2z" /></svg>,
+    <svg key="circle" viewBox="0 0 32 32" className="w-12 h-12 fill-white"><circle cx="16" cy="16" r="14" /></svg>,
+    <svg key="square" viewBox="0 0 32 32" className="w-12 h-12 fill-white"><rect x="4" y="4" width="24" height="24" rx="2" /></svg>
+  ]
 
   const currentQuestion = useMemo(() => {
     if (gameState?.currentQuestionIndex === undefined) return null
@@ -337,31 +359,64 @@ export default function PlayQuizPageTailwind() {
   }
 
   if (showResults && !showLeaderboard) {
-    const stats = (currentQuestion?.choices || []).map((_, i) => ({ choice: i, count: responses.filter((r) => r.choiceIndex === i).length }))
+    // const stats = (currentQuestion?.choices || []).map((_, i) => ({ choice: i, count: responses.filter((r) => r.choiceIndex === i).length }))
+    // return (
+    //   <div className="min-h-screen p-1 bg-linear-to-br from-blue-600 to-purple-700">
+    //     <div className="max-w-6xl mx-auto text-center text-white">
+    //       <h1 className="text-3xl font-bold mb-1">نتائج السؤال</h1>
+    //       <div className="bg-white/10 p-1 rounded">
+    //         <div className="text-xl font-semibold mb-1">{currentQuestion?.text}</div>
+    //         <div className="space-y-1">
+    //           {(currentQuestion?.choices || []).map((choice, idx) => {
+    //             const isCorrect = idx === currentQuestion?.correctAnswer
+    //             const count = stats.find((s) => s.choice === idx)?.count || 0
+    //             return (
+    //               <div key={idx} className={`p-1 rounded flex items-center justify-between ${isCorrect ? "bg-green-50" : "bg-white/20"}`}>
+    //                 <div className="flex items-center gap-1">
+    //                   <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${choiceColors[idx] || "bg-gray-400"} ${choiceTextColors[idx]}`}>{["أ", "ب", "ج", "د"][idx]}</div>
+    //                   <div className="font-medium">{choice}</div>
+    //                 </div>
+    //                 <div className="text-2xl font-bold">{count}</div>
+    //               </div>
+    //             )
+    //           })}
+    //         </div>
+    //         <div className="text-center mt-1 text-white/80">في انتظار عرض الترتيب الحالي...</div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // )
+    const isCorrect = selectedAnswer === currentQuestion?.correctAnswer;
+    const didNotAnswer = selectedAnswer === null;
+
+    const bgColor = didNotAnswer ? "bg-gray-800" : isCorrect ? "bg-green-500" : "bg-red-500";
+    const title = didNotAnswer ? "انتهى الوقت!" : isCorrect ? "إجابة صحيحة! 🎉" : "إجابة خاطئة! ❌";
+
     return (
-      <div className="min-h-screen p-1 bg-linear-to-br from-blue-600 to-purple-700">
-        <div className="max-w-6xl mx-auto text-center text-white">
-          <h1 className="text-3xl font-bold mb-1">نتائج السؤال</h1>
-          <div className="bg-white/10 p-1 rounded">
-            <div className="text-xl font-semibold mb-1">{currentQuestion?.text}</div>
-            <div className="space-y-1">
-              {(currentQuestion?.choices || []).map((choice, idx) => {
-                const isCorrect = idx === currentQuestion?.correctAnswer
-                const count = stats.find((s) => s.choice === idx)?.count || 0
-                return (
-                  <div key={idx} className={`p-1 rounded flex items-center justify-between ${isCorrect ? "bg-green-50" : "bg-white/20"}`}>
-                    <div className="flex items-center gap-1">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${choiceColors[idx] || "bg-gray-400"} ${choiceTextColors[idx]}`}>{["أ", "ب", "ج", "د"][idx]}</div>
-                      <div className="font-medium">{choice}</div>
-                    </div>
-                    <div className="text-2xl font-bold">{count}</div>
-                  </div>
-                )
-              })}
+      <div className={`min-h-screen ${bgColor} flex flex-col items-center justify-center p-1 text-white transition-colors duration-500`}>
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="text-center"
+        >
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-1 drop-shadow-lg">{title}</h1>
+
+          {!didNotAnswer && (
+            <div className="bg-black/20 rounded-2xl p-1 mt-1 inline-block">
+              <p className="text-xl mb-1">أنت اخترت:</p>
+              <div className="flex items-center gap-1 justify-center">
+                <div className="w-8 h-8">
+                  {KAHOOT_SHAPES[selectedAnswer % 4]}
+                </div>
+                <p className="text-2xl font-bold">{currentQuestion?.choices[selectedAnswer]}</p>
+              </div>
             </div>
-            <div className="text-center mt-1 text-white/80">في انتظار عرض الترتيب الحالي...</div>
+          )}
+
+          <div className="mt-3 text-lg font-medium opacity-80 animate-pulse">
+            استعد للترتيب العام...
           </div>
-        </div>
+        </motion.div>
       </div>
     )
   }
@@ -403,16 +458,33 @@ export default function PlayQuizPageTailwind() {
     )
   }
 
+  if (hasAnswered && gameState.isActive && !showResults) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-200 p-1">
+        <h2 className="text-3xl font-bold text-gray-800 mb-1">في انتظار باقي الفرق...</h2>
+        <div className="w-6 h-6 border-2 border-gray-300 border-t-purple-600 rounded-full animate-spin"></div>
+        <div className="mt-1 font-bold text-xl text-gray-600">{currentGroup.groupName}</div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen p-1 bg-white/5 backdrop-blur-md">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-1">
+        {/* شريط المعلومات العلوي */}
+        <div className="bg-white shadow-sm flex justify-between items-center p-4">
+          <div className="font-bold text-lg text-gray-800">{currentGroup.groupName}</div>
+          <div className="bg-purple-600 text-white px-4 py-2 rounded-full font-bold text-xl">
+            {Math.ceil(timeLeft)}
+          </div>
+        </div>
+        {/* <div className="text-center mb-1">
           <div className="bg-white/10 rounded p-1 inline-block text-lg font-bold">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</div>
           <div className="mt-1 font-bold text-white text-2xl">{currentGroup.groupName}</div>
           <div className="text-white/80 text-sm">{currentGroup.members.join(" || ")}</div>
-        </div>
+        </div> */}
 
-        <div className="bg-white/10 rounded-2xl p-1 mb-1 backdrop-blur-sm">
+        {/* <div className="bg-white/10 rounded-2xl p-1 mb-1 backdrop-blur-sm">
           <h2 className="text-4xl font-extrabold mb-1 text-white text-center">{currentQuestion.text}</h2>
 
           <div className="grid gap-1">
@@ -440,9 +512,43 @@ export default function PlayQuizPageTailwind() {
           {hasAnswered && (
             <div className="mt-1 p-1 rounded bg-white/10 text-center text-lg font-semibold text-white">تم إرسال الإجابة — في انتظار النتائج...</div>
           )}
+        </div> */}
+        <div className="flex-1 p-1 flex flex-col max-w-4xl mx-auto w-full">
+          {/* عرض السؤال (اختياري، في كاهوت الأصلي السؤال بيكون على الشاشة الرئيسية فقط، بس الأفضل نسيبه للطلاب) */}
+          <div className="bg-white rounded-xl shadow-md p-1 mb-1 text-center mt-1">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">{currentQuestion.text}</h2>
+          </div>
+
+          {/* شبكة الأزرار 2x2 */}
+          <div className="grid grid-cols-2 gap-1 flex-1 pb-1">
+            {(currentQuestion.choices || []).map((choice, idx) => (
+              <motion.button
+                key={idx}
+                onClick={() => handleAnswerSelect(idx)}
+                disabled={hasAnswered || timeLeft === 0}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: idx * 0.1, type: "spring" }}
+                className={cn(
+                  "relative flex flex-col items-center justify-center p-4 rounded-md shadow-[0_6px_0_0] active:shadow-[0_0px_0_0] active:translate-y-[6px] transition-all",
+                  choiceColors[idx % 4],
+                  choiceTextColors[idx % 4]
+                )}
+              >
+                {/* الشكل الهندسي */}
+                <div className="mb-1 drop-shadow-md">
+                  {KAHOOT_SHAPES[idx % 4]}
+                </div>
+                {/* نص الإجابة */}
+                <span className="text-white font-bold text-lg md:text-2xl text-center drop-shadow-md">
+                  {choice}
+                </span>
+              </motion.button>
+            ))}
+          </div>
         </div>
 
-        <div className="flex justify-between items-center gap-1">
+        {/* <div className="flex justify-between items-center gap-1">
           <Button variant="outline" onClick={() => setShowExitConfirm(true)} className="bg-red-500 text-white">خروج</Button>
           <div className="bg-orange-500 text-white p-1 rounded font-bold">{Math.ceil(timeLeft)} ث</div>
           <Button variant="outline" onClick={() => setShowResetConfirm(true)} className="bg-blue-500 text-white">إعادة تعيين</Button>
@@ -475,7 +581,8 @@ export default function PlayQuizPageTailwind() {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
+      </div>
     </div>
   )
 }
