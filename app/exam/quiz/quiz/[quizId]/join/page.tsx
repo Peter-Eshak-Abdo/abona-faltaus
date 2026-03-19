@@ -34,11 +34,9 @@ function JoinQuizView({ auth }: { auth: Auth }) {
 
       const unsubscribe = subscribeToGameState(quizId, (state) => {
         setGameState(state)
-        if (state?.isActive && hasJoined) {
-          router.push(`/exam/quiz/quiz/${quizId}/play`)
-        }
+        // التوجيه يتم فقط هنا عندما يقرر الأدمن بدء المسابقة
+        if (state?.isActive && hasJoined) router.push(`/exam/quiz/quiz/${quizId}/play`)
       })
-
       return unsubscribe
     }
   }, [quizId, hasJoined, router])
@@ -158,7 +156,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
       )
 
       setHasJoined(true)
-      router.push(`/exam/quiz/quiz/${quizId}/play`)
+      // router.push(`/exam/quiz/quiz/${quizId}/play`)
 
     } catch (error) {
       console.error("Error joining quiz:", error)
@@ -173,7 +171,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
   if (!quiz) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b border-white"></div>
       </div>
     )
   }
@@ -186,7 +184,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
     )
   }
 
-  if (gameState?.isActive) {
+  if (gameState?.isActive && !hasJoined) {
     return (
       <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
         <div className="w-full max-w-md text-center bg-white rounded-2xl shadow-2xl p-1">
@@ -209,32 +207,63 @@ function JoinQuizView({ auth }: { auth: Auth }) {
     )
   }
 
-  if (hasJoined) {
+  if (hasJoined && !gameState?.isActive) {
     return (
       <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
           <div className="text-center bg-white rounded-2xl shadow-2xl">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+            {/* <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
               <svg className="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
               </svg>
-            </div>
+            </div> */}
+            {/* عرض الصورة هنا */}
+            {!useCustomName && selectedSaint?.src ? (
+              <img
+                src={selectedSaint.src}
+                alt={selectedSaint.name}
+                className="w-10 h-10 rounded-full mx-auto mb-1 object-cover border border-green-100 shadow-md"
+              />
+            ) : (
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-12 h-12 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                </svg>
+              </div>
+            )}
             <h2 className="text-4xl font-bold mb-3 text-gray-900">تم الانضمام بنجاح!</h2>
             <p className="text-gray-600 text-2xl">فريق</p>
             <p className="text-gray-600 text-4xl font-extrabold">&quot;{useCustomName ? groupName : selectedSaint?.name}&quot;</p>
-            <p className="text-gray-600 mt-1 text-2xl"> اسماء الاعضاء:</p>
-            <ul className="list-disc list">
-              <li>{memberNames.map((name, index) => (
-                <span key={index} className="text-gray-600 text-2xl font-bold block">
-                  {index + 1}- {name}
-                </span>
-              ))}</li>
-            </ul>
+            <div className="bg-gray-50 rounded-xl p-1 mb-1">
+              <p className="text-gray-600 mt-1 text-2xl"> اسماء الاعضاء:</p>
+              {/* <ul className="list-disc list">
+                <li>{memberNames.map((name, index) => (
+                  <span key={index} className="text-gray-600 text-2xl font-bold block">
+                    {index + 1}- {name}
+                  </span>
+                ))}</li>
+              </ul> */}
+              <div className="grid grid-cols-1 gap-1">
+                {memberNames.map((name, index) => (
+                  <span key={index} className="text-gray-600 text-lg text-right block">
+                    {index + 1}- {name}
+                  </span>
+                ))}
+              </div>
+            </div>
             <p className="text-gray-600 mt-1 text-2xl">
               انضمت للمسابقة. في انتظار بدء الخادم...
             </p>
-            <div className="animate-pulse">
+            {/* <div className="animate-pulse">
               <div className="h-3 bg-green-200 rounded-full"></div>
+            </div> */}
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <motion.div
+                className="bg-green-500 h-2 rounded-full"
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
             </div>
           </div>
         </motion.div>
@@ -340,7 +369,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
                                 ? "border-gray-400 bg-gray-200 text-gray-500 opacity-50 grayscale cursor-not-allowed"
                                 : "border-white/30 hover:border-white/50 hover:bg-white/20 bg-white/10 text-black/80 hover:scale-95"
                             }`}
-                          // disabled={selectedSaint !== null && !isSelected}
+                        // disabled={selectedSaint !== null && !isSelected}
                         >
                           <img
                             src={saint.src}

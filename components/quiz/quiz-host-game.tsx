@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponses, updateGroupScores, checkAndResetQuizIfNeeded } from "@/lib/firebase-utils"
+import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponses, updateGroupScores, checkAndResetQuizIfNeeded, cleanupOldGroups } from "@/lib/firebase-utils"
 import type { Quiz, Group, GameState, QuizResponse, LeaderboardEntry } from "@/types/quiz"
 import { motion } from "framer-motion"
 
@@ -33,6 +33,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
   const currentQuestion = gameState.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz.questions[gameState.currentQuestionIndex]
   const isLastQuestion = gameState.currentQuestionIndex >= quiz.questions.length - 1
+  const CHOICE_COLORS = ["#e21b3c", "#1368ce", "#d89e00", "#26890c"]; // أحمر، أزرق، أصفر، أخضر
 
   // question-only timer (host)
   useEffect(() => {
@@ -228,11 +229,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }
 
-  // UI helpers
-  const getChoiceStyle = (index: number) => {
-    const colors = ["#ef4444", "#16a34a", "#3b82f6", "#f59e0b"] // red, green, blue, yellow
-    return { backgroundColor: colors[index] ?? "#6b7280" }
-  }
+  const getChoiceStyle = (index: number) => ({ backgroundColor: CHOICE_COLORS[index] ?? "#6b7280" });
 
   const getChoiceLabel = (i: number) => ["أ", "ب", "ج", "د"][i] ?? `${i + 1}`
 
@@ -270,7 +267,9 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     if (!confirm("هل أنت متأكد من إعادة تعيين المسابقة؟ سيتم حذف الإجابات والنقاط.")) return
     setIsResetting(true)
     try {
+      await cleanupOldGroups(quiz.id);
       await checkAndResetQuizIfNeeded(quiz.id)
+      window.location.reload(); // لإعادة شحن الواجهة كلياً
       alert("تمت محاولة إعادة التعيين (إن كان مطلوب).")
     } catch (err) {
       console.error("Reset failed:", err)
@@ -280,10 +279,7 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }
 
-  const handleExitHost = () => {
-    // مجرد خروج من واجهة المضيف والعودة لصفحة المسابقات أو الرئيسية
-    router.push("/")
-  }
+  const handleExitHost = () => router.push("/")
 
   const handleSkipPhase = async () => {
     if (fullScreenPhase === "question") {
@@ -307,83 +303,145 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
     }
   }
 
-  // --- RENDER ---
-
   // if quiz not active -> final podium view (host)
   if (!gameState.isActive) {
     return (
-      <div className="min-h-screen p-1 relative overflow-hidden">
-        <div className="flex items-center justify-between mb-1">
-          <div>
-            <h1 className="text-4xl font-bold text-white drop-shadow">🎉 انتهت المسابقة! 🎉</h1>
-            <p className="text-white/90">الفائزون النهائيون</p>
-          </div>
-          <div className="flex gap-1">
-            <button type="button" onClick={handleResetQuiz} disabled={isResetting} className="p-1 rounded-xl bg-blue-600 text-white">{isResetting ? "جاري..." : "إعادة تعيين"}</button>
-            <button type="button" onClick={handleExitHost} className="p-1 rounded-xl bg-gray-200 text-black">خروج</button>
-          </div>
+      //   <div className="min-h-screen p-1 relative overflow-hidden">
+      //     <div className="flex items-center justify-between mb-1">
+      //       <div>
+      //         <h1 className="text-4xl font-bold text-white drop-shadow">🎉 انتهت المسابقة! 🎉</h1>
+      //         <p className="text-white/90">الفائزون النهائيون</p>
+      //       </div>
+      //       <div className="flex gap-1">
+      //         <button type="button" onClick={handleResetQuiz} disabled={isResetting} className="p-1 rounded-xl bg-blue-600 text-white">{isResetting ? "جاري..." : "إعادة تعيين"}</button>
+      //         <button type="button" onClick={handleExitHost} className="p-1 rounded-xl bg-gray-200 text-black">خروج</button>
+      //       </div>
+      //     </div>
+
+      //     <div className="flex items-center justify-center min-h-[60vh]">
+      //       <div className="text-center w-full max-w-6xl">
+      //         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5 }} className="mb-1">
+      //           <div className="grid grid-cols-1 md:grid-cols-3 gap-1 items-end">
+      //             {/* second place */}
+      //             {leaderboard[1] && (
+      //               <div className="bg-white/20 text-white p-1 rounded-2xl shadow-lg">
+      //                 <div className="text-2xl font-bold">2</div>
+      //                 {leaderboard[1].saintImage && <img src={leaderboard[1].saintImage} alt={leaderboard[1].saintName} className="w-16 h-16 rounded-full mx-auto my-1" />}
+      //                 <div className="font-bold">{leaderboard[1].groupName}</div>
+      //                 <div className="text-sm opacity-80">{leaderboard[1].members.join(" • ")}</div>
+      //                 <div className="text-xl font-bold mt-1">{leaderboard[1].score.toLocaleString()}</div>
+      //               </div>
+      //             )}
+
+      //             {/* first place */}
+      //             {leaderboard[0] && (
+      //               <div className="bg-yellow-400 text-black p-1 rounded-2xl shadow-2xl">
+      //                 <div className="text-4xl font-bold">👑 1</div>
+      //                 {leaderboard[0].saintImage && <img src={leaderboard[0].saintImage} alt={leaderboard[0].saintName} className="w-24 h-24 rounded-full mx-auto my-1 border-4 border-white" />}
+      //                 <div className="font-bold text-2xl">{leaderboard[0].groupName}</div>
+      //                 <div className="text-sm opacity-80">{leaderboard[0].members.join(" • ")}</div>
+      //                 <div className="text-3xl font-bold mt-1">{leaderboard[0].score.toLocaleString()}</div>
+      //               </div>
+      //             )}
+
+      //             {/* third place */}
+      //             {leaderboard[2] && (
+      //               <div className="bg-white/20 text-white p-1 rounded-2xl shadow-lg">
+      //                 <div className="text-2xl font-bold">3</div>
+      //                 {leaderboard[2].saintImage && <img src={leaderboard[2].saintImage} alt={leaderboard[2].saintName} className="w-16 h-16 rounded-full mx-auto my-1" />}
+      //                 <div className="font-bold">{leaderboard[2].groupName}</div>
+      //                 <div className="text-sm opacity-80">{leaderboard[2].members.join(" • ")}</div>
+      //                 <div className="text-xl font-bold mt-1">{leaderboard[2].score.toLocaleString()}</div>
+      //               </div>
+      //             )}
+      //           </div>
+      //         </motion.div>
+
+      //         {leaderboard.length > 3 && (
+      //           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-1">
+      //             <h3 className="text-xl font-bold text-white mb-1">باقي المشاركين</h3>
+      //             <div className="grid gap-1">
+      //               {leaderboard.slice(3).map((entry, idx) => (
+      //                 <div key={entry.groupId} className="flex items-center justify-between bg-white/20 p-1 rounded">
+      //                   <div className="flex items-center gap-1">
+      //                     <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">{idx + 4}</div>
+      //                     <div>
+      //                       <div className="font-bold">{entry.groupName}</div>
+      //                       <div className="text-xs opacity-80">{entry.members.join(" • ")}</div>
+      //                     </div>
+      //                   </div>
+      //                   <div className="font-bold">{entry.score.toLocaleString()}</div>
+      //                 </div>
+      //               ))}
+      //             </div>
+      //           </div>
+      //         )}
+
+      //       </div>
+      //     </div>
+      //   </div>
+      <div className="min-h-screen bg-linear-to-b from-purple-900 via-blue-900 to-black p-1 text-white">
+        <div className="text-center mb-1">
+          <motion.h1
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="text-6xl font-black mb-1 animate-bounce"
+          >
+            🏆 أبطال المسابقة 🏆
+          </motion.h1>
         </div>
 
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center w-full max-w-6xl">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5 }} className="mb-1">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-1 items-end">
-                {/* second place */}
-                {leaderboard[1] && (
-                  <div className="bg-white/20 text-white p-1 rounded-2xl shadow-lg">
-                    <div className="text-2xl font-bold">2</div>
-                    {leaderboard[1].saintImage && <img src={leaderboard[1].saintImage} alt={leaderboard[1].saintName} className="w-16 h-16 rounded-full mx-auto my-1" />}
-                    <div className="font-bold">{leaderboard[1].groupName}</div>
-                    <div className="text-sm opacity-80">{leaderboard[1].members.join(" • ")}</div>
-                    <div className="text-xl font-bold mt-1">{leaderboard[1].score.toLocaleString()}</div>
-                  </div>
-                )}
-
-                {/* first place */}
-                {leaderboard[0] && (
-                  <div className="bg-yellow-400 text-black p-1 rounded-2xl shadow-2xl">
-                    <div className="text-4xl font-bold">👑 1</div>
-                    {leaderboard[0].saintImage && <img src={leaderboard[0].saintImage} alt={leaderboard[0].saintName} className="w-24 h-24 rounded-full mx-auto my-1 border-4 border-white" />}
-                    <div className="font-bold text-2xl">{leaderboard[0].groupName}</div>
-                    <div className="text-sm opacity-80">{leaderboard[0].members.join(" • ")}</div>
-                    <div className="text-3xl font-bold mt-1">{leaderboard[0].score.toLocaleString()}</div>
-                  </div>
-                )}
-
-                {/* third place */}
-                {leaderboard[2] && (
-                  <div className="bg-white/20 text-white p-1 rounded-2xl shadow-lg">
-                    <div className="text-2xl font-bold">3</div>
-                    {leaderboard[2].saintImage && <img src={leaderboard[2].saintImage} alt={leaderboard[2].saintName} className="w-16 h-16 rounded-full mx-auto my-1" />}
-                    <div className="font-bold">{leaderboard[2].groupName}</div>
-                    <div className="text-sm opacity-80">{leaderboard[2].members.join(" • ")}</div>
-                    <div className="text-xl font-bold mt-1">{leaderboard[2].score.toLocaleString()}</div>
-                  </div>
-                )}
+        <div className="flex flex-row justify-center items-end gap-1 h-[50vh] max-w-5xl mx-auto">
+          {/* المركز الثاني */}
+          {leaderboard[1] && (
+            <motion.div
+              initial={{ height: 0 }} animate={{ height: '60%' }}
+              className="flex flex-col items-center w-1/3"
+            >
+              <img src={leaderboard[1].saintImage} className="w-20 h-20 rounded-full border border-gray-400 mb-1" />
+              <div className="bg-gray-400 w-full rounded-t-lg p-1 text-center text-black font-bold">
+                <p className="text-xl">{leaderboard[1].groupName}</p>
+                <p className="text-2xl">2</p>
               </div>
             </motion.div>
+          )}
 
-            {leaderboard.length > 3 && (
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-1">
-                <h3 className="text-xl font-bold text-white mb-1">باقي المشاركين</h3>
-                <div className="grid gap-1">
-                  {leaderboard.slice(3).map((entry, idx) => (
-                    <div key={entry.groupId} className="flex items-center justify-between bg-white/20 p-1 rounded">
-                      <div className="flex items-center gap-1">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">{idx + 4}</div>
-                        <div>
-                          <div className="font-bold">{entry.groupName}</div>
-                          <div className="text-xs opacity-80">{entry.members.join(" • ")}</div>
-                        </div>
-                      </div>
-                      <div className="font-bold">{entry.score.toLocaleString()}</div>
-                    </div>
-                  ))}
-                </div>
+          {/* المركز الأول */}
+          {leaderboard[0] && (
+            <motion.div
+              initial={{ height: 0 }} animate={{ height: '80%' }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-col items-center w-1/3"
+            >
+              <div className="text-5xl mb-1">👑</div>
+              <img src={leaderboard[0].saintImage} className="w-32 h-32 rounded-full border border-yellow-400 mb-1 shadow-[0_0_20px_rgba(250,204,21,0.5)]" />
+              <div className="bg-yellow-400 w-full rounded-t-lg p-1 text-center text-black font-black">
+                <p className="text-2xl">{leaderboard[0].groupName}</p>
+                <p className="text-4xl">1</p>
               </div>
-            )}
+            </motion.div>
+          )}
 
-          </div>
+          {/* المركز الثالث */}
+          {leaderboard[2] && (
+            <motion.div
+              initial={{ height: 0 }} animate={{ height: '40%' }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-col items-center w-1/3"
+            >
+              <img src={leaderboard[2].saintImage} className="w-16 h-16 rounded-full border border-orange-600 mb-1" />
+              <div className="bg-orange-600 w-full rounded-t-lg p-1 text-center text-black font-bold">
+                <p className="text-lg">{leaderboard[2].groupName}</p>
+                <p className="text-xl">3</p>
+              </div>
+            </motion.div>
+          )}
+        </div>
+
+        {/* أزرار التحكم بعد النهاية */}
+        <div className="mt-1 flex justify-center gap-1">
+          <button onClick={handleResetQuiz} className="bg-white text-purple-900 p-1 rounded-full font-bold hover:scale-105 transition">مسابقة جديدة</button>
+          <button onClick={handleExitHost} className="bg-purple-700 p-1 rounded-full font-bold">خروج</button>
         </div>
       </div>
     )
@@ -522,12 +580,12 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
             </div>
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 grid grid-cols-2 gap-1 mt-3">
             {(currentQuestion?.choices || []).map((choice, index) => (
-              <motion.div key={index} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.04 }} className={`p-1 rounded-lg flex items-center justify-between ${gameState.showResults && index === currentQuestion.correctAnswer ? "ring-1 ring-green-500 bg-green-50 shadow" : "bg-white/20 hover:bg-white/30"}`}>
+              <motion.div key={index} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.04 }} className={`p-1 rounded-lg flex items-center justify-between ${gameState.showResults && index === currentQuestion.correctAnswer ? "ring-1 ring-green-500 bg-green-50 shadow" : "bg-white/20 hover:bg-white/30"}`} style={getChoiceStyle(index)}>
                 <div className="flex items-center gap-1">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white" style={getChoiceStyle(index)}>{getChoiceLabel(index)}</div>
-                  <div className="text-lg">{choice}</div>
+                  <span className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white" style={getChoiceStyle(index)}>{getChoiceLabel(index)}</span>
+                  {choice}
                 </div>
                 {gameState.showResults && index === currentQuestion.correctAnswer && (
                   <div className="bg-green-500 text-white p-1 rounded-full text-sm font-bold">الإجابة الصحيحة</div>

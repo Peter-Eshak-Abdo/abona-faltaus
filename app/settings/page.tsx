@@ -107,16 +107,16 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
 
   return (
     <div className="min-h-screen bg-linear-to-br flex items-center justify-center">
-      <div className="w-full max-w-2xl space-y-2 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
-        <div className="text-center mb-3">
-          <h1 className="text-3xl font-bold mb-2 text-black drop-shadow-lg">الإعدادات</h1>
+      <div className="w-full max-w-8xl space-y-1 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
+        <div className="text-center mb-1">
+          <h1 className="text-3xl font-bold mb-1 text-black drop-shadow-lg">الإعدادات</h1>
           <p className="text-black/90 drop-shadow-md">تخصيص تجربتك في التطبيق</p>
         </div>
 
         {/* Profile Settings */}
         <Card className="backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-black drop-shadow-md">
+            <CardTitle className="flex items-center gap-1 text-black drop-shadow-md">
               <User className="w-5 h-5" />
               الملف الشخصي
             </CardTitle>
@@ -187,7 +187,7 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
         {/* Appearance Settings */}
         <Card className="backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-black drop-shadow-md">
+            <CardTitle className="flex items-center gap-1 text-black drop-shadow-md">
               {theme === "dark" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               المظهر
             </CardTitle>
@@ -195,13 +195,13 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
           <CardContent className="space-y-1">
             <div className="space-y-1">
               <Label className="text-black font-semibold">السمة</Label>
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col sm:flex-row gap-1">
                 <Button
                   variant={settings.theme === "light" ? "default" : "outline"}
                   onClick={() => handleSettingChange("theme", "light")}
                   className="flex-1 bg-white/30 hover:bg-white/40 border-white/40 text-black font-semibold"
                 >
-                  <Sun className="w-4 h-4 mr-2" />
+                  <Sun className="w-4 h-4 mr-1" />
                   فاتح
                 </Button>
                 <Button
@@ -209,7 +209,7 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
                   onClick={() => handleSettingChange("theme", "dark")}
                   className="flex-1 bg-white/30 hover:bg-white/40 border-white/40 text-black font-semibold"
                 >
-                  <Moon className="w-4 h-4 mr-2" />
+                  <Moon className="w-4 h-4 mr-1" />
                   داكن
                 </Button>
                 <Button
@@ -217,7 +217,7 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
                   onClick={() => handleSettingChange("theme", "system")}
                   className="flex-1 bg-white/30 hover:bg-white/40 border-white/40 text-black font-semibold"
                 >
-                  <Shield className="w-4 h-4 mr-2" />
+                  <Shield className="w-4 h-4 mr-1" />
                   النظام
                 </Button>
               </div>
@@ -228,15 +228,15 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
         {/* Language Settings */}
         <Card className="backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-black drop-shadow-md">
+            <CardTitle className="flex items-center gap-1 text-black drop-shadow-md">
               <Globe className="w-5 h-5" />
               اللغة
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
+          <CardContent className="space-y-1">
+            <div className="space-y-1">
               <Label className="text-black font-semibold">لغة التطبيق</Label>
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <Button
                   variant={settings.language === "ar" ? "default" : "outline"}
                   onClick={() => handleSettingChange("language", "ar")}
@@ -257,12 +257,12 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
         </Card>
 
         {/* Save Button */}
-        <div className="flex justify-center pt-2">
+        <div className="flex justify-center pt-1">
           <Button
             onClick={saveSettings}
             disabled={saving}
             size="lg"
-            className="px-8 bg-white/30 hover:bg-white/40 border-white/40 text-black font-semibold shadow-xl/30 inset-shadow-sm"
+            className="px-1 bg-white/30 hover:bg-white/40 border-white/40 text-black font-semibold shadow-xl/30 inset-shadow-sm"
           >
             {saving ? "جاري الحفظ..." : "حفظ الإعدادات"}
           </Button>
@@ -270,7 +270,7 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
 
         {/* User Info */}
         {user && (
-          <Card className="mt-2 backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
+          <Card className="mt-1 backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
             <CardHeader>
               <CardTitle className="text-black drop-shadow-md font-semibold">معلومات الحساب</CardTitle>
             </CardHeader>
@@ -301,14 +301,6 @@ function SettingsView({ auth, db }: { auth: Auth, db: Firestore }) {
 
 
 export default function SettingsPage() {
-  const [auth, setAuth] = useState<Auth | null>(null);
-  const [db, setDb] = useState<Firestore | null>(null);
-
-  useEffect(() => {
-    // const { auth, db } = getFirebaseServices();
-    setAuth(auth);
-    setDb(db);
-  }, []);
 
   if (!auth || !db) {
     return (
