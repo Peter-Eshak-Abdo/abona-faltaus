@@ -41,7 +41,11 @@ export default function ChatBot() {
         setMessages((m) => [...m, { role: "assistant", content: data.reply.content }]);
       }
     } catch (err: any) {
-      setMessages((m) => [...m, { role: "assistant", content: `<b>خطأ:</b> ${err.message}` }]);
+      // setMessages((m) => [...m, { role: "assistant", content: `<b>خطأ:</b> ${err.message}` }]);
+      setMessages((m) => [...m, {
+        role: "assistant",
+        content: "يا صديقي، حدث اضطراب بسيط في الاتصال، لكن تذكر أن 'كل الأشياء تعمل معاً للخير'. جرب تسألني تاني."
+      }]);
     } finally {
       setLoading(false);
     }
