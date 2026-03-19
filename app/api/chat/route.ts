@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { google } from '@ai-sdk/google';
+import { openai } from '@ai-sdk/openai';
+import { streamText, ResponseBody } from 'ai';
 import { promises as fs } from "fs";
 import path from "path";
+
+// تفعيل الـ Edge Runtime لتجنب الـ 10 ثواني
+export const runtime = 'edge';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
@@ -482,24 +488,39 @@ ${finalQuotes.map((q: { quote: any; author: any; }) => `- "${q.quote}" (${q.auth
 `;
 // --- 3. محاولة الـ AI (Gemini أولاً ثم OpenAI) ---
     try {
-      console.log("Attempting Gemini...");
-      const model = genAI.getGenerativeModel({
-        model: "gemini-3-flash-preview",
-      });
-      const result = await model.generateContent(systemPrompt);
-      const text = result.response.text();
-      return NextResponse.json({ reply: { content: text } });
+      // console.log("Attempting Gemini...");
+      // const model = genAI.getGenerativeModel({model: "gemini-3-flash-preview"});
+      // const result = await model.generateContent(systemPrompt);
+      // const text = result.response.text();
+      // return NextResponse.json({ reply: { content: text } });
+      const result = await streamText({
+      model: google('gemini-3-flash-preview'),
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...messages
+      ],
+    });
+
+    return result.toDataStreamResponse();
 
     } catch (geminiError) {
       console.error("Gemini Failed, switching to OpenAI:", geminiError);
 
       // الفال باك (Fallback) لـ OpenAI
       if (process.env.OPENAI_API_KEY) {
-        const completion = await openai.chat.completions.create({
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "system", content: systemPrompt }, { role: "user", content: lastUserMessage }],
-        });
-        return NextResponse.json({ reply: { content: completion.choices[0].message.content } });
+        // const completion = await openai.chat.completions.create({
+        //   model: "gpt-3.5-turbo",
+        //   messages: [{ role: "system", content: systemPrompt }, { role: "user", content: lastUserMessage }],
+        // });
+        // return NextResponse.json({ reply: { content: completion.choices[0].message.content } });
+        const result = await streamText({
+      model: openai('gpt-3.5-turbo'),
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...messages
+      ],
+    });
+    return result.toDataStreamResponse();
       }
 
       throw new Error("كل محاولات الـ AI فشلت");
