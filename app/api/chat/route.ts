@@ -4,8 +4,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { promises as fs } from "fs";
 import path from "path";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 // متغير لتخزين البيانات في الذاكرة (Memory Cache) لسرعة الوصول
 let bibleCache: any = null;
 let quotesCache: any = null;
@@ -484,7 +484,7 @@ ${finalQuotes.map((q: { quote: any; author: any; }) => `- "${q.quote}" (${q.auth
     try {
       console.log("Attempting Gemini...");
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash-preview",
+        model: "gemini-3-flash-preview",
       });
       const result = await model.generateContent(systemPrompt);
       const text = result.response.text();
