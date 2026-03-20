@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+import OpenAIClient from "openai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { google } from '@ai-sdk/google';
-import { openai } from '@ai-sdk/openai';
-import { streamText, ResponseBody } from 'ai';
+import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
+import { streamText } from "ai";
 import { promises as fs } from "fs";
 import path from "path";
 
 // تفعيل الـ Edge Runtime لتجنب الـ 10 ثواني
-export const runtime = 'edge';
+// export const runtime = 'edge';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
+const openaiClient = new OpenAIClient({
+  apiKey: process.env.OPENAI_API_KEY || "",
+});
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 // متغير لتخزين البيانات في الذاكرة (Memory Cache) لسرعة الوصول
 let bibleCache: any = null;
@@ -372,35 +374,38 @@ function normalize(term: string) {
 // }
 
 export async function POST(request: Request) {
-try {
-  const { messages } = await request.json();
-  const lastUserMessage = messages[messages.length - 1]?.content || "";
-  const searchTerm = normalize(lastUserMessage);
-
-  // 1. تحميل كل الملفات (مرة واحدة فقط)
-  const publicPath = path.join(process.cwd(), "public");
-  if (!bibleCache || !quotesCache || !topicsCache) {
-    const [bibleData, quotesData, topicsData] = await Promise.all([
-      fs.readFile(
-        path.join(publicPath, "bible-json", "bible_fixed.json"),
-        "utf8",
-      ),
-      fs.readFile(path.join(publicPath, "quotes.json"), "utf8"),
-      fs.readFile(path.join(publicPath, "verses_topics.json"), "utf8"),
-    ]);
-    bibleCache = JSON.parse(bibleData.replace(/^\uFEFF/, ""));
-    quotesCache = JSON.parse(quotesData.replace(/^\uFEFF/, ""));
-    topicsCache = JSON.parse(topicsData.replace(/^\uFEFF/, ""));
-  }
-
   try {
+    const { messages } = await request.json();
+    const lastUserMessage = messages[messages.length - 1]?.content || "";
+    const searchTerm = normalize(lastUserMessage);
+
+    // 1. تحميل كل الملفات (مرة واحدة فقط)
+    const publicPath = path.join(process.cwd(), "public");
+    if (!bibleCache || !quotesCache || !topicsCache) {
+      const [bibleData, quotesData, topicsData] = await Promise.all([
+        fs.readFile(
+          path.join(publicPath, "bible-json", "bible_fixed.json"),
+          "utf8",
+        ),
+        fs.readFile(path.join(publicPath, "quotes.json"), "utf8"),
+        fs.readFile(path.join(publicPath, "verses_topics.json"), "utf8"),
+      ]);
+      bibleCache = JSON.parse(bibleData.replace(/^\uFEFF/, ""));
+      quotesCache = JSON.parse(quotesData.replace(/^\uFEFF/, ""));
+      topicsCache = JSON.parse(topicsData.replace(/^\uFEFF/, ""));
+    }
+
+    try {
       if (!bibleCache) {
         // في Vercel نستخدم المسار النسبي من جذر المشروع
         const publicPath = path.join(process.cwd(), "public");
         const [bibleData, quotesData, topicsData] = await Promise.all([
-          fs.readFile(path.join(publicPath, "bible-json", "bible_fixed.json"), "utf8"),
+          fs.readFile(
+            path.join(publicPath, "bible-json", "bible_fixed.json"),
+            "utf8",
+          ),
           fs.readFile(path.join(publicPath, "quotes.json"), "utf8"),
-          fs.readFile(path.join(publicPath, "verses_topics.json"), "utf8")
+          fs.readFile(path.join(publicPath, "verses_topics.json"), "utf8"),
         ]);
         bibleCache = JSON.parse(bibleData.replace(/^\uFEFF/, ""));
         quotesCache = JSON.parse(quotesData.replace(/^\uFEFF/, ""));
@@ -409,63 +414,63 @@ try {
     } catch (e) {
       console.error("Data Loading Error:", e);
       // لو الملفات منفعش تتقري، هنكمل عشان الـ AI يجاوب بشكل عام وميطلعش Error
-  }
+    }
 
-  // 2. البحث الذكي (آيات + مواضيع + أقوال)
-  let foundVerses: any[] = [];
+    // 2. البحث الذكي (آيات + مواضيع + أقوال)
+    let foundVerses: any[] = [];
 
-  // أ: بحث الكلمات المفتاحية في الإنجيل الكامل
-if (bibleCache) {
-  for (const book of bibleCache) {
-    if (foundVerses.length >= 4) break;
-    book.chapters.forEach((chapter: any[], cIdx: number) => {
-      chapter.forEach((vObj: any) => {
-        if (
-          foundVerses.length < 4 &&
-          normalize(vObj.text_plain).includes(searchTerm)
-        ) {
-          foundVerses.push({
-            text: vObj.text_vocalized,
-            ref: `${book.name} ${cIdx + 1}:${vObj.verse}`,
+    // أ: بحث الكلمات المفتاحية في الإنجيل الكامل
+    if (bibleCache) {
+      for (const book of bibleCache) {
+        if (foundVerses.length >= 4) break;
+        book.chapters.forEach((chapter: any[], cIdx: number) => {
+          chapter.forEach((vObj: any) => {
+            if (
+              foundVerses.length < 4 &&
+              normalize(vObj.text_plain).includes(searchTerm)
+            ) {
+              foundVerses.push({
+                text: vObj.text_vocalized,
+                ref: `${book.name} ${cIdx + 1}:${vObj.verse}`,
+              });
+            }
           });
-        }
-      });
-    });
-  }
-  }
+        });
+      }
+    }
 
-  // ب: بحث المواضيع (Concept)
-  const topicResults = topicsCache
-    .filter((v: any) => normalize(v.topic).includes(searchTerm))
-    .slice(0, 5)
-    .map((v: any) => ({ text: v.verse, ref: v.ref }));
+    // ب: بحث المواضيع (Concept)
+    const topicResults = topicsCache
+      .filter((v: any) => normalize(v.topic).includes(searchTerm))
+      .slice(0, 5)
+      .map((v: any) => ({ text: v.verse, ref: v.ref }));
 
-  // دمج ومنع تكرار الآيات
-  const finalVerses = [...foundVerses, ...topicResults].slice(0, 7);
+    // دمج ومنع تكرار الآيات
+    const finalVerses = [...foundVerses, ...topicResults].slice(0, 7);
 
-  // ج: بحث أقوال الآباء
-  const finalQuotes = quotesCache
-    .filter(
-      (q: any) =>
-        normalize(q.quote).includes(searchTerm) ||
-        normalize(q.topic).includes(searchTerm),
-    )
-    .slice(0, 5);
+    // ج: بحث أقوال الآباء
+    const finalQuotes = quotesCache
+      .filter(
+        (q: any) =>
+          normalize(q.quote).includes(searchTerm) ||
+          normalize(q.topic).includes(searchTerm),
+      )
+      .slice(0, 5);
 
-  // 3. نداء Gemini (مع محاولة حل مشكلة الـ 404)
-  // نستخدم gemini-1.5-flash كاختيار أساسي
-  // const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
-  // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // 3. نداء Gemini (مع محاولة حل مشكلة الـ 404)
+    // نستخدم gemini-1.5-flash كاختيار أساسي
+    // const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-// const context = `
-//     الآيات: ${foundVerses.map((v) => `${v.text} (${v.ref})`).join("\n") || "لا يوجد"}
-//     أقوال الآباء: يتم البحث عنها...
-//     `;
+    // const context = `
+    //     الآيات: ${foundVerses.map((v) => `${v.text} (${v.ref})`).join("\n") || "لا يوجد"}
+    //     أقوال الآباء: يتم البحث عنها...
+    //     `;
 
-// const systemPrompt = `أنت مساعد مسيحي أرثوذكسي. أجب بعمق على: "${lastUserMessage}".
-//     استخدم هذه المراجع إن وجدت: ${context}. نسق الرد بـ HTML بفقرات واضحة وعناوين h3 للآيات.`;
+    // const systemPrompt = `أنت مساعد مسيحي أرثوذكسي. أجب بعمق على: "${lastUserMessage}".
+    //     استخدم هذه المراجع إن وجدت: ${context}. نسق الرد بـ HTML بفقرات واضحة وعناوين h3 للآيات.`;
 
-  const systemPrompt = `
+    const systemPrompt = `
 أنت "مساعد مسيحي أرثوذكسي" ذكي وعميق. مهمتك الإجابة على التساؤلات الروحية.
 السؤال الحالي: "${lastUserMessage}"
 
@@ -474,7 +479,7 @@ if (bibleCache) {
 ${finalVerses.map((v) => `- ${v.text} (${v.ref})`).join("\n")}
 
 أقوال الآباء:
-${finalQuotes.map((q: { quote: any; author: any; }) => `- "${q.quote}" (${q.author})`).join("\n")}
+${finalQuotes.map((q: { quote: any; author: any }) => `- "${q.quote}" (${q.author})`).join("\n")}
 
 طريقة الرد (HTML):
 1. ابدأ بشرح روحي طويل وعميق (3 فقرات على الأقل) بأسلوب ChatGPT.
@@ -486,23 +491,19 @@ ${finalQuotes.map((q: { quote: any; author: any; }) => `- "${q.quote}" (${q.auth
 7. عنوان: <h3 style='color:#1e40af; font-size:22px;'>من أقوال الآباء</h3>
 8. اعرض الأقوال بنصها وتحتها اسم القائل.
 `;
-// --- 3. محاولة الـ AI (Gemini أولاً ثم OpenAI) ---
+    // --- 3. محاولة الـ AI (Gemini أولاً ثم OpenAI) ---
     try {
       // console.log("Attempting Gemini...");
       // const model = genAI.getGenerativeModel({model: "gemini-3-flash-preview"});
       // const result = await model.generateContent(systemPrompt);
       // const text = result.response.text();
       // return NextResponse.json({ reply: { content: text } });
-      const result = await streamText({
-      model: google('gemini-3-flash-preview'),
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages
-      ],
-    });
+      const result = streamText({
+        model: google("gemini-3-flash-preview"),
+        messages: [{ role: "system", content: systemPrompt }, ...messages],
+      });
 
-    return result.toDataStreamResponse();
-
+      return result.toTextStreamResponse();
     } catch (geminiError) {
       console.error("Gemini Failed, switching to OpenAI:", geminiError);
 
@@ -513,29 +514,31 @@ ${finalQuotes.map((q: { quote: any; author: any; }) => `- "${q.quote}" (${q.auth
         //   messages: [{ role: "system", content: systemPrompt }, { role: "user", content: lastUserMessage }],
         // });
         // return NextResponse.json({ reply: { content: completion.choices[0].message.content } });
-        const result = await streamText({
-      model: openai('gpt-3.5-turbo'),
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages
-      ],
-    });
-    return result.toDataStreamResponse();
+        const result = streamText({
+          model: openai("gpt-3.5-turbo"),
+          messages: [{ role: "system", content: systemPrompt }, ...messages],
+        });
+        return result.toTextStreamResponse();
       }
 
       throw new Error("كل محاولات الـ AI فشلت");
     }
-  // const result = await model.generateContent(systemPrompt);
-  // const response = await result.response;
-  // const text = response.text();
+    // const result = await model.generateContent(systemPrompt);
+    // const response = await result.response;
+    // const text = response.text();
 
-  // return NextResponse.json({ reply: { content: text } });
-} catch (error: any) {
-  console.error("Critical Error:", error);
-  return NextResponse.json(
-    { reply: { content: "عذراً، أواجه ضغطاً حالياً. ولكن باختصار: الله يحبك ويرشدك دائماً. حاول مرة أخرى لاحقاً." } },
-    // { error: "خطأ في السيرفر: " + error.message },
-    { status: 500 },
-  );
+    // return NextResponse.json({ reply: { content: text } });
+  } catch (error: any) {
+    console.error("Critical Error:", error);
+    return NextResponse.json(
+      {
+        reply: {
+          content:
+            "عذراً، أواجه ضغطاً حالياً. ولكن باختصار: الله يحبك ويرشدك دائماً. حاول مرة أخرى لاحقاً.",
+        },
+      },
+      // { error: "خطأ في السيرفر: " + error.message },
+      { status: 500 },
+    );
   }
 }
