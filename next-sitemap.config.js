@@ -6,14 +6,14 @@ export default {
   sitemapSize: 7000,
   changefreq: "daily",
   priority: 0.7,
-  exclude: ["/admin/*", "/api/*", "/private/*"],
+  exclude: ["/admin/*", "/api/*", "/private/*","/auth/*"],
   robotsTxtOptions: {
     additionalSitemaps: [],
     policies: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/*", "/admin/*", "/private/*"],
+        disallow: ["/api/*", "/admin/*", "/private/*", "/auth/*"],
       },
     ],
   },
