@@ -1,63 +1,23 @@
 "use client";
-import { useChat } from 'ai/react';
-import { useState, useRef, useEffect, Key } from "react";
+import { useChat } from '@ai-sdk/react';
+import { useRef, useEffect } from "react";
 import DOMPurify from "dompurify";
-import { Send, User, Bot, Loader2 } from "lucide-react"; // أيقونات جميلة
+import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-// interface ChatMessage {
-//   role: "user" | "assistant";
-//   content: string;
-// }
 
 export default function ChatBot() {
-  const [loading, setLoading] = useState(false);
-  // const [messages, setMessages] = useState<ChatMessage[]>([]);
-  // const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
+
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
   });
-  // const sendMessage = async () => {
-  //   if (!input.trim() || loading) return;
-
-  //   const userMsg: ChatMessage = { role: "user", content: input };
-  //   setMessages((m) => [...m, userMsg]);
-  //   setInput("");
-  //   setLoading(true);
-
-  //   try {
-  //     const res = await fetch("/api/chat", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ messages: [...messages, userMsg] }),
-  //     });
-
-  //     if (!res.ok) throw new Error("فشل الاتصال بالسيرفر");
-
-  //     const data = await res.json();
-  //     if (data.reply) {
-  //       setMessages((m) => [...m, { role: "assistant", content: data.reply.content }]);
-  //     }
-  //   } catch (err: any) {
-  //     // setMessages((m) => [...m, { role: "assistant", content: `<b>خطأ:</b> ${err.message}` }]);
-  //     setMessages((m) => [...m, {
-  //       role: "assistant",
-  //       content: "يا صديقي، حدث اضطراب بسيط في الاتصال، لكن تذكر أن 'كل الأشياء تعمل معاً للخير'. جرب تسألني تاني."
-  //     }]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   useEffect(() => {
-    // التمرير التلقائي لأسفل عند وصول رسالة جديدة
+    // التمرير التلقائي لأسفل - تم تغيير loading لـ isLoading
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, isLoading]);
 
   return (
     // <Card className="flex flex-col h-full border-none rounded-none shadow-none">
@@ -148,24 +108,27 @@ export default function ChatBot() {
     // </Card>
     <div className="flex flex-col h-full bg-white">
       <ScrollArea className="flex-1 p-1">
-        {messages.map((m: { role: string; content: string | Node; }, i: Key | null | undefined) => (
-          <div key={i} className={`flex gap-1 mb-1 ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-            <div className={`p-1 rounded-2xl max-w-[80%] ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'}`}>
-              {/* عرض الـ HTML المبعوث من السيرفر */}
-              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />
+        {messages.map((m) => (
+          <div key={m.id} className={`flex gap-1 mb-1 ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+            <div className={`p-2 rounded-2xl max-w-[80%] ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'}`}>
+              <div
+                className="prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />
             </div>
           </div>
         ))}
+        <div ref={endRef} />
       </ScrollArea>
 
-      <form onSubmit={handleSubmit} className="p-1 border-t flex gap-1">
+      <form onSubmit={handleSubmit} className="p-2 border-t flex gap-1 bg-white">
         <Input
           value={input}
           onChange={handleInputChange}
           placeholder="اسأل سؤالاً روحياً..."
+          className="flex-1"
         />
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? <Loader2 className="animate-spin" /> : <Send size={20} />}
+        <Button type="submit" disabled={isLoading || !input.trim()}>
+          {isLoading ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
         </Button>
       </form>
     </div>
