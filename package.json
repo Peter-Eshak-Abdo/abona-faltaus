@@ -18,6 +18,7 @@
     "test": "jest --watchAll=false --passWithNoTests"
   },
   "dependencies": {
+    "ai": "^6.0.136",
     "@ai-sdk/google": "^3.0.43",
     "@ai-sdk/openai": "^3.0.41",
     "@ai-sdk/react": "^3.0.138",
@@ -44,7 +45,6 @@
     "@tanstack/react-query": "^5.90.21",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "ai": "^6.0.136",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

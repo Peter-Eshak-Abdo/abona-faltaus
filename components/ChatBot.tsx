@@ -1,6 +1,6 @@
 "use client";
 import { useChat } from '@ai-sdk/react';
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, Key } from "react";
 import DOMPurify from "dompurify";
 import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export default function ChatBot() {
   const endRef = useRef<HTMLDivElement>(null);
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/chat',
-  });
+  // const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  //   api: '/api/chat',
+  // });
+
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading
+  } = useChat() as any;
 
   useEffect(() => {
     // التمرير التلقائي لأسفل - تم تغيير loading لـ isLoading
@@ -108,7 +116,7 @@ export default function ChatBot() {
     // </Card>
     <div className="flex flex-col h-full bg-white">
       <ScrollArea className="flex-1 p-1">
-        {messages.map((m) => (
+        {messages.map((m: { id: Key | null | undefined; role: string; content: string | Node; }) => (
           <div key={m.id} className={`flex gap-1 mb-1 ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
             <div className={`p-2 rounded-2xl max-w-[80%] ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'}`}>
               <div
