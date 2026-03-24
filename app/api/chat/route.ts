@@ -103,7 +103,7 @@ export async function POST(request: Request) {
     // المحاولة الأولى: Gemini
     try {
       const result = streamText({
-        model: google("gemini-2.0-flash"),
+        model: google("gemini-3-flash-preview"),
         messages: allMessages,
       });
       return result.toUIMessageStreamResponse();
