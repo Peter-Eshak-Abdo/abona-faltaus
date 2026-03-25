@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { nextQuestion, showQuestionResults, endQuiz, getQuestionResponses, updateGroupScores, checkAndResetQuizIfNeeded, cleanupOldGroups } from "@/lib/firebase-utils"
 import type { Quiz, Group, GameState, QuizResponse, LeaderboardEntry } from "@/types/quiz"
 import { motion } from "framer-motion"
+import confetti from 'canvas-confetti';
 
 interface QuizHostGameProps {
   quiz: Quiz
@@ -30,10 +31,10 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
 
   const [isEnding, setIsEnding] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
-
+  const [showFinalPodium, setShowFinalPodium] = useState(false);
   const currentQuestion = gameState.shuffledQuestions?.[gameState.currentQuestionIndex] || quiz.questions[gameState.currentQuestionIndex]
   const isLastQuestion = gameState.currentQuestionIndex >= quiz.questions.length - 1
-  const CHOICE_COLORS = ["#e21b3c", "#1368ce", "#d89e00", "#26890c"]; // أحمر، أزرق، أصفر، أخضر
+  const CHOICE_COLORS = ["#e21b3c", "#1368ce", "#d89e00", "#26890c"];
 
   // question-only timer (host)
   useEffect(() => {
@@ -206,6 +207,9 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
       try {
         setIsLoading(true)
         await endQuiz(quiz.id)
+        setShowFinalPodium(true); // تفعيل منصة التتويج
+        setIsLoading(false);
+        return;
       } catch (error: any) {
         setError(error?.message || "فشل في إنهاء المسابقة")
       } finally {
@@ -463,27 +467,114 @@ export function QuizHostGame({ quiz, groups, gameState }: QuizHostGameProps) {
   // full screen question phase
   if (fullScreenPhase === "question") {
     return (
-      <div className="min-h-screen p-1">
-        <div className="max-w-8xl mx-auto bg-white/10 rounded-2xl p-1">
-          <div className="flex justify-between items-center mb-1">
-            <div>
-              <h1 className="text-3xl font-bold text-white">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</h1>
-              <p className="text-white/80 text-5xl">{quiz.title}</p>
-            </div>
-            <div className="flex gap-1">
-              <button onClick={handleSkipPhase} className="p-1 rounded bg-orange-500 text-white">تخطي</button>
-              <button onClick={handleEndQuiz} disabled={isEnding} className="p-1 rounded bg-red-600 text-white">{isEnding ? "جاري..." : "إنهاء"}</button>
-            </div>
-          </div>
+      // <div className="min-h-screen p-1">
+      //   <div className="max-w-8xl mx-auto bg-white/10 rounded-2xl p-1">
+      //     <div className="flex justify-between items-center mb-1">
+      //       <div>
+      //         <h1 className="text-3xl font-bold text-white">السؤال {gameState.currentQuestionIndex + 1} من {quiz.questions.length}</h1>
+      //         <p className="text-white/80 text-5xl">{quiz.title}</p>
+      //       </div>
+      //       <div className="flex gap-1">
+      //         <button onClick={handleSkipPhase} className="p-1 rounded bg-orange-500 text-white">تخطي</button>
+      //         <button onClick={handleEndQuiz} disabled={isEnding} className="p-1 rounded bg-red-600 text-white">{isEnding ? "جاري..." : "إنهاء"}</button>
+      //       </div>
+      //     </div>
 
-          <div className="text-center">
-            <h2 className="text-4xl font-bold text-white mb-1">{currentQuestion?.text}</h2>
-            <div className="text-2xl text-white">يبقى {Math.ceil(timeLeft)} ث</div>
-          </div>
+      //     <div className="text-center">
+      //       <h2 className="text-4xl font-bold text-white mb-1">{currentQuestion?.text}</h2>
+      //       <div className="text-2xl text-white">يبقى {Math.ceil(timeLeft)} ث</div>
+      //     </div>
+      //   </div>
+      // </div>
+      <div className="min-h-screen p-1 bg-slate-900 text-white flex flex-col items-center justify-center">
+      <div className="max-w-6xl w-full text-center">
+        <h2 className="text-6xl font-bold mb-2 animate-pulse">{currentQuestion?.text}</h2>
+
+        {/* إظهار الاختيارات هنا أيضاً لكي يراها الجميع */}
+        <div className="grid grid-cols-2 gap-1 w-full">
+          {currentQuestion?.choices.map((choice, index) => (
+            <div
+              key={index}
+              className="p-1 rounded-2xl text-3xl font-bold flex items-center gap-1"
+              style={{ backgroundColor: CHOICE_COLORS[index] }}
+            >
+              <span className="bg-white/20 w-7 h-7 rounded-full flex items-center justify-center">
+                {getChoiceLabel(index)}
+              </span>
+              {choice}
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-2 text-4xl font-mono bg-white/10 inline-block p-1 rounded-full">
+          الوقت المتبقي: {Math.ceil(timeLeft)} ثانية
         </div>
       </div>
+    </div>
     )
   }
+
+  // إضافة واجهة منصة التتويج (Final Podium)
+if (showFinalPodium) {
+  const topThree = [...leaderboard].slice(0, 3);
+  // ترتيب العرض: الثالث (يسار)، الأول (منتصف)، الثاني (يمين)
+  const displayOrder = [topThree[2], topThree[0], topThree[1]].filter(Boolean);
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-1">
+      <h1 className="text-6xl font-black mb-2 text-yellow-500 italic">النتائج النهائية</h1>
+
+      <div className="flex items-end justify-center gap-1 h-96 w-full max-w-5xl">
+        {displayOrder.map((group, idx) => {
+          const isFirst = group.groupId === topThree[0]?.groupId;
+          const isSecond = group.groupId === topThree[1]?.groupId;
+          const isThird = group.groupId === topThree[2]?.groupId;
+
+          return (
+            <motion.div
+              key={group.groupId}
+              initial={{ y: 500, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{
+                delay: isThird ? 0.5 : isSecond ? 1.5 : 2.5,
+                type: "spring",
+                stiffness: 50
+              }}
+              className="flex flex-col items-center flex-1"
+            >
+              <div className="mb-1 text-center">
+                {group.saintImage && (
+                  <img src={group.saintImage} className="w-8 h-8 rounded-full border-2 border-white mb-1" alt="" />
+                )}
+                <div className="text-2xl font-bold">{group.groupName}</div>
+                <div className="text-yellow-400 font-mono">{group.score} نقطة</div>
+              </div>
+
+              <div
+                className={`w-full rounded-t-2xl flex items-center justify-center text-6xl font-black shadow-2xl`}
+                style={{
+                  height: isFirst ? '100%' : isSecond ? '75%' : '50%',
+                  background: isFirst ? 'linear-gradient(to top, #b45309, #f59e0b)' :
+                             isSecond ? 'linear-gradient(to top, #4b5563, #9ca3af)' :
+                             'linear-gradient(to top, #78350f, #a16207)'
+                }}
+              >
+                {isFirst ? "1" : isSecond ? "2" : "3"}
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <button
+        onClick={() => window.location.reload()}
+        className="mt-3 px-2 py-1 bg-white text-black rounded-full font-bold text-2xl hover:bg-yellow-500 transition-colors"
+      >
+        خروج
+      </button>
+    </div>
+  );
+}
 
   if (fullScreenPhase === "stats") {
     return (

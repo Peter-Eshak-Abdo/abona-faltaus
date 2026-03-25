@@ -46,9 +46,14 @@ function JoinQuizView({ auth }: { auth: Auth }) {
     if (savedGroup) {
       try {
         const parsed = JSON.parse(savedGroup);
-        // التحقق الأهم: هل الفريق المتخزن ده تبع المسابقة اللي فاتحينها دلوقتي؟
-        if (parsed.quizId === quizId) {
-          // استرجاع البيانات عشان الشاشة متظهرش فاضية
+        const THREE_HOURS = 3 * 60 * 60 * 1000; // 3 ساعات بالمللي ثانية
+        const now = Date.now();
+
+        // التحقق من شرطين: نفس المسابقة + لم يمر 3 ساعات
+        const isSameQuiz = parsed.quizId === quizId;
+        const isFresh = parsed.timestamp && (now - parsed.timestamp) < THREE_HOURS;
+
+        if (isSameQuiz && isFresh) {
           setGroupName(parsed.groupName || "");
           setMemberNames(parsed.members || []);
           setMemberCount(parsed.members?.length || 5);
@@ -59,14 +64,12 @@ function JoinQuizView({ auth }: { auth: Auth }) {
           } else {
             setUseCustomName(true);
           }
-
           setHasJoined(true);
         } else {
-          // لو الفريق تبع مسابقة تانية قديمة، امسح البيانات دي عشان يدخل من جديد
+          // إذا انتهت الصلاحية أو مسابقة مختلفة، امسح المخزن
           localStorage.removeItem("currentGroup");
         }
       } catch (e) {
-        console.error("Error parsing saved group", e);
         localStorage.removeItem("currentGroup");
       }
     }
@@ -139,6 +142,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
         quizId: quizId,
         groupName: finalGroupName,
         members: validNames.map((name) => name.trim()),
+        timestamp: Date.now(),
         ...(selectedSaint && !useCustomName && {
           saintName: selectedSaint.name,
           saintImage: selectedSaint.src,

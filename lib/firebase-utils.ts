@@ -381,6 +381,7 @@ export const getQuizGroups = (
   );
 };
 export const startQuiz = async (quizId: string) => {
+  const batch = writeBatch(db);
   const gameStateRef = doc(db, "quizzes", quizId, "gameState", "current");
   // 1. تصفير الـ Game State
   await setDoc(
@@ -390,6 +391,7 @@ export const startQuiz = async (quizId: string) => {
       currentQuestionIndex: 0,
       questionStartTime: serverTimestamp(),
       showResults: false,
+      showQuestionOnly: true,
       startedAt: serverTimestamp(),
     },
     { merge: true },
@@ -398,18 +400,12 @@ export const startQuiz = async (quizId: string) => {
   // 2. تصفير سكور المجموعات عند البدء الفعلي
   const groupsRef = collection(db, "quizzes", quizId, "groups");
   const groupsSnapshot = await getDocs(groupsRef);
-  const batch = writeBatch(db);
-
-  groupsSnapshot.docs.forEach((doc) => {
-    batch.update(doc.ref, { score: 0 });
-  });
+  groupsSnapshot.docs.forEach((doc) => {batch.update(doc.ref, { score: 0 })});
 
   // 3. مسح أي إجابات قديمة من محاولات سابقة
   const responsesRef = collection(db, "quizzes", quizId, "responses");
   const responsesSnapshot = await getDocs(responsesRef);
-  responsesSnapshot.docs.forEach((doc) => {
-    batch.delete(doc.ref);
-  });
+  responsesSnapshot.docs.forEach((doc) => {batch.delete(doc.ref)});
 
   await batch.commit();
 };;
@@ -463,10 +459,14 @@ export const getQuestionResponses = async (quizId: string, questionIndex: number
 
 export const updateGroupScores = async (quizId: string, scores: Record<string, number>) => {
   const batch = writeBatch(db);
-  for (const groupId in scores) {
+  // for (const groupId in scores) {
+  //   const groupRef = doc(db, "quizzes", quizId, "groups", groupId);
+  //   batch.update(groupRef, { score: scores[groupId] });
+  // }
+  Object.entries(scores).forEach(([groupId, score]) => {
     const groupRef = doc(db, "quizzes", quizId, "groups", groupId);
-    batch.update(groupRef, { score: scores[groupId] });
-  }
+    batch.update(groupRef, { score });
+  });
   await batch.commit();
 };
 
