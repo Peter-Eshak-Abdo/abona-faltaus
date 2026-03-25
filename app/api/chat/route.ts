@@ -183,20 +183,23 @@ export async function POST(request: Request) {
       ...modelMessages,
     ];
 
+    const streamConfig = {
+      messages: allMessages,
+      maxOutputTokens: 2048,
+    };
+
     // ✅ المحاولة الأولى: Gemini مع maxTokens كافي للرد الكامل
     try {
       const geminiResult = streamText({
         model: google("gemini-2.0-flash"),
-        messages: allMessages,
-        maxOutputTokens: 2048, // ✅ كافي للرد التفصيلي
+        ...streamConfig,
       });
 
       await geminiResult.consumeStream();
 
       const result2 = streamText({
         model: google("gemini-3-flash-preview"),
-        messages: allMessages,
-        maxOutputTokens: 2048,
+        ...streamConfig,
       });
       return result2.toUIMessageStreamResponse();
     } catch (geminiErr: any) {
@@ -208,8 +211,7 @@ export async function POST(request: Request) {
       // ✅ Fallback: GPT-4o-mini
       const fallback = streamText({
         model: openai("gpt-4o-mini"),
-        messages: allMessages,
-        maxOutputTokens: 2048,
+        ...streamConfig
       });
       return fallback.toUIMessageStreamResponse();
     }

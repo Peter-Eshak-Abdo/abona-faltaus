@@ -5,6 +5,14 @@ service cloud.firestore {
     // صلاحية الوصول إلى ملف المستخدم فقط
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /conversations/{conversationId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+
+        match /messages/{messageId} {
+          allow read, write: if request.auth != null && request.auth.uid == userId;
+        }
+      }
     }
 
     // صلاحيات المقالات
@@ -101,14 +109,6 @@ service cloud.firestore {
 
       // التعديل (Update) غالباً مش هنحتاجه في السلة فممكن نقفله
       allow update: if false;
-    }
-
-    match /conversations/{conversationId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-
-      match /messages/{messageId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
     }
 
     // صلاحيات الآيات (verses)
