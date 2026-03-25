@@ -3,7 +3,13 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useRef, useEffect, useState, useCallback } from "react";
 import DOMPurify from "dompurify";
-import { Send, Loader2, Bot, User, Sparkles } from "lucide-react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, db } from "@/lib/firebase";
+import {
+  collection, addDoc, updateDoc, doc,
+  serverTimestamp, query, orderBy, getDocs, limit
+} from "firebase/firestore";
+import { Send, Loader2, Bot, User, Sparkles, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -30,17 +36,67 @@ function extractText(m: any): string {
   return "";
 }
 
+// ✅ حفظ رسالة في Firebase - بنحفظ بس role + text علشان نوفر مساحة
+async function saveMessageToFirebase(
+  userId: string,
+  conversationId: string,
+  role: "user" | "assistant",
+  text: string
+) {
+  try {
+    await addDoc(
+      collection(db, "users", userId, "conversations", conversationId, "messages"),
+      { role, text, createdAt: serverTimestamp() }
+    );
+  } catch (e) {
+    console.error("Firebase save error:", e);
+  }
+}
+
+// ✅ إنشاء محادثة جديدة في Firebase
+async function createConversation(userId: string): Promise<string> {
+  const ref = await addDoc(
+    collection(db, "users", userId, "conversations"),
+    { createdAt: serverTimestamp(), lastMessage: "", updatedAt: serverTimestamp() }
+  );
+  return ref.id;
+}
+
+// ✅ تحديث آخر رسالة في المحادثة
+async function updateConversationLastMessage(userId: string, conversationId: string, text: string) {
+  try {
+    await updateDoc(doc(db, "users", userId, "conversations", conversationId), {
+      lastMessage: text.slice(0, 2000),
+      updatedAt: serverTimestamp(),
+    });
+  } catch (e) {
+    console.error("Firebase update error:", e);
+  }
+}
+
 export default function ChatBot() {
   const endRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [inputValue, setInputValue] = useState("");
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // ✅ Firebase Auth
+  const [user] = useAuthState(auth);
 
   // ✅ AI SDK v5/6: transport بدل api، وسendMessage بدل append
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, setMessages, status, error } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
   const isLoading = status === "streaming" || status === "submitted";
+
+// ✅ إنشاء conversation جديدة لو المستخدم مسجل ومفيش conversation
+  useEffect(() => {
+    if (user && !conversationId) {
+      createConversation(user.uid).then(setConversationId);
+    }
+  }, [user]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,6 +108,36 @@ export default function ChatBot() {
     el.style.height = "auto";
     el.style.height = Math.min(el.scrollHeight, 120) + "px";
   }, [inputValue]);
+
+   // ✅ حفظ الرسائل في Firebase بعد كل رسالة جديدة
+  useEffect(() => {
+    if (!user || !conversationId || messages.length === 0 || isSaving) return;
+    const lastMsg = messages[messages.length - 1];
+    // بنحفظ بس لما الـ status بيبقى ready (خلص الـ streaming)
+    if (status !== "ready") return;
+
+    const text = extractText(lastMsg);
+    if (!text) return;
+
+    setIsSaving(true);
+    saveMessageToFirebase(user.uid, conversationId, lastMsg.role as any, text)
+      .then(() => {
+        if (lastMsg.role === "assistant") {
+          updateConversationLastMessage(user.uid, conversationId, text);
+        }
+      })
+      .finally(() => setIsSaving(false));
+  }, [messages, status]);
+
+  // ✅ محادثة جديدة
+  const handleNewChat = useCallback(async () => {
+    setMessages([]);
+    setInputValue("");
+    if (user) {
+      const newId = await createConversation(user.uid);
+      setConversationId(newId);
+    }
+  }, [user, setMessages]);
 
   const handleSend = useCallback(() => {
     const text = inputValue.trim();
@@ -66,24 +152,6 @@ export default function ChatBot() {
       e.preventDefault();
       handleSend();
     }
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSend();
-  };
-
-  // ✅ في v5 الـ messages بتبقى parts مش content مباشرة
-  const getMessageText = (m: any): string => {
-    // لو في parts (v5 format)
-    if (m.parts) {
-      return m.parts
-        .filter((p: any) => p.type === "text")
-        .map((p: any) => p.text)
-        .join("");
-    }
-    // fallback لـ content القديم
-    return m.content ?? "";
   };
 
   return (
@@ -103,7 +171,20 @@ export default function ChatBot() {
             }
           </p>
         </div>
-      </div>
+
+      {/* ✅ زرار محادثة جديدة */}
+      {messages.length > 0 && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleNewChat}
+          className="h-4 w-4 rounded-full text-gray-400 hover:text-amber-600 hover:bg-amber-50"
+          title="محادثة جديدة"
+        >
+          <Plus size={8} />
+        </Button>
+      )}
+    </div>
 
       {/* Messages */}
       <ScrollArea className="flex-1 p-1">
@@ -141,11 +222,12 @@ export default function ChatBot() {
                     : "bg-white text-gray-800 border border-gray-100 rounded-bl-sm"
                 )}>
                   {isUser ? (
-                    <p className="whitespace-pre-wrap text-right">{text}</p>
+                    <p className="whitespace-pre-wrap text-right" dir="rtl">{text}</p>
                   ) : (
-                    <div
-                      className="prose prose-sm max-w-none text-right [&_h3]:text-amber-700 [&_h3]:font-bold [&_strong]:text-gray-900"
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(text) }}
+                      <div
+                        dir="rtl"
+                        className="prose prose-sm max-w-none [&_h3]:text-amber-700 [&_h3]:font-bold [&_strong]:text-gray-900 [&_p]:mb-2 [&_p:last-child]:mb-0 [&_span[dir]]:block [&_span[dir]]:bg-amber-50 [&_span[dir]]:rounded [&_span[dir]]:px-2 [&_span[dir]]:py-1 [&_span[dir]]:my-1 [&_span[dir]]:text-amber-800 [&_span[dir]]:font-medium"
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(text, { ADD_ATTR: ["dir", "style"] }) }}
                     />
                   )}
                 </div>
@@ -160,10 +242,10 @@ export default function ChatBot() {
                 <Bot size={7} />
               </div>
               <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-sm p-1 shadow-sm">
-                <div className="flex gap-1 items-center h-4">
-                  <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce [animation-delay:0ms]" />
-                  <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce [animation-delay:150ms]" />
-                  <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce [animation-delay:300ms]" />
+                <div className="flex gap-1 items-center h-3">
+                  <span className="w-.5 h-.5 bg-amber-400 rounded-full animate-bounce [animation-delay:0ms]" />
+                  <span className="w-.5 h-.5 bg-amber-400 rounded-full animate-bounce [animation-delay:150ms]" />
+                  <span className="w-.5 h-.5 bg-amber-400 rounded-full animate-bounce [animation-delay:300ms]" />
                 </div>
               </div>
             </div>

@@ -82,7 +82,7 @@ service cloud.firestore {
         // الطلاب يقدروا يقرأوا النقاط عشان يشوفوا الـ Leaderboard
         allow read: if true;
       }
-      
+
       // الردود (responses)
       match /responses/{responseId} {
         allow read: if true;
@@ -101,6 +101,14 @@ service cloud.firestore {
 
       // التعديل (Update) غالباً مش هنحتاجه في السلة فممكن نقفله
       allow update: if false;
+    }
+
+    match /conversations/{conversationId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
     // صلاحيات الآيات (verses)
