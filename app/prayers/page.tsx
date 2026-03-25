@@ -135,7 +135,6 @@ export default async function PrayersPage({ searchParams }: Props) {
             nextDirectoryLink={nextDirectoryPath} // مررنا الرابط الجديد هنا
         />
       )}
-
     </div>
   );
 }

@@ -118,7 +118,6 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
 
     // تصميم القائمة (للقراءات)
     const listLayout = `flex flex-col px-0.5 border-b last:border-0 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'} p-0.5 rounded`;
-
     const wrapperClass = isGrid ? gridLayout : listLayout;
 
     return (

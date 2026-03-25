@@ -1,5 +1,3 @@
-// lib/mappings.ts
-
 export const TITLES_MAP: Record<string, string> = {
   // --- المجلدات الرئيسية ---
   liturgies: "القداسات الإلهية",

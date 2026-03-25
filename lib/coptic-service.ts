@@ -1,4 +1,3 @@
-// lib/coptic-service.ts
 import fs from 'fs';
 import path from 'path';
 
@@ -11,8 +10,8 @@ export type FileSystemItem = {
 };
 
 export type FileContext = {
-  data: any;           // محتوى الملف الخام
-  siblings: string[];  // الملفات المجاورة
+  data: any;
+  siblings: string[];
   currentIndex: number;
   prev: string | null;
   next: string | null;
