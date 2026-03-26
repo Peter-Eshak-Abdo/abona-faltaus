@@ -157,6 +157,16 @@ async function buildSystemPrompt(searchTerm: string): Promise<string> {
 اكتب الآيات الكتابية دائماً داخل: <span dir="rtl" style="direction:rtl;unicode-bidi:embed;">نص الآية</span>`;
 }
 
+// ✅ استخراج النص من UIMessage (ai@6 format)
+function extractLastUserText(messages: any[]): string {
+  const last = messages[messages.length - 1];
+  if (!last) return "";
+  if (Array.isArray(last.parts)) {
+    return last.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("");
+  }
+  return last.content ?? "";
+}
+
 export async function POST(request: Request) {
   try {
     const { messages } = await request.json();
@@ -165,22 +175,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "رسائل غير صالحة" }, { status: 400 });
     }
 
-    const lastMsg = messages[messages.length - 1];
-    const lastUserMessage = lastMsg?.parts
-      ? lastMsg.parts
-          .filter((p: any) => p.type === "text")
-          .map((p: any) => p.text)
-          .join("")
-      : (lastMsg?.content ?? "");
-
-    const searchTerm = normalize(lastUserMessage);
     await loadData();
-
+    const searchTerm = normalize(extractLastUserText(messages));
     const systemPrompt = await buildSystemPrompt(searchTerm);
-    const modelMessages = await convertToModelMessages(messages);
+    // const lastMsg = messages[messages.length - 1];
+    // const lastUserMessage = lastMsg?.parts
+    //   ? lastMsg.parts
+    //       .filter((p: any) => p.type === "text")
+    //       .map((p: any) => p.text)
+    //       .join("")
+    //   : (lastMsg?.content ?? "");
+
+    // ✅ نبني الـ messages بشكل بسيط — بدون convertToModelMessages
+    // لأن ai@6 بيقبل content string مباشرة في streamText
+    const coreMessages = messages.map((m: any) => ({
+      role: m.role as "user" | "assistant",
+      content: Array.isArray(m.parts)
+        ? m.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("")
+        : (m.content ?? ""),
+    }));
+    // const modelMessages = await convertToModelMessages(messages);
     const allMessages = [
       { role: "system" as const, content: systemPrompt },
-      ...modelMessages,
+      ...coreMessages,
     ];
 
     const streamConfig = {
@@ -190,23 +207,20 @@ export async function POST(request: Request) {
 
     // ✅ المحاولة الأولى: Gemini مع maxTokens كافي للرد الكامل
     try {
-      const geminiResult = streamText({
-        model: google("gemini-2.0-flash"),
-        ...streamConfig,
-      });
+      // const geminiResult = streamText({
+      //   model: google("gemini-2.0-flash"),
+      //   ...streamConfig,
+      // });
 
-      await geminiResult.consumeStream();
+      // await geminiResult.consumeStream();
 
-      const result2 = streamText({
+      const result = streamText({
         model: google("gemini-3-flash-preview"),
         ...streamConfig,
       });
-      return result2.toUIMessageStreamResponse();
+      return result.toUIMessageStreamResponse();
     } catch (geminiErr: any) {
-      console.error(
-        "Gemini failed, falling back to OpenAI:",
-        geminiErr?.message ?? geminiErr,
-      );
+      console.error("Gemini failed, falling back to OpenAI:",geminiErr?.message ?? geminiErr);
 
       // ✅ Fallback: GPT-4o-mini
       const fallback = streamText({
