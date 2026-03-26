@@ -119,7 +119,7 @@
     "autoprefixer": "^10.4.27",
     "baseline-browser-mapping": "^2.10.10",
     "eslint": "^10",
-    "eslint-config-next": "16.1.7",
+    "eslint-config-next": "16.2.1",
     "jest": "^30.3.0",
     "next-sitemap": "^4.2.3",
     "postcss": "^8.5.8",
