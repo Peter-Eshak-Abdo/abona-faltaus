@@ -29,10 +29,10 @@ export function QuizStats({ quiz, groups }: QuizStatsProps) {
             <div className="text-gray-700 font-bold text-lg">عضو</div>
           </div>
           <div className="text-center p-1 bg-orange-50 rounded-2xl shadow-lg">
-            <div className="text-gray-700 font-bold text-lg">{Math.round(quiz.questions.reduce((sum, q) => sum + q.timeLimit, 0) / 60)} دقيقة</div>
-            <div className="text-4xl font-bold text-orange-600 mb-1">
-              <div className="text-gray-700 font-bold text-lg">{Math.round(quiz.questions.reduce((sum, q) => sum + q.timeLimit, 0))} ثانية</div>
+            <div className="text-4xl font-bold text-purple-600 mb-1">
+              {Math.round(quiz.questions.reduce((sum, q) => sum + q.timeLimit, 0) / 60)}
             </div>
+            <div className="text-gray-700 font-bold text-lg">دقيقة</div>
           </div>
         </div>
       </CardContent>

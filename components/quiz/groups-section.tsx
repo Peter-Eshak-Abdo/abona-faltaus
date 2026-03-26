@@ -165,7 +165,7 @@ export function GroupsSection({
 
             {/* صورة القديس أو الرمز */}
             <div className="relative">
-              <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-slate-700">
+              <div className="w-4 h-4 rounded-full overflow-hidden border-4 border-slate-700">
                 {group.saintImage ? (
                   <img src={group.saintImage} className="w-full h-full object-cover" />
                 ) : (
@@ -180,6 +180,14 @@ export function GroupsSection({
             <div className="text-center">
               <h3 className="text-xl font-bold truncate max-w-[150px]">{group.groupName}</h3>
               <p className="text-slate-500 text-sm font-medium">{group.members.length} أعضاء</p>
+              <p className="text-gray-600 mt-1 text-2xl"> اسماء الاعضاء:</p>
+              <div className="grid grid-cols-1 gap-1">
+                {group.members.map((name, index) => (
+                  <span key={index} className="text-gray-600 text-lg text-right block">
+                    {index + 1}- {name}
+                  </span>
+                ))}
+              </div>
             </div>
           </motion.div>
         )

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { google } from "@ai-sdk/google";
 import { openai } from "@ai-sdk/openai";
-import { streamText, convertToModelMessages } from "ai";
+import { streamText } from "ai";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -59,80 +59,6 @@ function searchBible(searchTerm: string): { text: string; ref: string }[] {
   return found;
 }
 
-// export async function POST(request: Request) {
-//   try {
-//     const body = await request.json();
-
-//     // ✅ AI SDK v5/6: الـ messages بييجوا كـ UIMessages بـ parts
-//     // convertToModelMessages بيحوّلها للـ format الصح للـ model
-//     const { messages } = body;
-
-//     if (!messages || !Array.isArray(messages) || messages.length === 0) {
-//       return NextResponse.json({ error: "رسائل غير صالحة" }, { status: 400 });
-//     }
-
-//     // استخراج نص آخر رسالة من الـ parts format الجديد
-//     const lastMsg = messages[messages.length - 1];
-//     const lastUserMessage = lastMsg?.parts
-//       ? lastMsg.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("")
-//       : (lastMsg?.content ?? "");
-
-//     const searchTerm = normalize(lastUserMessage);
-
-//     await loadData();
-
-//     const foundVerses  = searchBible(searchTerm);
-//     const topicResults = (topicsCache ?? [])
-//       .filter((v: any) => normalize(v.topic).includes(searchTerm))
-//       .slice(0, 5)
-//       .map((v: any) => ({ text: v.verse, ref: v.ref }));
-
-//     const finalVerses = [...foundVerses, ...topicResults].slice(0, 7);
-//     const finalQuotes = (quotesCache ?? [])
-//       .filter((q: any) =>
-//         normalize(q.quote).includes(searchTerm) ||
-//         normalize(q.topic).includes(searchTerm)
-//       )
-//       .slice(0, 5);
-
-//     const systemPrompt = `أنت مساعد مسيحي أرثوذكسي. أجب بعمق على السؤال.
-// المراجع المتاحة:
-// الآيات: ${finalVerses.map((v) => `${v.text} (${v.ref})`).join(" | ")}
-// الأقوال: ${finalQuotes.map((q: { quote: any; author: any }) => `"${q.quote}" - ${q.author}`).join(" | ")}
-// استخدم HTML لتنسيق الرد (فقرات، عناوين h3، خط عريض).`;
-
-//     // ✅ convertToModelMessages يحوّل UIMessages لـ CoreMessages
-//     const modelMessages = await convertToModelMessages(messages);
-
-//     const allMessages = [
-//       { role: "system" as const, content: systemPrompt },
-//       ...modelMessages,
-//     ];
-
-//     // المحاولة الأولى: Gemini
-//     try {
-//       const result = streamText({
-//         model: google("gemini-3-flash-preview"),
-//         messages: allMessages,
-//       });
-//       return result.toUIMessageStreamResponse();
-//     } catch (geminiErr) {
-//       console.error("Gemini failed, falling back to OpenAI:", geminiErr);
-//       const fallback = streamText({
-//         model: openai("gpt-4o-mini"),
-//         messages: allMessages,
-//       });
-//       return fallback.toUIMessageStreamResponse();
-//     }
-//   } catch (error: any) {
-//     console.error("Chat API error:", error);
-//     return NextResponse.json(
-//       { error: "حدث خطأ في السيرفر، يرجى المحاولة لاحقاً" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 async function buildSystemPrompt(searchTerm: string): Promise<string> {
   const foundVerses = searchBible(searchTerm);
   const topicResults = (topicsCache ?? [])
@@ -176,22 +102,23 @@ export async function POST(request: Request) {
     }
 
     await loadData();
-    const searchTerm = normalize(extractLastUserText(messages));
-    const systemPrompt = await buildSystemPrompt(searchTerm);
-    // const lastMsg = messages[messages.length - 1];
-    // const lastUserMessage = lastMsg?.parts
-    //   ? lastMsg.parts
-    //       .filter((p: any) => p.type === "text")
-    //       .map((p: any) => p.text)
-    //       .join("")
-    //   : (lastMsg?.content ?? "");
+    // const systemPrompt = await buildSystemPrompt(normalize(extractLastUserText(messages)));
+    const lastMsg = messages[messages.length - 1];
+    const lastUserMessage = lastMsg?.parts
+      ? lastMsg.parts
+          .filter((p: any) => p.type === "text")
+          .map((p: any) => p.text)
+          .join("")
+      : (lastMsg?.content ?? "");
 
-    // ✅ نبني الـ messages بشكل بسيط — بدون convertToModelMessages
-    // لأن ai@6 بيقبل content string مباشرة في streamText
+    const systemPrompt = await buildSystemPrompt(normalize(lastUserMessage));
     const coreMessages = messages.map((m: any) => ({
       role: m.role as "user" | "assistant",
       content: Array.isArray(m.parts)
-        ? m.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("")
+        ? m.parts
+            .filter((p: any) => p.type === "text")
+            .map((p: any) => p.text)
+            .join("")
         : (m.content ?? ""),
     }));
     // const modelMessages = await convertToModelMessages(messages);
@@ -202,10 +129,9 @@ export async function POST(request: Request) {
 
     const streamConfig = {
       messages: allMessages,
-      maxOutputTokens: 2048,
+      maxOutputTokens: 4096,
     };
 
-    // ✅ المحاولة الأولى: Gemini مع maxTokens كافي للرد الكامل
     try {
       // const geminiResult = streamText({
       //   model: google("gemini-2.0-flash"),
@@ -220,14 +146,16 @@ export async function POST(request: Request) {
       });
       return result.toUIMessageStreamResponse();
     } catch (geminiErr: any) {
-      console.error("Gemini failed, falling back to OpenAI:",geminiErr?.message ?? geminiErr);
+      console.error(
+        "Gemini failed, falling back to OpenAI:",
+        geminiErr?.message ?? geminiErr,
+      );
 
       // ✅ Fallback: GPT-4o-mini
       const fallback = streamText({
         model: openai("gpt-4o-mini"),
-        ...streamConfig
-      });
-      return fallback.toUIMessageStreamResponse();
+        ...streamConfig,
+      }).toUIMessageStreamResponse();
     }
   } catch (error: any) {
     console.error("Chat API error:", error);

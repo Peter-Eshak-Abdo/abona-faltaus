@@ -311,88 +311,93 @@ function HostQuizView({ auth }: { auth: Auth }) {
     // </div>
     <div className="h-screen w-full bg-slate-900 flex flex-col md:flex-row overflow-hidden text-white font-sans">
 
-    {/* الـ Overlay للـ QR Code عند التكبير */}
-    <AnimatePresence>
-      {isQRFull && (
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          onClick={() => setIsQRFull(false)}
-          className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4 cursor-pointer"
-        >
-          <div className="bg-white p-8 rounded-3xl shadow-2xl">
-            <QRCodeSection joinUrl={joinUrl} qrSize={500} setQrSize={() => {}} hideControls />
+      {/* الـ Overlay للـ QR Code عند التكبير */}
+      <AnimatePresence>
+        {isQRFull && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setIsQRFull(false)}
+            className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-1 cursor-pointer"
+          >
+            <div className="bg-white p-1 rounded-3xl shadow-2xl">
+              <QRCodeSection joinUrl={joinUrl} qrSize={500} setQrSize={() => { }} hideControls />
+            </div>
+            <p className="mt-1 text-4xl font-bold text-white">امسح الكود للانضمام</p>
+            <p className="mt-1 text-2xl text-blue-400">{joinUrl}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* السايد بار الأيمن (بيانات المسابقة) */}
+      <aside className="w-full md:w-80 bg-slate-800/50 p-1 flex flex-col border-l border-white/10 shadow-2xl z-10">
+        <div className="flex flex-col items-center text-center gap-0.5 grow">
+          <div className="flex flex-col-reverse md:flex-row">
+            <div className="grow px-3">
+              <h1 className="text-6xl font-black leading-tight drop-shadow-md">{quiz.title}</h1>
+              <p className="text-slate-400 line-clamp-2">{quiz.description}</p>
+            </div>
+            <img src="/images/alnosor/logo.jpeg" alt="Logo" className="w-8 h-8 rounded-2xl shadow-lg border-2 border-white/20" />
           </div>
-          <p className="mt-8 text-4xl font-bold text-white">امسح الكود للانضمام</p>
-          <p className="mt-4 text-2xl text-blue-400">{joinUrl}</p>
-        </motion.div>
-      )}
-    </AnimatePresence>
 
-    {/* السايد بار الأيمن (بيانات المسابقة) */}
-    <aside className="w-full md:w-80 bg-slate-800/50 p-6 flex flex-col border-l border-white/10 shadow-2xl z-10">
-      <div className="flex flex-col items-center text-center gap-4 grow">
-        <img src="/images/alnosor/logo.jpeg" alt="Logo" className="w-24 h-24 rounded-2xl shadow-lg border-2 border-white/20" />
-        <h1 className="text-3xl font-black leading-tight drop-shadow-md">{quiz.title}</h1>
-        <p className="text-slate-400 line-clamp-2">{quiz.description}</p>
+          <hr className="w-full border-white/10 my-2" />
 
-        <hr className="w-full border-white/10 my-2" />
-
-        {/* مصغر الـ QR للضغط عليه */}
-        <div
-          onClick={() => setIsQRFull(true)}
-          className="group relative cursor-pointer hover:scale-105 transition-transform"
-        >
-          <div className="bg-white p-2 rounded-xl">
-             <QRCodeSection joinUrl={joinUrl} qrSize={160} setQrSize={() => {}} hideControls />
-          </div>
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-xl transition-opacity">
-             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* مصغر الـ QR للضغط عليه */}
+          <div
+            onClick={() => setIsQRFull(true)}
+            className="group relative cursor-pointer hover:scale-105 transition-transform"
+          >
+            <div className="bg-white p-1 rounded-xl">
+              <QRCodeSection joinUrl={joinUrl} qrSize={160} setQrSize={() => { }} hideControls />
+            </div>
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-xl transition-opacity">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m4 0l-5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-             </svg>
+              </svg>
+            </div>
           </div>
+          <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">اضغط لتكبير الكود</p>
         </div>
-        <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">اضغط لتكبير الكود</p>
-      </div>
 
-      {/* زر البدء في السايد بار */}
-      <div className="mt-auto pt-6">
-        <Button
-          onClick={handleStartQuiz}
-          disabled={groups.length === 0 || isStarting}
-          className="w-full h-16 text-2xl font-black rounded-2xl bg-amber-500 hover:bg-amber-600 shadow-lg shadow-amber-500/20 text-slate-900 transition-all active:scale-95"
-        >
-          {isStarting ? "جاري البدء..." : "ابدأ الآن 🚀"}
-        </Button>
-      </div>
-    </aside>
-
-    {/* المساحة الرئيسية (الفرق) */}
-    <main className="flex-1 p-6 overflow-hidden flex flex-col gap-6">
-      <header className="flex justify-between items-end">
-        <div>
-          <h2 className="text-5xl font-black text-white/90">بانتظار الأبطال...</h2>
-          <p className="text-slate-400 text-xl mt-2">انضم {groups.length} فريق حتى الآن</p>
+        {/* زر البدء في السايد بار */}
+        <div className="mt-auto pt-1">
+          <Button
+            onClick={handleStartQuiz}
+            disabled={groups.length === 0 || isStarting}
+            className="w-full h-5 text-2xl font-black rounded-2xl bg-amber-500 hover:bg-amber-600 shadow-lg shadow-amber-500/20 text-slate-900 transition-all active:scale-95"
+          >
+            {isStarting ? "جاري البدء..." : "ابدأ الآن 🚀"}
+          </Button>
         </div>
-        <div className="flex gap-4">
-           {/* إحصائيات سريعة هنا إن أردت */}
-           <Button onClick={handleCleanupOldGroups} variant="outline" className="border-white/10 text-white hover:bg-white/10 rounded-xl">
+      </aside>
+
+      {/* المساحة الرئيسية (الفرق) */}
+      <main className="flex-1 p-1 overflow-hidden flex flex-col gap-1">
+        <header className="flex justify-between items-end">
+          <div>
+            <h2 className="text-5xl font-black text-white/90">بانتظار الأبطال...</h2>
+            <p className="text-slate-400 text-xl mt-1">انضم {groups.length} فريق حتى الآن</p>
+          </div>
+          <div className="flex gap-1">
+            {/* إحصائيات سريعة هنا إن أردت */}
+            <Button onClick={handleCleanupOldGroups} variant="outline" className="border-white/10 text-black hover:bg-white/90 rounded-xl">
               تنظيف القائمة
-           </Button>
-        </div>
-      </header>
+            </Button>
+          </div>
+        </header>
 
-      <section className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-         <GroupsSection
+        <section className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
+          <GroupsSection
             groups={groups}
             isCleaningUp={isCleaningUp}
             handleCleanupOldGroups={handleCleanupOldGroups}
             handleDeleteGroup={handleDeleteGroup}
             deletingGroupId={deletingGroupId}
-            compactView // خاصية جديدة سنضيفها
+            compactView
           />
-      </section>
-    </main>
-  </div>
+        </section>
+        <QuizStats quiz={quiz} groups={groups} />
+      </main>
+    </div>
   )
 }
 

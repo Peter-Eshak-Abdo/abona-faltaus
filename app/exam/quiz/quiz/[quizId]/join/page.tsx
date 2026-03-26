@@ -160,8 +160,6 @@ function JoinQuizView({ auth }: { auth: Auth }) {
       )
 
       setHasJoined(true)
-      // router.push(`/exam/quiz/quiz/${quizId}/play`)
-
     } catch (error) {
       console.error("Error joining quiz:", error)
       const errorMessage = (error as Error).message || "فشل في الانضمام للمسابقة"
@@ -216,11 +214,6 @@ function JoinQuizView({ auth }: { auth: Auth }) {
       <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
           <div className="text-center bg-white rounded-2xl shadow-2xl">
-            {/* <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-              <svg className="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-              </svg>
-            </div> */}
             {/* عرض الصورة هنا */}
             {!useCustomName && selectedSaint?.src ? (
               <img
@@ -240,13 +233,6 @@ function JoinQuizView({ auth }: { auth: Auth }) {
             <p className="text-gray-600 text-4xl font-extrabold">&quot;{useCustomName ? groupName : selectedSaint?.name}&quot;</p>
             <div className="bg-gray-50 rounded-xl p-1 mb-1">
               <p className="text-gray-600 mt-1 text-2xl"> اسماء الاعضاء:</p>
-              {/* <ul className="list-disc list">
-                <li>{memberNames.map((name, index) => (
-                  <span key={index} className="text-gray-600 text-2xl font-bold block">
-                    {index + 1}- {name}
-                  </span>
-                ))}</li>
-              </ul> */}
               <div className="grid grid-cols-1 gap-1">
                 {memberNames.map((name, index) => (
                   <span key={index} className="text-gray-600 text-lg text-right block">
@@ -258,9 +244,6 @@ function JoinQuizView({ auth }: { auth: Auth }) {
             <p className="text-gray-600 mt-1 text-2xl">
               انضمت للمسابقة. في انتظار بدء الخادم...
             </p>
-            {/* <div className="animate-pulse">
-              <div className="h-3 bg-green-200 rounded-full"></div>
-            </div> */}
             <div className="w-full bg-gray-200 rounded-full h-2">
               <motion.div
                 className="bg-green-500 h-2 rounded-full"
@@ -277,11 +260,13 @@ function JoinQuizView({ auth }: { auth: Auth }) {
 
   return (
     <div className="min-h-screen bg-linear-to-br flex items-center justify-center">
-      <div className="w-full max-w-8xl space-y-2 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
-        <div className="text-center mb-2">
-          <h1 className="text-5xl font-bold mb-2 text-black drop-shadow-lg">{quiz.title}</h1>
-          <p className="text-black/90 drop-shadow-md text-lg mb-3">{quiz.description}</p>
-          <img src={"/images/alnosor/logo.jpeg"} alt="Logo" className="rounded-lg shadow-lg mb-2 w-20 mx-auto" />
+      <div className="w-full max-w-8xl space-y-1 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
+        <div className="flex flex-col-reverse md:flex-row">
+          <div className="grow px-3">
+            <h1 className="text-5xl font-bold mb-1 text-black drop-shadow-lg">{quiz.title}</h1>
+            <p className="text-black/90 drop-shadow-md text-lg mb-1">{quiz.description}</p>
+          </div>
+          <img src={"/images/alnosor/logo.jpeg"} alt="Logo" className="rounded-lg shadow-lg mb-1 w-20 mx-auto" />
         </div>
 
         <Card className="backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
@@ -301,7 +286,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
                   <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
-                  <p className="mr-3 text-red-700 text-lg">{error}</p>
+                  <p className="mr-2 text-red-700 text-lg">{error}</p>
                 </div>
               </div>
             )}
@@ -354,7 +339,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 max-h-96 overflow-y-auto"
+                    className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-1 max-h-96 overflow-y-auto"
                   >
                     {SAINTS_DATA.map((saint, index) => {
                       const isSelected = selectedSaint?.name === saint.name;
@@ -366,7 +351,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: index * 0.05 }}
                           onClick={() => handleSaintSelect(saint)}
-                          className={`p-2 rounded-xl border-2 transition-all duration-300 transform scale-90 flex flex-col items-center gap-1
+                          className={`p-1 rounded-xl border-2 transition-all duration-300 transform scale-90 flex flex-col items-center gap-1
                           ${isSelected
                               ? "border-white/60 bg-white/40 scale-100 text-black shadow-lg"
                               : selectedSaint
@@ -378,9 +363,9 @@ function JoinQuizView({ auth }: { auth: Auth }) {
                           <img
                             src={saint.src}
                             alt={saint.name}
-                            className={`w-8 h-8 rounded-full object-cover border border-white/50 ${selectedSaint && !isSelected ? "grayscale" : ""}`}
+                            className={`w-8 h-12 rounded-full object-cover border border-white/50 ${selectedSaint && !isSelected ? "grayscale" : ""}`}
                           />
-                          <p className={`text-center leading-tight font-bold ${isSelected ? "text-sm" : "text-xs"}`}>
+                          <p className={`text-center leading-tight font-bold ${isSelected ? "text-lg" : "text-md"}`}>
                             {saint.name}
                           </p>
                         </motion.button>
@@ -434,7 +419,7 @@ function JoinQuizView({ auth }: { auth: Auth }) {
                       placeholder={`اسم العضو ${index + 1}`}
                       className="w-full text-lg p-1 ps-3 border-2 bg-white/30 border-white/40 text-black placeholder:text-gray-600 font-medium rounded-xl focus:border-white/60 focus:outline-none transition-colors"
                     />
-                    <div className="absolute start-0 ms-0.5 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-white/40 rounded-full flex items-center justify-center border border-white/50">
+                    <div className="absolute inset-s-0 ms-0.5 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-white/40 rounded-full flex items-center justify-center border border-white/50">
                       <span className="text-black text-sm font-bold">{index + 1}</span>
                     </div>
                   </div>
