@@ -61,3 +61,7 @@
 
 //   return null; // This component doesn't render anything
 // }
+
+export default function OneSignal() {
+  return <div>OneSignal</div>;
+}

@@ -11,7 +11,7 @@ import { QRCodeSection } from "@/components/quiz/qr-code-section"
 import { GroupsSection } from "@/components/quiz/groups-section"
 import { QuizStats } from "@/components/quiz/quiz-stats"
 
-function HostQuizView() {
+export default function HostQuizView() {
   const { quizId } = useParams()
   const router = useRouter()
   const [quiz, setQuiz] = useState<any>(null)

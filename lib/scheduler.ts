@@ -12,7 +12,7 @@
 // }
 
 // // Check if current time matches any schedule
-// export const checkAndSendScheduledNotifications = async () => {
+export const checkAndSendScheduledNotifications = async () => {
 //   // const { db } = getFirebaseServices(); // Initialize Firebase services
 //   try {
 //     const now = new Date();
@@ -67,10 +67,10 @@
 //   } catch (error) {
 //     console.error("Error checking scheduled notifications:", error);
 //   }
-// };
+};
 
 // // Vercel Cron function (to be called by Vercel's cron service)
-// export async function handler() {
-//   await checkAndSendScheduledNotifications();
-//   return { statusCode: 200, body: "Scheduled notifications checked" };
-// }
+export async function handler() {
+  await checkAndSendScheduledNotifications();
+  return { statusCode: 200, body: "Scheduled notifications checked" };
+}

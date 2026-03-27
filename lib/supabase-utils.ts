@@ -13,9 +13,9 @@ export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt">) => {
         title: quiz.title,
         description: quiz.description,
         questions: quiz.questions,
-        shuffle_questions: quiz.shuffleQuestions || false,
-        shuffle_choices: quiz.shuffleChoices || false,
-        created_by: quiz.createdBy,
+        shuffle_questions: quiz.shuffle_questions || false,
+        shuffle_choices: quiz.shuffle_choices || false,
+        created_by: quiz.created_by,
       },
     ])
     .select()
@@ -47,7 +47,7 @@ export const getQuiz = async (quizId: string): Promise<Quiz | null> => {
     shuffleChoices: data.shuffle_choices,
     createdAt: new Date(data.created_at),
     createdBy: data.created_by,
-  } as Quiz;
+  } as unknown as Quiz;
 };
 
 export const updateQuiz = async (quizId: string, updates: any) => {

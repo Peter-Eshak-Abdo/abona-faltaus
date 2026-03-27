@@ -1,5 +1,3 @@
-// lib/types/coptic.ts
-
 export interface CopticTitle {
   english?: string;
   coptic?: string;

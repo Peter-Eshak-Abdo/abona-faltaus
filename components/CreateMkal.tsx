@@ -83,3 +83,7 @@
 //     </div>
 //   );
 // }
+
+export default function CreateMkal() {
+  return <div>CreateMkal</div>;
+}

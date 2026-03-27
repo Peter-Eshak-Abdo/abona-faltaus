@@ -142,3 +142,6 @@
 //   );
 // }
 
+export default function MkalatFeed() {
+  return <div>MkalatFeed</div>;
+}

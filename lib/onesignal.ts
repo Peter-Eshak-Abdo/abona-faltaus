@@ -160,3 +160,8 @@
 //   const currentCount = await getUnreadNotificationsCount(userId);
 //   await updateUnreadNotificationsCount(userId, currentCount + 1);
 // };
+
+export const initializeOneSignal = async () => {
+  console.log("Initializing OneSignal...");
+};
+//

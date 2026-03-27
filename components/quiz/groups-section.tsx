@@ -27,7 +27,7 @@ export function GroupsSection({
       return new Date(date);
     };
     const now = new Date()
-    const lastActivity = ensureDate(group.lastActivity || group.joinedAt);
+    const lastActivity = ensureDate(group.last_activity || group.joined_at);
     const minutesAgo = Math.floor((now.getTime() - lastActivity.getTime()) / (1000 * 60));
 
     if (minutesAgo > 60) return { status: "inactive", text: `منذ ساعة+`, color: "text-red-600" };
@@ -157,7 +157,7 @@ export function GroupsSection({
           >
             {/* زر الحذف يظهر عند الـ hover فقط */}
             <button
-              onClick={() => handleDeleteGroup(group.id, group.groupName)}
+              onClick={() => handleDeleteGroup(group.id, group.group_name)}
               className="absolute top-2 right-2 p-1 text-slate-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" /></svg>
@@ -166,8 +166,8 @@ export function GroupsSection({
             {/* صورة القديس أو الرمز */}
             <div className="relative">
               <div className="w-4 h-4 rounded-full overflow-hidden border-4 border-slate-700">
-                {group.saintImage ? (
-                  <img src={group.saintImage} className="w-full h-full object-cover" />
+                {group.saint_image ? (
+                  <img src={group.saint_image} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-slate-700 flex items-center justify-center text-3xl">👤</div>
                 )}
@@ -178,7 +178,7 @@ export function GroupsSection({
             </div>
 
             <div className="text-center">
-              <h3 className="text-xl font-bold truncate max-w-[150px]">{group.groupName}</h3>
+              <h3 className="text-xl font-bold truncate max-w-[150px]">{group.group_name}</h3>
               <p className="text-slate-500 text-sm font-medium">{group.members.length} أعضاء</p>
               <p className="text-gray-600 mt-1 text-2xl"> اسماء الاعضاء:</p>
               <div className="grid grid-cols-1 gap-1">

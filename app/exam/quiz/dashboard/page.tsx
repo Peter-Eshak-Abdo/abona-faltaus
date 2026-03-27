@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import TrashSection from "@/components/quiz/trash-section"
 
-function DashboardView() {
+export default function DashboardView() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [quizzes, setQuizzes] = useState<any[]>([])
@@ -116,3 +116,4 @@ function DashboardView() {
     </div>
   )
 }
+
