@@ -1,143 +1,35 @@
 "use client";
-export const dynamic = "force-dynamic";
-
-import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  GithubAuthProvider,
-  updateProfile,
-  Auth,
-} from "firebase/auth";
-import { db, auth } from "@/lib/firebase";
-// import { getFirebaseServices } from "@/lib/firebase";
-import { doc, setDoc, getDoc, serverTimestamp, Firestore } from "firebase/firestore";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ButtonGroup } from "@/components/ui/button-group";
 
 export default function LoginPage() {
-  // const [auth, setAuth] = useState<Auth | null>(null);
-  // const [db, setDb] = useState<Firestore | null>(null);
   const router = useRouter();
-  const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // const { auth, db } = getFirebaseServices();
-    // setAuth(auth);
-    // setDb(db);
-    if (auth?.currentUser) router.push("/");
-    setIsLoading(false);
-  }, [router]);
-
-  const saveUser = async (
-    uid: string,
-    displayName?: string | null
-  ) => {
-    if (!db) return;
-    const ref = doc(db, "users", uid);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) {
-      await setDoc(ref, {
-        uid,
-        email,
-        name: displayName || name || "مستخدم",
-        createdAt: serverTimestamp(),
-      });
-    }
+  // الدخول بجوجل
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/auth/callback` }
+    });
   };
 
-  const handleSocialLogin = async (
-    provider: GoogleAuthProvider | GithubAuthProvider
-  ) => {
-    if (!auth) return;
-    try {
-      setIsLoading(true);
-      const res = await signInWithPopup(auth, provider);
-      await saveUser(res.user.uid, res.user.displayName);
-      router.push("/");
-    } catch (err: unknown) {
-      console.error(err);
-      if (typeof err === "object" && err !== null && "code" in err) {
-        const code = (err as { code: string }).code;
-        if (code !== 'auth/popup-closed-by-user') {
-          setError("حدث خطأ أثناء تسجيل الدخول الاجتماعي");
-        }
-      } else {
-        setError("حدث خطأ أثناء تسجيل الدخول الاجتماعي");
-      }
-    } finally {
-      setIsLoading(false);
-    }
+  // إنشاء حساب أو دخول بالبريد
+  const handleAuth = async (mode: 'login' | 'signup') => {
+    const { error } = mode === 'signup'
+      ? await supabase.auth.signUp({ email, password })
+      : await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) alert(error.message);
+    else router.push("/");
   };
-
-  const handleEmailAuth = async () => {
-    if (!auth) return;
-    setError("");
-    if (!email || !password || (mode === "signup" && !name)) {
-      setError("الرجاء ملء جميع الحقول المطلوبة");
-      return;
-    }
-    if (mode === "signup" && password.length < 6) {
-      setError("كلمة المرور قصيرة جدًا. يجب أن تكون 6 أحرف على الأقل.");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      if (mode === "login") {
-        const res = await signInWithEmailAndPassword(auth, email.trim(), password);
-        await saveUser(res.user.uid, res.user.displayName);
-      } else {
-        const res = await createUserWithEmailAndPassword(auth, email.trim(), password);
-        await updateProfile(res.user, { displayName: name });
-        await saveUser(res.user.uid, name);
-      }
-      router.push("/");
-    } catch (err: unknown) {
-      console.error(err);
-      if (typeof err === "object" && err !== null && "code" in err) {
-        const code = (err as { code: string }).code;
-        switch (code) {
-          case "auth/user-not-found":
-            setError("هذا المستخدم غير موجود. سجل أولاً.");
-            break;
-          case "auth/wrong-password":
-            setError("كلمة المرور غير صحيحة.");
-            break;
-          case "auth/email-already-in-use":
-            setError("هذا البريد مسجل بالفعل. سجل الدخول.");
-            break;
-          case "auth/invalid-email":
-            setError("تنسيق البريد الإلكتروني غير صالح.");
-            break;
-          case "auth/weak-password":
-            setError("كلمة المرور ضعيفة. 6 أحرف على الأقل.");
-            break;
-          default:
-            setError(mode === "login" ? "فشل تسجيل الدخول. حاول مرة أخرى." : "فشل إنشاء الحساب. حاول مرة أخرى.");
-        }
-      } else {
-        setError(mode === "login" ? "فشل تسجيل الدخول. حاول مرة أخرى." : "فشل إنشاء الحساب. حاول مرة أخرى.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading) {
-    return <div className="flex justify-center items-center min-h-screen">جاري التحميل...</div>;
-  }
 
   return (
     <div className="max-w-7xl mx-auto flex items-center justify-center min-h-screen bg-gray-100">
@@ -148,31 +40,28 @@ export default function LoginPage() {
         <Card className="w-full max-w-xl bg-white shadow-lg">
           <CardHeader className="mb-1">
             <CardTitle className="text-center text-4xl font-extrabold">
-              {mode === "login" ? "تسجيل الدخول" : "إنشاء حساب"}
+              تسجيل الدخول
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex justify-center mb-1 gap-1">
               <Button
-                variant={mode === "login" ? "default" : "outline"}
-                onClick={() => setMode("login")}
-                disabled={isLoading}
+                onClick={() => handleAuth("login")}
                 className="mr-1"
                 size="normal"
               >
                 دخول
               </Button>
               <Button
-                variant={mode === "signup" ? "default" : "outline"}
-                onClick={() => setMode("signup")}
-                disabled={isLoading}
+                variant="default"
+                onClick={() => handleAuth("signup")}
                 size="normal"
               >
                 حساب جديد
               </Button>
             </div>
 
-            {mode === "signup" && (
+            {/* {mode === "signup" && (
               <div className="mb-1">
                 <Input
                   type="text"
@@ -182,7 +71,7 @@ export default function LoginPage() {
                   disabled={isLoading}
                 />
               </div>
-            )}
+            )} */}
 
             <div className="mb-1">
               <Input
@@ -191,7 +80,6 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 dir="ltr"
-                disabled={isLoading}
               />
             </div>
 
@@ -202,7 +90,6 @@ export default function LoginPage() {
                 dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
               />
               <small className="text-gray-500">
                 يجب أن تكون كلمة المرور 6 أحرف على الأقل.
@@ -211,43 +98,34 @@ export default function LoginPage() {
 
             <Button
               className="w-full mb-1"
-              onClick={handleEmailAuth}
-              disabled={isLoading}
+              onClick={handleGoogleLogin}
               size="normal"
             >
-              {isLoading
-                ? mode === "login"
-                  ? "جاري الدخول..."
-                  : "جاري الإنشاء..."
-                : mode === "login"
-                  ? "تسجيل الدخول"
-                  : "إنشاء حساب"}
+                جاري الدخول...
             </Button>
 
             <ButtonGroup aria-label="Button group" className="w-full gap-1 flex justify-center">
               <Button
                 variant="destructive"
-                onClick={() => handleSocialLogin(new GoogleAuthProvider())}
-                disabled={isLoading}
+                onClick={() => handleGoogleLogin()}
                 size="normal"
               >
                 Google
               </Button>
               <Button
-                variant="secondary"
-                onClick={() => handleSocialLogin(new GithubAuthProvider())}
-                disabled={isLoading}
+              variant="secondary"
+                onClick={() => handleAuth('login')}
                 size="normal"
               >
                 GitHub
               </Button>
             </ButtonGroup>
 
-            {error && (
+            {/* {error && (
               <div className="bg-red-100 border border-red-400 text-red-700 p-1 rounded mt-1 text-center">
                 {error}
               </div>
-            )}
+            )}*/}
           </CardContent>
         </Card>
       </motion.div>

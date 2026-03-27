@@ -1,152 +1,86 @@
 "use client";
-export const dynamic = "force-dynamic";
-
-import { useState, useEffect } from "react";
-// import { getFirebaseServices } from "@/lib/firebase";
-import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-  Auth,
-} from "firebase/auth";
-import { db, auth } from "@/lib/firebase";
-import { doc, setDoc, serverTimestamp, Firestore } from "firebase/firestore";
+import { useState } from "react";
 import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function SignUpPage() {
-  // const [auth, setAuth] = useState<Auth | null>(null);
-  // const [db, setDb] = useState<Firestore | null>(null);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // const { auth, db } = getFirebaseServices();
-    // setAuth(auth);
-    // setDb(db);
-    setLoading(false);
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    if (!auth || !db) return;
+    setLoading(true);
 
     if (!email || !password || !name) {
       setError("جميع الحقول مطلوبة.");
-      return;
-    }
-    if (password.length < 6) {
-      setError("كلمة المرور قصيرة جدًا. يجب أن تكون 6 أحرف على الأقل.");
+      setLoading(false);
       return;
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
-      );
-      const user = userCredential.user;
-      await updateProfile(user, { displayName: name });
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
-        name,
-        createdAt: serverTimestamp(),
+      // 1. إنشاء الحساب في Supabase Auth
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: { full_name: name }, // بيتحفظ في الـ metadata
+        },
       });
 
-      router.push("/auth/profile");
-    } catch (err: unknown) {
-      console.error(err);
-      if (typeof err === "object" && err !== null && "code" in err) {
-        switch ((err as { code: string }).code) {
-          case "auth/email-already-in-use":
-            setError("هذا البريد الإلكتروني مسجّل بالفعل. حاول تسجيل الدخول.");
-            break;
-          case "auth/invalid-email":
-            setError("تنسيق البريد الإلكتروني غير صالح.");
-            break;
-          case "auth/weak-password":
-            setError("كلمة المرور ضعيفة جدًا. يجب أن تحتوي على 6 أحرف على الأقل.");
-            break;
-          case "auth/operation-not-allowed":
-            setError("تسجيل البريد/كلمة المرور غير مفعل في الإعدادات.");
-            break;
-          default:
-            setError("حدث خطأ أثناء إنشاء الحساب. حاول مرة أخرى.");
-        }
-      } else {
-        setError("حدث خطأ أثناء إنشاء الحساب. حاول مرة أخرى.");
+      if (signUpError) throw signUpError;
+
+      if (data.user) {
+        // 2. إضافة البيانات لجدول الـ profiles (اختياري لو عامل Trigger في الداتابيز)
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .upsert({
+            id: data.user.id,
+            name: name,
+            email: email,
+            updated_at: new Date(),
+          });
+
+        if (profileError) throw profileError;
+        router.push("/auth/profile");
       }
+    } catch (err: any) {
+      setError(err.message || "حدث خطأ أثناء إنشاء الحساب.");
+    } finally {
+      setLoading(false);
     }
   };
-
-  if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">جاري التحميل...</div>;
-  }
 
   return (
     <>
       <LogoHeader />
-      <div className="max-w-7xl mx-auto my-1">
-        <h2 className="mb-1">إنشاء حساب جديد</h2>
+      <div className="max-w-md mx-auto my-1 p-1">
+        <h2 className="text-2xl font-bold mb-1 text-center">إنشاء حساب جديد</h2>
+        {error && <div className="bg-red-100 border border-red-400 text-red-700 p-1 rounded mb-1 text-sm">{error}</div>}
 
-        {error && <div className="bg-red-100 border border-red-400 text-red-700 p-1 rounded">{error}</div>}
-
-        <form onSubmit={handleSignUp} className="bg-white p-1 rounded-lg shadow-md">
-          <div className="mb-1">
+        <form onSubmit={handleSignUp} className="bg-white p-1 rounded-lg shadow-md space-y-1">
+          <div>
             <label className="block text-sm font-medium text-gray-700">الاسم</label>
-            <input
-              type="text"
-              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              placeholder="اسمك الكامل"
-            />
+            <input type="text" className="w-full p-1 border rounded-md" value={name} onChange={(e) => setName(e.target.value)} required />
           </div>
-
-          <div className="mb-1">
+          <div>
             <label className="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
-            <input
-              type="email"
-              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="example@example.com"
-            />
+            <input type="email" className="w-full p-1 border rounded-md" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
-
-          <div className="mb-1">
+          <div>
             <label className="block text-sm font-medium text-gray-700">كلمة المرور</label>
-            <input
-              type="password"
-              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
-            <small className="text-gray-500">يجب أن تكون كلمة المرور 6 أحرف على الأقل.</small>
+            <input type="password" className="w-full p-1 border rounded-md" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
-
-          <button type="submit" className="bg-green-600 hover:bg-green-700 text-white w-full p-1 rounded">
-            إنشاء حساب
+          <button type="submit" disabled={loading} className="w-full bg-green-600 text-white p-1 rounded hover:bg-green-700 disabled:opacity-50">
+            {loading ? "جاري الإنشاء..." : "إنشاء حساب"}
           </button>
-
-          <p className="mt-1 text-center">
-            لديك حساب بالفعل؟{' '}
-            <Link href="/auth/signin" className="underline">
-              سجل الدخول
-            </Link>
-          </p>
+          <p className="text-center text-sm">لديك حساب؟ <Link href="/auth/signin" className="underline">سجل الدخول</Link></p>
         </form>
       </div>
     </>

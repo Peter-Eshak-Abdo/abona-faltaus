@@ -11,47 +11,46 @@ export interface Quiz {
   id: string;
   title: string;
   description: string;
-  createdBy: string;
-  createdAt: Date;
+  created_by: string;
+  created_at: string;
   questions: Question[];
-  isActive: boolean;
-  shuffleQuestions: boolean;
-  shuffleChoices: boolean;
+  shuffle_questions: boolean;
+  shuffle_choices: boolean;
 }
 
 export interface Group {
   id: string;
-  groupName: string;
+  quiz_id: string;
+  group_name: string;
   members: string[];
-  joinedAt: Date;
+  joined_at: string;
   score: number;
-  lastActivity: Date;
-  saintName?: string;
-  saintImage?: string;
+  last_activity: string;
+  saint_name?: string;
+  saint_image?: string;
 }
 
 export interface GameState {
-  quizId: string;
-  currentQuestionIndex: number;
-  isActive: boolean;
-  startedAt: Date | null;
-  questionStartTime: Date | null;
-  showResults: boolean;
-  showQuestionOnly: boolean;
-  currentQuestionTimeLimit: number;
-  shuffledQuestions?: Question[];
+  quiz_id: string;
+  current_question_index: number;
+  is_active: boolean;
+  started_at: string | null;
+  question_start_time: string | null;
+  show_results: boolean;
+  show_question_only: boolean;
+  current_question_time_limit?: number;
+  shuffled_questions?: Question[];
 }
 
 export interface QuizResponse {
-  timeTaken: any;
-  choiceIndex: number;
   id: string;
-  groupId: string;
-  questionIndex: number;
-  answer: number;
-  timestamp: Date;
-  isCorrect: boolean;
-  responseTime: number;
+  quiz_id: string;
+  group_id: string;
+  question_index: number;
+  choice_index: number;
+  is_correct: boolean;
+  time_taken: number;
+  created_at: string;
 }
 
 export interface LeaderboardEntry {

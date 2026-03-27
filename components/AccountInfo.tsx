@@ -1,42 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-// import { getFirebaseServices } from "@/lib/firebase";
-import {
-  onAuthStateChanged,
-  signOut,
-  User as FirebaseUser,
-} from "firebase/auth";
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  serverTimestamp,
-  Timestamp
-} from "firebase/firestore";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
-import { db, auth, storage } from "@/lib/firebase";
-import { Copy, Share2, LogOut, X } from "lucide-react";
+import { Copy, Share2, LogOut, X, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-type UserData = {
-  uid: string;
-  name: string;
-  email: string;
-  photoURL: string;
-  createdAt: Timestamp;
-};
+import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
 
 export default function AccountInfo() {
-  // const [auth, setAuth] = useState<any>(null);
-  // const [db, setDb] = useState<Firestore | null>(null);
-  // const [storage, setStorage] = useState<FirebaseStorage | null>(null);
-  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -44,167 +16,105 @@ export default function AccountInfo() {
   const router = useRouter();
 
   useEffect(() => {
-    // const { auth, db, storage } = getFirebaseServices();
-    // setAuth(auth);
-    // setDb(db);
-    // setStorage(storage);
-
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      setFirebaseUser(user);
+    const getProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        if (!db) return;
-        const snap = await getDoc(doc(db, "users", user.uid));
-        if (snap.exists()) {
-          setUserData({ ...(snap.data() as UserData), uid: user.uid });
-        }
+        setUser(user);
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        setProfile(data);
       } else {
-        router.push("/auth/login");
+        router.push("/auth/signin");
       }
       setLoading(false);
-    });
-    return () => unsub();
-  }, [router, db]);
+    };
+    getProfile();
+  }, [router]);
 
-  const handleImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (!e.target.files || !firebaseUser || !storage || !db) return;
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !user) return;
     setUploading(true);
     const file = e.target.files[0];
-    const storageRef = ref(storage, `users/${firebaseUser.uid}/photoUrl`);
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
+    const fileExt = file.name.split('.').pop();
+    const filePath = `${user.id}/avatar.${fileExt}`;
 
-    await updateDoc(doc(db, "users", firebaseUser.uid), {
-      photoURL: downloadURL,
-      updatedAt: serverTimestamp(),
-    });
+    // 1. رفع الصورة لـ Storage (Bucket اسمه 'avatars')
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true });
 
-    const updatedSnap = await getDoc(doc(db, "users", firebaseUser.uid));
-    if (updatedSnap.exists()) {
-      const data = updatedSnap.data();
-      setUserData({
-        uid: firebaseUser.uid,
-        name: data.name,
-        email: data.email,
-        photoURL: data.photoURL + `?t=${Date.now()}`,
-        createdAt: data.createdAt,
-      });
+    if (uploadError) {
+      console.error(uploadError);
+      setUploading(false);
+      return;
     }
 
+    // 2. الحصول على رابط الصورة العام
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    // 3. تحديث الداتابيز برابط الصورة الجديد
+    await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', user.id);
+
+    setProfile({ ...profile, avatar_url: publicUrl });
     setUploading(false);
-    setSuccessMsg("تم رفع الصورة بنجاح");
+    setSuccessMsg("تم تحديث الصورة الشخصية");
     setTimeout(() => setSuccessMsg(""), 3000);
   };
 
-  const handleCopy = () => {
-    if (!firebaseUser) return;
-    navigator.clipboard.writeText(firebaseUser.uid);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleShare = () => {
-    if (!firebaseUser) return;
-    const msg = `رقم حسابي في الموقع هو: ${firebaseUser.uid}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
-  };
-
   const handleLogout = async () => {
-    if (!auth) return;
-    await signOut(auth);
-    router.push("/auth/login");
+    await supabase.auth.signOut();
+    router.push("/auth/signin");
   };
 
-  if (loading)
-    return (
-      <div className="text-center my-1">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-      </div>
-    );
+  if (loading) return <div className="flex justify-center p-1"><Loader2 className="animate-spin" /></div>;
 
   return (
-    <div className="max-w-7xl mx-auto p-1 flex items-center justify-center min-h-screen">
+    <div className="max-w-md mx-auto p-1 bg-white shadow-lg rounded-2xl border mt-1" dir="rtl">
       {successMsg && (
-        <div
-          className="fixed top-4 right-4 bg-green-500 text-white p-1 rounded-md shadow-lg z-50"
-          role="alert"
-        >
-          <div className="flex justify-between items-center">
-            <strong>نظام الموقع</strong>
-            <button
-              type="button"
-              className="text-white hover:text-gray-200"
-              onClick={() => setSuccessMsg("")}
-              title="إغلاق"
-            >
-              <X size={16} />
-            </button>
-          </div>
-          <div className="mt-2">{successMsg}</div>
+        <div className="fixed top-4 left-4 bg-green-500 text-white p-1 rounded-md shadow-xl flex gap-1 items-center">
+          <span>{successMsg}</span>
+          <X size={8} className="cursor-pointer" onClick={() => setSuccessMsg("")} />
         </div>
       )}
 
-      <div className="max-w-md mx-auto p-1 shadow rounded-lg border border-border bg-card text-card-foreground">
-        <div className="text-center mb-1">
+      <div className="text-center space-y-1">
+        <div className="relative w-12 h-12 mx-auto">
           <Image
-            key={userData?.photoURL}
-            src={userData?.photoURL || "/images/logo.webp"}
-            alt="الصورة الشخصية"
-            width={100}
-            height={100}
-            className="rounded-full mb-1 mx-auto"
-            style={{ objectFit: "cover" }}
-          />
-          <p className="text-xl font-bold">{userData?.name}</p>
-          <small className="text-muted-foreground">{userData?.email}</small>
-        </div>
-
-        <div className="mb-1">
-          <label htmlFor="upload" className="block text-sm font-medium mb-1">
-            تغيير الصورة الشخصية
-          </label>
-          <input
-            type="file"
-            id="upload"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="w-full rounded-md border border-input bg-background p-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            disabled={uploading}
+            src={profile?.avatar_url || "/images/eagle.webp"}
+            alt="Profile"
+            fill
+            className="rounded-full object-cover border-3 border-amber-100"
           />
         </div>
+        <div>
+          <h2 className="text-xl font-bold">{profile?.name || "مستخدم جديد"}</h2>
+          <p className="text-gray-500 text-sm">{user?.email}</p>
+        </div>
+      </div>
 
-        <ul className="space-y-1 mb-1">
-          <li className="flex justify-between">
-            <strong>الاسم:</strong> {userData?.name}
-          </li>
-          <li className="flex justify-between">
-            <strong>البريد:</strong> {userData?.email}
-          </li>
-          <li className="flex justify-between">
-            <strong>رقم الحساب:</strong> {firebaseUser?.uid}
-          </li>
-          <li className="flex justify-between">
-            <strong>تاريخ الإنشاء:</strong>{" "}
-            {userData?.createdAt
-              ? userData.createdAt.toDate().toLocaleString()
-              : ""}
-          </li>
-        </ul>
+      <div className="mt-1 space-y-1">
+        <div className="text-sm">
+          <label className="block font-medium mb-1">تغيير الصورة</label>
+          <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} className="text-xs" />
+        </div>
 
-        <div className="flex justify-center gap-1 mt-1">
-          <button onClick={handleCopy} className="inline-flex items-center rounded-md bg-amber-400 p-1 text-primary-foreground hover:bg-amber-400primary/90 disabled:opacity-50 disabled:pointer-events-none text-sm" type="button">
-            <Copy size={16} className="mr-1" />
-            {copied ? "تم النسخ!" : "نسخ UID"}
-          </button>
-          <button onClick={handleShare} className="inline-flex items-center rounded-md bg-green-600 p-1 text-primary-foreground hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none text-sm" type="button">
-            <Share2 size={16} className="mr-1" />
-            مشاركة
-          </button>
-          <button onClick={handleLogout} className="inline-flex items-center rounded-md bg-destructive p-1 text-primary-foreground hover:bg-destructive/90 disabled:opacity-50 disabled:pointer-events-none text-sm" type="button">
-            <LogOut size={16} className="mr-1" />
-            تسجيل الخروج
-          </button>
+        <div className="bg-gray-50 p-1 rounded-lg space-y-1 text-sm">
+          <div className="flex justify-between"><strong>رقم الحساب:</strong> <span className="text-[10px]">{user?.id}</span></div>
+          <div className="flex justify-between"><strong>تاريخ الانضمام:</strong> <span>{new Date(user?.created_at).toLocaleDateString('ar-EG')}</span></div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-1">
+          <Button onClick={() => { navigator.clipboard.writeText(user.id); setCopied(true); setTimeout(() => setCopied(false), 2000); }} variant="outline" className="text-xs">
+            <Copy size={7} className="ml-1" /> {copied ? "تم!" : "نسخ ID"}
+          </Button>
+          <Button onClick={handleLogout} variant="destructive" className="text-xs">
+            <LogOut size={7} className="ml-1" /> خروج
+          </Button>
         </div>
       </div>
     </div>

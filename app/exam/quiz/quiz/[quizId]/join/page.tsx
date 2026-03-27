@@ -2,16 +2,13 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { getQuiz, joinQuizAsGroup, subscribeToGameState } from "@/lib/firebase-utils"
 import { SAINTS_DATA } from "@/lib/saints-data"
 import type { Quiz, GameState, Saint } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/lib/firebase";
-import { Auth } from "firebase/auth"
+import { getQuiz, joinQuizAsGroup, subscribeToGameState } from "@/lib/supabase-utils"
 
-function JoinQuizView({ auth }: { auth: Auth }) {
+export default function JoinQuizPage() {
   const params = useParams()
   const router = useRouter()
   const [quiz, setQuiz] = useState<Quiz | null>(null)
@@ -26,61 +23,55 @@ function JoinQuizView({ auth }: { auth: Auth }) {
   const [hasJoined, setHasJoined] = useState(false)
   const quizId = params.quizId as string
   const memberCountRef = useRef<HTMLDivElement>(null)
-  const [user] = useAuthState(auth);
 
   useEffect(() => {
     if (quizId) {
       loadQuiz()
-
-      const unsubscribe = subscribeToGameState(quizId, (state) => {
+      const subscription = subscribeToGameState(quizId, (state) => {
         setGameState(state)
         // التوجيه يتم فقط هنا عندما يقرر الأدمن بدء المسابقة
-        if (state?.isActive && hasJoined) router.push(`/exam/quiz/quiz/${quizId}/play`)
+        if (state?.is_active && hasJoined) router.push(`/exam/quiz/quiz/${quizId}/play`)
       })
-      return unsubscribe
+      return () => { subscription.unsubscribe() }
     }
   }, [quizId, hasJoined, router])
 
   useEffect(() => {
-    const savedGroup = localStorage.getItem("currentGroup");
+    const savedGroup = localStorage.getItem("currentGroup")
     if (savedGroup) {
       try {
-        const parsed = JSON.parse(savedGroup);
-        const THREE_HOURS = 3 * 60 * 60 * 1000; // 3 ساعات بالمللي ثانية
-        const now = Date.now();
+        const parsed = JSON.parse(savedGroup)
+        const THREE_HOURS = 3 * 60 * 60 * 1000
+        const now = Date.now()
 
-        // التحقق من شرطين: نفس المسابقة + لم يمر 3 ساعات
-        const isSameQuiz = parsed.quizId === quizId;
-        const isFresh = parsed.timestamp && (now - parsed.timestamp) < THREE_HOURS;
+        const isSameQuiz = parsed.quiz_id === quizId
+        const isFresh = parsed.timestamp && (now - parsed.timestamp) < THREE_HOURS
 
         if (isSameQuiz && isFresh) {
-          setGroupName(parsed.groupName || "");
-          setMemberNames(parsed.members || []);
-          setMemberCount(parsed.members?.length || 5);
+          setGroupName(parsed.group_name || "")
+          setMemberNames(parsed.members || [])
+          setMemberCount(parsed.members?.length || 5)
 
-          if (parsed.saintName) {
-            setUseCustomName(false);
-            setSelectedSaint({ name: parsed.saintName, src: parsed.saintImage || "" });
+          if (parsed.saint_name) {
+            setUseCustomName(false)
+            setSelectedSaint({ name: parsed.saint_name, src: parsed.saint_image || "" })
           } else {
-            setUseCustomName(true);
+            setUseCustomName(true)
           }
-          setHasJoined(true);
+          setHasJoined(true)
         } else {
-          // إذا انتهت الصلاحية أو مسابقة مختلفة، امسح المخزن
-          localStorage.removeItem("currentGroup");
+          localStorage.removeItem("currentGroup")
         }
       } catch (e) {
-        localStorage.removeItem("currentGroup");
+        localStorage.removeItem("currentGroup")
       }
     }
-  }, [quizId]);
+  }, [quizId])
 
   useEffect(() => {
     const newNames = [...memberNames]
     if (memberCount > memberNames.length) {
-      for (let i = memberNames.length; i < memberCount; i++) {
-        newNames.push("")
-      }
+      for (let i = memberNames.length; i < memberCount; i++) newNames.push("")
     } else if (memberCount < memberNames.length) {
       newNames.splice(memberCount)
     }
@@ -91,12 +82,11 @@ function JoinQuizView({ auth }: { auth: Auth }) {
     try {
       const quizData = await getQuiz(quizId)
       if (!quizData) {
-        setError("المسابقة غير موجوده")
+        setError("المسابقة غير موجودة")
         return
       }
       setQuiz(quizData)
     } catch (error) {
-      console.error("Error loading quiz:", error)
       setError("فشل في تحميل المسابقة")
     }
   }
@@ -117,54 +107,40 @@ function JoinQuizView({ auth }: { auth: Auth }) {
   const handleJoin = async () => {
     const finalGroupName = useCustomName ? groupName.trim() : selectedSaint?.name || ""
 
-    if (!finalGroupName) {
-      setError("يرجى اختيار قديس أو إدخال اسم مخصص للفريق")
-      return
-    }
+    if (!finalGroupName) return setError("يرجى اختيار قديس أو إدخال اسم مخصص للفريق")
 
     const validNames = memberNames.filter((name) => name.trim())
-    if (validNames.length !== memberCount) {
-      setError("يرجى ملء جميع أسماء الأعضاء")
-      return
-    }
+    if (validNames.length !== memberCount) return setError("يرجى ملء جميع أسماء الأعضاء")
 
     const uniqueNames = new Set(validNames.map((name) => name.trim().toLowerCase()))
-    if (uniqueNames.size !== validNames.length) {
-      setError("لازم تكون كل أسماء الأعضاء مختلفة في فريقكم")
-      return
-    }
+    if (uniqueNames.size !== validNames.length) return setError("لازم تكون كل أسماء الأعضاء مختلفة في فريقكم")
 
     setIsJoining(true)
     setError("")
 
     try {
       const groupData = {
-        quizId: quizId,
         groupName: finalGroupName,
-        members: validNames.map((name) => name.trim()),
-        timestamp: Date.now(),
-        ...(selectedSaint && !useCustomName && {
-          saintName: selectedSaint.name,
-          saintImage: selectedSaint.src,
-        }),
+        members: validNames,
+        saintName: !useCustomName ? selectedSaint?.name : undefined,
+        saintImage: !useCustomName ? selectedSaint?.src : undefined,
       }
 
       const groupId = await joinQuizAsGroup(quizId, groupData)
 
-      localStorage.setItem(
-        "currentGroup",
-        JSON.stringify({
-          id: groupId,
-          ...groupData,
-        }),
-      )
+      localStorage.setItem("currentGroup", JSON.stringify({
+        id: groupId,
+        quiz_id: quizId,
+        group_name: groupData.groupName,
+        members: groupData.members,
+        saint_name: groupData.saintName,
+        saint_image: groupData.saintImage,
+        timestamp: Date.now()
+      }))
 
       setHasJoined(true)
-    } catch (error) {
-      console.error("Error joining quiz:", error)
-      const errorMessage = (error as Error).message || "فشل في الانضمام للمسابقة"
-      alert(errorMessage)
-      setError(errorMessage)
+    } catch (error: any) {
+      setError(error.message || "فشل في الانضمام للمسابقة")
     } finally {
       setIsJoining(false)
     }
@@ -173,84 +149,40 @@ function JoinQuizView({ auth }: { auth: Auth }) {
   if (!quiz) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
-        <div className="animate-spin rounded-full h-16 w-16 border-b border-white"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white"></div>
       </div>
     )
   }
 
-  if (gameState?.isActive && !hasJoined) {
+  if (gameState?.is_active && !hasJoined) {
     return (
-      <div className="min-h-screen flex items-center justify-center ...">
-        {/* محتوى "بدأ المسابقة بالفعل" */}
-      </div>
-    )
-  }
-
-  if (gameState?.isActive && !hasJoined) {
-    return (
-      <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
-        <div className="w-full max-w-md text-center bg-white rounded-2xl shadow-2xl p-1">
-          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-            <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold mb-2 text-gray-900">بدأ المسابقة بالفعل</h2>
-          <p className="text-gray-600 mb-1 text-lg">هذة المسابقة بدأ بالفعل. لا يمكنك الانضمام الآن.</p>
-          <button
-            onClick={() => router.push("/")}
-            className="w-full py-1 text-lg bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-colors font-bold"
-            type="button"
-          >
-            العودة للرئيسية
-          </button>
+      <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 p-1 shadow-2xl">
+        <div className="w-full max-w-md text-center bg-white rounded-2xl shadow-2xl p-2">
+          <h2 className="text-2xl font-bold mb-2 text-gray-900">بدأت المسابقة بالفعل</h2>
+          <p className="text-gray-600 mb-3 text-lg">هذه المسابقة بدأت بالفعل. لا يمكنك الانضمام الآن.</p>
+          <button onClick={() => router.push("/")} className="w-full py-3 text-lg bg-gray-600 text-white rounded-xl font-bold">العودة للرئيسية</button>
         </div>
       </div>
     )
   }
 
-  if (hasJoined && !gameState?.isActive) {
+  if (hasJoined && !gameState?.is_active) {
     return (
-      <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
+      <div className="min-h-screen flex items-center justify-center backdrop-blur-md bg-white/20 p-1 shadow-2xl">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md">
-          <div className="text-center bg-white rounded-2xl shadow-2xl">
-            {/* عرض الصورة هنا */}
+          <div className="text-center bg-white rounded-2xl shadow-2xl p-1">
             {!useCustomName && selectedSaint?.src ? (
-              <img
-                src={selectedSaint.src}
-                alt={selectedSaint.name}
-                className="w-10 h-10 rounded-full mx-auto mb-1 object-cover border border-green-100 shadow-md"
-              />
+              <img src={selectedSaint.src} alt={selectedSaint.name} className="w-12 h-12 rounded-full mx-auto mb-1 object-cover border-4 border-green-100 shadow-md" />
             ) : (
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-12 h-12 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-                </svg>
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-1">
+                <span className="text-4xl text-green-600">✓</span>
               </div>
             )}
-            <h2 className="text-4xl font-bold mb-3 text-gray-900">تم الانضمام بنجاح!</h2>
-            <p className="text-gray-600 text-2xl">فريق</p>
-            <p className="text-gray-600 text-4xl font-extrabold">&quot;{useCustomName ? groupName : selectedSaint?.name}&quot;</p>
-            <div className="bg-gray-50 rounded-xl p-1 mb-1">
-              <p className="text-gray-600 mt-1 text-2xl"> اسماء الاعضاء:</p>
-              <div className="grid grid-cols-1 gap-1">
-                {memberNames.map((name, index) => (
-                  <span key={index} className="text-gray-600 text-lg text-right block">
-                    {index + 1}- {name}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <p className="text-gray-600 mt-1 text-2xl">
-              انضمت للمسابقة. في انتظار بدء الخادم...
-            </p>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <motion.div
-                className="bg-green-500 h-2 rounded-full"
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
+            <h2 className="text-4xl font-bold mb-1 text-gray-900">تم الانضمام بنجاح!</h2>
+            <p className="text-gray-600 text-2xl font-extrabold mb-1">&quot;{useCustomName ? groupName : selectedSaint?.name}&quot;</p>
+            <p className="text-gray-600 mt-1 text-xl">في انتظار بدء الخادم...</p>
+            <div className="w-full bg-gray-200 rounded-full h-2 mt-1 overflow-hidden">
+              <motion.div className="bg-green-500 h-full" initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 2, repeat: Infinity }} />
             </div>
           </div>
         </motion.div>
@@ -259,209 +191,75 @@ function JoinQuizView({ auth }: { auth: Auth }) {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br flex items-center justify-center">
-      <div className="w-full max-w-8xl space-y-1 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
-        <div className="flex flex-col-reverse md:flex-row">
-          <div className="grow px-3">
-            <h1 className="text-5xl font-bold mb-1 text-black drop-shadow-lg">{quiz.title}</h1>
-            <p className="text-black/90 drop-shadow-md text-lg mb-1">{quiz.description}</p>
-          </div>
-          <img src={"/images/alnosor/logo.jpeg"} alt="Logo" className="rounded-lg shadow-lg mb-1 w-20 mx-auto" />
+    <div className="min-h-screen bg-linear-to-br from-blue-600 to-purple-700 flex items-center justify-center p-1">
+      <div className="w-full max-w-7xl space-y-1 backdrop-blur-md bg-white/20 rounded-3xl p-1 shadow-2xl">
+        <div className="text-center text-white mb-1">
+          <h1 className="text-5xl font-bold drop-shadow-lg">{quiz.title}</h1>
+          <p className="text-xl mt-1 opacity-90">{quiz.description}</p>
         </div>
 
-        <Card className="backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
+        <Card className="bg-white/90 shadow-xl border-none">
           <CardHeader>
-            <CardTitle className="flex items-center gap-1 text-black drop-shadow-md text-center justify-center text-2xl font-bold">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-              </svg>
-              الانضمام كفريق
-            </CardTitle>
+            <CardTitle className="text-center text-3xl font-bold">الانضمام كفريق</CardTitle>
           </CardHeader>
-
-          <CardContent className="p-1 space-y-1">
+          <CardContent className="space-y-1">
             {error && (
-              <div className="bg-red-50 border-l-4 border-red-400 p-1 rounded-lg">
-                <div className="flex">
-                  <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  <p className="mr-2 text-red-700 text-lg">{error}</p>
-                </div>
-              </div>
+              <div className="bg-red-100 text-red-700 p-1 rounded-xl text-center font-bold">{error}</div>
             )}
 
-            {/* اختيار نوع الاسم */}
             <div>
-              <label className="block text-lg font-bold text-black mb-1">اختر اسم الفريق</label>
+              <label className="block text-xl font-bold mb-1 text-center">اختر اسم الفريق</label>
               <div className="flex gap-1 mb-1">
-                <button
-                  onClick={() => setUseCustomName(false)}
-                  className={`flex-1 p-1 rounded-xl font-bold transition-all ${!useCustomName
-                    ? "bg-white/30 hover:bg-white/40 border-white/40 text-black shadow-xl/30 inset-shadow-sm"
-                    : "bg-white/20 hover:bg-white/30 border-white/30 text-black/80"
-                    }`}
-                  type="button"
-                >
-                  اختيار قديس
-                </button>
-                <button
-                  onClick={() => setUseCustomName(true)}
-                  className={`flex-1 p-1 rounded-xl font-bold transition-all ${useCustomName
-                    ? "bg-white/30 hover:bg-white/40 border-white/40 text-black shadow-xl/30 inset-shadow-sm"
-                    : "bg-white/20 hover:bg-white/30 border-white/30 text-black/80"
-                    }`}
-                  type="button"
-                >
-                  اسم مخصص
-                </button>
+                <button onClick={() => setUseCustomName(false)} className={`flex-1 p-1 rounded-xl font-bold ${!useCustomName ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}>اختيار قديس</button>
+                <button onClick={() => setUseCustomName(true)} className={`flex-1 p-1 rounded-xl font-bold ${useCustomName ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}>اسم مخصص</button>
               </div>
 
               <AnimatePresence mode="wait">
                 {useCustomName ? (
-                  <motion.div
-                    key="custom"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                  >
-                    <input
-                      type="text"
-                      value={groupName}
-                      onChange={(e) => setGroupName(e.target.value)}
-                      placeholder="أدخل اسم فريقك..."
-                      className="w-full text-lg p-1 bg-white/30 border-white/40 text-black placeholder:text-gray-600 font-medium rounded-xl focus:border-white/60 focus:outline-none transition-colors"
-                    />
-                  </motion.div>
+                  <motion.input key="custom" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    type="text" value={groupName} onChange={(e) => setGroupName(e.target.value)} placeholder="أدخل اسم فريقك..."
+                    className="w-full text-xl p-1 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none" />
                 ) : (
-                  <motion.div
-                    key="saints"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-1 max-h-96 overflow-y-auto"
-                  >
-                    {SAINTS_DATA.map((saint, index) => {
-                      const isSelected = selectedSaint?.name === saint.name;
-
-                      return (
-                        <motion.button
-                          key={saint.name}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: index * 0.05 }}
-                          onClick={() => handleSaintSelect(saint)}
-                          className={`p-1 rounded-xl border-2 transition-all duration-300 transform scale-90 flex flex-col items-center gap-1
-                          ${isSelected
-                              ? "border-white/60 bg-white/40 scale-100 text-black shadow-lg"
-                              : selectedSaint
-                                ? "border-gray-400 bg-gray-200 text-gray-500 opacity-50 grayscale cursor-not-allowed"
-                                : "border-white/30 hover:border-white/50 hover:bg-white/20 bg-white/10 text-black/80 hover:scale-95"
-                            }`}
-                        // disabled={selectedSaint !== null && !isSelected}
-                        >
-                          <img
-                            src={saint.src}
-                            alt={saint.name}
-                            className={`w-8 h-12 rounded-full object-cover border border-white/50 ${selectedSaint && !isSelected ? "grayscale" : ""}`}
-                          />
-                          <p className={`text-center leading-tight font-bold ${isSelected ? "text-lg" : "text-md"}`}>
-                            {saint.name}
-                          </p>
-                        </motion.button>
-                      )
-                    })}
+                  <motion.div key="saints" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-1 max-h-96 overflow-y-auto p-1">
+                    {SAINTS_DATA.map((saint) => (
+                      <button key={saint.name} onClick={() => handleSaintSelect(saint)}
+                        className={`p-1 rounded-xl border-2 transition-all flex flex-col items-center gap-1 ${selectedSaint?.name === saint.name ? "border-blue-600 bg-blue-50 scale-105 shadow-md" : "border-gray-200 hover:border-blue-300"}`}>
+                        <img src={saint.src} alt={saint.name} className="w-8 h-12 rounded-full object-cover border-2 border-white shadow-sm" />
+                        <p className="text-center font-bold text-sm">{saint.name}</p>
+                      </button>
+                    ))}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            <hr className="border-white/30" />
+            <hr className="my-1" />
 
-            <div ref={memberCountRef}>
-              <label className="block text-lg font-bold text-black mb-1 select-none">عدد الأعضاء</label>
-              <div className="flex items-center justify-center gap-1 px-1">
-                <button
-                  onClick={() => setMemberCount(Math.max(1, memberCount - 1))}
-                  disabled={memberCount <= 1}
-                  className="w-4 h-4 rounded-full border-2 border-white/40 flex items-center justify-center hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-black"
-                  type="button"
-                  title="تقليل عدد الأعضاء"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                  </svg>
-                </button>
-                <div className="text-4xl font-bold text-black w-16 text-center">{memberCount}</div>
-                <button
-                  onClick={() => setMemberCount(Math.min(10, memberCount + 1))}
-                  disabled={memberCount >= 10}
-                  className="w-4 h-4 rounded-full border-2 border-white/40 flex items-center justify-center hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-black"
-                  title="زيادة عدد الأعضاء"
-                  type="button"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                </button>
+            <div ref={memberCountRef} className="text-center">
+              <label className="block text-xl font-bold mb-1">عدد الأعضاء</label>
+              <div className="flex items-center justify-center gap-1">
+                <button onClick={() => setMemberCount(Math.max(1, memberCount - 1))} className="w-12 h-12 rounded-full bg-gray-200 hover:bg-gray-300 text-2xl font-bold">-</button>
+                <span className="text-5xl font-black">{memberCount}</span>
+                <button onClick={() => setMemberCount(Math.min(10, memberCount + 1))} className="w-12 h-12 rounded-full bg-gray-200 hover:bg-gray-300 text-2xl font-bold">+</button>
               </div>
             </div>
 
-            <div>
-              <label className="block text-lg font-bold text-black mb-1">أسماء الأعضاء</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
-                {memberNames.map((name, index) => (
-                  <div key={index} className="relative">
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => updateMemberName(index, e.target.value)}
-                      placeholder={`اسم العضو ${index + 1}`}
-                      className="w-full text-lg p-1 ps-3 border-2 bg-white/30 border-white/40 text-black placeholder:text-gray-600 font-medium rounded-xl focus:border-white/60 focus:outline-none transition-colors"
-                    />
-                    <div className="absolute inset-s-0 ms-0.5 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-white/40 rounded-full flex items-center justify-center border border-white/50">
-                      <span className="text-black text-sm font-bold">{index + 1}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mt-1">
+              {memberNames.map((name, index) => (
+                <div key={index} className="relative">
+                  <input type="text" value={name} onChange={(e) => updateMemberName(index, e.target.value)} placeholder={`اسم العضو ${index + 1}`}
+                    className="w-full text-lg p-1 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none pr-1 text-right" dir="rtl" />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold">{index + 1}</span>
+                </div>
+              ))}
             </div>
 
-            <button
-              onClick={handleJoin}
-              disabled={isJoining}
-              className="w-full bg-white/30 hover:bg-white/40 border-white/40 text-black font-bold py-1 rounded-xl transition-all duration-200 text-xl flex items-center justify-center gap-1 shadow-xl/30 inset-shadow-sm"
-              type="button"
-            >
-              {isJoining ? (
-                <>
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black"></div>
-                  جاري الانضمام...
-                </>
-              ) : (
-                <>
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-                  </svg>
-                  الانضمام للمسابقة
-                </>
-              )}
+            <button onClick={handleJoin} disabled={isJoining} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-1 rounded-xl text-2xl mt-1 transition-colors shadow-lg">
+              {isJoining ? "جاري الانضمام..." : "الانضمام للمسابقة 🚀"}
             </button>
           </CardContent>
         </Card>
       </div>
     </div>
   )
-}
-
-export default function JoinQuizPage() {
-  if (!auth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-700">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white"></div>
-      </div>
-    );
-  }
-
-  return <JoinQuizView auth={auth} />;
 }

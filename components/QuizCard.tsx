@@ -32,7 +32,7 @@ const QuizCard = React.memo(({ quiz, index, onEdit, onDelete, onHost, onJoin }: 
             <div className="flex items-center text-gray-600">
               <Calendar className="w-3 h-3" />
               <span className="text-2xl font-extrabold">
-                {new Date(quiz.createdAt).toLocaleDateString("ar-EG")}
+                {new Date(quiz.created_at).toLocaleDateString("ar-EG")}
               </span>
             </div>
             <div className="flex items-center text-gray-600">

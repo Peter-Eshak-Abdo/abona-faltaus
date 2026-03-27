@@ -2,9 +2,8 @@
 
 import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
-import { useAuthState } from "react-firebase-hooks/auth"
-import { auth } from "@/lib/firebase";
-import { createQuiz } from "@/lib/firebase-utils"
+import { createClient } from "@/lib/supabase/client" // <-- إضافة Supabase Client
+import { createQuiz, updateQuiz } from "@/lib/supabase-utils" // <-- من ملف utils الجديد
 import { Plus, Trash2, Check, Shuffle, Clock, X, Upload, Download } from "lucide-react"
 import type { Question, Quiz } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
@@ -20,7 +19,9 @@ interface CreateQuizDialogProps {
 }
 
 export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }: CreateQuizDialogProps) {
-  const [user] = useAuthState(auth)
+  const supabase = createClient();
+  const [user, setUser] = useState<any>(null);
+
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [questions, setQuestions] = useState<Question[]>([])
@@ -31,6 +32,9 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
+    // جلب بيانات المستخدم
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+
     if (!open) {
       setTitle("")
       setDescription("")
@@ -42,12 +46,13 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
       setTitle(editQuiz.title)
       setDescription(editQuiz.description)
       setQuestions(editQuiz.questions)
-      setShuffleQuestions(editQuiz.shuffleQuestions || false)
-      setShuffleChoices(editQuiz.shuffleChoices || false)
+      setShuffleQuestions(editQuiz.shuffle_questions || false)
+      setShuffleChoices(editQuiz.shuffle_choices || false)
       setIsEditing(true)
     }
   }, [open, editQuiz])
 
+  // ... (نفس دوال إضافة وتحديث وحذف الأسئلة واستيراد الإكسيل بدون تغيير لأنها React States عادية) ...
   const addQuestion = () => {
     const newQuestion: Question = {
       id: crypto.randomUUID() || Date.now().toString(),
@@ -77,52 +82,29 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
   }
 
   const downloadTemplate = () => {
-    // Create sample data for template
     const sampleData = [
       ["Question", "Choice1", "Choice2", "Choice3", "Choice4", "Correct", "TimeLimit"],
       ["ما هو عاصمة مصر؟", "القاهرة", "الإسكندرية", "أسوان", "المنصورة", "1", "20"],
       ["كم عدد أيام الأسبوع؟", "5", "6", "7", "8", "3", "15"],
       ["الشمس تشرق من الشرق", "صح", "خطأ", "", "", "1", "10"]
     ]
-
     const worksheet = XLSX.utils.aoa_to_sheet(sampleData)
     const workbook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(workbook, worksheet, "Template")
-
-    // Generate and download the file
     XLSX.writeFile(workbook, "quiz_template.xlsx")
   }
 
   const exportQuizToExcel = () => {
-    if (questions.length === 0) {
-      alert("لا توجد أسئلة للتصدير")
-      return
-    }
+    if (questions.length === 0) return alert("لا توجد أسئلة للتصدير")
 
     const exportData = [
       ["Question", "Choice1", "Choice2", "Choice3", "Choice4", "Correct", "TimeLimit"],
       ...questions.map((question) => {
-        const correctIndex = question.correctAnswer + 1 // 1-based index
+        const correctIndex = question.correctAnswer + 1
         if (question.type === "true-false") {
-          return [
-            question.text,
-            question.choices[0] || "صح",
-            question.choices[1] || "خطأ",
-            "",
-            "",
-            correctIndex.toString(),
-            question.timeLimit.toString()
-          ]
+          return [question.text, question.choices[0] || "صح", question.choices[1] || "خطأ", "", "", correctIndex.toString(), question.timeLimit.toString()]
         } else {
-          return [
-            question.text,
-            question.choices[0] || "",
-            question.choices[1] || "",
-            question.choices[2] || "",
-            question.choices[3] || "",
-            correctIndex.toString(),
-            question.timeLimit.toString()
-          ]
+          return [question.text, question.choices[0] || "", question.choices[1] || "", question.choices[2] || "", question.choices[3] || "", correctIndex.toString(), question.timeLimit.toString()]
         }
       })
     ]
@@ -130,12 +112,8 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
     const worksheet = XLSX.utils.aoa_to_sheet(exportData)
     const workbook = XLSX.utils.book_new()
     const sanitizedTitle = (title || "Quiz").replace(/[^a-zA-Z0-9]/g, "_").slice(0, 21)
-    const sheetName = `${sanitizedTitle}_Questions`
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
-
-    // Generate and download the file
-    const fileName = `${title.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, "_") || "quiz"}.xlsx`
-    XLSX.writeFile(workbook, fileName)
+    XLSX.utils.book_append_sheet(workbook, worksheet, `${sanitizedTitle}_Questions`)
+    XLSX.writeFile(workbook, `${title.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, "_") || "quiz"}.xlsx`)
   }
 
   const handleExcelImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,11 +125,9 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
       try {
         const data = new Uint8Array(e.target?.result as ArrayBuffer)
         const workbook = XLSX.read(data, { type: 'array' })
-        const sheetName = workbook.SheetNames[0]
-        const worksheet = workbook.Sheets[sheetName]
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]]
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as string[][]
 
-        // Assume first row is headers: Question, Choice1, Choice2, Choice3, Choice4, Correct, TimeLimit
         const importedQuestions: Question[] = []
         for (let i = 1; i < jsonData.length; i++) {
           const row = jsonData[i]
@@ -166,31 +142,26 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
 
             if (!questionText || !choice1 || !choice2 || !correctStr) continue
 
-            const correctAnswer = parseInt(correctStr) - 1 // Assuming 1-based index in Excel
+            const correctAnswer = parseInt(correctStr) - 1
             const timeLimit = timeLimitStr ? parseInt(timeLimitStr) : 20
-
-            // Detect true/false questions if only 2 choices are provided
             const isTrueFalse = !choice3 && !choice4
             const type = isTrueFalse ? "true-false" : "multiple-choice"
             const choices = isTrueFalse ? ["صح", "خطأ"] : [choice1, choice2, choice3, choice4]
 
             if (correctAnswer >= 0 && correctAnswer < choices.length) {
-              const newQuestion: Question = {
+              importedQuestions.push({
                 id: Date.now().toString() + i,
                 type,
                 text: questionText,
                 choices,
                 correctAnswer,
                 timeLimit,
-              }
-              importedQuestions.push(newQuestion)
+              })
             }
           }
         }
-
         setQuestions([...questions, ...importedQuestions])
       } catch (error) {
-        console.error("Error parsing Excel file:", error)
         alert("خطأ في قراءة ملف Excel. تأكد من الصيغة الصحيحة.")
       }
     }
@@ -202,32 +173,15 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
     if (!title.trim()) return alert("يجب إدخال اسم المسابقة")
     if (questions.length === 0) return alert("يجب إضافة سؤال واحد على الأقل")
 
-    // Check for empty question texts
-    const emptyTextQuestions = questions
-      .map((q, index) => ({ q, index }))
-      .filter(({ q }) => !q.text.trim())
-      .map(({ index }) => index + 1)
-
-    if (emptyTextQuestions.length > 0) return alert(`يجب إدخال نص للأسئلة التالية: ${emptyTextQuestions.join(', ')}`)
-
-    // Check for incomplete multiple choice questions
-    // const incompleteChoiceQuestions = questions
-    //   .map((q, index) => ({ q, index }))
-    //   .filter(({ q }) => q.type !== "true-false" && !q.choices.every((c) => c.trim()))
-    //   .map(({ index }) => index + 1)
-
-    // if (incompleteChoiceQuestions.length > 0) return alert(`يجب إدخال جميع الاختيارات للأسئلة متعددة الاختيارات التالية: ${incompleteChoiceQuestions.join(', ')}`)
-
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
       if (!q.text.trim()) return alert(`السؤال رقم ${i + 1} فارغ!`);
-
-      // تصفية الخيارات الفارغة (كاهوت يقبل 2 خيار على الأقل)
       const validChoices = q.choices.filter(c => c.trim() !== "");
       if (q.type === "multiple-choice" && validChoices.length < 2) {
         return alert(`السؤال رقم ${i + 1} يجب أن يحتوي على خيارين على الأقل`);
       }
     }
+
     setIsSubmitting(true)
     try {
       const quizData = {
@@ -235,260 +189,150 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
         description: description.trim(),
         questions: questions.map(q => ({
           ...q,
-          // تنظيف الخيارات من المسافات الزائدة قبل الحفظ
           choices: q.choices.map(c => c.trim())
         })),
-        shuffleQuestions,
-        shuffleChoices,
-        updatedAt: Date.now(), // مهم للترتيب في الداشبورد
+        shuffle_questions: shuffleQuestions,
+        shuffle_choices: shuffleChoices,
+        created_by: user.id, // استخدمنا الـ id الخاص بـ Supabase
+        created_at: new Date().toISOString()
       };
+
       if (isEditing && editQuiz) {
-        // Update existing quiz
-        const { updateQuiz } = await import("@/lib/firebase-utils")
+        // تحديث في Supabase
         await updateQuiz(editQuiz.id, quizData)
         alert("تم تحديث المسابقة بنجاح!")
       } else {
-        // Create new quiz
-        await createQuiz({
-          ...quizData,
-          createdBy: user.uid,
-          // createdAt: Date.now(),
-          isActive: false, })
+        // إنشاء في Supabase
+        await createQuiz(quizData)
       }
 
       onQuizCreated()
       onOpenChange(false)
-      // setTitle("")
-      // setDescription("")
-      // setQuestions([])
-      // setShuffleQuestions(false)
-      // setShuffleChoices(false)
-      // setIsEditing(false)
     } catch (error: any) {
       console.error("Error saving quiz:", error)
-      console.dir(error); // سيظهر لك تفاصيل الخطأ كاملة في الكونسول
-      console.error("Error Code:", error?.code); // هذا سيخبرنا إذا كان السبب "permission-denied"
       alert("حدث خطأ: " + (error?.message || "Unknown error"));
-      alert(`حدث خطأ في ${isEditing ? 'تحديث' : 'إنشاء'} المسابقة. حاول مرة أخرى.`)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const isValid =
-    title.trim() &&
-    questions.length > 0 &&
-    questions.every((q) => q.text.trim() && (q.type === "true-false" || q.choices.every((c) => c.trim())))
-
   if (typeof window === 'undefined' || !open) return null
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center md:top-2 p-1 z-100">
-      <div className="bg-white dark:bg-black rounded-2xl p-1 border border-white/30 dark:border-white/20 shadow-2xl  max-w-8xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-1 z-50 overflow-y-auto" dir="rtl">
+      <div className="bg-white dark:bg-black rounded-2xl p-1 border border-white/30 shadow-2xl max-w-4xl w-full my-1">
         <div className="flex justify-between items-center mb-1">
-          <h5 className="text-lg font-semibold">{isEditing ? 'تعديل المسابقة' : 'انشئ المسابقة الجديدة'}</h5>
-          <button type="button" className="text-red-500 hover:text-red-700" onClick={() => onOpenChange(false)} title="Close">
+          <h5 className="text-2xl font-bold">{isEditing ? 'تعديل المسابقة' : 'إنشاء مسابقة جديدة'}</h5>
+          <button type="button" className="text-red-500 hover:bg-red-50 p-1 rounded-full" onClick={() => onOpenChange(false)}>
             <X size={24} />
           </button>
         </div>
+
         <div className="space-y-1">
-          <div className="mb-1">
+          <div>
             <label className="block text-sm font-medium mb-1">اسم المسابقة</label>
-            <input
-              type="text"
-              className="w-full rounded-md border border-input p-1 text-black placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="اضف اسم المسابقة ..."
-            />
+            <input type="text" className="w-full rounded-xl border-2 p-1 font-bold text-lg focus:border-blue-500 outline-none" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="اسم المسابقة..." />
           </div>
-          <div className="mb-1">
+
+          <div>
             <label className="block text-sm font-medium mb-1">وصف المسابقة</label>
-            <textarea
-              className="w-full resize-none rounded-md border border-input p-1 text-black placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 font-bold text-lg text-shadow-lg/20 text-shadow-amber-500/50"
-              rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="اضف وصف للمسابقة ..."
-            />
-          </div>
-          <div className="mb-1">
-            <div className="flex gap-1 mb-1">
-              <button
-                type="button"
-                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-amber-400 hover:text-primary-foreground"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload size={16} className="ml-1" />
-                استيراد الأسئلة من Excel
-              </button>
-              <button
-                type="button"
-                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-amber-400 hover:text-primary-foreground"
-                onClick={downloadTemplate}
-              >
-                <Download size={16} className="ml-1" />
-                تحميل نموذج Excel
-              </button>
-              <button
-                type="button"
-                className="inline-flex items-center rounded-md border border-primary p-1 text-primary hover:bg-amber-400 hover:text-primary-foreground"
-                onClick={exportQuizToExcel}
-              >
-                <Download size={16} className="ml-1" />
-                تصدير المسابقة إلى Excel
-              </button>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".xlsx,.xls"
-              onChange={handleExcelImport}
-              className="hidden"
-              aria-label="استيراد ملف Excel للأسئلة"
-            />
-            <small className="text-black block mt-1">
-              الصيغة: عمود الأسئلة، الاختيار1، الاختيار2، الاختيار3، الاختيار4، الإجابة الصحيحة (رقم 1-4)، وقت السؤال (بالثواني). للأسئلة صح/خطأ: اترك الاختيار3 والاختيار4 فارغين
-            </small>
+            <textarea className="w-full rounded-xl border-2 p-1 font-bold focus:border-blue-500 outline-none resize-none" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="وصف للمسابقة..." />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols- gap-1 mb-1">
-            <div className="flex items-center">
-              <Checkbox id="shuffleQuestions" defaultChecked className="ml-1" checked={shuffleQuestions} onCheckedChange={(checked: boolean) => setShuffleQuestions(checked)} />
-              <label className="flex items-center" htmlFor="shuffleQuestions">
-                <Shuffle className="ml-1" size={16} />
-                الاسئلة عشوائية
-              </label>
+          <div>
+            <div className="flex flex-wrap gap-1 mb-1">
+              <button type="button" className="flex items-center gap-1 rounded-lg border-2 border-blue-600 p-1 text-blue-600 hover:bg-blue-50 font-bold" onClick={() => fileInputRef.current?.click()}>
+                <Upload size={9} /> استيراد من Excel
+              </button>
+              <button type="button" className="flex items-center gap-1 rounded-lg border-2 border-green-600 p-1 text-green-600 hover:bg-green-50 font-bold" onClick={downloadTemplate}>
+                <Download size={9} /> نموذج فارغ
+              </button>
+              <button type="button" className="flex items-center gap-1 rounded-lg border-2 border-amber-600 p-1 text-amber-600 hover:bg-amber-50 font-bold" onClick={exportQuizToExcel}>
+                <Download size={9} /> تصدير للإكسيل
+              </button>
             </div>
-            <div className="flex items-center">
-              <Checkbox id="shuffleChoices" defaultChecked className="ml-1" checked={shuffleChoices} onCheckedChange={(checked: boolean) => setShuffleChoices(checked)} />
-              <label className="flex items-center" htmlFor="shuffleChoices">
-                <Shuffle className="ml-1" size={16} />
-                ترتيب الاختيارات عشوائي
-              </label>
-            </div>
+            <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleExcelImport} className="hidden" />
           </div>
 
-          <div className="flex justify-between items-center mb-1">
-            <h6>عدد الاسئلة ({questions.length})</h6>
-            <button type="button" className="inline-flex items-center rounded-md border p-1 border-primary text-primary hover:font-bold hover:text-lg" onClick={addQuestion}>
-              <Plus size={16} className="ml-1" />
-              اضف سؤال
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-1 bg-gray-50 p-1 rounded-xl border">
+            <label className="flex items-center gap-1 cursor-pointer font-semibold">
+              <Checkbox checked={shuffleQuestions} onCheckedChange={(checked: boolean) => setShuffleQuestions(checked)} />
+              <Shuffle size={9} className="text-blue-600" /> ترتيب الأسئلة عشوائي
+            </label>
+            <label className="flex items-center gap-1 cursor-pointer font-semibold">
+              <Checkbox checked={shuffleChoices} onCheckedChange={(checked: boolean) => setShuffleChoices(checked)} />
+              <Shuffle size={9} className="text-blue-600" /> ترتيب الاختيارات عشوائي
+            </label>
+          </div>
+
+          <div className="flex justify-between items-center bg-blue-50 p-1 rounded-xl border border-blue-100">
+            <h6 className="text-xl font-bold text-blue-900">الأسئلة ({questions.length})</h6>
+            <button type="button" className="flex items-center gap-1 rounded-lg bg-blue-600 text-white p-1 font-bold hover:bg-blue-700 shadow-md" onClick={addQuestion}>
+              <Plus size={9} /> إضافة سؤال
             </button>
           </div>
 
-          <Accordion type="multiple" className="w-full">
+          <Accordion type="multiple" className="w-full space-y-1">
             <AnimatePresence>
               {questions.map((question, index) => (
-                <motion.div
-                  key={question.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                >
-                  <AccordionItem value={question.id} className="border border-border rounded-lg mb-1">
-                    <div className="flex justify-between items-center p-0.5 border-b border-border">
-                      <p className="text-xl font-bold flex-1">سؤال {index + 1}: {question.text.slice(0, 50)}{question.text.length > 50 ? '...' : ''}</p>
-                      <button
-                        type="button"
-                        className="inline-flex items-center rounded-md bg-red-600 px-1 text-black hover:bg-red-700 ml-1"
-                        onClick={() => removeQuestion(index)}
-                        title="احذف السؤال"
-                      >
+                <motion.div key={question.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, height: 0 }}>
+                  <AccordionItem value={question.id} className="border-2 rounded-xl bg-white shadow-sm overflow-hidden">
+                    <div className="flex justify-between items-center p-1 bg-gray-50 border-b">
+                      <p className="text-lg font-bold text-gray-800">سؤال {index + 1}: {question.text.slice(0, 40)}{question.text.length > 40 ? '...' : ''}</p>
+                      <button type="button" className="text-red-600 hover:bg-red-100 p-1 rounded-lg" onClick={() => removeQuestion(index)}>
                         <Trash2 size={20} />
                       </button>
                     </div>
-                    <AccordionTrigger className="px-1 hover:no-underline">
-                      <span className="text-lg font-medium">تفاصيل السؤال</span>
+                    <AccordionTrigger className="px-1 hover:no-underline bg-white">
+                      <span className="text-sm font-bold text-blue-600">عرض تفاصيل السؤال</span>
                     </AccordionTrigger>
-                    <AccordionContent className="px-1 pb-1">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-1">
+                    <AccordionContent className="p-1 space-y-1">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                         <div>
-                          <label className="block text-lg font-medium mb-1">نوع السؤال</label>
-                          <select
-                            className="w-full rounded-md border border-input bg-background px-1 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            value={question.type}
-                            onChange={(e) =>
-                              updateQuestion(index, {
-                                type: e.target.value as "true-false" | "multiple-choice",
-                                choices: e.target.value === "true-false" ? ["True", "False"] : ["", "", "", ""],
-                                correctAnswer: 0,
-                              })
-                            }
-                            title="نوع السؤال"
-                          >
-                            <option value="multiple-choice">اختيارات</option>
-                            <option value="true-false">صح و غلط</option>
+                          <label className="block text-sm font-bold mb-1">نوع السؤال</label>
+                          <select className="w-full rounded-lg border-2 p-1 outline-none focus:border-blue-500" value={question.type}
+                            onChange={(e) => updateQuestion(index, {
+                              type: e.target.value as "true-false" | "multiple-choice",
+                              choices: e.target.value === "true-false" ? ["صح", "خطأ"] : ["", "", "", ""],
+                              correctAnswer: 0,
+                            })}>
+                            <option value="multiple-choice">اختيارات متعددة</option>
+                            <option value="true-false">صح أم خطأ</option>
                           </select>
                         </div>
                         <div>
-                          <label className="flex items-center gap-1 text-lg font-medium mb-1">
-                            <Clock size={16} /> وقت السؤال (بالثواني)
+                          <label className="flex items-center gap-1 text-sm font-bold mb-1">
+                            <Clock size={8} /> وقت السؤال بالثواني
                           </label>
-                          <input
-                            type="number"
-                            min="5"
-                            max="300"
-                            className="w-full rounded-md border border-input bg-background px-1 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            value={question.timeLimit}
-                            onChange={(e) =>
-                              updateQuestion(index, { timeLimit: Number.parseInt(e.target.value) || 20 })
-                            }
-                            title="وقت السؤال (بالثواني)"
-                          />
+                          <input type="number" min="5" max="300" className="w-full rounded-lg border-2 p-1 outline-none focus:border-blue-500"
+                            value={question.timeLimit} onChange={(e) => updateQuestion(index, { timeLimit: Number.parseInt(e.target.value) || 20 })} />
                         </div>
                       </div>
 
-                      <div className="mb-1">
-                        <label className="block text-lg font-medium mb-1">السؤال</label>
-                        <textarea
-                          className="w-full resize-none rounded-md border border-input bg-background px-1 py-0.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          rows={2}
-                          value={question.text}
-                          onChange={(e) => updateQuestion(index, { text: e.target.value })}
-                          title="السؤال"
-                        />
+                      <div>
+                        <label className="block text-sm font-bold mb-1">نص السؤال</label>
+                        <textarea className="w-full rounded-lg border-2 p-1 outline-none focus:border-blue-500 resize-none font-semibold text-lg" rows={2}
+                          value={question.text} onChange={(e) => updateQuestion(index, { text: e.target.value })} />
                       </div>
 
-                      <div>
-                        <label className="block text-lg font-medium mb-1">الاختيارات</label>
-                        {question.choices.map((choice, choiceIndex) => (
-                          <div key={choiceIndex} className="flex items-center gap-1 mb-1">
-                            <div
-                              className="rounded-full w-4 h-4"
-                              style={{
-                                backgroundColor:
-                                  choiceIndex === 0
-                                    ? "green"
-                                    : choiceIndex === 1
-                                      ? "red"
-                                      : choiceIndex === 2
-                                        ? "blue"
-                                        : "yellow",
-                              }}
-                            />
-                            <input
-                              type="text"
-                              className="flex-1 rounded-md border border-input bg-background px-1 py-0.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                              value={choice}
-                              placeholder={`اختيار ${choiceIndex + 1}`}
-                              onChange={(e) => updateChoice(index, choiceIndex, e.target.value)}
-                              disabled={question.type === "true-false"}
-                            />
-                            <button
-                              type="button"
-                              className={`inline-flex items-center rounded-md p-1 text-lg ${question.correctAnswer === choiceIndex
-                                ? "bg-green-600 text-green-500 hover:bg-green-700 border border-green-500"
-                                : "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                                }`}
-                              onClick={() => updateQuestion(index, { correctAnswer: choiceIndex })}
-                              title="اختيار الصحيح"
-                            >
-                              <Check size={24} />
-                            </button>
-                          </div>
-                        ))}
-                        <small className="text-muted-foreground">اضغط على (صح) لاختيار الاجابة الصحيحة</small>
+                      <div className="space-y-1">
+                        <label className="block text-sm font-bold">الاختيارات (اضغط ✔️ لتحديد الإجابة الصحيحة)</label>
+                        {question.choices.map((choice, choiceIndex) => {
+                          const isCorrect = question.correctAnswer === choiceIndex;
+                          const colors = ["bg-red-500", "bg-blue-500", "bg-yellow-500", "bg-green-500"];
+                          return (
+                            <div key={choiceIndex} className="flex items-center gap-1">
+                              <div className={`w-4 h-4 rounded-full ${colors[choiceIndex % 4]}`} />
+                              <input type="text" className={`flex-1 rounded-lg border-2 p-1 outline-none font-semibold transition-colors ${isCorrect ? 'border-green-500 bg-green-50' : 'focus:border-blue-500'}`}
+                                value={choice} placeholder={`اختيار ${choiceIndex + 1}`}
+                                onChange={(e) => updateChoice(index, choiceIndex, e.target.value)} disabled={question.type === "true-false"} />
+                              <button type="button" onClick={() => updateQuestion(index, { correctAnswer: choiceIndex })}
+                                className={`p-1 rounded-lg border-2 transition-colors ${isCorrect ? "bg-green-500 border-green-500 text-white shadow-md" : "border-gray-300 text-gray-400 hover:border-green-500 hover:text-green-500"}`}>
+                                <Check size={8} />
+                              </button>
+                            </div>
+                          )
+                        })}
                       </div>
                     </AccordionContent>
                   </AccordionItem>
@@ -497,15 +341,14 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
             </AnimatePresence>
           </Accordion>
 
-          {questions.length === 0 && <p className="text-center text-muted-foreground">مفيش اي سؤال مضاف</p>}
-        </div>
-        <div className="flex justify-end gap-1 mt-1">
-          <button type="button" className="p-1 bg-red-900 border border-red-900 text-red-900 rounded-md hover:text-red-600 hover:border-red-600 hover:font-bold" onClick={() => onOpenChange(false)} title="Cancel">
-            الغاء
-          </button>
-          <button type="button" className="p-1 bg-blue-600 border border-blue-900 text-blue-800 rounded-lg font-extrabolder text-xl hover:bg-amber-400/90" onClick={validateAndSubmit} disabled={isSubmitting} title={isEditing ? "Update Quiz" : "Create Quiz"}>
-            {isSubmitting ? (isEditing ? "جاري التحديث ..." : "جاري الانشاء ...") : (isEditing ? "تحديث المسابقة" : "إنشاء مسابقة")}
-          </button>
+          <div className="flex justify-end gap-1 pt-1 border-t">
+            <button type="button" className="p-1 rounded-xl font-bold text-gray-600 hover:bg-gray-100" onClick={() => onOpenChange(false)}>
+              إلغاء
+            </button>
+            <button type="button" className="p-1 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg disabled:opacity-50" onClick={validateAndSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "جاري الحفظ..." : (isEditing ? "تحديث المسابقة" : "إنشاء المسابقة 🚀")}
+            </button>
+          </div>
         </div>
       </div>
     </div>,

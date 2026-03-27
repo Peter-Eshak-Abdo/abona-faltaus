@@ -30,6 +30,9 @@ export async function explorePath(relativePath: string = ''): Promise<PathResult
 
   const fullPath = path.join(BASE_PATH, relativePath);
 
+  console.log("Current Directory:", process.cwd());
+  console.log("Full Path attempted:", fullPath);
+  console.log("Files in root:", fs.readdirSync(process.cwd()));
   try {
     if (!fs.existsSync(fullPath)) {
       return { type: 'error', message: 'المسار غير موجود. تأكد من تشغيل npm run output:generate' };
