@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = 'force-dynamic';
 import { useState } from "react";
 import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
@@ -13,75 +14,96 @@ export default function SignUpPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const debugSupabase = async () => {
-    console.log("🔍 Testing Supabase Connection...");
-    console.log("🔗 URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+  // const debugSupabase = async () => {
+  //   console.log("🔍 Testing Supabase Connection...");
+  //   console.log("🔗 URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
 
-    // محاولة قراءة أي بيانات من جدول البروفايل للتأكد من وجوده
-    const { data, error } = await supabase.from('profiles').select('*').limit(1);
+  //   // محاولة قراءة أي بيانات من جدول البروفايل للتأكد من وجوده
+  //   const { data, error } = await supabase.from('profiles').select('*').limit(1);
 
-    if (error) {
-      console.error("❌ Table Access Error:", error.message);
-      console.error("❌ Full Error Object:", error);
-    } else {
-      console.log("✅ Connection Successful! Profiles table found.");
-    }
-  };
+  //   if (error) {
+  //     console.error("❌ Table Access Error:", error.message);
+  //     console.error("❌ Full Error Object:", error);
+  //   } else {
+  //     console.log("✅ Connection Successful! Profiles table found.");
+  //   }
+  // };
 
-  useEffect(() => {
-    debugSupabase();
-  }, []);
+  // useEffect(() => {
+  //   debugSupabase();
+  // }, []);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    console.log("🚀 Starting Sign Up Process...");
-    console.log("1️⃣ Step: Registering user in Supabase Auth...");
+    // console.log("🚀 Starting Sign Up Process...");
+    // console.log("1️⃣ Step: Registering user in Supabase Auth...");
+    if (!email || !password || !name) {
+      setError("جميع الحقول مطلوبة.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      // 1. إنشاء المستخدم في Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // // 1. إنشاء المستخدم في Auth
+      // const { data: authData, error: authError } = await supabase.auth.signUp({
+      // 1. إنشاء الحساب في Supabase Auth
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
-        options: { data: { full_name: name } },
+        // options: { data: { full_name: name } },
+        options: {
+          data: { full_name: name }, // بيتحفظ في الـ metadata
+        },
       });
 
-      if (authError) {
-        console.error("❌ Auth Error:", authError.message);
-        throw authError;
-      }
+      if (signUpError) throw signUpError;
+      // if (authError) {
+      //   console.error("❌ Auth Error:", authError.message);
+      //   throw authError;
+      // }
 
-      console.log("✅ Auth Success! User ID:", authData.user?.id);
+      // console.log("✅ Auth Success! User ID:", authData.user?.id);
 
-      if (authData.user) {
-        console.log("2️⃣ Step: Inserting into 'profiles' table...");
+      // if (authData.user) {
+      //   console.log("2️⃣ Step: Inserting into 'profiles' table...");
 
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles") // تأكد من الاسم هنا بالحرف
-          .insert([{
-            id: authData.user.id,
+        // const { data: profileData, error: profileError } = await supabase
+        //   .from("profiles") // تأكد من الاسم هنا بالحرف
+        //   .insert([{
+      //     id: authData.user.id,
+      if (data.user) {
+        // 2. إضافة البيانات لجدول الـ profiles (اختياري لو عامل Trigger في الداتابيز)
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .upsert({
+            id: data.user.id,
             name: name,
-            email: email.trim()
-          }]);
+            email: email,
+            updated_at: new Date(),
+          });
+          //   email: email.trim()
+          // }]);
+        if (profileError) throw profileError;
+        // if (profileError) {
+        //   console.error("❌ Profile Table Error:", profileError.message);
+        //   console.error("❌ Error Code:", profileError.code);
+        //   console.error("❌ Hint:", profileError.hint);
+        //   throw profileError;
+        // }
 
-        if (profileError) {
-          console.error("❌ Profile Table Error:", profileError.message);
-          console.error("❌ Error Code:", profileError.code);
-          console.error("❌ Hint:", profileError.hint);
-          throw profileError;
-        }
-
-        console.log("✅ Profile Created Successfully!");
+        // console.log("✅ Profile Created Successfully!");
         router.push("/auth/profile");
       }
     } catch (err: any) {
-      console.error("💥 Global Catch Error:", err);
-      setError(err.message || "حدث خطأ غير متوقع");
+      setError(err.message || "حدث خطأ أثناء إنشاء الحساب.");
+      // console.error("💥 Global Catch Error:", err);
+      // setError(err.message || "حدث خطأ غير متوقع");
     } finally {
       setLoading(false);
-      console.log("🏁 Process Finished.");
+      // console.log("🏁 Process Finished.");
     }
   };
 
@@ -114,7 +136,6 @@ export default function SignUpPage() {
     </>
   );
 }
-function useEffect(arg0: () => void, arg1: never[]) {
-  throw new Error("Function not implemented.");
-}
-
+// function useEffect(arg0: () => void, arg1: never[]) {
+//   throw new Error("Function not implemented.");
+// }

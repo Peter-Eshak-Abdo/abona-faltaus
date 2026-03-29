@@ -8,7 +8,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn("Supabase credentials are missing!")
 }
 
-export const supabase = createBrowserClient(
-  supabaseUrl || "https://placeholder-url.supabase.co",
-  supabaseAnonKey || "placeholder-key",
-);
+export function createClient() {
+  return createBrowserClient(
+    supabaseUrl || "https://placeholder-url.supabase.co",
+    supabaseAnonKey || "placeholder-key",
+  );
+}
