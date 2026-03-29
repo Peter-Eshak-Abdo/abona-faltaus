@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,18 @@ export default function SignInPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    // لو الرابط فيه access_token، الكلاينت بتاع Supabase هيلقطه أوتوماتيك
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        console.log("✅ Session captured from URL hash!");
+        router.push("/auth/profile");
+      }
+    });
+
+    return () => authListener.subscription.unsubscribe();
+  }, []);
+  
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);

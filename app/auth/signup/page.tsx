@@ -1,6 +1,6 @@
 "use client";
 export const dynamic = 'force-dynamic';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,24 +14,17 @@ export default function SignUpPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // const debugSupabase = async () => {
-  //   console.log("🔍 Testing Supabase Connection...");
-  //   console.log("🔗 URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+  useEffect(() => {
+    // لو الرابط فيه access_token، الكلاينت بتاع Supabase هيلقطه أوتوماتيك
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        console.log("✅ Session captured from URL hash!");
+        router.push("/auth/profile");
+      }
+    });
 
-  //   // محاولة قراءة أي بيانات من جدول البروفايل للتأكد من وجوده
-  //   const { data, error } = await supabase.from('profiles').select('*').limit(1);
-
-  //   if (error) {
-  //     console.error("❌ Table Access Error:", error.message);
-  //     console.error("❌ Full Error Object:", error);
-  //   } else {
-  //     console.log("✅ Connection Successful! Profiles table found.");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   debugSupabase();
-  // }, []);
+    return () => authListener.subscription.unsubscribe();
+  }, []);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,20 +49,6 @@ export default function SignUpPage() {
 
       if (data.user) {
         console.log("Step 3: Attempting to Insert/Upsert into 'profiles'...");
-        // const { error: profileError } = await supabase
-        //   .from("profiles")
-        //   .upsert({
-        //     id: data.user.id,
-        //     full_name: name,
-        //     email: email.trim(),
-        //     updated_at: new Date(),
-        //   });
-
-        // if (profileError) {
-        //   console.error("❌ Profile Table Error (RLS or Schema):", profileError);
-        //   throw profileError;
-        // }
-
         console.log("✅ All Steps Completed Successfully!");
         router.push("/auth/profile");
       }

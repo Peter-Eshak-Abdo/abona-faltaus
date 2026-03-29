@@ -29,6 +29,7 @@ export default function UserHeader() {
     };
 
     fetchUserAndProfile();
+    const timeout = setTimeout(fetchUserAndProfile, 500);
 
     // الاستماع لتغييرات تسجيل الدخول/الخروج
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
@@ -42,6 +43,7 @@ export default function UserHeader() {
 
     return () => {
       authListener.subscription.unsubscribe();
+      clearTimeout(timeout);
     };
   }, []);
 

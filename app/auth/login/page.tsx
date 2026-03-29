@@ -1,7 +1,7 @@
 // app/auth/login/page.tsx
 "use client";
 import { supabase } from "@/lib/supabase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    // لو الرابط فيه access_token، الكلاينت بتاع Supabase هيلقطه أوتوماتيك
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        console.log("✅ Session captured from URL hash!");
+        router.push("/auth/profile");
+      }
+    });
+
+    return () => authListener.subscription.unsubscribe();
+  }, []);
+  
   const handleOAuthLogin = async (provider: 'google' | 'github') => {
     setLoading(true);
     console.log(`🌐 Redirecting to ${provider} login...`);
