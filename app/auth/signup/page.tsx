@@ -38,72 +38,46 @@ export default function SignUpPage() {
     setError("");
     setLoading(true);
 
-    // console.log("🚀 Starting Sign Up Process...");
-    // console.log("1️⃣ Step: Registering user in Supabase Auth...");
-    if (!email || !password || !name) {
-      setError("جميع الحقول مطلوبة.");
-      setLoading(false);
-      return;
-    }
+    console.log("Step 1: Starting SignUp with:", email);
 
     try {
-      // // 1. إنشاء المستخدم في Auth
-      // const { data: authData, error: authError } = await supabase.auth.signUp({
-      // 1. إنشاء الحساب في Supabase Auth
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
-        // options: { data: { full_name: name } },
-        options: {
-          data: { full_name: name }, // بيتحفظ في الـ metadata
-        },
+        options: { data: { full_name: name } },
       });
 
-      if (signUpError) throw signUpError;
-      // if (authError) {
-      //   console.error("❌ Auth Error:", authError.message);
-      //   throw authError;
-      // }
+      if (signUpError) {
+        console.error("❌ Auth SignUp Error:", signUpError.message);
+        throw signUpError;
+      }
 
-      // console.log("✅ Auth Success! User ID:", authData.user?.id);
+      console.log("Step 2: Auth Success. User ID:", data.user?.id);
 
-      // if (authData.user) {
-      //   console.log("2️⃣ Step: Inserting into 'profiles' table...");
-
-        // const { data: profileData, error: profileError } = await supabase
-        //   .from("profiles") // تأكد من الاسم هنا بالحرف
-        //   .insert([{
-      //     id: authData.user.id,
       if (data.user) {
-        // 2. إضافة البيانات لجدول الـ profiles (اختياري لو عامل Trigger في الداتابيز)
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .upsert({
-            id: data.user.id,
-            full_name: name,
-            email: email,
-            updated_at: new Date(),
-          });
-          //   email: email.trim()
-          // }]);
-        if (profileError) throw profileError;
+        console.log("Step 3: Attempting to Insert/Upsert into 'profiles'...");
+        // const { error: profileError } = await supabase
+        //   .from("profiles")
+        //   .upsert({
+        //     id: data.user.id,
+        //     full_name: name,
+        //     email: email.trim(),
+        //     updated_at: new Date(),
+        //   });
+
         // if (profileError) {
-        //   console.error("❌ Profile Table Error:", profileError.message);
-        //   console.error("❌ Error Code:", profileError.code);
-        //   console.error("❌ Hint:", profileError.hint);
+        //   console.error("❌ Profile Table Error (RLS or Schema):", profileError);
         //   throw profileError;
         // }
 
-        // console.log("✅ Profile Created Successfully!");
+        console.log("✅ All Steps Completed Successfully!");
         router.push("/auth/profile");
       }
     } catch (err: any) {
-      setError(err.message || "حدث خطأ أثناء إنشاء الحساب.");
-      // console.error("💥 Global Catch Error:", err);
-      // setError(err.message || "حدث خطأ غير متوقع");
+      console.error("💥 Global Catch:", err);
+      setError(err.message || "حدث خطأ ما");
     } finally {
       setLoading(false);
-      // console.log("🏁 Process Finished.");
     }
   };
 

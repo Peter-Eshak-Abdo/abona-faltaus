@@ -15,16 +15,35 @@ export default function LoginPage() {
 
   const handleOAuthLogin = async (provider: 'google' | 'github') => {
     setLoading(true);
+    console.log(`🌐 Redirecting to ${provider} login...`);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`
       }
     });
-    if (error) alert(error.message);
+
+    if (error) {
+      console.error(`❌ ${provider} Login Error:`, error.message);
+      alert(error.message);
+    }
     setLoading(false);
   };
 
+  const handleGoogleSignIn = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consensus',
+        },
+      }
+    });
+  };
+  
   const handleEmailAuth = async (mode: 'login' | 'signup') => {
     setLoading(true);
     const { error } = mode === 'signup'

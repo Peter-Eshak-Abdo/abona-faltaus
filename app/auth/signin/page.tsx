@@ -31,12 +31,26 @@ export default function SignInPage() {
     }
   };
 
+  // const handleGoogleSignIn = async () => {
+  //   await supabase.auth.signInWithOAuth({
+  //     provider: 'google',
+  //     options: { redirectTo: `${window.location.origin}/auth/callback` }
+  //   });
+  // };
+
   const handleGoogleSignIn = async () => {
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consensus',
+        },
+      }
     });
   };
+  
   return (
     <>
       <LogoHeader />
