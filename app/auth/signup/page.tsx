@@ -80,7 +80,7 @@ export default function SignUpPage() {
           .from("profiles")
           .upsert({
             id: data.user.id,
-            name: name,
+            full_name: name,
             email: email,
             updated_at: new Date(),
           });
