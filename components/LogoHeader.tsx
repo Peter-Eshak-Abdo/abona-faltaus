@@ -10,7 +10,8 @@ export default function LogoHeader() {
           src="/images/eagle.webp"
           alt="Logo"
           width={60}
-          height={80}
+          height={40}
+          sizes="auto"
           className="rounded-full border-blue-300 justify-self-start flex-none"
         />
         <h1 className="font-bold text-2xl md:text-4xl flex-initial grow text-center">
@@ -20,7 +21,8 @@ export default function LogoHeader() {
           src="/images/eagle.webp"
           alt="Logo"
           width={60}
-          height={80}
+          height={40}
+          sizes="auto"
           className="rounded-full border-blue-300 justify-self-end flex-none"
           style={{ transform: "scaleX(-1)" }}
         />

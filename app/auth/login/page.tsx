@@ -15,7 +15,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     // لو الرابط فيه access_token، الكلاينت بتاع Supabase هيلقطه أوتوماتيك
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
       if (event === "SIGNED_IN" && session) {
         console.log("✅ Session captured from URL hash!");
         router.push("/auth/profile");
@@ -24,7 +24,7 @@ export default function LoginPage() {
 
     return () => authListener.subscription.unsubscribe();
   }, []);
-  
+
   const handleOAuthLogin = async (provider: 'google' | 'github') => {
     setLoading(true);
     console.log(`🌐 Redirecting to ${provider} login...`);

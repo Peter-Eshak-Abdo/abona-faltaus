@@ -1,13 +1,23 @@
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from "@supabase/ssr";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+let client: ReturnType<typeof createBrowserClient> | null = null;
 
-// تأكد إننا بنعمل نسخة واحدة بس (Singleton)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true // دي مهمة جداً عشان يلقط التوكن من الرابط
-  }
-})
+export const createClient = () => {
+  if (client) return client;
+
+  client = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storageKey: "abona-faltaus-auth-token", // اسم ثابت عشان النسخ ما تضيعش من بعض
+      },
+    },
+  );
+  return client;
+};
+
+export const supabase = createClient();

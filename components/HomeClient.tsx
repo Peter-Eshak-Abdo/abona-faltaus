@@ -16,6 +16,7 @@ import {
 } from "react-icons/fa";
 import LogoHeader from "@/components/LogoHeader";
 import UserHeader from "@/components/UserHeader";
+import { supabase } from "@/lib/supabase";
 
 const sections = [
   { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
@@ -36,6 +37,19 @@ export default function HomeClient() {
   const [showMenu, setShowMenu] = useState(false);
   const [logoPos, setLogoPos] = useState("center");
   const eagleControls = useAnimation();
+
+  useEffect(() => {
+    // أول ما يسجل دخول، بنمسح الـ Hash من الرابط عشان ما يهنقش
+    if (window.location.hash) {
+      const { data: authListener } = supabase.auth.onAuthStateChange((event: string) => {
+        if (event === 'SIGNED_IN') {
+          // بيمسح الـ access_token من الرابط بدون ما يعمل ريفريش
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      });
+      return () => authListener.subscription.unsubscribe();
+    }
+  }, []);
 
   useEffect(() => {
     if (showMenu) {
@@ -119,7 +133,8 @@ export default function HomeClient() {
                 src="/images/eagle.webp"
                 alt="Eagle"
                 width={210}
-                height={220}
+                height={140}
+                sizes="auto"
               />
             </motion.div>
           </motion.div>
