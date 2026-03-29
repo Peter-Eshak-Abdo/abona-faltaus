@@ -15,7 +15,7 @@ export default function SignUpPage() {
 
   const debugSupabase = async () => {
     console.log("🔍 Testing Supabase Connection...");
-    console.log("🔗 URL:", process.env.NEXT_PUBLIC_SUPABASE_URL_NEW);
+    console.log("🔗 URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
 
     // محاولة قراءة أي بيانات من جدول البروفايل للتأكد من وجوده
     const { data, error } = await supabase.from('profiles').select('*').limit(1);
