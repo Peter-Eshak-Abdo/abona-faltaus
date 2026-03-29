@@ -40,12 +40,12 @@ export default function HostQuizView() {
     const channel = supabase
       .channel(`quiz_${quizId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'groups', filter: `quiz_id=eq.${quizId}` },
-        payload => {
+        (        payload: { eventType: string; new: any; old: { id: any } }) => {
           if (payload.eventType === 'INSERT') setGroups(prev => [...prev, payload.new])
           if (payload.eventType === 'DELETE') setGroups(prev => prev.filter(g => g.id !== payload.old.id))
         })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${quizId}` },
-        payload => setGameState(payload.new))
+        (        payload: { new: any }) => setGameState(payload.new))
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }

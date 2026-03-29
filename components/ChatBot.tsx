@@ -62,7 +62,7 @@ export default function ChatBot() {
   // ── Auth & Real-time setup ──────────────────────────────────────────────
   useEffect(() => {
     // الحصول على المستخدم الحالي
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.getUser().then(({ data }: { data: { user: any } }) => setUser(data.user));
 
     // الاشتراك في تغييرات المحادثات (Real-time)
     const channel = supabase
@@ -109,12 +109,12 @@ export default function ChatBot() {
       .order('created_at', { ascending: true });
 
     if (msgs) {
-      setMessages(msgs.map((m) => ({
+      setMessages(msgs.map((m: { id: any; role: any; content: any; }) => ({
         id: m.id,
         role: m.role,
         content: m.content,
       })) as any);
-      setSavedIds(new Set(msgs.map((m) => m.id)));
+      setSavedIds(new Set(msgs.map((m: { id: any; }) => m.id)));
     }
   }, [user, convId, setMessages]);
 
