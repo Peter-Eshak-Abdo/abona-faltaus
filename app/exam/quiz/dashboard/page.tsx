@@ -31,6 +31,9 @@ export default function DashboardView() {
       }
     }
     checkUser()
+    // استنى ثانية بسيطة عشان السيشن تستقر
+    const timeout = setTimeout(checkUser, 500);
+    return () => clearTimeout(timeout);
   }, [router])
 
   const loadQuizzes = async (userId: string) => {

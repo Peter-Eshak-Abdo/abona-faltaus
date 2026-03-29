@@ -16,6 +16,20 @@ export default function AccountInfo() {
   const router = useRouter();
 
   useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user || error) {
+        console.log("No user found, redirecting...");
+        router.push("/auth/signin");
+      }
+    };
+
+    // استنى ثانية بسيطة عشان السيشن تستقر
+    const timeout = setTimeout(checkUser, 500);
+    return () => clearTimeout(timeout);
+  }, []);
+  
+  useEffect(() => {
     const getProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {

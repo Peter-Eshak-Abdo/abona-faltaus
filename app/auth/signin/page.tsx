@@ -45,12 +45,12 @@ export default function SignInPage() {
         redirectTo: `${window.location.origin}/auth/callback`,
         queryParams: {
           access_type: 'offline',
-          prompt: 'consensus',
+          prompt: 'consent',
         },
       }
     });
   };
-  
+
   return (
     <>
       <LogoHeader />

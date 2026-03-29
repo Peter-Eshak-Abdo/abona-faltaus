@@ -38,12 +38,12 @@ export default function LoginPage() {
         redirectTo: `${window.location.origin}/auth/callback`,
         queryParams: {
           access_type: 'offline',
-          prompt: 'consensus',
+          prompt: 'consent',
         },
       }
     });
   };
-  
+
   const handleEmailAuth = async (mode: 'login' | 'signup') => {
     setLoading(true);
     const { error } = mode === 'signup'
