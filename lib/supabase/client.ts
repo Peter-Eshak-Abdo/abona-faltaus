@@ -8,9 +8,13 @@ export function createClient() {
   client = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: true, // إجباري
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storageKey: "abona-auth-v1", // اسم فريد للسيشن
+      },
+    },
   );
-  return client;
 }
-
-// تصدير نسخة ثابتة للاستخدام في الكومبوننتس
-export const supabase = createClient();

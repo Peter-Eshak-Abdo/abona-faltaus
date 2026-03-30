@@ -32,7 +32,7 @@ export default function UserHeader() {
     const timeout = setTimeout(fetchUserAndProfile, 500);
 
     // الاستماع لتغييرات تسجيل الدخول/الخروج
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event: any, session: { user: any; }) => {
       setUser(session?.user || null);
       if (!session?.user) {
         setCustomDisplayName(null);

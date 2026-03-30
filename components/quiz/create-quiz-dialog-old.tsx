@@ -33,7 +33,7 @@ export function CreateQuizDialog({ open, onOpenChange, onQuizCreated, editQuiz }
 
   useEffect(() => {
     // جلب بيانات المستخدم
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.getUser().then(({ data }: { data: { user: any } }) => setUser(data.user));
 
     if (!open) {
       setTitle("")

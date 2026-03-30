@@ -89,7 +89,7 @@ export const getUserQuizzes = async (userId: string): Promise<Quiz[]> => {
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return (data || []).map((q) => ({
+  return (data || []).map((q: { created_at: string | number | Date; shuffle_questions: any; shuffle_choices: any; }) => ({
     ...q,
     createdAt: new Date(q.created_at),
     shuffleQuestions: q.shuffle_questions,
@@ -139,7 +139,7 @@ export const getQuizGroups = (
     .select("*")
     .eq("quiz_id", quizId)
     .order("joined_at", { ascending: true })
-    .then(({ data }) => {
+    .then(({ data }: { data: any }) => {
       if (data) callback(data as unknown as Group[]);
     });
 
@@ -161,7 +161,7 @@ export const getQuizGroups = (
           .select("*")
           .eq("quiz_id", quizId)
           .order("joined_at", { ascending: true })
-          .then(({ data }) => {
+          .then(({ data }: { data: any }) => {
             if (data) callback(data as unknown as Group[]);
           });
       },
@@ -228,7 +228,7 @@ export const subscribeToGameState = (
     .select("*")
     .eq("quiz_id", quizId)
     .single()
-    .then(({ data }) => {
+    .then(({ data }: { data: any }) => {
       if (data) callback(data as unknown as GameState);
     });
 
@@ -242,7 +242,7 @@ export const subscribeToGameState = (
         table: "game_state",
         filter: `quiz_id=eq.${quizId}`,
       },
-      (payload) => {
+      (payload: { new: unknown; }) => {
         callback(payload.new as unknown as GameState);
       },
     )
@@ -300,8 +300,8 @@ export const getTrashedQuizzes = async (userId: string) => {
     .eq("created_by", userId)
     .order("deleted_at", { ascending: false });
 
-  return (data || []).map((t) => ({
-    ...t.data,
+  return (data || []).map((t: { data: any; id: string; deleted_at: string | number | Date; expires_at: string | number | Date; }) => ({
+    ...(t.data as object),
     trashId: t.id,
     deletedAt: new Date(t.deleted_at),
     expiresAt: new Date(t.expires_at),

@@ -24,7 +24,7 @@ export default function SignInPage() {
         router.push("/auth/profile");
       }
     });
-    
+
     const debugAuth = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       console.log("1. Client Session:", session ? "✅ Found" : "❌ Not Found");
@@ -34,7 +34,7 @@ export default function SignInPage() {
 
       if (error) console.error("3. Auth Error:", error.message);
     };
-
+    debugAuth()
     return () => authListener.subscription.unsubscribe();
   }, []);
 
@@ -69,6 +69,8 @@ export default function SignInPage() {
           access_type: 'offline',
           prompt: 'consent',
         },
+        // ده بيحل مشاكل الـ localhost
+        skipBrowserRedirect: false,
       }
     });
   };
