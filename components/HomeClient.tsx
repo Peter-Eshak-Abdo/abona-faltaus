@@ -21,6 +21,7 @@ import { supabase } from "@/lib/supabase";
 const sections = [
   { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
   { name: "حول", href: "/about", icon: <FaInfoCircle /> },
+  { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
   { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },

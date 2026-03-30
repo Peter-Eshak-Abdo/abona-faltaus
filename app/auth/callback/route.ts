@@ -1,26 +1,34 @@
-export const dynamic = "force-dynamic";
-import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";
 
-  // لو مفيش code، يمكن السيشن اتعملت خلاص في الكلاينت
-  if (!code) {
-    console.log("⚠️ No code in URL, checking session state...");
-    // لو مفيش كود، نرجعه للصفحة المطلوبة ونخلي الكلاينت هو اللي يتعامل
-    return NextResponse.redirect(`${origin}${next}`);
+  if (code) {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (!error) {
+      const forwardedHost = request.headers.get("x-forwarded-host");
+      const isLocalEnv = process.env.NODE_ENV === "development";
+
+      if (isLocalEnv) {
+        return NextResponse.redirect(`${origin}${next}`);
+      } else if (forwardedHost) {
+        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+      } else {
+        return NextResponse.redirect(`${origin}${next}`);
+      }
+    }
+
+    // إذا حدث خطأ في التبادل
+    console.error("Auth error:", error.message);
+    return NextResponse.redirect(
+      `${origin}/auth/login?error=auth-code-error&message=${error.message}`,
+    );
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
-
-  if (!error) {
-    return NextResponse.redirect(`${origin}${next}`);
-  }
-
-  console.error("❌ Exchange Error:", error.message);
-  return NextResponse.redirect(`${origin}/auth/login?error=auth-code-error`);
+  return NextResponse.redirect(`${origin}/auth/login?error=no-code`);
 }
