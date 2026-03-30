@@ -24,6 +24,16 @@ export default function SignInPage() {
         router.push("/auth/profile");
       }
     });
+    
+    const debugAuth = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      console.log("1. Client Session:", session ? "✅ Found" : "❌ Not Found");
+
+      const cookies = document.cookie;
+      console.log("2. Browser Cookies:", cookies.includes("sb-") ? "✅ Auth Cookies Exist" : "❌ No Auth Cookies");
+
+      if (error) console.error("3. Auth Error:", error.message);
+    };
 
     return () => authListener.subscription.unsubscribe();
   }, []);

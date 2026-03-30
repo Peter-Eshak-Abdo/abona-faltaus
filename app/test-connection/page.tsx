@@ -18,8 +18,18 @@ export default function TestPage() {
         setData(data)
       }
     }
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        console.log("✅ السيشن موجودة والكوكيز شغالة!", session.user.email);
+      } else {
+        console.log("❌ مفيش سيشن.. الكوكيز لسه فيها مشكلة.");
+      }
+    }
+    checkSession()
     check()
   }, [])
+
 
   return (
     <div style={{ padding: "20px", direction: "rtl" }}>
