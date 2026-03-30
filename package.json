@@ -19,7 +19,7 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.43",
     "@ai-sdk/openai": "^3.0.41",
-    "@ai-sdk/react": "^3.0.138",
+    "@ai-sdk/react": "^3.0.143",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@emotion/is-prop-valid": "^1.3.1",
     "@google/generative-ai": "^0.24.1",
