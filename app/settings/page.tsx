@@ -12,10 +12,10 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 
 interface UserSettings {
-  notificationsEnabled: boolean;
-  soundEnabled: boolean;
-  language: string;
-  theme: string;
+  // notificationsEnabled: boolean;
+  // soundEnabled: boolean;
+  // language: string;
+  // theme: string;
   displayName: string;
   email: string;
 }
@@ -26,10 +26,10 @@ export default function SettingsView() {
   const supabase = createClient();
 
   const [settings, setSettings] = useState<UserSettings>({
-    notificationsEnabled: true,
-    soundEnabled: true,
-    language: "ar",
-    theme: "light",
+    // notificationsEnabled: true,
+    // soundEnabled: true,
+    // language: "ar",
+    // theme: "light",
     displayName: "",
     email: "",
   });
@@ -45,20 +45,15 @@ export default function SettingsView() {
         try {
           const { data: profile } = await supabase
             .from("profiles")
-            .select("*")
+            .select("full_name")
             .eq("id", user.id)
             .single();
 
           if (profile) {
             setSettings({
-              notificationsEnabled: profile.notifications_enabled ?? true,
-              soundEnabled: profile.sound_enabled ?? true,
-              language: profile.language ?? "ar",
-              theme: profile.theme ?? "light",
-              displayName: profile.name || user.user_metadata?.full_name || "",
+              displayName: profile.full_name || user.user_metadata?.full_name || "",
               email: user.email || "",
             });
-            if (profile.theme) setTheme(profile.theme);
           }
         } catch (error) {
           console.error("Error loading settings:", error);
@@ -78,17 +73,12 @@ export default function SettingsView() {
       const { error } = await supabase
         .from("profiles")
         .update({
-          notifications_enabled: settings.notificationsEnabled,
-          sound_enabled: settings.soundEnabled,
-          language: settings.language,
-          theme: settings.theme,
-          name: settings.displayName,
+          full_name: settings.displayName,
         })
         .eq("id", user.id);
 
       if (error) throw error;
 
-      setTheme(settings.theme);
       toast.success("تم حفظ الإعدادات بنجاح!");
     } catch (error) {
       console.error("Error saving settings:", error);

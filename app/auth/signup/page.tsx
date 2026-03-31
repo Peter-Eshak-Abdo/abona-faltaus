@@ -15,45 +15,44 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // لو الرابط فيه access_token، الكلاينت بتاع Supabase هيلقطه أوتوماتيك
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
       if (event === "SIGNED_IN" && session) {
-        console.log("✅ Session captured from URL hash!");
+        console.log("✅ Session captured, redirecting...");
         router.push("/auth/profile");
       }
     });
 
     return () => authListener.subscription.unsubscribe();
-  }, []);
+  }, [router]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    console.log("Step 1: Starting SignUp with:", email);
-
     try {
+      // بنبعت الـ full_name جوه الـ user_metadata
+      // الـ Database Trigger هيسحب الاسم من هنا ويحطه في جدول البروفايلات
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
-        options: { data: { full_name: name } },
+        options: {
+          data: {
+            full_name: name
+          }
+        },
       });
 
-      if (signUpError) {
-        console.error("❌ Auth SignUp Error:", signUpError.message);
-        throw signUpError;
-      }
-
-      console.log("Step 2: Auth Success. User ID:", data.user?.id);
+      if (signUpError) throw signUpError;
 
       if (data.user) {
-        console.log("Step 3: Attempting to Insert/Upsert into 'profiles'...");
-        console.log("✅ All Steps Completed Successfully!");
-        router.push("/auth/profile");
+        console.log("✅ Auth Success! Database Trigger will handle profile creation.");
+        // إذا كان التسجيل يتطلب تأكيد إيميل، يفضل إظهار رسالة للمستخدم
+        // أما إذا كان الدخول مباشر، الـ useEffect فوق هيعمل الـ redirect
+        alert("تم إنشاء الحساب بنجاح! افحص بريدك الإلكتروني إذا تطلب الأمر.");
       }
     } catch (err: any) {
-      console.error("💥 Global Catch:", err);
+      console.error("💥 Error:", err.message);
       setError(err.message || "حدث خطأ ما");
     } finally {
       setLoading(false);
@@ -89,6 +88,3 @@ export default function SignUpPage() {
     </>
   );
 }
-// function useEffect(arg0: () => void, arg1: never[]) {
-//   throw new Error("Function not implemented.");
-// }

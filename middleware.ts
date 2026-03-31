@@ -13,9 +13,17 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value),
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            // إجبار الكوكيز إنها تشتغل على لوكال هوست
+            const cookieOptions = {
+              ...options,
+              secure: process.env.NODE_ENV === "production", // true فقط في برودكشن
+              sameSite: "lax" as const,
+            };
+            request.cookies.set(name, value);
+            supabaseResponse = NextResponse.next({ request });
+            supabaseResponse.cookies.set(name, value, cookieOptions);
+          });
           supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),

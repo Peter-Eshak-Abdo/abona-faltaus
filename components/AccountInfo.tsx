@@ -28,7 +28,7 @@ export default function AccountInfo() {
     const timeout = setTimeout(checkUser, 500);
     return () => clearTimeout(timeout);
   }, []);
-  
+
   useEffect(() => {
     const getProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -36,7 +36,7 @@ export default function AccountInfo() {
         setUser(user);
         const { data } = await supabase
           .from('profiles')
-          .select('*')
+          .select('full_name')
           .eq('id', user.id)
           .single();
         setProfile(data);
@@ -106,7 +106,7 @@ export default function AccountInfo() {
           />
         </div>
         <div>
-          <h2 className="text-xl font-bold">{profile?.name || "مستخدم جديد"}</h2>
+          <h2 className="text-xl font-bold">{profile?.full_name || "مستخدم جديد"}</h2>
           <p className="text-gray-500 text-sm">{user?.email}</p>
         </div>
       </div>

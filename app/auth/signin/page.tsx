@@ -35,6 +35,27 @@ export default function SignInPage() {
       if (error) console.error("3. Auth Error:", error.message);
     };
     debugAuth()
+
+    const testCookies = async () => {
+      console.log("--- فحص شامل للكوكيز والسيشن ---");
+
+      // 1. فحص المتصفح (Client-side)
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log("1. السيشن في المتصفح:", session ? "✅ موجودة" : "❌ مفقودة");
+
+      // 2. فحص الكوكيز الخام
+      const allCookies = document.cookie;
+      console.log("2. كوكيز المتصفح الحالية:", allCookies || "empty");
+
+      // 3. فحص كود التحقق (PKCE Verifier) - ده أهم واحد للـ Google Login
+      const hasVerifier = allCookies.includes('sb-') && allCookies.includes('-auth-token-code-verifier');
+      console.log("3. هل كود Verifier موجود؟:", hasVerifier ? "✅ نعم (جيد)" : "❌ لا (سبب فشل جوجل)");
+
+      // 4. فحص الـ Local Storage
+      const localStorageData = window.localStorage.getItem(`sb-${process.env.NEXT_PUBLIC_SUPABASE_URL?.split('.')[0].split('//')[1]}-auth-token`);
+      console.log("4. هل توجد بيانات في LocalStorage؟:", localStorageData ? "✅ نعم" : "❌ لا");
+    };
+    testCookies()
     return () => authListener.subscription.unsubscribe();
   }, []);
 

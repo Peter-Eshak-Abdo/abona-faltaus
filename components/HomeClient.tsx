@@ -38,18 +38,7 @@ export default function HomeClient() {
   const [showMenu, setShowMenu] = useState(false);
   const [logoPos, setLogoPos] = useState("center");
   const eagleControls = useAnimation();
-  const [user, setUser] = useState<any>(null)
-
-  useEffect(() => {
-    // نضع الكود جوه useEffect عشان نضمن إن المتصفح جاهز
-    const getUser = async () => {
-      if (!supabase) return; // حماية إضافية
-      const { data } = await supabase.auth.getUser()
-      setUser(data.user)
-    }
-    getUser()
-  }, [])
-
+  
   useEffect(() => {
     // أول ما يسجل دخول، بنمسح الـ Hash من الرابط عشان ما يهنقش
     if (window.location.hash) {
@@ -82,7 +71,6 @@ export default function HomeClient() {
     <motion.div className="min-h-screen relative overflow-hidden">
       <LogoHeader />
       <UserHeader />
-      {user ? `أهلاً يا ${user.email}` : "سجل دخولك"}
       {/* اللوجو الأساسي */}
       <motion.div
         className="z-20 rounded-full border-blue-300 shadow-xl absolute bg-transparent"

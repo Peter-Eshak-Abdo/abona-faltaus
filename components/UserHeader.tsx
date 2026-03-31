@@ -18,12 +18,12 @@ export default function UserHeader() {
         // جلب الاسم المخصص من جدول profiles
         const { data } = await supabase
           .from("profiles")
-          .select("name")
+          .select("full_name")
           .eq("id", user.id)
           .single();
 
-        if (data?.name) {
-          setCustomDisplayName(data.name);
+        if (data?.full_name) {
+          setCustomDisplayName(data.full_name);
         }
       }
     };
