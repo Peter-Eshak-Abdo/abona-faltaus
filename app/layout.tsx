@@ -6,7 +6,6 @@ import { LoadingProvider as GlobalLoadingProvider } from "./loading-context";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ClientLayoutAnimation from "@/components/ClientLayoutAnimation";
 import { Toaster } from "@/components/ui/sonner";
-import LazyLoadOnInteraction from "@/components/LazyLoadOnInteraction";
 import FixProcess from "@/components/FixProcess";
 import OfflineNotification from "@/components/OfflineNotification";
 import PwaManager from "@/components/PwaManager";
@@ -22,7 +21,7 @@ const vazirmatn = Vazirmatn({
   variable: '--font-vazirmatn'
 });
 
-const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://abona-faltaus.vercel.app";
+const baseUrl = process.env.VERCEL_URL!;
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -132,7 +131,6 @@ export default function RootLayout({
           <OfflineNotification />
           <LoadingProvider>
             <PwaManager/>
-            {/* {process.env.NODE_ENV === "production" && <LazyLoadOnInteraction src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" id="onesignal-sdk" />} */}
             <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
           </LoadingProvider>
         </GlobalLoadingProvider>

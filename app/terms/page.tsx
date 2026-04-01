@@ -1,4 +1,4 @@
-const CONTACT_EMAIL = "petereshak11@gmail.com";
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_GMAIL;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 export default function TermsOfServicePage() {

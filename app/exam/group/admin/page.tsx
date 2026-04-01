@@ -165,7 +165,7 @@ export default function ExamSettings() {
   };
 
   const selectedMax = calculateMaxForSelected();
-  const joinUrl = `${typeof window !== "undefined" ? window.location.origin : "https://abona-faltaus.vercel.app"}/exam/group/join?room=${roomId}`;
+  const joinUrl = `${typeof window !== "undefined" ? window.location.origin : process.env.VERCEL_URL}/exam/group/join?room=${roomId}`;
 
   return (
     <Card className="container py-5">

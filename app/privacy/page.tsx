@@ -1,5 +1,6 @@
-const CONTACT_EMAIL = "petereshak11@gmail.com";
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_GMAIL;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
+const REPO = process.env.NEXT_PUBLIC_GITHUB_REPO;
 
 export default function PrivacyPolicyPage() {
   return (
@@ -90,7 +91,7 @@ export default function PrivacyPolicyPage() {
             <ul className="list-disc mr-1 mt-1">
               <li><strong>البريد الإلكتروني:</strong><a href={"mailto:" + CONTACT_EMAIL} className="underline">{CONTACT_EMAIL}</a></li>
               <li className="mt-1"><strong>الموقع الرسمي:</strong> <a href={SITE_URL} className="underline">{SITE_URL}</a></li>
-              <li className="mt-1">لو عايز تشوف الكود المصدري أو تساهم: <a href="https://github.com/Peter-Eshak-Abdo/abona-faltaus" className="underline">مستودع GitHub</a></li>
+              <li className="mt-1">لو عايز تشوف الكود المصدري أو تساهم: <a href={REPO} className="underline">مستودع GitHub</a></li>
             </ul>
           </article>
         </section>

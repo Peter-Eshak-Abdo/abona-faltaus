@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://abona-faltaus.vercel.app";
+const baseUrl = process.env.VERCEL_URL!;
 
 export const metadata = {
   metadataBase: new URL(baseUrl),
