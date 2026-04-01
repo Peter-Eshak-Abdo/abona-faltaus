@@ -38,7 +38,10 @@ export default function HomeClient() {
   const [showMenu, setShowMenu] = useState(false);
   const [logoPos, setLogoPos] = useState("center");
   const eagleControls = useAnimation();
-  
+  const [lastUpdate, setLastUpdate] = useState("");
+  const [lastMessage, setLastMessage] = useState("");
+  const [commitCount, setCommitCount] = useState(0);
+
   useEffect(() => {
     // أول ما يسجل دخول، بنمسح الـ Hash من الرابط عشان ما يهنقش
     if (window.location.hash) {
@@ -50,6 +53,52 @@ export default function HomeClient() {
       });
       return () => authListener.subscription.unsubscribe();
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchLastCommit = async () => {
+      try {
+        const baseApiUrl = 'https://api.github.com/repos/Peter-Eshak-Abdo/abona-faltaus';
+
+        const commitRes = await fetch(`${baseApiUrl}/commits?sha=main&per_page=5`);
+        const commits = await commitRes.json();
+
+        if (commits && commits.length > 0) {
+          const myCommit = commits.find((c: { commit: { author: { name: string | string[]; }; }; }) => !c.commit.author.name.includes('dependabot')) || commits[0];
+
+          const commitObj = myCommit.commit;
+          const commitDate = new Date(commitObj.committer.date);
+
+          setLastUpdate(commitDate.toLocaleString('ar-EG', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          }));
+
+          setLastMessage(commitObj.message);
+        }
+        const countRes = await fetch(`${baseApiUrl}/commits?sha=main&per_page=1`);
+        const linkHeader = countRes.headers.get('link');
+
+        if (linkHeader) {
+          const match = linkHeader.match(/page=(\d+)>; rel="last"/);
+          if (match) {
+            setCommitCount(parseInt(match[1], 10));
+          }
+        } else {
+          const allCommits = await countRes.json();
+          setCommitCount(allCommits.length);
+        }
+
+      } catch (error) {
+        console.error("Error fetching commit:", error);
+      }
+    };
+
+    fetchLastCommit();
   }, []);
 
   useEffect(() => {
@@ -173,18 +222,21 @@ export default function HomeClient() {
             );
           })}
       </AnimatePresence>
-      {/* <button
-        onClick={() => router.push("/chat")}
-        className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg transition-all"
-        aria-label="افتح الشات"
-        title="افتح الشات"
-        type="button"
-        >
-        <svg width="32" height="32" fill="currentColor"><circle cx="16" cy="16" r="16" /></svg>
-      </button> */}
-      {/* </div> */}
-      <footer className="absolute text-start mt-1 text-sm opacity-80 bottom-1">
-        <p className="mt-2">آخر تحديث: {new Date().toLocaleDateString('ar-EG')}</p>
+
+      <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-1 ltr:left-1 rtl:right-1">
+        <div className="flex flex-col gap-0.5">
+          <p>
+            <strong>آخر تحديث:</strong> {lastUpdate || "..."}
+          </p>
+          {lastMessage && (
+            <p className="italic opacity-70 border-r-2 border-primary pr-1">
+              "{lastMessage}"
+            </p>
+          )}
+          <p className="text-[10px]">
+            إجمالي التحديثات: <span className="font-bold text-primary">{commitCount}</span>
+          </p>
+        </div>
       </footer>
     </motion.div>
   );

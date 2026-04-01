@@ -148,7 +148,7 @@ export default function SettingsView() {
           <Button
             onClick={saveSettings}
             disabled={saving}
-            size="lg"
+            size="normal"
             className="p-1 text-lg bg-white/30 hover:bg-white/40 border-white/40 text-black font-bold shadow-xl/30 inset-shadow-sm transition-all"
           >
             {saving ? "جاري الحفظ..." : "حفظ الإعدادات"}
