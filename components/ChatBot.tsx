@@ -161,7 +161,7 @@ export default function ChatBot() {
       <header className="h-14 flex items-center justify-between px-1 bg-amber-600 text-white shrink-0">
         <div className="flex items-center gap-1">
           <Sparkles className="h-5 w-5" />
-          <span className="font-bold">مساعد اجتماع النسور</span>
+          <span className="font-bold">مساعد ابونا فلتاؤس</span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setSheetOpen(true)} className="text-white">
           <PanelRight />
@@ -174,7 +174,7 @@ export default function ChatBot() {
             {messages.map((m) => (
               <div key={m.id} className={cn("flex", m.role === "user" ? "justify-start" : "justify-end")}>
                 <div className={cn("rounded-2xl p-1 max-w-[85%] text-sm shadow-sm", m.role === "user" ? "bg-amber-500 text-white rounded-tr-none" : "bg-gray-100 text-gray-800 rounded-tl-none")}>
-                  {m.role === "user" ? m.content : <div className="prose prose-sm break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />}
+                  {m.role === "user" ? m.content : <div className="prose prose-sm wrap-break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />}
                 </div>
               </div>
             ))}
