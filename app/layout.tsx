@@ -21,7 +21,9 @@ const vazirmatn = Vazirmatn({
   variable: '--font-vazirmatn'
 });
 
-const baseUrl = process.env.VERCEL_URL!;
+const baseUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : 'http://localhost:3000'; // عشان يشتغل معاك لوكال برضه
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -80,7 +82,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
-              "@context": baseUrl,
+              "@context": "https://schema.org",
               "@type": "ReligiousOrganization",
               "name": "أبونا فلتاؤس السرياني",
               "url": baseUrl,

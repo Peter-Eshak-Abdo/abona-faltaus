@@ -3,7 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Church, Users, BookOpen, Music, GraduationCap, Heart, Mail, Github, ExternalLink } from "lucide-react";
+import { Church, Users, BookOpen, Music, GraduationCap, Heart, Mail, ExternalLink } from "lucide-react";
+// import { Church, Users, BookOpen, Music, GraduationCap, Heart, Mail, Github, ExternalLink } from "lucide-react";
 import { APP_VERSION } from "@/lib/version";
 import router from "next/router";
 
@@ -170,7 +171,8 @@ export default function AboutPage() {
                 </Button>
                 <Button variant="outline" size="normal" className="bg-white/30 hover:bg-white/40 border-white/40 text-black font-semibold" asChild>
                   <a href={github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
-                    <Github className="w-4 h-4" />
+                    <ExternalLink className="w-4 h-4" />
+                    {/* <Github className="w-4 h-4" /> */}
                     GitHub
                     <ExternalLink className="w-3 h-3" />
                   </a>

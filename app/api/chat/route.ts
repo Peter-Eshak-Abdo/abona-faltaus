@@ -4,12 +4,14 @@ import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { promises as fs } from "fs";
 import path from "path";
+import { supabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
-let bibleCache: any = null;
-let quotesCache: any = null;
-let topicsCache: any = null;
+export const maxDuration = 30;
+// تعريفات الـ Cache عشان الـ TypeScript ميزعلش
+let quotesCache: { quote: string; author: string; topic: string }[] | null = null;
+let topicsCache: { topic: string; verse: string; ref: string }[] | null = null;
 
 function normalize(term: string): string {
   if (!term) return "";
@@ -21,147 +23,140 @@ function normalize(term: string): string {
     .toLowerCase();
 }
 
-async function loadData() {
-  if (bibleCache && quotesCache && topicsCache) return;
+async function loadStaticData() {
+  if (quotesCache && topicsCache) return;
   const publicPath = path.join(process.cwd(), "public");
-  const [bibleData, quotesData, topicsData] = await Promise.all([
-    fs.readFile(
-      path.join(publicPath, "bible-json", "bible_fixed.json"),
-      "utf8",
-    ),
-    fs.readFile(path.join(publicPath, "quotes.json"), "utf8"),
-    fs.readFile(path.join(publicPath, "verses_topics.json"), "utf8"),
-  ]);
-  bibleCache = JSON.parse(bibleData.replace(/^\uFEFF/, ""));
-  quotesCache = JSON.parse(quotesData.replace(/^\uFEFF/, ""));
-  topicsCache = JSON.parse(topicsData.replace(/^\uFEFF/, ""));
+  try {
+    const [quotesData, topicsData] = await Promise.all([
+      fs.readFile(path.join(publicPath, "quotes.json"), "utf8"),
+      fs.readFile(path.join(publicPath, "verses_topics.json"), "utf8"),
+    ]);
+    quotesCache = JSON.parse(quotesData.replace(/^\uFEFF/, ""));
+    topicsCache = JSON.parse(topicsData.replace(/^\uFEFF/, ""));
+  } catch (err) {
+    console.error("Error loading static data:", err);
+    quotesCache = [];
+    topicsCache = [];
+  }
 }
 
-function searchBible(searchTerm: string): { text: string; ref: string }[] {
-  const found: { text: string; ref: string }[] = [];
-  if (!bibleCache) return found;
-  for (const book of bibleCache) {
-    if (found.length >= 4) break;
-    (book.chapters as any[][]).forEach((chapter, cIdx) => {
-      for (const vObj of chapter) {
-        if (
-          found.length < 4 &&
-          normalize(vObj.text_plain).includes(searchTerm)
-        ) {
-          found.push({
-            text: vObj.text_vocalized,
-            ref: `${book.name} ${cIdx + 1}:${vObj.verse}`,
-          });
-        }
-      }
-    });
+async function searchBible(searchTerm: string) {
+  const { data, error } = await supabase
+    .from("bible_verses")
+    .select("vocalized_text, book_name, chapter_number, verse_number")
+    .ilike("plain_text", `%${searchTerm}%`)
+    .limit(5);
+
+  if (error || !data) {
+    console.error("Search Error:", error);
+    return [];
   }
-  return found;
+
+  return data.map((v: { vocalized_text: any; book_name: any; chapter_number: any; verse_number: any; }) => ({
+    text: v.vocalized_text,
+    ref: `${v.book_name} ${v.chapter_number}:${v.verse_number}`,
+  }));
 }
 
 async function buildSystemPrompt(searchTerm: string): Promise<string> {
-  const foundVerses = searchBible(searchTerm);
+  const foundVerses = await searchBible(searchTerm);
   const topicResults = (topicsCache ?? [])
-    .filter((v: any) => normalize(v.topic).includes(searchTerm))
+    .filter((v) => normalize(v.topic).includes(searchTerm))
     .slice(0, 5)
-    .map((v: any) => ({ text: v.verse, ref: v.ref }));
+    .map((v) => ({ text: v.verse, ref: v.ref }));
 
   const finalVerses = [...foundVerses, ...topicResults].slice(0, 7);
   const finalQuotes = (quotesCache ?? [])
     .filter(
-      (q: any) =>
+      (q) =>
         normalize(q.quote).includes(searchTerm) ||
-        normalize(q.topic).includes(searchTerm),
+        normalize(q.topic).includes(searchTerm)
     )
     .slice(0, 5);
 
-  return `أنت مساعد مسيحي أرثوذكسي روحاني. أجب بعمق وتفصيل كامل على السؤال دون اختصار.
-المراجع المتاحة:
-الآيات: ${finalVerses.map((v) => `${v.text} (${v.ref})`).join(" | ")}
-الأقوال: ${finalQuotes.map((q: { quote: any; author: any }) => `"${q.quote}" - ${q.author}`).join(" | ")}
-استخدم HTML لتنسيق الرد: فقرات <p>، عناوين <h3>، خط عريض <strong>.
-اكتب الآيات الكتابية دائماً داخل: <span dir="rtl" style="direction:rtl;unicode-bidi:embed;">نص الآية</span>`;
-}
+  return `أنت مساعد مسيحي أرثوذكسي روحاني يسمى "مساعد اجتماع النسور".
+أجب بعمق وتفصيل كامل على الأسئلة الروحية والطقسية.
 
-// ✅ استخراج النص من UIMessage (ai@6 format)
-function extractLastUserText(messages: any[]): string {
-  const last = messages[messages.length - 1];
-  if (!last) return "";
-  if (Array.isArray(last.parts)) {
-    return last.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("");
-  }
-  return last.content ?? "";
+**قواعد السلوك:**
+1. ابدأ الرد فوراً بالدخول في صلب الموضوع بأسلوب روحي.
+2. لا تذكر معلومات المطور (Peter Eshak) أو روابط الاجتماع إلا إذا سألك المستخدم صراحة عن هويتك أو من طورك.
+3. معلوماتك للرجوع إليها عند الحاجة فقط:
+   - المطور: Peter Eshak Abdo
+   - التابع لـ: اجتماع النسور - كنيسة العذراء بالاسماعيلية.
+4- المراجع الروحية لتفسير الكتاب المقدس او شرح للعقيدة اوللطقس او تاريخ الكنيسة من موقع (https://st-takla.org)
+
+المراجع المتاحة حالياً:
+الآيات: ${finalVerses.map((v) => `${v.text} (${v.ref})`).join(" | ")}
+الأقوال: ${finalQuotes.map((q) => `"${q.quote}" - ${q.author}`).join(" | ")}
+
+تنسيق الرد:
+- استخدم HTML: فقرات <p>، عناوين <h3>، خط عريض <strong>.
+- الآيات الكتابية داخل: <span dir="rtl" style="direction:rtl;unicode-bidi:embed;">نص الآية</span>`;
 }
 
 export async function POST(request: Request) {
   try {
     const { messages } = await request.json();
+    await loadStaticData();
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return NextResponse.json({ error: "رسائل غير صالحة" }, { status: 400 });
-    }
-
-    await loadData();
-    // const systemPrompt = await buildSystemPrompt(normalize(extractLastUserText(messages)));
+    // 1. استخراج نص آخر رسالة
     const lastMsg = messages[messages.length - 1];
-    const lastUserMessage = lastMsg?.parts
-      ? lastMsg.parts
-          .filter((p: any) => p.type === "text")
-          .map((p: any) => p.text)
-          .join("")
-      : (lastMsg?.content ?? "");
+    const lastUserMessage = Array.isArray(lastMsg.parts)
+      ? lastMsg.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("")
+      : (lastMsg.content ?? "");
 
     const systemPrompt = await buildSystemPrompt(normalize(lastUserMessage));
+
+    // 2. تجهيز الرسائل بالشكل المطلوب للـ SDK Core
     const coreMessages = messages.map((m: any) => ({
-      role: m.role as "user" | "assistant",
+      role: m.role as "user" | "assistant" | "system",
       content: Array.isArray(m.parts)
-        ? m.parts
-            .filter((p: any) => p.type === "text")
-            .map((p: any) => p.text)
-            .join("")
+        ? m.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("")
         : (m.content ?? ""),
     }));
-    // const modelMessages = await convertToModelMessages(messages);
-    const allMessages = [
-      { role: "system" as const, content: systemPrompt },
-      ...coreMessages,
-    ];
 
     const streamConfig = {
-      messages: allMessages,
+      messages: [
+        { role: "system" as const, content: systemPrompt },
+        ...coreMessages,
+      ],
       maxOutputTokens: 4096,
     };
 
+    // --- نظام التعاقب (Model Waterfall) ---
     try {
-      // const geminiResult = streamText({
-      //   model: google("gemini-2.0-flash"),
-      //   ...streamConfig,
-      // });
-
-      // await geminiResult.consumeStream();
-
+      // المحاولة الأولى: Gemini 3 Flash
       const result = streamText({
         model: google("gemini-3-flash-preview"),
         ...streamConfig,
       });
-      return result.toUIMessageStreamResponse();
-    } catch (geminiErr: any) {
-      console.error(
-        "Gemini failed, falling back to OpenAI:",
-        geminiErr?.message ?? geminiErr,
-      );
+      // ✅ السر هنا: لازم toDataStreamResponse عشان useChat في الكلاينت تفهمها
+      return result.toTextStreamResponse();
 
-      // ✅ Fallback: GPT-4o-mini
-      const fallback = streamText({
-        model: openai("gpt-4o-mini"),
-        ...streamConfig,
-      }).toUIMessageStreamResponse();
+    } catch (geminiErr) {
+      console.warn("Gemini 3 failed, trying Gemini 1.5 Flash...", geminiErr);
+
+      try {
+        // المحاولة الثانية: Gemini 1.5 Flash
+        const result = streamText({
+          model: google("gemini-1.5-flash"),
+          ...streamConfig,
+        });
+        return result.toTextStreamResponse();
+
+      } catch (gemini15Err) {
+        console.warn("All Gemini models failed, falling back to OpenAI...", gemini15Err);
+
+        // المحاولة الثالثة: GPT-4o-mini
+        const result = streamText({
+          model: openai("gpt-4o-mini"),
+          ...streamConfig,
+        });
+        return result.toTextStreamResponse();
+      }
     }
-  } catch (error: any) {
-    console.error("Chat API error:", error);
-    return NextResponse.json(
-      { error: "حدث خطأ في السيرفر، يرجى المحاولة لاحقاً" },
-      { status: 500 },
-    );
+  } catch (error) {
+    console.error("API Error:", error);
+    return NextResponse.json({ error: "خطأ في السيرفر" }, { status: 500 });
   }
 }

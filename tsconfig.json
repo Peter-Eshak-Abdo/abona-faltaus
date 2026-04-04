@@ -43,7 +43,7 @@
     "app/exam/group/admin/exams/page.jsx",
     "app/exam/group/admin/page.tsx",
     ".next/dev/types/**/*.ts"
-, "scripts/test-kholagi.js"  ],
+, "scripts/test-kholagi.js", "upload.mjs"  ],
   "exclude": [
     "node_modules",
     "functions"

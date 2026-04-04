@@ -1,225 +1,208 @@
 "use client";
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
-import { useRef, useEffect, useState, useCallback } from "react";
+
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import DOMPurify from "dompurify";
-import { Send, Loader2, Bot, User, Sparkles, Plus, MessageSquare, Trash2, X, PanelRight } from "lucide-react";
+import { Send, Loader2, Sparkles, Plus, Trash2, PanelRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-interface Conversation { id: string; lastMessage: string; updatedAt: any; }
-
-// ── extract text ──────────────────────────────────────────────────────────────
-function extractText(m: any): string {
-  if (Array.isArray(m.parts)) return m.parts.filter((p: any) => p.type === "text").map((p: any) => p.text ?? "").join("");
-  if (typeof m.content === "string") return m.content;
-  return "";
-}
-
-
-// ── Sidebar ───────────────────────────────────────────────────────────────────
-function ConvSidebar({ open, onOpenChange, conversations, activeId, onSelect, onNew, onDelete }: any) {
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-72 p-0 flex flex-col">
-        <SheetHeader className="p-1 border-b flex flex-row justify-between items-center">
-          <SheetTitle className="text-sm">المحادثات</SheetTitle>
-          <Button variant="ghost" size="sm" onClick={onNew} className="text-amber-600"><Plus size={8} /> جديدة</Button>
-        </SheetHeader>
-        <ScrollArea className="flex-1">
-          {conversations.map((c: any) => (
-            <div key={c.id} onClick={() => onSelect(c.id)} className={cn("p-1 cursor-pointer hover:bg-gray-100 flex justify-between", activeId === c.id && "bg-amber-50")}>
-              <span className="text-xs truncate">{c.last_message || "محادثة جديدة"}</span>
-              <Trash2 size={6} className="text-red-400" onClick={(e) => { e.stopPropagation(); onDelete(c.id); }} />
-            </div>
-          ))}
-        </ScrollArea>
-      </SheetContent>
-    </Sheet>
-  );
-}
-
-// ── Main ──────────────────────────────────────────────────────────────────────
 export default function ChatBot() {
   const endRef = useRef<HTMLDivElement>(null);
-  const taRef = useRef<HTMLTextAreaElement>(null);
-  const [input, setInput] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [convId, setConvId] = useState<string | null>(null);
-  const [convs, setConvs] = useState<Conversation[]>([]);
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [convs, setConvs] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
 
-  const { messages, sendMessage, setMessages, status, error } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
-  });
-  const isLoading = status === "streaming" || status === "submitted";
+  // إدارة الرسائل والـ Loading يدوياً لضمان الاستقرار
+  const [messages, setMessages] = useState<any[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // ── Auth & Real-time setup ──────────────────────────────────────────────
-  useEffect(() => {
-    // الحصول على المستخدم الحالي
-    supabase.auth.getUser().then(({ data }: { data: { user: any } }) => setUser(data.user));
-
-    // الاشتراك في تغييرات المحادثات (Real-time)
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'conversations' },
-        () => fetchConversations()
-      )
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
+  // جلب المحادثات
+  const fetchConversations = useCallback(async (userId: string) => {
+    const { data } = await supabase
+      .from("conversations")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    if (data) setConvs(data);
   }, []);
 
-  const fetchConversations = async () => {
-    const { data } = await supabase
-      .from('conversations')
-      .select('*')
-      .order('updated_at', { ascending: false });
-    if (data) setConvs(data as any);
-  };
+  useEffect(() => {
+    const initAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser(session.user);
+        fetchConversations(session.user.id);
+      }
+    };
+    initAuth();
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchConversations(session.user.id);
+    });
+    return () => authListener.subscription.unsubscribe();
+  }, [fetchConversations]);
 
-  useEffect(() => { if (user) fetchConversations(); }, [user]);
-
-  // ── Helpers ─────────────────────────────────────────────────────────────
-  const handleNew = useCallback(() => {
-    if (messages.length === 0) { setSheetOpen(false); return; }
-    setMessages([]);
-    setInput("");
-    setSavedIds(new Set());
-    setConvId(null);
-    setSheetOpen(false);
-  }, [messages, setMessages]);
-
-  const handleSelect = useCallback(async (id: string) => {
-    if (!user || id === convId) { setSheetOpen(false); return; }
-    setSheetOpen(false);
+  const handleSelect = async (id: string) => {
     setConvId(id);
-    setMessages([]);
-
+    setSheetOpen(false);
+    setIsLoading(true);
     const { data: msgs } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('conversation_id', id)
-      .order('created_at', { ascending: true });
+      .from("messages")
+      .select("*")
+      .eq("conversation_id", id)
+      .order("created_at", { ascending: true });
 
     if (msgs) {
-      setMessages(msgs.map((m: { id: any; role: any; content: any; }) => ({
-        id: m.id,
-        role: m.role,
-        content: m.content,
-      })) as any);
-      setSavedIds(new Set(msgs.map((m: { id: any; }) => m.id)));
+      setMessages(msgs.map((m: any) => ({ id: m.id, role: m.role, content: m.content })));
     }
-  }, [user, convId, setMessages]);
+    setIsLoading(false);
+  };
 
-  const handleDelete = useCallback(async (id: string) => {
-    await supabase.from('conversations').delete().eq('id', id);
-    if (id === convId) handleNew();
-    fetchConversations();
-  }, [convId, handleNew]);
-
-  const handleSend = useCallback(() => {
+  // --- دالة الإرسال اليدوية "المضادة للرصاص" ---
+  const onFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const text = input.trim();
-    if (!text || isLoading) return;
+    if (!text || isLoading || !user) return;
+
+    setIsLoading(true);
+    const userMsg = { id: Date.now().toString(), role: "user", content: text };
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
-    sendMessage({ text });
-  }, [input, isLoading, sendMessage]);
 
-  // ── Auto Save to Supabase ──────────────────────────────────────────────
-  useEffect(() => {
-    if (!user || status !== "ready" || messages.length === 0) return;
-    const last = messages[messages.length - 1];
-    if (!last?.id || savedIds.has(last.id)) return;
-
-    const text = extractText(last);
-    if (!text) return;
-
-    const doSave = async () => {
+    try {
       let currentCid = convId;
 
-      // 1. إنشاء محادثة لو مش موجودة
+      // 1. إنشاء محادثة في Supabase لو جديدة
       if (!currentCid) {
         const { data: newConv } = await supabase
-          .from('conversations')
-          .insert([{ user_id: user.id, title: text.slice(0, 30) }])
-          .select()
-          .single();
+          .from("conversations")
+          .insert([{ user_id: user.id, title: text.slice(0, 40) }])
+          .select().single();
         if (newConv) {
           currentCid = newConv.id;
           setConvId(currentCid);
+          fetchConversations(user.id);
         }
       }
 
-      // 2. حفظ الرسالة
-      await supabase.from('messages').insert([
-        { conversation_id: currentCid, role: last.role, content: text }
-      ]);
+      // 2. حفظ رسالة المستخدم
+      await supabase.from("messages").insert([{ conversation_id: currentCid, role: "user", content: text }]);
 
-      // 3. تحديث وقت المحادثة
-      await supabase
-        .from('conversations')
-        .update({ updated_at: new Date().toISOString(), last_message: text.slice(0, 80) })
-        .eq('id', currentCid);
+      // 3. نداء الـ API يدوياً (Streaming)
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({ messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })) }),
+      });
 
-      setSavedIds((p) => new Set(p).add(last.id));
-    };
+      if (!response.ok) throw new Error("API Error");
 
-    doSave();
-  }, [messages, status, user]);
+      // 4. قراءة الـ Stream وتحديث الـ UI لحظياً
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let aiContent = "";
 
-  // ── Auto Scroll & UI effects ──
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isLoading]);
+      const aiMsgId = (Date.now() + 1).toString();
+      setMessages((prev) => [...prev, { id: aiMsgId, role: "assistant", content: "" }]);
+
+      while (true) {
+        const { done, value } = await (reader?.read() as any);
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        // تنظيف الداتا من فورمات Vercel AI (لو الرد بيبدأ بـ 0: أو " )
+        const cleanChunk = chunk.replace(/^\d+:"/g, '').replace(/"$/g, '').replace(/\\n/g, '\n');
+        aiContent += cleanChunk;
+
+        setMessages((prev) =>
+          prev.map(m => m.id === aiMsgId ? { ...m, content: aiContent } : m)
+        );
+      }
+
+      // 5. حفظ رد الـ AI النهائي في Supabase
+      await supabase.from("messages").insert([{ conversation_id: currentCid, role: "assistant", content: aiContent }]);
+
+    } catch (err) {
+      console.error("Critical Chat Error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
-    <div className="flex flex-col h-full bg-linear-to-b from-amber-50/30 to-white" style={{ fontFamily: "Tajawal, sans-serif" }}>
-
-      <ConvSidebar
-        open={sheetOpen} onOpenChange={setSheetOpen}
-        conversations={convs} activeId={convId}
-        onSelect={handleSelect} onNew={handleNew} onDelete={handleDelete}
-      />
-
-      {/* Header */}
-      <div className="flex items-center gap-1 p-1 border-b border-amber-100 bg-white/90 backdrop-blur-sm">
-        <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center text-amber-600"><Sparkles size={7} /></div>
-        <div className="flex-1"><p className="text-sm font-semibold">المساعد الروحي</p></div>
-        <div className="flex gap-1">
-          <Button variant="ghost" size="icon" onClick={() => setSheetOpen(true)} className="h-7 w-7"><PanelRight size={8} /></Button>
-        </div>
-      </div>
-
-      {/* Messages Area */}
-      <ScrollArea className="flex-1 p-1">
-        <div className="space-y-1">
-          {messages.map((m) => (
-            <div key={m.id} className={cn("flex gap-1", m.role === "user" ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("max-w-[80%] p-1 rounded-2xl text-sm", m.role === "user" ? "bg-blue-600 text-white" : "bg-white border")}>
-                {m.role === "user" ? extractText(m) : <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(extractText(m)) }} />}
+    <div className="flex flex-col h-screen bg-white" dir="rtl">
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent side="right" className="w-80 p-0 flex flex-col">
+          <SheetHeader className="p-4 border-b bg-amber-50">
+            <SheetTitle className="text-right text-amber-900 font-bold">المحادثات السابقة</SheetTitle>
+            <Button onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }} variant="outline" className="w-full mt-2 border-amber-200 text-amber-800">
+              <Plus size={16} className="ml-2" /> محادثة جديدة
+            </Button>
+          </SheetHeader>
+          <ScrollArea className="flex-1">
+            {convs.map((c) => (
+              <div key={c.id} onClick={() => handleSelect(c.id)} className={cn("p-4 border-b cursor-pointer text-right text-sm hover:bg-gray-50 transition-colors", convId === c.id && "bg-amber-100")}>
+                {c.title}
               </div>
-            </div>
-          ))}
-          {isLoading && <Loader2 className="animate-spin text-amber-500 mx-auto" size={8} />}
-          <div ref={endRef} />
-        </div>
-      </ScrollArea>
+            ))}
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
 
-      {/* Input */}
-      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-1 border-t bg-white flex gap-1">
-        <Textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="اسأل سؤالاً..."
-          className="flex-1 text-right"
-          dir="rtl"
-        />
-        <Button type="submit" disabled={isLoading} className="bg-amber-500"><Send size={8} /></Button>
-      </form>
+      <header className="h-14 flex items-center justify-between px-4 bg-amber-600 text-white shrink-0">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5" />
+          <span className="font-bold">مساعد اجتماع النسور</span>
+        </div>
+        <Button variant="ghost" size="icon" onClick={() => setSheetOpen(true)} className="text-white">
+          <PanelRight />
+        </Button>
+      </header>
+
+      <main className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="max-w-3xl mx-auto p-4 space-y-6">
+            {messages.map((m) => (
+              <div key={m.id} className={cn("flex", m.role === "user" ? "justify-start" : "justify-end")}>
+                <div className={cn("rounded-2xl px-4 py-2.5 max-w-[85%] text-sm shadow-sm", m.role === "user" ? "bg-amber-500 text-white rounded-tr-none" : "bg-gray-100 text-gray-800 rounded-tl-none")}>
+                  {m.role === "user" ? m.content : <div className="prose prose-sm break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />}
+                </div>
+              </div>
+            ))}
+            {isLoading && messages[messages.length - 1]?.role === 'user' && (
+              <div className="flex justify-end p-2">
+                <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
+              </div>
+            )}
+            <div ref={endRef} />
+          </div>
+        </ScrollArea>
+      </main>
+
+      <footer className="p-4 border-t bg-white">
+        <form onSubmit={onFormSubmit} className="max-w-3xl mx-auto flex gap-2 items-end">
+          <Textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={user ? "اكتب سؤالك هنا..." : "يرجى تسجيل الدخول"}
+            className="flex-1 min-h-[50px] max-h-[150px] border-amber-100 focus-visible:ring-amber-500 resize-none"
+            disabled={!user || isLoading}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onFormSubmit(e); } }}
+          />
+          <Button type="submit" size="icon" className="h-[50px] w-[50px] bg-amber-600 hover:bg-amber-700 shrink-0" disabled={!input.trim() || isLoading || !user}>
+            <Send className="h-5 w-5" />
+          </Button>
+        </form>
+      </footer>
     </div>
   );
 }
