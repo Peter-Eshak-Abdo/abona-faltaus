@@ -7,9 +7,8 @@ import path from "path";
 import { supabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
-
 export const maxDuration = 30;
-// تعريفات الـ Cache عشان الـ TypeScript ميزعلش
+
 let quotesCache: { quote: string; author: string; topic: string }[] | null = null;
 let topicsCache: { topic: string; verse: string; ref: string }[] | null = null;
 
@@ -123,14 +122,12 @@ export async function POST(request: Request) {
       maxOutputTokens: 4096,
     };
 
-    // --- نظام التعاقب (Model Waterfall) ---
     try {
       // المحاولة الأولى: Gemini 3 Flash
       const result = streamText({
-        model: google("gemini-3-flash-preview"),
+        model: google("gemini-3-flash-preview") as any,
         ...streamConfig,
       });
-      // ✅ السر هنا: لازم toDataStreamResponse عشان useChat في الكلاينت تفهمها
       return result.toTextStreamResponse();
 
     } catch (geminiErr) {
@@ -139,7 +136,7 @@ export async function POST(request: Request) {
       try {
         // المحاولة الثانية: Gemini 1.5 Flash
         const result = streamText({
-          model: google("gemini-1.5-flash"),
+          model: google("gemini-1.5-flash") as any,
           ...streamConfig,
         });
         return result.toTextStreamResponse();
@@ -149,7 +146,7 @@ export async function POST(request: Request) {
 
         // المحاولة الثالثة: GPT-4o-mini
         const result = streamText({
-          model: openai("gpt-4o-mini"),
+          model: openai("gpt-4o-mini") as any,
           ...streamConfig,
         });
         return result.toTextStreamResponse();
