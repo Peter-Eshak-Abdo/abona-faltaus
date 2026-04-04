@@ -142,15 +142,15 @@ export default function ChatBot() {
     <div className="flex flex-col h-screen bg-white" dir="rtl">
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="right" className="w-80 p-0 flex flex-col">
-          <SheetHeader className="p-4 border-b bg-amber-50">
+          <SheetHeader className="p-1 border-b bg-amber-50">
             <SheetTitle className="text-right text-amber-900 font-bold">المحادثات السابقة</SheetTitle>
-            <Button onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }} variant="outline" className="w-full mt-2 border-amber-200 text-amber-800">
-              <Plus size={16} className="ml-2" /> محادثة جديدة
+            <Button onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }} variant="outline" className="w-full mt-1 border-amber-200 text-amber-800">
+              <Plus size={8} className="ml-1" /> محادثة جديدة
             </Button>
           </SheetHeader>
           <ScrollArea className="flex-1">
             {convs.map((c) => (
-              <div key={c.id} onClick={() => handleSelect(c.id)} className={cn("p-4 border-b cursor-pointer text-right text-sm hover:bg-gray-50 transition-colors", convId === c.id && "bg-amber-100")}>
+              <div key={c.id} onClick={() => handleSelect(c.id)} className={cn("p-1 border-b cursor-pointer text-right text-sm hover:bg-gray-50 transition-colors", convId === c.id && "bg-amber-100")}>
                 {c.title}
               </div>
             ))}
@@ -158,8 +158,8 @@ export default function ChatBot() {
         </SheetContent>
       </Sheet>
 
-      <header className="h-14 flex items-center justify-between px-4 bg-amber-600 text-white shrink-0">
-        <div className="flex items-center gap-2">
+      <header className="h-14 flex items-center justify-between px-1 bg-amber-600 text-white shrink-0">
+        <div className="flex items-center gap-1">
           <Sparkles className="h-5 w-5" />
           <span className="font-bold">مساعد اجتماع النسور</span>
         </div>
@@ -170,16 +170,16 @@ export default function ChatBot() {
 
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
-          <div className="max-w-3xl mx-auto p-4 space-y-6">
+          <div className="max-w-3xl mx-auto p-1 space-y-1">
             {messages.map((m) => (
               <div key={m.id} className={cn("flex", m.role === "user" ? "justify-start" : "justify-end")}>
-                <div className={cn("rounded-2xl px-4 py-2.5 max-w-[85%] text-sm shadow-sm", m.role === "user" ? "bg-amber-500 text-white rounded-tr-none" : "bg-gray-100 text-gray-800 rounded-tl-none")}>
+                <div className={cn("rounded-2xl p-1 max-w-[85%] text-sm shadow-sm", m.role === "user" ? "bg-amber-500 text-white rounded-tr-none" : "bg-gray-100 text-gray-800 rounded-tl-none")}>
                   {m.role === "user" ? m.content : <div className="prose prose-sm break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />}
                 </div>
               </div>
             ))}
             {isLoading && messages[messages.length - 1]?.role === 'user' && (
-              <div className="flex justify-end p-2">
+              <div className="flex justify-end p-1">
                 <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
               </div>
             )}
@@ -188,8 +188,8 @@ export default function ChatBot() {
         </ScrollArea>
       </main>
 
-      <footer className="p-4 border-t bg-white">
-        <form onSubmit={onFormSubmit} className="max-w-3xl mx-auto flex gap-2 items-end">
+      <footer className="p-1 border-t bg-white">
+        <form onSubmit={onFormSubmit} className="max-w-3xl mx-auto flex gap-1 items-end">
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}

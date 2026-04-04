@@ -124,7 +124,7 @@ export async function POST(request: Request) {
 
     try {
       // المحاولة الأولى: Gemini 3 Flash
-      const result = streamText({
+      const result: any = await streamText({
         model: google("gemini-3-flash-preview") as any,
         ...streamConfig,
       });
@@ -135,7 +135,7 @@ export async function POST(request: Request) {
 
       try {
         // المحاولة الثانية: Gemini 1.5 Flash
-        const result = streamText({
+        const result: any = await streamText({
           model: google("gemini-1.5-flash") as any,
           ...streamConfig,
         });
@@ -145,7 +145,7 @@ export async function POST(request: Request) {
         console.warn("All Gemini models failed, falling back to OpenAI...", gemini15Err);
 
         // المحاولة الثالثة: GPT-4o-mini
-        const result = streamText({
+        const result: any = await streamText({
           model: openai("gpt-4o-mini") as any,
           ...streamConfig,
         });
