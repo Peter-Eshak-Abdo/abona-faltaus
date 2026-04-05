@@ -6,6 +6,12 @@ import {
   newTestament,
   shortBookNames,
 } from "@/lib/books";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+let cachedBible: any = null;
 
 export type VerseObj = {
   verse: number | null;
@@ -39,8 +45,14 @@ function removeArabicDiacritics(str = "") {
 // build reverse maps from lib/books
 const BOOKNAME_TO_ABBREV: Record<string, string> = {};
 for (const k of Object.keys(bookNames)) {
-  BOOKNAME_TO_ABBREV[removeArabicDiacritics(bookNames[k as keyof typeof bookNames])] = k;
-  BOOKNAME_TO_ABBREV[removeArabicDiacritics(shortBookNames[k as keyof typeof shortBookNames] || "")] = k;
+  BOOKNAME_TO_ABBREV[
+    removeArabicDiacritics(bookNames[k as keyof typeof bookNames])
+  ] = k;
+  BOOKNAME_TO_ABBREV[
+    removeArabicDiacritics(
+      shortBookNames[k as keyof typeof shortBookNames] || "",
+    )
+  ] = k;
 }
 
 // extra manual map (some variants)
@@ -117,7 +129,6 @@ const EXTRA_NAME_MAP: Record<string, string> = {
   "رؤيا يوحنا": "re",
 };
 
-
 function lookupAbbrevByName(name?: string) {
   if (!name) return null;
   const key = removeArabicDiacritics(name);
@@ -154,8 +165,8 @@ function toVerseObj(input: any, idxInChapter?: number): VerseObj {
       typeof input.verse === "number"
         ? input.verse
         : typeof input.verse === "string" && /^\d+$/.test(input.verse)
-        ? parseInt(input.verse, 10)
-        : null;
+          ? parseInt(input.verse, 10)
+          : null;
     return {
       verse: verseNum ?? (idxInChapter != null ? idxInChapter + 1 : null),
       text_vocalized: text,
@@ -177,12 +188,12 @@ function normalizeChaptersField(chaptersField: any): VerseObj[][] {
   if (Array.isArray(chaptersField)) {
     if (chaptersField.length > 0 && Array.isArray(chaptersField[0])) {
       return chaptersField.map((ch: any[]) =>
-        (ch || []).map((v: any, i: number) => toVerseObj(v, i))
+        (ch || []).map((v: any, i: number) => toVerseObj(v, i)),
       );
     }
     // flat array of verses -> wrap
     const isFlat = chaptersField.every(
-      (el) => typeof el === "string" || typeof el === "object"
+      (el) => typeof el === "string" || typeof el === "object",
     );
     if (isFlat)
       return [chaptersField.map((v: any, i: number) => toVerseObj(v, i))];
@@ -213,95 +224,194 @@ function normalizeChaptersField(chaptersField: any): VerseObj[][] {
   }
 }
 
+// export async function loadBible(): Promise<BookObj[]> {
+//   let fileData: string | null = null;
+//   let usedPath: string | null = null;
+//   for (const p of CANDIDATE_PATHS) {
+//     try {
+//       const stat = await fs.stat(p).catch(() => null);
+//       if (stat && stat.isFile()) {
+//         fileData = await fs.readFile(p, "utf-8");
+//         usedPath = p;
+//         break;
+//       }
+//     } catch (e) {
+//       // ignore
+//     }
+//   }
+//   if (!fileData)
+//     throw new Error(
+//       "لا يوجد ملف JSON للكتاب المقدس في public/. تأكد من وجود bible_fixed.json"
+//     );
+
+//   const parsed = JSON.parse(fileData.replace(/^\uFEFF/, ""));
+//   let booksRaw: any[] = [];
+
+//   if (Array.isArray(parsed)) {
+//     booksRaw = parsed;
+//   } else if (typeof parsed === "object" && parsed !== null) {
+//     // if top-level keys are book names -> convert to array
+//     const firstKey = Object.keys(parsed)[0];
+//     const firstVal = (parsed as any)[firstKey];
+//     if (
+//       Array.isArray(firstVal) ||
+//       (typeof firstVal === "object" &&
+//         firstVal !== null &&
+//         (firstVal.chapters || Array.isArray(firstVal)))
+//     ) {
+//       // treat as map: key = book name
+//       booksRaw = Object.keys(parsed).map((k) => {
+//         const v = (parsed as any)[k];
+//         if (Array.isArray(v)) return { name: k, chapters: v };
+//         if (typeof v === "object" && v !== null)
+//           return { ...(v as object), name: v.name ?? k };
+//         return { name: k, chapters: [] };
+//       });
+//     } else if (parsed.chapters || parsed.abbrev || parsed.name) {
+//       // single book object
+//       booksRaw = [parsed];
+//     } else {
+//       // unknown object -> try values
+//       const vals = Object.values(parsed);
+//       if (Array.isArray(vals) && vals.length > 0) booksRaw = vals as any[];
+//     }
+//   }
+
+//   // if still empty -> throw
+//   if (!booksRaw.length) throw new Error("لم أجد كتبًا صالحة داخل JSON");
+
+//   // build canonical abbrev list for fallback assignment if needed
+//   const canonical = [...oldTestament, ...newTestament];
+
+//   const books: BookObj[] = booksRaw.map((raw: any, idx: number) => {
+//     const rawName = (raw.abbrev || raw.name || raw.title || raw.book || "")
+//       .toString()
+//       .trim();
+//     let abbrev = (raw.abbrev || "").toString().trim().toLowerCase();
+//     if (!abbrev) {
+//       // try lookup by name via bookNames
+//       const guessed = lookupAbbrevByName(rawName);
+//       if (guessed) abbrev = guessed;
+//     }
+//     // fallback: if still missing and we have canonical length and idx fits
+//     if (!abbrev) {
+//       if (canonical[idx]) abbrev = canonical[idx];
+//       else
+//         abbrev =
+//           rawName.replace(/\s+/g, "_").toLowerCase().slice(0, 6) ||
+//           `book${idx}`;
+//     }
+
+//     const chapters = normalizeChaptersField(
+//       raw.chapters ?? raw.verses ?? raw.content ?? raw.text ?? raw
+//     );
+//     return {
+//       abbrev: abbrev.toLowerCase(),
+//       name: raw.name ?? rawName ?? abbrev,
+//       chapters,
+//     };
+//   });
+
+//   // debug log small summary
+//   // console.log("loadBible used:", usedPath, "books:", books.length, "example:", books.slice(0,2).map(b => ({abbrev:b.abbrev, chapters:b.chapters.length})));
+//   return books;
+// }
+
 export async function loadBible(): Promise<BookObj[]> {
-  let fileData: string | null = null;
-  let usedPath: string | null = null;
-  for (const p of CANDIDATE_PATHS) {
-    try {
-      const stat = await fs.stat(p).catch(() => null);
-      if (stat && stat.isFile()) {
-        fileData = await fs.readFile(p, "utf-8");
-        usedPath = p;
-        break;
-      }
-    } catch (e) {
-      // ignore
-    }
-  }
-  if (!fileData)
-    throw new Error(
-      "لا يوجد ملف JSON للكتاب المقدس في public/. تأكد من وجود bible_fixed.json"
-    );
+  if (cachedBible) return cachedBible;
 
-  const parsed = JSON.parse(fileData.replace(/^\uFEFF/, ""));
-  let booksRaw: any[] = [];
+  console.log("جاري جلب بيانات الكتاب المقدس من Supabase...");
 
-  if (Array.isArray(parsed)) {
-    booksRaw = parsed;
-  } else if (typeof parsed === "object" && parsed !== null) {
-    // if top-level keys are book names -> convert to array
-    const firstKey = Object.keys(parsed)[0];
-    const firstVal = (parsed as any)[firstKey];
-    if (
-      Array.isArray(firstVal) ||
-      (typeof firstVal === "object" &&
-        firstVal !== null &&
-        (firstVal.chapters || Array.isArray(firstVal)))
-    ) {
-      // treat as map: key = book name
-      booksRaw = Object.keys(parsed).map((k) => {
-        const v = (parsed as any)[k];
-        if (Array.isArray(v)) return { name: k, chapters: v };
-        if (typeof v === "object" && v !== null)
-          return { ...(v as object), name: v.name ?? k };
-        return { name: k, chapters: [] };
-      });
-    } else if (parsed.chapters || parsed.abbrev || parsed.name) {
-      // single book object
-      booksRaw = [parsed];
-    } else {
-      // unknown object -> try values
-      const vals = Object.values(parsed);
-      if (Array.isArray(vals) && vals.length > 0) booksRaw = vals as any[];
-    }
-  }
-
-  // if still empty -> throw
-  if (!booksRaw.length) throw new Error("لم أجد كتبًا صالحة داخل JSON");
-
-  // build canonical abbrev list for fallback assignment if needed
+  // دمج العهد القديم والجديد لمعرفة الترتيب والاختصارات
   const canonical = [...oldTestament, ...newTestament];
 
-  const books: BookObj[] = booksRaw.map((raw: any, idx: number) => {
-    const rawName = (raw.abbrev || raw.name || raw.title || raw.book || "")
-      .toString()
-      .trim();
-    let abbrev = (raw.abbrev || "").toString().trim().toLowerCase();
-    if (!abbrev) {
-      // try lookup by name via bookNames
-      const guessed = lookupAbbrevByName(rawName);
-      if (guessed) abbrev = guessed;
-    }
-    // fallback: if still missing and we have canonical length and idx fits
-    if (!abbrev) {
-      if (canonical[idx]) abbrev = canonical[idx];
-      else
-        abbrev =
-          rawName.replace(/\s+/g, "_").toLowerCase().slice(0, 6) ||
-          `book${idx}`;
+  let allData: any[] = [];
+  let from = 0;
+  let step = 1000;
+  let fetchMore = true;
+
+  // سحب البيانات على دفعات لتجنب حد 1000 سطر الخاص بـ Supabase
+  while (fetchMore) {
+    const { data, error } = await supabase
+      .from("bible_verses")
+      .select("*")
+      .order("id", { ascending: true })
+      .range(from, from + step - 1);
+
+    if (error) {
+      console.error("خطأ في جلب البيانات من Supabase:", error);
+      break;
     }
 
-    const chapters = normalizeChaptersField(
-      raw.chapters ?? raw.verses ?? raw.content ?? raw.text ?? raw
+    if (data && data.length > 0) {
+      allData.push(...data);
+      from += step;
+      if (data.length < step) fetchMore = false;
+    } else {
+      fetchMore = false;
+    }
+  }
+
+  if (allData.length === 0) {
+    throw new Error(
+      "لم يتم العثور على بيانات في Supabase أو يوجد خطأ في الاتصال.",
     );
-    return {
-      abbrev: abbrev.toLowerCase(),
-      name: raw.name ?? rawName ?? abbrev,
-      chapters,
-    };
+  }
+
+  const booksMap = new Map<string, BookObj>();
+
+  allData.forEach((row) => {
+    // استخراج رقم السفر من الاسم (مثال: "01-Genesis" هنطلع منها رقم 1)
+    const match = row.book_name.match(/^(\d+)-/);
+    let bookIndex = -1;
+    if (match) {
+      // بنطرح 1 عشان الـ Arrays بتبدأ من صفر
+      bookIndex = parseInt(match[1], 10) - 1;
+    }
+
+    // نجيب الاختصار (مثال: gn) بناءً على الترتيب، ولو فشلنا نجربه بالاسم
+    let abbrev =
+      bookIndex >= 0 && canonical[bookIndex]
+        ? canonical[bookIndex]
+        : lookupAbbrevByName(row.book_name) || "unknown";
+
+    if (!booksMap.has(abbrev)) {
+      booksMap.set(abbrev, {
+        abbrev: abbrev,
+        // نجيب الاسم العربي من ملف books.js لو موجود
+        name: bookNames[abbrev as keyof typeof bookNames] || row.book_name,
+        chapters: [],
+      });
+    }
+
+    const book = booksMap.get(abbrev)!;
+    // الإصحاح الأول بيكون الاندكس بتاعه 0
+    const chapterIndex = row.chapter_number - 1;
+
+    if (!book.chapters[chapterIndex]) {
+      book.chapters[chapterIndex] = [];
+    }
+
+    // إضافة الآية
+    book.chapters[chapterIndex].push({
+      verse: row.verse_number,
+      text_vocalized: row.vocalized_text,
+      text_plain: row.plain_text,
+    });
   });
 
-  // debug log small summary
-  // console.log("loadBible used:", usedPath, "books:", books.length, "example:", books.slice(0,2).map(b => ({abbrev:b.abbrev, chapters:b.chapters.length})));
-  return books;
+  // ترتيب الآيات داخل كل إصحاح عشان نضمن إنها متلخبطتش
+  const booksArray = Array.from(booksMap.values());
+  booksArray.forEach((book) => {
+    for (let i = 0; i < book.chapters.length; i++) {
+      if (book.chapters[i]) {
+        book.chapters[i].sort((a, b) => (a.verse || 0) - (b.verse || 0));
+      } else {
+        book.chapters[i] = []; // لو في إصحاح فاضي (فجوة) بنحط مصفوفة فارغة
+      }
+    }
+  });
+
+  cachedBible = booksArray;
+  return cachedBible;
 }
