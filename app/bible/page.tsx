@@ -64,7 +64,7 @@ export default function BibleReaderPage() {
           setLoadingStatus("جاري تحميل الكتاب المقدس (لأول مرة)...");
 
           // استدعاء الدالة مع الـ Progress
-          data = await loadBible((p) => setLoadProgress(p));
+          const data = await loadBible((p) => setLoadProgress(p));
 
           // حفظ البيانات في الجهاز للأبد
           await localforage.setItem("offline_bible_data", data);
