@@ -16,6 +16,8 @@ export interface Quiz {
   questions: Question[];
   shuffle_questions: boolean;
   shuffle_choices: boolean;
+  deleted_at: string | null;
+  is_deleted: boolean;
 }
 
 export interface Group {

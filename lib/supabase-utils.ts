@@ -1,10 +1,9 @@
 import { createClient } from "@/lib/supabase/client";
-import type { Quiz, Group, QuizResponse, GameState } from "@/types/quiz";
+import type { Quiz, Group, GameState } from "@/types/quiz";
 
 const supabase = createClient();
 
 // --- Quiz Operations ---
-
 export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt">) => {
   const { data, error } = await supabase
     .from("quizzes")
@@ -16,6 +15,9 @@ export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt">) => {
         shuffle_questions: quiz.shuffle_questions || false,
         shuffle_choices: quiz.shuffle_choices || false,
         created_by: quiz.created_by,
+        created_at: new Date().toISOString(),
+        deleted_at: null,
+        is_deleted: false,
       },
     ])
     .select()
@@ -51,11 +53,22 @@ export const getQuiz = async (quizId: string): Promise<Quiz | null> => {
 };
 
 export const updateQuiz = async (quizId: string, updates: any) => {
-  const { error } = await supabase
+  // console.log("🛠️ جاري تحديث المسابقة رقم:", quizId, "بالبيانات:", updates);
+
+  const { data, error } = await supabase
     .from("quizzes")
     .update(updates)
-    .eq("id", quizId);
-  if (error) throw error;
+    .eq("id", quizId)
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    console.error("❌ خطأ أثناء التحديث في Supabase:", error);
+    throw error;
+  }
+
+  console.log("✅ تم التحديث بنجاح، البيانات الجديدة من السيرفر:", data);
+  return data as unknown as Quiz;
 };
 
 export const deleteQuiz = async (quizId: string) => {
@@ -89,16 +102,21 @@ export const getUserQuizzes = async (userId: string): Promise<Quiz[]> => {
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return (data || []).map((q: { created_at: string | number | Date; shuffle_questions: any; shuffle_choices: any; }) => ({
-    ...q,
-    createdAt: new Date(q.created_at),
-    shuffleQuestions: q.shuffle_questions,
-    shuffleChoices: q.shuffle_choices,
-  })) as unknown as Quiz[];
+  return (data || []).map(
+    (q: {
+      created_at: string | number | Date;
+      shuffle_questions: any;
+      shuffle_choices: any;
+    }) => ({
+      ...q,
+      createdAt: new Date(q.created_at),
+      shuffleQuestions: q.shuffle_questions,
+      shuffleChoices: q.shuffle_choices,
+    }),
+  ) as unknown as Quiz[];
 };
 
 // --- Group Operations ---
-
 export const joinQuizAsGroup = async (quizId: string, groupData: any) => {
   // التأكد من عدم تكرار اسم المجموعة
   const { data: existingGroup } = await supabase
@@ -144,7 +162,7 @@ export const getQuizGroups = (
     });
 
   // الاشتراك في التغييرات اللحظية
-  return supabase
+  const channel = supabase
     .channel(`groups-${quizId}`)
     .on(
       "postgres_changes",
@@ -167,28 +185,35 @@ export const getQuizGroups = (
       },
     )
     .subscribe();
+  // إرجاع دالة لإلغاء الاشتراك عند تدمير الكومبوننت
+  return () => {
+    supabase.removeChannel(channel);
+  };
 };
 
 // --- Game State Operations ---
-
 export const startQuiz = async (quizId: string) => {
-  // 1. تحديث حالة اللعبة
-  await supabase
-    .from("game_state")
-    .update({
+  const { error } = await supabase.from("game_state").upsert(
+    {
+      quiz_id: quizId,
       is_active: true,
       current_question_index: 0,
-      question_start_time: new Date().toISOString(),
       show_results: false,
-      show_question_only: true,
       started_at: new Date().toISOString(),
-    })
-    .eq("quiz_id", quizId);
+      // لو الأعمدة التالية سببت 400 احذفها مؤقتاً للتأكد
+      question_start_time: new Date().toISOString(),
+      show_question_only: true,
+    },
+    { onConflict: "quiz_id" } as any,
+  );
 
-  // 2. تصفير السكور للمجموعات
+  if (error) {
+    console.error("❌ خطأ في بدء المسابقة (400):", error.message);
+    throw error;
+  }
+
+  // تصفير المجموعات والردود
   await supabase.from("quiz_groups").update({ score: 0 }).eq("quiz_id", quizId);
-
-  // 3. مسح الإجابات القديمة
   await supabase.from("quiz_responses").delete().eq("quiz_id", quizId);
 };
 
@@ -225,14 +250,14 @@ export const subscribeToGameState = (
   // جلب الحالة الحالية أولاً
   supabase
     .from("game_state")
-    .select("*")
+    .select("quiz_id, is_active, current_question_index, show_results")
     .eq("quiz_id", quizId)
-    .single()
+    .maybeSingle()
     .then(({ data }: { data: any }) => {
       if (data) callback(data as unknown as GameState);
     });
 
-  return supabase
+  const channel = supabase
     .channel(`state-${quizId}`)
     .on(
       "postgres_changes",
@@ -242,15 +267,18 @@ export const subscribeToGameState = (
         table: "game_state",
         filter: `quiz_id=eq.${quizId}`,
       },
-      (payload: { new: unknown; }) => {
+      (payload: { new: unknown }) => {
         callback(payload.new as unknown as GameState);
       },
     )
     .subscribe();
+  // إرجاع دالة لإلغاء الاشتراك
+  return () => {
+    supabase.removeChannel(channel);
+  };
 };
 
 // --- Responses & Scoring ---
-
 export const submitResponse = async (
   quizId: string,
   groupId: string,
@@ -292,7 +320,6 @@ export const updateGroupScores = async (
 };
 
 // --- Trash Management ---
-
 export const getTrashedQuizzes = async (userId: string) => {
   const { data } = await supabase
     .from("trashed_quizzes")
@@ -300,12 +327,19 @@ export const getTrashedQuizzes = async (userId: string) => {
     .eq("created_by", userId)
     .order("deleted_at", { ascending: false });
 
-  return (data || []).map((t: { data: any; id: string; deleted_at: string | number | Date; expires_at: string | number | Date; }) => ({
-    ...(t.data as object),
-    trashId: t.id,
-    deletedAt: new Date(t.deleted_at),
-    expiresAt: new Date(t.expires_at),
-  }));
+  return (data || []).map(
+    (t: {
+      data: any;
+      id: string;
+      deleted_at: string | number | Date;
+      expires_at: string | number | Date;
+    }) => ({
+      ...(t.data as object),
+      trashId: t.id,
+      deletedAt: new Date(t.deleted_at),
+      expiresAt: new Date(t.expires_at),
+    }),
+  );
 };
 
 export const restoreQuiz = async (trashId: string) => {
@@ -319,3 +353,5 @@ export const restoreQuiz = async (trashId: string) => {
     await supabase.from("trashed_quizzes").delete().eq("id", trashId);
   }
 };
+export { createClient };
+

@@ -401,7 +401,7 @@ export default function BibleReaderPage() {
           className={`mx-auto flex items-center gap-1 p-1 rounded-full font-bold transition-all ${isPlaying ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}
         >
           {isPlaying ? <FaStop /> : <FaPlay />}
-          {isPlaying ? "استماع للاصحاح" : "ايقاف القراءة"}
+          {isPlaying ? "ايقاف القراءة" : "استماع للاصحاح"}
         </button>
         </div>
       </div>
