@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion"
 
 const KAHOOT_COLORS = [
   { color: "bg-red-500", icon: "▲", hover: "bg-red-600" },
+  { color: "bg-green-500", icon: "■", hover: "bg-green-600" },
   { color: "bg-blue-500", icon: "◆", hover: "bg-blue-600" },
   { color: "bg-yellow-500", icon: "●", hover: "bg-yellow-600" },
-  { color: "bg-green-500", icon: "■", hover: "bg-green-600" },
 ]
 
 export default function PlayPage({ params: paramsPromise }: { params: Promise<{ quizId: string }> }) {
@@ -18,38 +18,43 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
   const [gameState, setGameState] = useState<any>(null);
   const [currentQuestion, setCurrentQuestion] = useState<any>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
-  const [teamId, setTeamId] = useState<string | null>(null);
-  const [timer, setTimer] = useState(20);
+  const [teamId, setTeamId] = useState<string | any>(null);
+  const [timer, setTimer] = useState(0);
 
   useEffect(() => {
-    setTeamId(localStorage.getItem(`team_id_${quizId}`));
+    const teamId = localStorage.getItem(`team_id_${quizId}`);
 
-    const fetchInitial = async () => {
+    const fetchData = async () => {
       const { data: gs } = await supabase.from("game_state").select("*").eq("quiz_id", quizId).single();
+      const { data: qData } = await supabase.from("quizzes").select("questions").eq("id", quizId).single();
+      const { data: tData } = await supabase.from("quiz_groups").select("*").eq("id", teamId).single();
+
+      setTeamId(tData);
       setGameState(gs);
-      if (gs) fetchQuestion(gs.current_question_index);
+      if (gs && qData) {
+        const q = qData.questions[gs.current_question_index];
+        setCurrentQuestion(q);
+        setTimer(q.timeLimit || 20);
+      }
     };
 
-    fetchInitial();
+    fetchData();
 
     const channel = supabase.channel(`game-${quizId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${quizId}` },
-      (payload) => {
-        const newState = payload.new;
-        setGameState(newState);
-        setHasAnswered(false); // ريست مع كل مرحلة جديدة
-
-        // ريست التايمر عند بداية سؤال جديد
-        if (newState.phase === 'question') {
-          setTimer(20);
-        }
-
-        fetchQuestion(newState.current_question_index);
-      }).subscribe();
+        async (payload) => {
+          setGameState(payload.new);
+          setHasAnswered(false);
+          const { data: qData } = await supabase.from("quizzes").select("questions").eq("id", quizId).single();
+          const q = qData?.questions[payload.new.current_question_index];
+          setCurrentQuestion(q);
+          setTimer(q?.timeLimit || 20);
+        }).subscribe();
 
     return () => { supabase.removeChannel(channel); };
   }, [quizId]);
 
+  // تايمر ديناميكي يعتمد على وقت السؤال
   useEffect(() => {
     if (gameState?.phase !== 'question' || timer <= 0) return;
     const interval = setInterval(() => {
@@ -58,67 +63,80 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
     return () => clearInterval(interval);
   }, [timer, gameState?.phase]);
 
-  const fetchQuestion = async (index: number) => {
-    const { data } = await supabase.from("questions").select("*").eq("quiz_id", quizId).order('id');
-    if (data && data[index]) setCurrentQuestion(data[index]);
-  };
-
   const submitAnswer = async (choiceIndex: number) => {
-    if (hasAnswered || gameState.phase !== 'question') return;
+    if (hasAnswered || gameState.phase !== 'question' || !teamId) return;
     setHasAnswered(true);
 
     const isCorrect = choiceIndex === currentQuestion.correct_answer;
 
-    // 1. حساب السكور فوراً لو صح
     if (isCorrect) {
-      // حساب بونص سرعة: كل ما جاوب أسرع ياخد نقاط أكتر (مثال: 1000 نقطة كحد أقصى)
-      const points = Math.max(500, 1000 - (20 - timer) * 20);
-      await supabase.rpc('increment_team_score', {
-        team_id: teamId,
-        points: points
-      });
+      // نقاط تعتمد على سرعة الاستجابة
+      const points = Math.max(500, Math.floor(1000 * (timer / currentQuestion.timeLimit)));
+      await supabase.rpc('increment_team_score', { team_id: teamId.id, points: points });
+
+      // await supabase.rpc('increment_team_score', {
+      //   team_id: teamId,
+      //   points: points
+      // });
     }
 
-    // 2. تسجيل الإجابة في جدول answers للـ Statistics
     await supabase.from("answers").insert({
       quiz_id: quizId,
-      question_id: currentQuestion.id,
-      team_id: teamId,
+      question_id: currentQuestion.id || gameState.current_question_index,
+      team_id: teamId.id,
       answer_index: choiceIndex,
       is_correct: isCorrect
     });
   };
 
-  if (!gameState || !currentQuestion) return <div className="h-screen bg-[#46178f] flex items-center justify-center text-white">مستني الأدمن يبدأ...</div>;
+  if (!gameState || !currentQuestion) {
+    return (
+      <div className="h-screen bg-[#46178f] flex flex-col items-center justify-center text-white p-4 text-center">
+        <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mb-4"></div>
+        <h2 className="text-xl font-bold">في انتظار بداية الجولة...</h2>
+        <p className="text-white/60 text-sm mt-2">تأكد إن الأدمن بدأ المسابقة</p>
+      </div>
+    );
+  }
+
+  if (gameState?.phase === 'final') {
+    return (
+      <div className="h-screen bg-[#46178f] text-white flex flex-col items-center justify-center p-1 text-center">
+        <h2 className="text-2xl font-black mb-1">انتهت المسابقة! 🏁</h2>
+        <div className="bg-white/10 p-1 rounded-2xl border border-white/20">
+          <p className="text-sm opacity-70">فريقك: {teamId?.group_name}</p>
+          <p className="text-4xl font-black text-yellow-400 my-1">{teamId?.score} نقطة</p>
+        </div>
+      </div>
+    );
+  }
+
+  // اللاعب ينتظر 3 ثواني قبل ظهور الأزرار
+  const showButtons = timer <= (currentQuestion?.timeLimit - 3);
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-slate-900 font-bold">
+    <div className="h-screen w-screen overflow-hidden bg-slate-900 font-bold p-1">
       <AnimatePresence mode="wait">
-        {gameState.phase === 'question' && !hasAnswered && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full grid grid-cols-2 grid-rows-2 p-1 gap-1">
-            {currentQuestion.options.map((option: string, i: number) => (
-              <button
-                key={i}
-                onClick={() => submitAnswer(i)}
-                className={`${KAHOOT_COLORS[i].color} ${KAHOOT_COLORS[i].hover} text-white flex flex-col items-center justify-center rounded-lg transition-transform active:scale-95`}
-              >
-                <span className="text-6xl mb-1">{KAHOOT_COLORS[i].icon}</span>
-                <span className="text-2xl px-1">{option}</span>
-              </button>
-            ))}
-          </motion.div>
-        )}
-
-        {hasAnswered && gameState.phase === 'question' && (
-          <div className="h-full flex flex-col items-center justify-center text-white bg-purple-800">
-            <div className="animate-pulse text-4xl">تم استلام إجابتك!</div>
-            <p className="mt-1 opacity-70 text-xl">استنى النتيجة على شاشة الأدمن</p>
-          </div>
-        )}
-
-        {gameState.phase === 'result' && (
-          <div className={`h-full flex flex-col items-center justify-center text-white ${hasAnswered ? 'bg-blue-600' : 'bg-gray-600'}`}>
-             <h2 className="text-5xl mb-1 text-center px-1">انتهى وقت السؤال!</h2>
+        {gameState.phase === 'question' && !hasAnswered ? (
+          showButtons ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full grid grid-cols-2 gap-1">
+              {KAHOOT_COLORS.slice(0, currentQuestion?.choices?.length).map((c, i) => (
+                <button key={i} onClick={() => submitAnswer(i)} className={`${c.color} text-white flex flex-col items-center justify-center rounded-lg active:scale-95 transition-transform`}>
+                  <span className="text-4xl">{c.icon}</span>
+                  <span className="text-xs mt-1">{currentQuestion.choices[i]}</span>
+                </button>
+              ))}
+            </motion.div>
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center text-white text-center">
+              <div className="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin mb-1"></div>
+              <h2 className="text-xl">ركز في السؤال...</h2>
+            </div>
+          )
+        ) : (
+          <div className="h-full flex flex-col items-center justify-center text-white bg-[#46178f]">
+            <h2 className="text-2xl">{hasAnswered ? "تم الإرسال! ✅" : "استعد..."}</h2>
+            <p className="text-sm opacity-50 mt-1">انتظر النتيجة على الشاشة</p>
           </div>
         )}
       </AnimatePresence>

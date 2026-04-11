@@ -1,89 +1,65 @@
+"use client"
+import { useState } from "react"
 import { QRCodeSVG } from "qrcode.react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Slider } from "@/components/ui/slider"
+import { motion, AnimatePresence } from "framer-motion"
+import { Maximize2, Minimize2, Link2 } from "lucide-react"
 
-interface QRCodeSectionProps {
-  joinUrl: string
-  qrSize: number
-  setQrSize: (size: number) => void
-  hideControls?: boolean
-}
+export default function QRCodeSection({ quizId }: { quizId: string }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const quizUrl = `${window.location.origin}/exam/quiz/quiz/${quizId}/join`
 
-export function QRCodeSection({ joinUrl, qrSize, setQrSize, hideControls = false }: QRCodeSectionProps) {
   return (
-    <Card className="shadow-2xl overflow-hidden shrink-3 grow">
-      <CardHeader className="bg-linear-to-r from-blue-600 to-purple-600 text-black">
-        <CardTitle className="flex items-center gap-1 text-2xl font-bold text-center">
-          الانضمام للمسابقة
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-center p-1">
-        {joinUrl && (
-          <>
-            <div className="bg-gray-50 p-0.5 rounded-2xl inline-block mb-1 border-2 border-gray-200">
-              <QRCodeSVG value={joinUrl} size={qrSize} />
-            </div>
+    <>
+      <div className="flex flex-col items-center gap-1 p-1 bg-white dark:bg-zinc-800 rounded-3xl border-2 border-zinc-100 dark:border-zinc-700 shadow-sm">
+        <div
+          onClick={() => setIsExpanded(true)}
+          className="relative cursor-pointer group p-1 bg-white rounded-2xl border-2 border-dashed border-zinc-200 hover:border-blue-500 transition-all"
+        >
+          <QRCodeSVG value={quizUrl} size={150} />
+          <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all rounded-2xl">
+            <Maximize2 className="text-blue-600" />
+          </div>
+        </div>
 
-            {/* لا تظهر عناصر التحكم إذا كان hideControls يساوي true */}
-            {!hideControls && (
-              <div className="mb-1 px-1">
-                <div className="flex items-center justify-between mb-1">
-                  <Button
-                    onClick={() => setQrSize(Math.max(250, qrSize - 75))}
-                    className="p-1 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors"
-                    title="تقليل حجم الكود"
-                    type="button"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" className="bi bi-dash-circle fw-bolder" viewBox="0 0 16 16">
-                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                      <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8" />
-                    </svg>
-                  </Button>
-                  <span className="text-2xl font-extrabold text-gray-700 bg-gray-100 p-1 rounded-xl">{qrSize}px</span>
-                  <Button
-                    onClick={() => setQrSize(Math.min(1000, qrSize + 75))}
-                    className="p-1 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors"
-                    title="زيادة حجم الكود"
-                    type="button"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" className="bi bi-plus-circle fw-bolder" viewBox="0 0 16 16">
-                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-                    </svg>
-                  </Button>
-                </div>
-                <div className="relative mb-1">
-                  <div className="absolute inset-0 bg-linear-to-l from-blue-600 to-purple-600 h-2 rounded-full" />
-                  <Slider
-                    value={[qrSize]}
-                    onValueChange={(value) => setQrSize(value[0])}
-                    max={1000}
-                    min={250}
-                    step={25}
-                    className="custom-slider w-full"
-                    dir="rtl"
-                  />
-                  <div className="flex justify-between text-sm text-gray-600 mt-1">
-                    <span>صغير</span>
-                    <span>كبير</span>
-                  </div>
-                </div>
-                <style jsx>{`
-                  .custom-slider [data-radix-slider-track] {
-                    background: transparent !important;
-                  }
-                `}</style>
-              </div>
-            )}
+        <div className="text-center">
+          <p className="text-sm font-bold text-zinc-500 mb-1">لينك الانضمام المباشر:</p>
+          <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl border border-zinc-200 dark:border-zinc-700">
+            <Link2 size={16} className="text-blue-500" />
+            <code className="text-xs font-black text-blue-600">{quizUrl}</code>
+          </div>
+        </div>
+      </div>
 
-            <p className="text-gray-600 mb-1 text-lg font-medium">امسح الكود أو ادخل على:</p>
-            <div className="bg-gray-100 p-1 rounded-xl border-2 border-gray-200">
-              <p className="font-mono text-sm break-all text-gray-800 font-medium">{joinUrl}</p>
-            </div>
-          </>
+      {/* Full Screen Overlay */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsExpanded(false)}
+            className="fixed inset-0 bg-black/90 backdrop-blur-xl z-999 flex flex-col items-center justify-center p-1 cursor-zoom-out"
+          >
+            <motion.div
+              initial={{ scale: 0.5, y: 100 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              className="bg-white p-1 rounded-[40px] shadow-[0_0_50px_rgba(59,130,246,0.5)]"
+            >
+              <QRCodeSVG value={quizUrl} size={800} />
+            </motion.div>
+            {/* <motion.p
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+              className="text-white text-3xl font-black mt-1 text-center"
+            >
+              امسح الكود للدخول في المسابقة 🚀
+            </motion.p> */}
+            <button className="mt-1 text-white/50 flex items-center gap-1">
+              <Minimize2 /> اضغط في أي مكان للإغلاق
+            </button>
+          </motion.div>
         )}
-      </CardContent>
-    </Card>
+      </AnimatePresence>
+    </>
   )
 }

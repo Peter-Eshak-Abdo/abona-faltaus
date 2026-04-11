@@ -1,33 +1,27 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { Quiz, Group } from "@/types/quiz"
+"use client"
+import { Clock, HelpCircle, Users, Trophy } from "lucide-react"
 
-interface QuizStatsProps {
-  quiz: Quiz
-  groups: Group[]
-}
+export function QuizStats({ quiz, groups }: { quiz: any, groups: any[] }) {
+  // حساب إجمالي الدقائق بناءً على وقت كل سؤال
+  const totalSeconds = quiz?.questions?.reduce((acc: number, q: any) => acc + (q.time_limit || 20), 0) || 0;
+  const totalMinutes = Math.ceil(totalSeconds / 60);
 
-export function QuizStats({ quiz, groups }: QuizStatsProps) {
-  const totalMembers = groups.reduce((sum: number, g: any) => sum + (g.members?.length || 0), 0)
+  const stats = [
+    { label: "سؤال", value: quiz?.questions?.length || 0, icon: HelpCircle, color: "bg-blue-500" },
+    { label: "فريق", value: groups.length, icon: Users, color: "bg-green-500" },
+    { label: "عضو", value: groups.reduce((acc, g) => acc + (g.members?.length || 0), 0), icon: Trophy, color: "bg-purple-500" },
+    { label: "دقيقة (تقريباً)", value: totalMinutes, icon: Clock, color: "bg-orange-500" },
+  ]
+
   return (
-    <Card className="shadow-2xl mb-1 overflow-hidden">
-      <CardHeader className="bg-linear-to-r from-purple-600 to-pink-600 text-white">
-        <CardTitle className="text-2xl font-bold">تفاصيل الامتحان</CardTitle>
-      </CardHeader>
-      <CardContent className="p-1">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-1" dir="rtl">
-          {[
-            { label: "سؤال", value: quiz.questions?.length || 0, color: "text-blue-500" },
-            { label: "فريق", value: groups.length, color: "text-green-500" },
-            { label: "عضو", value: totalMembers, color: "text-purple-500" },
-            { label: "دقيقة (تقريباً)", value: Math.ceil((quiz.questions?.reduce((a: any, b: any) => a + (b.timeLimit || 0), 0) || 0) / 60), color: "text-orange-500" }
-          ].map((stat, i) => (
-            <div key={i} className="bg-white/10 backdrop-blur-md p-1 rounded-2xl text-center border border-white/5">
-              <div className={`text-4xl font-black ${stat.color}`}>{stat.value}</div>
-              <div className="text-slate-400 font-bold">{stat.label}</div>
-            </div>
-          ))}
+    <div className="grid grid-cols-4 gap-1 p-0.5 bg-white/5 rounded-xl border border-white/10">
+      {stats.map((stat, i) => (
+        <div key={i} className="flex flex-col items-center p-0.5 rounded-lg bg-black/20">
+          <stat.icon className="w-3 h-3 mb-0.5 text-slate-400" />
+          <span className="text-2xl font-black text-white leading-none">{stat.value}</span>
+          <span className="text-2xl text-slate-400 font-bold mt-0.5">{stat.label}</span>
         </div>
-      </CardContent>
-    </Card>
+      ))}
+    </div>
   )
 }
