@@ -76,9 +76,21 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
 
   // 2. تتبع الإجابات
   useEffect(() => {
-    if (!currentQuestion?.id) return;
-    if (gs.phase !== 'question') return;
-    const channel = supabase.channel('ans-${gs.current_question_index}')
+    if (!currentQuestion?.id || gs.phase !== 'question') return;
+    // أولاً: نجلب عدد الإجابات اللي اتسجلت بالفعل للسؤال ده (عشان لو حد جاوب بسرعة)
+    const fetchInitialAnswers = async () => {
+      const { count, error } = await supabase
+        .from('answers')
+        .select('*', { count: 'exact', head: true })
+        .eq('question_id', currentQuestion.id);
+
+      if (!error && count !== null) {
+        setAnswersCount(count);
+      }
+    };
+
+    fetchInitialAnswers();
+    const channel = supabase.channel(`ans-${gs.current_question_index}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -97,7 +109,9 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     const { data } = await supabase.from("game_state").update(updateData).eq("quiz_id", quiz.id).select().single();
     if (data) {
       setGs(data);
-      setAnswersCount(0);
+      if (newPhase === 'question') {
+        setAnswersCount(0);
+      }
     }
   };
 
