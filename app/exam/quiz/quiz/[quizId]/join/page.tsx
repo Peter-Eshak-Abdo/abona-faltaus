@@ -93,14 +93,14 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#46178f] text-white p-1 text-center">
         <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
-          <div className="bg-white p-1 rounded-full mb-1 inline-block shadow-xl">
-            <img src={selectedSaint?.src} className="w-12 h-20 rounded-full object-cover" alt="saint" />
+          <div className="bg-white p-1 rounded-full inline-block shadow-xl top-1">
+            <img src={selectedSaint?.src} className="w-13 h-18 rounded-full object-cover" alt="saint" />
           </div>
           <h1 className="text-4xl font-black mb-1">عاش يا أبطال فريق
-            <p className="font-bold text-5xl">{selectedSaint?.name}</p>
-            <div className="flex flex-wrap gap-1 justify-center p-1 bg-black/20 rounded-lg max-h-[60px] overflow-y-auto custom-scrollbar">
+            <p className="font-bold text-5xl mb-0.5">{selectedSaint?.name}</p>
+            <div className="flex flex-wrap gap-0.5 justify-center p-0.5 bg-black/20 rounded-lg overflow-y-auto custom-scrollbar">
               {members?.map((name: string, index: number) => (
-                <span key={index} className="bg-white/10 px-1 py-0.5 rounded text-[10px] text-slate-300">
+                <span key={index} className="bg-white/10 px-1 py-0.5 rounded text-sm text-slate-300">
                   {name}
                 </span>
               ))}
@@ -108,7 +108,7 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
           </h1>
 
           <p className="text-xl opacity-80">الفريق سجل بنجاح، خليكم جاهزين..</p>
-          <div className="mt-1 flex gap-1 justify-center">
+          <div className="mt-1.5 flex gap-1 justify-center bottom-1">
             {[0, 200, 400].map((delay) => (
               <div key={delay} className="w-4 h-4 bg-white rounded-full animate-bounce" style={{ animationDelay: `${delay}ms` }} />
             ))}
@@ -123,7 +123,6 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
       <Card className="max-w-4xl mx-auto shadow-2xl border-none overflow-hidden">
         <CardHeader className="bg-[#46178f] text-white text-center py-1">
           <CardTitle className="text-5xl font-black">{quiz.title}</CardTitle>
-          <p className="opacity-70 font-bold">انضم للمسابقة الآن</p>
         </CardHeader>
 
         <CardContent className="p-1 space-y-1">
@@ -133,7 +132,7 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
               <span className="bg-blue-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-sm">1</span>
               اختار اسم الفريق (شفيعك)
             </h3>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-1">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-0.5">
               {SAINTS_DATA.map((saint) => {
                 const isSelected = selectedSaint?.name === saint.name;
                 return (
@@ -143,10 +142,10 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
                       setSelectedSaint(saint);
                       setTimeout(() => membersSectionRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
                     }}
-                    className={`flex flex-col items-center p-1 rounded-2xl transition-all border-2
+                    className={`flex flex-col items-center p-0.5 rounded-2xl transition-all border-2
                       ${isSelected ? 'border-blue-500 bg-blue-50 scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'}`}
                   >
-                    <img src={saint.src} className="w-20 h-10 rounded-full object-cover mb-1 shadow-sm" alt={saint.name} />
+                    <img src={saint.src} className="w-5 h-8 rounded-full object-cover mb-1 shadow-sm" alt={saint.name} />
                     <span className="text-xs font-black text-center">{saint.name}</span>
                   </button>
                 );

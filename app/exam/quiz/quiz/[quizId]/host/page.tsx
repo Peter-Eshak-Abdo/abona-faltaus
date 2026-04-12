@@ -126,7 +126,7 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
             <Play className="w-3 h-3 ml-1 fill-current" />
             <p className="text-xl">ابدأ الآن</p>
           </Button>
-        </div>
+        </div> 
       </div>
 
       <div className="grid grid-cols-12 gap-1">

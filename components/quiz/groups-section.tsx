@@ -47,7 +47,7 @@ export function GroupsSection({ groups, handleDeleteGroup }: GroupsSectionProps)
               <p className="text-xm text-green-400 font-medium m-0.5">{group.members?.length || 0} أعضاء</p>
 
               {/* قائمة الأعضاء */}
-              <div className="flex flex-wrap gap-0.5 justify-center bg-black/20 rounded-lg max-h-[60px] overflow-y-auto custom-scrollbar">
+              <div className="flex flex-wrap gap-0.5 justify-center bg-black/20 rounded-lg p-0.5 overflow-y-auto custom-scrollbar">
                 {group.members?.map((name: string, index: number) => (
                   <span key={index} className="bg-white/10 p-0.5 rounded text-xm text-slate-300">
                     {name}

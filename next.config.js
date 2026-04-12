@@ -92,6 +92,11 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
@@ -122,6 +127,10 @@ const nextConfig = {
         ],
       },
     ];
+  },
+  allowedDevOrigins: ["192.168.100.13", "localhost"],
+  experimental: {
+    allowedDevOrigins: ["192.168.100.13", "localhost"],
   },
 };
 

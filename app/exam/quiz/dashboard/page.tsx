@@ -15,12 +15,21 @@ export default function Dashboard() {
 
   // جلب البيانات عند فتح الصفحة
   const refreshQuizzes = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const data = await getUserQuizzes(user.id);
-      setQuizzes(data);
+    setLoading(true);
+    try {
+      // استخدم getSession بدلاً من getUser لو المشكلة استمرت، أو اتأكد من وجود الـ User مرة واحدة
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
+
+      if (user) {
+        const data = await getUserQuizzes(user.id);
+        setQuizzes(data || []);
+      }
+    } catch (error) {
+      console.error("Auth error:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => { refreshQuizzes(); }, []);
