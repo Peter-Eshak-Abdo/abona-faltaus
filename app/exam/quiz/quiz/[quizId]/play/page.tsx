@@ -18,7 +18,7 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
   const [gameState, setGameState] = useState<any>(null);
   const [currentQuestion, setCurrentQuestion] = useState<any>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
-  const [team, setTeam] = useState<string | any>(null);
+  const [team, setTeam] = useState<any>(null);
   const [timer, setTimer] = useState(0);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
       setGameState(gs);
       if (gs && qData) {
         const q = qData.questions[gs.current_question_index];
-        setCurrentQuestion({...q, correct_answer: q.correctAnswer});
+        setCurrentQuestion({ ...q, correct_answer: q.correctAnswer });
         setTimer(q.timeLimit + 4);
       }
     };
@@ -47,11 +47,15 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
           setHasAnswered(false);
           const { data: qData } = await supabase.from("quizzes").select("questions").eq("id", quizId).single();
           const q = qData?.questions[payload.new.current_question_index];
-          setCurrentQuestion({ ...q, correct_answer: q.correctAnswer });
-          setTimer((q?.timeLimit || 20)+4);
+          setCurrentQuestion({ ...q, correct_answer: q?.correctAnswer });
+          setTimer((q?.timeLimit || 20) + 4);
         }).subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    // تحديث السكور الخاص بالفريق Live
+    const channelTeam = supabase.channel(`t-${teamId}`).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'quiz_groups', filter: `id=eq.${teamId}` },
+      (p) => setTeam(p.new)).subscribe();
+
+    return () => { supabase.removeChannel(channel); supabase.removeChannel(channelTeam); };
   }, [quizId]);
 
   // تايمر ديناميكي يعتمد على وقت السؤال
@@ -67,17 +71,29 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
     if (hasAnswered || gameState.phase !== 'question' || !team) return;
     setHasAnswered(true);
 
-    const isCorrect = choiceIndex === currentQuestion.correct_answer;
+    const isCorrect = choiceIndex === currentQuestion.correctAnswer;
 
     if (isCorrect) {
       // نقاط تعتمد على سرعة الاستجابة
       const points = Math.max(500, Math.floor(1000 * (timer / currentQuestion.timeLimit)));
-      await supabase.rpc('increment_team_score', { team_id: team.id, points: points });
+      // التحديث المباشر أضمن لعدم ضياع النقاط
+      const newScore = (team.score || 0) + points;
+      await supabase.from('quiz_groups').update({ score: newScore }).eq('id', team.id);
+    } else {
+      // لو جاوب غلط، ممكن تبعت إجابة عشان الـ Host يعدّه
+      await supabase.from("answers").insert({
+        quiz_id: quizId,
+        question_id: gameState.current_question_index.toString(),
+        team_id: team.id,
+        answer_index: choiceIndex,
+        is_correct: false
+      });
+      return;
     }
 
     await supabase.from("answers").insert({
       quiz_id: quizId,
-      question_id: gameState.current_question_index.toString() || currentQuestion.id,
+      question_id: gameState.current_question_index.toString(),
       team_id: team.id,
       answer_index: choiceIndex,
       is_correct: isCorrect
@@ -96,49 +112,46 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
 
   if (gameState?.phase === 'final') {
     return (
-      <div className="h-screen bg-[#46178f] text-white flex flex-col items-center justify-center p-1 text-center">
-        <h2 className="text-2xl font-black mb-1">انتهت المسابقة! 🏁</h2>
-        <div className="bg-white/10 p-1 rounded-2xl border border-white/20">
-          <p className="text-sm opacity-70">فريقك: {team?.group_name}</p>
-          <div className="flex flex-wrap gap-1 justify-center p-1 bg-black/20 rounded-lg max-h-[60px] overflow-y-auto custom-scrollbar">
-            {team?.members?.map((name: string, index: number) => (
-                <span key={index} className="bg-white/10 px-1 py-0.5 rounded text-[10px] text-slate-300">
-                  {name}
-                </span>
-              ))}
+      <div className="h-screen bg-[#46178f] text-white flex flex-col items-center justify-center p-1 text-center font-sans">
+        <h2 className="text-[10vw] font-black mb-1 text-yellow-400">انتهت المسابقة! 🏁</h2>
+        <div className="bg-white/10 p-1 rounded-3xl w-full max-w-sm border-2 border-white/20 shadow-2xl backdrop-blur-sm">
+          <p className="text-[6vw] font-black mb-1">{team?.group_name}</p>
+          <div className="flex flex-wrap gap-1 justify-center p-1 bg-black/30 rounded-xl mb-1">
+            {team?.members?.map((name: string, i: number) => (
+              <span key={i} className="bg-white/10 px-1 py-1 rounded text-xs font-bold">{name}</span>
+            ))}
           </div>
-          <p className="text-6xl font-black text-white mt-4 drop-shadow-lg">{team?.score} <span className="text-lg opacity-50">نقطة</span></p>        </div>
+          <p className="text-[15vw] font-black text-white drop-shadow-[0_5px_5px_rgba(0,0,0,0.5)] leading-none">{team?.score}</p>
+          <p className="text-xl font-bold opacity-60 mt-1">نقطة</p>
+        </div>
       </div>
     );
   }
-
   // اللاعب ينتظر 3 ثواني قبل ظهور الأزرار
   const showButtons = timer <= (currentQuestion?.timeLimit || 20);
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-slate-900 font-bold p-1">
+    <div className="h-screen w-screen bg-slate-900 font-sans p-1 overflow-hidden">
       <AnimatePresence mode="wait">
-        {gameState.phase === 'question' && !hasAnswered ? (
+        {gameState?.phase === 'question' && !hasAnswered ? (
           showButtons ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full grid grid-cols-2 gap-1">
               {COLORS.slice(0, currentQuestion?.choices?.length).map((c, i) => (
-                <button key={i} onClick={() => submitAnswer(i)} className={`${c.color} text-white flex flex-col items-center justify-center rounded-lg active:scale-95 transition-transform`}>
-                  <span className="text-4xl">{c.icon}</span>
-                  <span className="text-xs mt-1">{currentQuestion.choices[i]}</span>
+                <button key={i} onClick={() => submitAnswer(i)} className={`${c.color} flex items-center justify-center rounded-2xl active:scale-95 transition-transform shadow-[0_6px_0_rgba(0,0,0,0.3)]`}>
+                  <span className="text-[20vw] text-white drop-shadow-lg">{c.icon}</span>
                 </button>
               ))}
             </motion.div>
           ) : (
-            // <div className="h-full flex flex-col items-center justify-center text-white text-center">
-            //   <div className="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin mb-1"></div>
-            //   <h2 className="text-xl">ركز في السؤال...</h2>
-              // </div>
-            <div className="h-full flex items-center justify-center text-white text-3xl animate-pulse">اقرأ السؤال 🧐</div>
+            <div className="h-full flex flex-col items-center justify-center text-white">
+              <div className="w-[15vw] h-[15vw] border-8 border-t-transparent border-white rounded-full animate-spin mb-1"></div>
+              <h2 className="text-[8vw] font-black animate-pulse">اقرأ السؤال 🧐</h2>
+            </div>
           )
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-white bg-[#46178f]">
-            <h2 className="text-2xl">{hasAnswered ? "تم الإرسال! ✅" : "استعد..."}</h2>
-            <p className="text-sm opacity-50 mt-1">انتظر النتيجة على الشاشة</p>
+            <h2 className="text-[10vw] font-black">{hasAnswered ? "تم الإرسال! ✅" : "استعد..."}</h2>
+            <p className="text-[5vw] opacity-60 mt-1 font-bold">بص على الشاشة الرئيسية</p>
           </div>
         )}
       </AnimatePresence>

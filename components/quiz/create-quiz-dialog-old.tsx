@@ -113,6 +113,8 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
   // 1. تحميل ملف Template
   const downloadTemplate = () => {
     const templateData = [
+      ["# معلومات المسابقة (اختياري)", "اسم المسابقة:", "مسابقة تجريبية", "الوصف:", "وصف المسابقة هنا"],
+      [],
       ["السؤال", "الاختيار 1", "الاختيار 2", "الاختيار 3", "الاختيار 4", "رقم الإجابة الصحيحة (1-4)", "الوقت بالثواني"],
       ["ما هو عاصمة مصر؟", "القاهرة", "الإسكندرية", "أسوان", "الجيزة", "1", "20"],
       ["10 + 5 يساوي؟", "10", "15", "20", "25", "2", "15"],
@@ -156,7 +158,7 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
         const sheet = workbook.Sheets[sheetName];
         const json: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        const importedQuestions: Question[] = json.slice(1).filter(row => row[0]).map(row => ({
+        const importedQuestions: Question[] = json.slice(3).filter(row => row[0]).map(row => ({
           id: crypto.randomUUID(),
           text: row[0]?.toString() || "",
           choices: [row[1]?.toString() || "", row[2]?.toString() || "", row[3]?.toString() || "", row[4]?.toString() || ""],
