@@ -21,6 +21,9 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
   const [members, setMembers] = useState<string[]>(Array(5).fill(""));
   const [loading, setLoading] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
+  // States جديدة للحفظ اللحظي للبيانات المحجوزة
+  const [takenSaints, setTakenSaints] = useState<string[]>([]);
+  const [takenMembers, setTakenMembers] = useState<string[]>([]);
 
   const membersSectionRef = useRef<HTMLDivElement>(null);
 
@@ -28,10 +31,16 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
     const fetchQuiz = async () => {
       const { data } = await supabase.from("quizzes").select("*").eq("id", quizId).single();
       setQuiz(data);
+      // جلب الفرق المسجلة حالياً
+      const { data: groupsData } = await supabase.from("quiz_groups").select("group_name, members").eq("quiz_id", quizId);
+      if (groupsData) {
+        setTakenSaints(groupsData.map(g => g.group_name));
+        setTakenMembers(groupsData.flatMap(g => g.members || []));
+      }
     };
     fetchQuiz();
 
-    const channel = supabase
+    const groupsChannel = supabase
       .channel(`game-state-${quizId}`)
       .on('postgres_changes', {
         event: 'UPDATE',
@@ -39,13 +48,24 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
         table: 'game_state',
         filter: `quiz_id=eq.${quizId}`
       }, (payload) => {
-        if (payload.new.is_active && hasJoined) {
-          router.push(`/exam/quiz/quiz/${quizId}/play`);
-        }
+        setTakenSaints(prev => [...prev, payload.new.group_name]);
+        setTakenMembers(prev => [...prev, ...(payload.new.members || [])]);
+        // if (payload.new.is_active && hasJoined) {
+        //   router.push(`/exam/quiz/quiz/${quizId}/play`);
+        // }
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    const gameChannel = supabase.channel(`game-state-${quizId}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${quizId}` },
+        (payload) => {
+          if (payload.new.is_active && hasJoined) {
+            router.push(`/exam/quiz/quiz/${quizId}/play`);
+          }
+        }
+      ).subscribe();
+
+    return () => { supabase.removeChannel(groupsChannel); supabase.removeChannel(gameChannel); };
   }, [quizId, hasJoined, router]);
 
   const handleJoin = async () => {
@@ -54,6 +74,11 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
     // تصفية الأسماء الفارغة
     const filledMembers = members.filter(n => n.trim() !== "");
     if (filledMembers.length === 0) return alert("يرجى إدخال اسم عضو واحد على الأقل");
+    // التحقق من تكرار الأسماء
+    const duplicateMembers = filledMembers.filter(m => takenMembers.includes(m));
+    if (duplicateMembers.length > 0) {
+      return alert(`الأسماء دي متسجلة في فريق تاني: ${duplicateMembers.join('، ')}\nيرجى كتابة الاسم الثلاثي أو تغييره.`);
+    }
 
     setLoading(true);
     const { data, error } = await supabase
@@ -135,9 +160,12 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-0.5">
               {SAINTS_DATA.map((saint) => {
                 const isSelected = selectedSaint?.name === saint.name;
+                const isTaken = takenSaints.includes(saint.name) && !isSelected; // تعطيل إذا كان محجوز
+
                 return (
                   <button
                     key={saint.name}
+                    disabled={isTaken}
                     onClick={() => {
                       setSelectedSaint(saint);
                       setTimeout(() => membersSectionRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
@@ -147,6 +175,7 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
                   >
                     <img src={saint.src} className="w-5 h-8 rounded-full object-cover mb-1 shadow-sm" alt={saint.name} />
                     <span className="text-xs font-black text-center">{saint.name}</span>
+                    {isTaken && <span className="text-[10px] text-red-500 font-bold mt-1">محجوز</span>}
                   </button>
                 );
               })}

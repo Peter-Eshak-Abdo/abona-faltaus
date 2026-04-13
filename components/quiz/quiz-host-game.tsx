@@ -1,8 +1,33 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, animate } from "framer-motion"
 import { Button } from "@/components/ui/button"
+
+const playAudio = (path: string, loop: boolean = false) => {
+  if (typeof window !== "undefined") {
+    const audio = new Audio(path);
+    audio.loop = loop;
+    audio.play().catch((e) => console.log("Audio ignored by browser:", e));
+    return audio;
+  }
+};
+
+const AnimatedNumber = ({ from, to }: { from: number, to: number }) => {
+  const nodeRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    // ننتظر نص ثانية قبل ما العداد يبدأ يزيد
+    const timeout = setTimeout(() => {
+      animate(from, to, {
+        duration: 1.5,
+        onUpdate(v) { if (nodeRef.current) nodeRef.current.textContent = Math.round(v).toString(); }
+      });
+    }, 500);
+    if (nodeRef.current) nodeRef.current.textContent = from.toString();
+    return () => clearTimeout(timeout);
+  }, [from, to]);
+  return <span ref={nodeRef}>{from}</span>;
+};
 
 export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any) {
   const supabase = createClient();
@@ -14,18 +39,18 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   // أنيميشن المتصدرين والنهاية التشويقية
   const [displayGroups, setDisplayGroups] = useState(groups);
   const [podiumStep, setPodiumStep] = useState(0);
-
+  const prevGroupsRef = useRef(groups); // حفظ المجموع القديم للأنيميشن
   const currentQuestion = quiz?.questions?.[gs.current_question_index] || null;
   const qTime = currentQuestion?.timeLimit || 20;
 
-  // 1. التخطي التلقائي عند إجابة كل الفرق
+  // حفظ الفرق قبل التحديث لعرضها في السكوربورد
   useEffect(() => {
-    if (gs.phase === 'question' && !isIntro && groups.length > 0 && answersCount >= groups.length) {
-      handlePhaseEnd();
+    if (gs.phase !== 'scoreboard') {
+      prevGroupsRef.current = groups;
     }
-  }, [answersCount, groups.length, gs.phase, isIntro]);
+  }, [gs.phase, groups]);
 
-  // 1. إدارة التايمر
+  // إدارة التايمر والصوت في آخر 5 ثواني
   useEffect(() => {
     if (gs.phase !== 'question') return;
 
@@ -35,18 +60,30 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     }
 
     const interval = setInterval(() => {
-      setTimer((p) => (p > 0 ? p - 1 : 0));
+      setTimer((p) => {
+        const newTime = p > 0 ? p - 1 : 0;
+        if (newTime <= 5 && newTime > 0) playAudio('/sounds/tick.mp3'); // صوت التايمر آخر 5 ثواني
+        return newTime;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
   }, [timer, gs.phase, isIntro]);
+
+  // التخطي التلقائي عند إجابة كل الفرق
+  useEffect(() => {
+    if (gs.phase === 'question' && !isIntro && groups.length > 0 && answersCount >= groups.length) {
+      handlePhaseEnd();
+    }
+  }, [answersCount, groups.length, gs.phase, isIntro]);
 
   // تحديث التايمر فور تغير المرحلة أو السؤال
   useEffect(() => {
     if (gs.phase === 'question') {
       setIsIntro(true);
       setTimer(4); // مدة عرض السؤال في المنتصف
-      const timeout = setTimeout(() =>{ setIsIntro(false); setTimer(qTime);}, 4000);
+      playAudio('/sounds/intro.mp3'); // صوت حماسي للسؤال
+      const timeout = setTimeout(() => { setIsIntro(false); setTimer(qTime); }, 4000);
       return () => clearTimeout(timeout);
     } else {
       setTimer(5);
@@ -54,9 +91,10 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     }
   }, [gs.phase, gs.current_question_index, qTime]);
 
-  // 3. تأخير تحديث السكوربورد لعمل أنيميشن الصعود والنزول
+  // تأخير تحديث السكوربورد لعمل أنيميشن الصعود والنزول
   useEffect(() => {
     if (gs.phase === 'scoreboard') {
+      playAudio('/sounds/score-up.mp3');
       const t = setTimeout(() => setDisplayGroups(groups), 1500); // يعرض القديم لثانية ونص ثم يطبق الجديد
       return () => clearTimeout(t);
     } else {
@@ -64,17 +102,17 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     }
   }, [gs.phase, groups]);
 
-  // 4. تتابع المرحلة النهائية (التشويق)
+  // تتابع المرحلة النهائية (التشويق)
   useEffect(() => {
     if (gs.phase === 'final') {
-      const t1 = setTimeout(() => setPodiumStep(1), 5000); // يظهر الثالث
-      const t2 = setTimeout(() => setPodiumStep(2), 9000); // يظهر الثاني
-      const t3 = setTimeout(() => setPodiumStep(3), 14000); // يظهر الأول
+      const t1 = setTimeout(() => { setPodiumStep(1); playAudio('/sounds/podium3.mp3'); }, 5000); // يظهر الثالث
+      const t2 = setTimeout(() => { setPodiumStep(2); playAudio('/sounds/podium2.m4a'); }, 10000); // يظهر الثاني
+      const t3 = setTimeout(() => { setPodiumStep(3); playAudio('/sounds/podium1.mp3', true); }, 15000); // يظهر الأول
       return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
     }
   }, [gs.phase]);
 
-  // 2. تتبع الإجابات
+  // تتبع الإجابات
   useEffect(() => {
     if (!currentQuestion?.id || gs.phase !== 'question') return;
     // أولاً: نجلب عدد الإجابات اللي اتسجلت بالفعل للسؤال ده (عشان لو حد جاوب بسرعة)
@@ -83,10 +121,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
         .from('answers')
         .select('*', { count: 'exact', head: true })
         .eq('question_id', currentQuestion.id);
-
-      if (!error && count !== null) {
-        setAnswersCount(count);
-      }
+      if (count !== null) setAnswersCount(count);
     };
 
     fetchInitialAnswers();
@@ -97,15 +132,17 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
         table: 'answers',
         filter: `question_id=eq.${quiz.id}`
       }, (payload) => {
-        if (payload.new.question_id === gs.current_question_index.toString() || payload.new.question_id === currentQuestion?.id) {
-          setAnswersCount(prev => prev + 1);
-        }
+        setAnswersCount(prev => {
+          const newCount = prev + 1;
+          if (newCount >= groups.length) setTimer(0);
+          return newCount;
+        });
       }).subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [quiz.id,gs.phase, gs.current_question_index, currentQuestion?.id]);
+  }, [gs.phase, gs.current_question_index, currentQuestion?.id, groups.length]);
 
   const goToPhase = async (newPhase: string, nextIndex?: number) => {
-    const updateData: any = { phase: newPhase , current_question_index: nextIndex ?? gs.current_question_index };
+    const updateData: any = { phase: newPhase, current_question_index: nextIndex ?? gs.current_question_index };
     const { data } = await supabase.from("game_state").update(updateData).eq("quiz_id", quiz.id).select().single();
     if (data) {
       setGs(data);
@@ -116,11 +153,16 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   };
 
   const handlePhaseEnd = () => {
-    if (gs.phase === 'question') goToPhase('result');
-    else if (gs.phase === 'result') goToPhase('scoreboard');
-    else if (gs.phase === 'scoreboard') {
-      if (gs.current_question_index < quiz.questions.length - 1) goToPhase('question', gs.current_question_index + 1);
-      else goToPhase('final');
+    if (gs.phase === 'question') {
+      goToPhase('result');
+    } else if (gs.phase === 'result') {
+      if (gs.current_question_index >= quiz.questions.length - 1) {
+        goToPhase('final');
+      } else {
+        goToPhase('scoreboard');
+      }
+    } else if (gs.phase === 'scoreboard') {
+      goToPhase('question', gs.current_question_index + 1);
     }
   };
 
@@ -227,7 +269,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
             {!isIntro && (
               <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="flex-1 grid grid-cols-2 gap-1 p-1">
                 {currentQuestion?.choices.map((opt: any, i: number) => (
-                  <div key={i} className={`rounded-2xl flex items-center justify-center p-1 text-center shadow-[0_8px_0_rgba(0,0,0,0.2)] border-2 border-white/10 ${['bg-red-500','bg-green-500', 'bg-blue-500', 'bg-yellow-500' ][i]}`}>
+                  <div key={i} className={`rounded-2xl flex items-center justify-center p-1 text-center shadow-[0_8px_0_rgba(0,0,0,0.2)] border-2 border-white/10 ${['bg-red-500', 'bg-green-500', 'bg-blue-500', 'bg-yellow-500'][i]}`}>
                     <span className="text-[5vw] font-black drop-shadow-lg">{opt}</span>
                   </div>
                 ))}
@@ -243,7 +285,9 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
             <div className="bg-green-500 w-full p-1 rounded-[3vw] text-[8vw] font-black text-center shadow-[0_10px_0_#15803d] border-4 border-white">
               {currentQuestion?.choices[currentQuestion?.correctAnswer]}
             </div>
-            <Button onClick={handlePhaseEnd} className="mt-1 h-[8vh] px-1 text-[4vh] font-black bg-blue-600 rounded-full shadow-xl">عرض الترتيب</Button>
+            <Button onClick={handlePhaseEnd} className="mt-1 h-[8vh] px-1 text-[4vh] font-black bg-blue-600 rounded-full shadow-xl">
+              {gs.current_question_index >= quiz.questions.length - 1 ? 'النتيجة النهائية!' : 'عرض الترتيب'}
+            </Button>
           </motion.div>
         )}
 
@@ -253,16 +297,21 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
             <h2 className="text-[5vw] font-black mb-1 text-yellow-400 drop-shadow-lg">المتصدرين 🏆</h2>
             <div className="w-full flex flex-col gap-1">
               <AnimatePresence>
-                {displayGroups.sort((a: any, b: any) => b.score - a.score).slice(0, 5).map((g: any, i: number) => (
-                  <motion.div layout key={g.id} initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="flex justify-between items-center p-1 bg-black/40 rounded-2xl border-l-[1vw] border-yellow-500 text-[4vw] font-black shadow-lg">
-                    <div className="flex items-center gap-1">
-                      <span className="text-white/50 w-[5vw]">{i + 1}.</span>
-                      <span>{g.group_name}</span>
-                    </div>
-                    <span className="text-yellow-400">{g.score}</span>
-                  </motion.div>
-                ))}
+                {displayGroups.sort((a: any, b: any) => b.score - a.score).slice(0, 5).map((g: any, i: number) => {
+                  const oldGroupData = prevGroupsRef.current.find((pg: any) => pg.id === g.id);
+                  const oldScore = oldGroupData ? oldGroupData.score : 0;
+
+                  return (
+                    <motion.div layout key={g.id} initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      className="flex justify-between items-center p-1 bg-black/40 rounded-2xl border-l-[1vw] border-yellow-500 text-[4vw] font-black shadow-lg">
+                      <div className="flex items-center gap-1">
+                        <span className="text-white/50 w-[5vw]">{i + 1}.</span>
+                        <span>{g.group_name}</span>
+                      </div>
+                      <span className="text-yellow-400"><AnimatedNumber from={oldScore} to={g.score} /></span>
+                    </motion.div>
+                  )
+                })}
               </AnimatePresence>
             </div>
             <Button onClick={handlePhaseEnd} className="w-full max-w-2xl mt-1 h-[8vh] text-[4vh] font-black bg-blue-500 rounded-full shadow-xl">
