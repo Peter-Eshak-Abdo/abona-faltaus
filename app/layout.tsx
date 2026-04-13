@@ -12,6 +12,7 @@ import PwaManager from "@/components/PwaManager";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import OneSignal from "@/components/OneSignal";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -131,6 +132,7 @@ export default function RootLayout({
         <div className="background-blur" />
         <GlobalLoadingProvider>
           <OfflineNotification />
+          <OneSignal />
           <LoadingProvider>
             <PwaManager/>
             <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
