@@ -1,57 +1,58 @@
 import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
-// لو هتجيب الآية من Supabase هتعمل Import للـ Client بتاعك هنا
 
 export async function GET(request: Request) {
-  const randomId = Math.floor(Math.random() * 35797) + 1;
-  const { data, error } = await supabase
-    .from("bible_verses")
-    .select("vocalized_text, book_name, chapter_number, verse_number")
-    .eq("id", randomId)
-    .single();
-
-  if (error || !data) {
-    return new NextResponse("Error fetching verse", { status: 500 });
-  }
-  const cleanBookName = data.book_name.replace(/^\d+-/, "");
-  const reference = `(${cleanBookName} ${data.chapter_number}:${data.verse_number})`;
-  const notificationTitle = "آية اليوم";
-  const notificationBody = `${data.vocalized_text}\n${reference}`;
-
-  // 1. حماية الـ API عشان محدش يفتحه من بره ويبعت إشعارات للناس
+  // 1. حماية الـ API أولاً
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  // 2. هات الآية من قاعدة البيانات (Supabase)
-  // const { data } = await supabase.from('verses').select('*').limit(1);
-  const dailyVerse = "هنا نص الآية اللي المفروض يتبعت";
-
-  // 3. إرسال الإشعار عن طريق OneSignal API
-  const options = {
-    method: "POST",
-    headers: {
-      accept: "application/json",
-      Authorization: `Basic ${process.env.ONESIGNAL_REST_API_KEY}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      app_id: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
-      included_segments: ["Subscribed Users"], // بيبعت لكل الناس اللي وافقت على الإشعارات
-      headings: { en: notificationTitle, ar: notificationTitle },
-      contents: { en: notificationBody, ar: notificationBody },
-    }),
-  };
-
   try {
-    const res = await fetch(
-      "https://onesignal.com/api/v1/notifications",
-      options,
+    // 2. جلب آية عشوائية من "مجموعة مختارة" (لو ضفت الـ Column)
+    // أو جلب عشوائي من الكل حالياً
+    const randomId = Math.floor(Math.random() * 35797) + 1;
+    const { data: verse, error } = await supabase
+      .from("bible_verses")
+      .select("vocalized_text, book_name, chapter_number, verse_number")
+      .eq("id", randomId)
+      .single();
+
+    if (error || !verse) throw new Error("Verse not found");
+
+    const cleanBookName = verse.book_name.replace(/^\d+-/, "");
+    const reference = `(${cleanBookName} ${verse.chapter_number}:${verse.verse_number})`;
+    const notificationTitle = "آية اليوم";
+    const notificationBody = `${verse.vocalized_text} ${reference}`;
+
+    // 3. إرسال الإشعار - تأكد من أسماء المتغيرات هنا
+    const appId = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
+    const apiKey = process.env.ONESIGNAL_REST_API_KEY;
+
+    if (!appId || !apiKey) {
+      return NextResponse.json({ error: "Missing API Keys" }, { status: 500 });
+    }
+
+    const response = await fetch("https://onesignal.com/api/v1/notifications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${apiKey}`,
+      },
+      body: JSON.stringify({
+        app_id: appId,
+        included_segments: ["Total Subscriptions"], // "Subscribed Users" أحياناً بتعمل مشاكل، دي أضمن
+        headings: { en: notificationTitle, ar: notificationTitle },
+        contents: { en: notificationBody, ar: notificationBody },
+      }),
+    });
+
+    const result = await response.json();
+    return NextResponse.json({ success: true, result });
+  } catch (err: any) {
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 },
     );
-    const data = await res.json();
-    return NextResponse.json({ success: true, data });
-  } catch (error) {
-    return NextResponse.json({ success: false, error });
   }
 }
