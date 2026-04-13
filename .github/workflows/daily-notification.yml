@@ -1,0 +1,16 @@
+name: Send Daily Notification
+
+on:
+  schedule:
+    - cron: '0 7 * * *' # بيشتغل تلقائي كل يوم الساعة 7 بتوقيت جرينتش (9 صباحاً بتوقيت مصر)
+
+  workflow_dispatch: # السطر ده هو الحل لمشكلة الـ Test! بيعملك زرار في جيت هاب تشغله وقت ما تحب
+
+jobs:
+  trigger-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit Next.js API
+        run: |
+          curl -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
+          -H "Authorization: Bearer Peter123456SecretTofa7a"
