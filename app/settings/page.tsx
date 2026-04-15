@@ -10,6 +10,8 @@ import { User } from "lucide-react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import OneSignal from 'react-onesignal';
+import { Bell } from "lucide-react";
 
 interface UserSettings {
   // notificationsEnabled: boolean;
@@ -24,6 +26,7 @@ export default function SettingsView() {
   const [user, setUser] = useState<any>(null);
   const { theme, setTheme } = useTheme();
   const supabase = createClient();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const [settings, setSettings] = useState<UserSettings>({
     // notificationsEnabled: true,
@@ -37,6 +40,13 @@ export default function SettingsView() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    const checkOneSignal = async () => {
+      if (typeof window !== "undefined") {
+        const state = OneSignal.User.PushSubscription.optedIn;
+        setNotificationsEnabled(!!state);
+      }
+    };
+    checkOneSignal();
     const loadUserSettings = async () => {
       const { data: { user } } = await supabase.auth.getUser();
 
@@ -85,6 +95,18 @@ export default function SettingsView() {
       toast.error("حدث خطأ في حفظ الإعدادات");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const toggleNotifications = async () => {
+    if (notificationsEnabled) {
+      await OneSignal.User.PushSubscription.optOut();
+      setNotificationsEnabled(false);
+      toast.success("تم إيقاف الإشعارات");
+    } else {
+      await OneSignal.User.PushSubscription.optIn();
+      setNotificationsEnabled(true);
+      toast.success("تم تفعيل الإشعارات");
     }
   };
 
@@ -139,6 +161,29 @@ export default function SettingsView() {
               <p className="text-sm text-black/80">
                 لا يمكن تغيير البريد الإلكتروني من هنا
               </p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="mt-1 backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-1 text-black drop-shadow-md">
+              <Bell className="w-5 h-5" />
+              إعدادات الإشعارات
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label className="text-black font-semibold text-lg">إشعارات الآيات والأقوال</Label>
+                <p className="text-sm text-black/80">استلام رسائل يومية (آية اليوم وأقوال الآباء)</p>
+              </div>
+              {/* سويتش بسيط */}
+              <button
+                onClick={toggleNotifications}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notificationsEnabled ? 'bg-green-500' : 'bg-gray-400'}`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notificationsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
             </div>
           </CardContent>
         </Card>

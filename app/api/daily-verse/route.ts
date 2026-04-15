@@ -44,6 +44,14 @@ export async function GET(request: Request) {
         included_segments: ["Total Subscriptions"], // "Subscribed Users" أحياناً بتعمل مشاكل، دي أضمن
         headings: { en: notificationTitle, ar: notificationTitle },
         contents: { en: notificationBody, ar: notificationBody },
+        web_buttons: [
+          {
+            id: "save-fav",
+            text: "❤️ حفظ في المفضلة",
+            icon: "رابط_صورة_قلب_صغيرة_لو_تحب.png",
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/add-fav-from-notification?bIdx=${verse.book_idx}&cIdx=${verse.chapter_idx}&vNum=${verse.verse_number}`,
+          },
+        ],
       }),
     });
 
