@@ -1,0 +1,17 @@
+name: Send Fathers-quotes Notification
+
+on:
+  schedule:
+    - cron: '0 15 * * *' # بيشتغل تلقائي كل يوم الساعة 3 بتوقيت جرينتش (5 مساءً بتوقيت مصر)
+    - cron: '0 19 * * *' # بيشتغل تلقائي كل يوم 7 مساءً بتوقيت جرينتش (9 مساءً بتوقيت مصر)
+
+  workflow_dispatch: # السطر ده هو الحل لمشكلة الـ Test! بيعملك زرار في جيت هاب تشغله وقت ما تحب
+
+jobs:
+  trigger-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit Next.js API
+        run: |
+          curl -X GET "https://abona-faltaus.vercel.app/api/add-fav-from-notification" \
+          -H "Authorization: Bearer Peter123456SecretTofa7a"
