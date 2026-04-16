@@ -16,7 +16,7 @@ jobs:
         run: |
           for attempt in {1..3}; do
             echo "Attempt $attempt..."
-            curl -i -X GET "https://abona-faltaus.vercel.app/api/daily-qoute" \
+            curl -i -X GET "https://abona-faltaus.vercel.app/api/daily-quote" \
               -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
               -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_BYPASS_TOKEN }}" \
               -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0" \
