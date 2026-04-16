@@ -17,7 +17,9 @@ jobs:
           # إضافة -f عشان يفشل لو فيه error 400/500
           # إضافة -i عشان يطبع الـ Headers والرد
           curl -f -i -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
-          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -H "User-Agent: CronJob-DailyVerses/1.0" \
+          -H "Accept: application/json"
     # steps:
     #   - name: Hit Next.js API
     #     run: |
