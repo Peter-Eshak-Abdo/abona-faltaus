@@ -14,12 +14,27 @@ jobs:
     steps:
       - name: Hit API and Show Response
         run: |
-          # إضافة -f عشان يفشل لو فيه error 400/500
-          # إضافة -i عشان يطبع الـ Headers والرد
-          curl -f -i -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
-          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-          -H "User-Agent: CronJob-DailyVerses/1.0" \
-          -H "Accept: application/json"
+          for attempt in {1..5}; do
+            echo "Attempt $attempt..."
+            curl -f -i -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
+              -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+              -H "User-Agent: CronJob-DailyVerses/1.0" \
+              -H "Accept: application/json" && break
+
+            if [ $attempt -lt 5 ]; then
+              sleep $((2 ** attempt))
+            fi
+          done
+    #   run: |
+    #     curl -f -i -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
+    #       -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+    #       -H "User-Agent: CronJob-DailyVerses/1.0" \
+    #       -H "Accept: application/json" \
+    #       --max-time 30 \
+    #       --retry 3 \
+    #       --retry-delay 5 \
+    #       --retry-max-time 60
+    
     # steps:
     #   - name: Hit Next.js API
     #     run: |
