@@ -19,19 +19,27 @@ export async function GET(request: Request) {
     if (poolError || !poolEntry) {
       console.log("الخزان فِضي! بنصفر البيانات دلوقتي...");
       // تصفير الجدول بالكامل
-      await supabase
+      const { error: resetError } = await supabase
         .from("daily_verses_pool")
         .update({ used_date: null })
-        .neq("id", 0); // شرط وهمي لتحديث كل الصفوف
+        .not("id", "is", null); // شرط وهمي لتحديث كل الصفوف
+
+      if (resetError)
+        throw new Error("Failed to reset pool: " + resetError.message);
 
       // المحاولة مرة تانية بعد التصفير
-      const { data: retryEntry } = await supabase
+      const { data: retryEntry, error: retryError } = await supabase
         .from("daily_verses_pool")
         .select("id, verse_id")
         .is("used_date", null)
         .limit(1)
         .maybeSingle();
 
+      if (retryError || !retryEntry) {
+        throw new Error(
+          `Pool is still empty after reset. Check if table has rows!`,
+        );
+      }
       poolEntry = retryEntry;
 
       // return NextResponse.json({message: "No fresh verses left in the pool!"});

@@ -16,9 +16,7 @@ jobs:
         run: |
           for attempt in {1..3}; do
             echo "Attempt $attempt..."
-            # ضفنا الـ Header الخاص بالـ Bypass
-            # وضفنا User-Agent "بشري" أكتر عشان نهرب من الـ Bot detection
-            curl -f -i -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
+            curl -i -X GET "https://abona-faltaus.vercel.app/api/daily-qoute" \
               -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
               -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_BYPASS_TOKEN }}" \
               -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0" \
