@@ -12,10 +12,17 @@ jobs:
   trigger-api:
     runs-on: ubuntu-latest
     steps:
-      - name: Hit Next.js API
+      - name: Hit API and Show Response
         run: |
-          curl -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
-          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-          -w "\n"
-        env:
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          # إضافة -f عشان يفشل لو فيه error 400/500
+          # إضافة -i عشان يطبع الـ Headers والرد
+          curl -f -i -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+    # steps:
+    #   - name: Hit Next.js API
+    #     run: |
+    #       curl -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
+    #       -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+    #       -w "\n"
+    #     env:
+    #       CRON_SECRET: ${{ secrets.CRON_SECRET }}

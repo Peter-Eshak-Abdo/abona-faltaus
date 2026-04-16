@@ -3,27 +3,47 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    // 1. التأمين (Security Check)
+    // التأمين (Security Check)
     const authHeader = request.headers.get("authorization");
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    // 2. جلب قول واحد غير مستخدم (used_date is NULL)
-    const { data: quoteEntry, error: qError } = await supabase
+    // جلب قول واحد غير مستخدم (used_date is NULL)
+    let { data: quoteEntry, error: quoteError } = await supabase
       .from("fathers_quotes")
       .select("id, author, quote")
       .is("used_date", null)
       .limit(1)
       .maybeSingle();
 
-    if (!quoteEntry) {
-      return NextResponse.json({ message: "No unused quotes left!" });
+    if (!quoteEntry || quoteError) {
+      console.log("الخزان فِضي! بنصفر البيانات دلوقتي...");
+
+      // تصفير الجدول بالكامل
+      await supabase
+        .from("fathers_quotes")
+        .update({ used_date: null })
+        .neq("id", 0); // شرط وهمي لتحديث كل الصفوف
+
+      // المحاولة مرة تانية بعد التصفير
+      const { data: retryEntry } = await supabase
+        .from("fathers_quotes")
+        .select("id, author, quote")
+        .is("used_date", null)
+        .limit(1)
+        .maybeSingle();
+
+      quoteEntry = retryEntry;
+
+      // return NextResponse.json({ message: "No unused quotes left!" });
     }
+
+    if (!quoteEntry) throw new Error("Database is completely empty!");
 
     const message = `☦️ ${quoteEntry.quote}\n👤 ${quoteEntry.author}`;
 
-    // 3. إرسال الإشعار لـ OneSignal (مع إضافة مفتاح en لتجنب الخطأ)
+    // إرسال الإشعار لـ OneSignal
     const osResponse = await fetch(
       "https://onesignal.com/api/v1/notifications",
       {
@@ -40,7 +60,7 @@ export async function GET(request: Request) {
             ar: "قول اليوم من الآباء",
           },
           contents: {
-            en: message, // حطينا الرسالة هنا كمان عشان وان سيجنال يقبل
+            en: message,
             ar: message,
           },
         }),
@@ -49,7 +69,7 @@ export async function GET(request: Request) {
 
     const osData = await osResponse.json();
 
-    // 4. تحديث حالة القول كأنه "استُخدم" عشان ميتكررش
+    // تحديث حالة القول كأنه "استُخدم" عشان ميتكررش
     if (osResponse.ok) {
       await supabase
         .from("fathers_quotes")
