@@ -1,7 +1,2 @@
 {
-  "crons": [
-    {
-      "path": "/api/daily-verse"
-    }
-  ]
 }
