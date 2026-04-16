@@ -2,31 +2,39 @@ import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  // 1. حماية الـ API أولاً
-  const { searchParams } = new URL(request.url);
+  // حماية الـ API أولاً
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
   try {
-    // 2. جلب آية عشوائية من "مجموعة مختارة" (لو ضفت الـ Column)
-    // أو جلب عشوائي من الكل حالياً
-    const randomId = Math.floor(Math.random() * 35797) + 1;
-    const { data: verse, error } = await supabase
+    const { data: poolEntry, error: poolError } = await supabase
+      .from("daily_verses_pool")
+      .select("id, verse_id")
+      .is("used_date", null)
+      .limit(1)
+      .maybeSingle();
+
+    if (poolError || !poolEntry) {
+      return NextResponse.json({
+        message: "No fresh verses left in the pool!",
+      });
+    }
+    // 2. جلب تفاصيل الآية نفسها
+    const { data: verse, error: verseError } = await supabase
       .from("bible_verses")
       .select("vocalized_text, book_name, chapter_number, verse_number")
-      .eq("id", randomId)
+      .eq("id", poolEntry.verse_id)
       .single();
 
-    if (error || !verse) throw new Error("Verse not found");
+    if (verseError || !verse) throw new Error("Verse details not found");
 
     const cleanBookName = verse.book_name.replace(/^\d+-/, "");
     const reference = `(${cleanBookName} ${verse.chapter_number}:${verse.verse_number})`;
     const notificationTitle = "آية اليوم";
     const notificationBody = `${verse.vocalized_text} ${reference}`;
 
-    // 3. إرسال الإشعار - تأكد من أسماء المتغيرات هنا
     const appId = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
     const apiKey = process.env.ONESIGNAL_REST_API_KEY;
 
@@ -34,6 +42,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Missing API Keys" }, { status: 500 });
     }
 
+    // 3. إرسال الإشعار
     const response = await fetch("https://onesignal.com/api/v1/notifications", {
       method: "POST",
       headers: {
@@ -42,21 +51,30 @@ export async function GET(request: Request) {
       },
       body: JSON.stringify({
         app_id: appId,
-        included_segments: ["Total Subscriptions"], // "Subscribed Users" أحياناً بتعمل مشاكل، دي أضمن
+        included_segments: ["Total Subscriptions"],
         headings: { en: notificationTitle, ar: notificationTitle },
         contents: { en: notificationBody, ar: notificationBody },
         web_buttons: [
           {
             id: "save-fav",
             text: "❤️ حفظ في المفضلة",
-            // icon: "رابط_صورة_قلب_صغيرة_لو_تحب.png",
-            url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/add-fav-from-notification?bIdx=${verse.book_idx}&cIdx=${verse.chapter_idx}&vNum=${verse.verse_number}`,
+            // تم تعديل الرابط لاستخدام المتغيرات المتاحة في الاستعلام
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/add-fav-from-notification?book=${cleanBookName}&chapter=${verse.chapter_number}&verse=${verse.verse_number}`,
           },
         ],
       }),
     });
 
     const result = await response.json();
+
+    // 4. تحديث حالة الآية في الـ Pool عشان متتبعتش تاني
+    if (response.ok) {
+      await supabase
+        .from("daily_verses_pool")
+        .update({ used_date: new Date().toISOString() })
+        .eq("id", poolEntry.id);
+    }
+    
     return NextResponse.json({ success: true, result });
   } catch (err: any) {
     return NextResponse.json(

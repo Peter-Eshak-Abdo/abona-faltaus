@@ -1,8 +1,10 @@
-name: Send Daily Verses
+name: Daily Verses
 
 on:
   schedule:
-    - cron: '0 7 * * *' # بيشتغل تلقائي كل يوم الساعة 7 بتوقيت جرينتش (9 صباحاً بتوقيت مصر)
+    - cron: "0 6 * * *" # بيشتغل تلقائي كل يوم الساعة 7 بتوقيت جرينتش (8 صباحاً بتوقيت مصر)
+    - cron: "0 13 * * *" # بيشتغل تلقائي كل يوم الساعة 7 بتوقيت جرينتش (3 صباحاً بتوقيت مصر)
+    - cron: "0 19 * * *" # بيشتغل تلقائي كل يوم الساعة 7 بتوقيت جرينتش (9 صباحاً بتوقيت مصر)
 
   workflow_dispatch: # السطر ده هو الحل لمشكلة الـ Test! بيعملك زرار في جيت هاب تشغله وقت ما تحب
 
@@ -13,4 +15,7 @@ jobs:
       - name: Hit Next.js API
         run: |
           curl -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
-          -H "Authorization: Bearer Peter123456SecretTofa7a"
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -w "\n"
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}

@@ -1,16 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/daily-verse",
-      "schedule": "0 7 * * *"
-    },
-    {
-      "path": "/api/fathers-quote?time=5pm",
-      "schedule": "0 15 * * *"
-    },
-    {
-      "path": "/api/fathers-quote?time=9pm",
-      "schedule": "0 19 * * *"
+      "path": "/api/daily-verse"
     }
   ]
 }

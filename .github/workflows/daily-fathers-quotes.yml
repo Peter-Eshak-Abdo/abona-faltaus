@@ -1,10 +1,11 @@
-name: Daily Quotes Notifications
+name: Daily Quotes
 
 on:
   schedule:
     # المواعيد بتوقيت UTC (زود ساعتين لمصر)
-    - cron: '0 15 * * *' # الساعة 5 مساءً
-    - cron: '0 20 * * *' # الساعة 11 مساءً
+    - cron: '0 7 * * *' # بيشتغل تلقائي كل يوم الساعة 7 بتوقيت جرينتش (9 صباحاً بتوقيت مصر)
+    - cron: '0 14 * * *' # بيشتغل تلقائي كل يوم الساعة 7 بتوقيت جرينتش (4 صباحاً بتوقيت مصر)
+    - cron: '0 20 * * *' # بيشتغل تلقائي كل يوم الساعة 7 بتوقيت جرينتش (10 صباحاً بتوقيت مصر)
   workflow_dispatch: # للسماح بالتشغيل اليدوي للتجربة
 
 jobs:
@@ -13,5 +14,8 @@ jobs:
     steps:
       - name: Hit Quotes API
         run: |
-          curl -X GET "https://abona-faltaus.vercel.app/api/daily-quotes" \
-          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          curl -X GET "https://abona-faltaus.vercel.app/api/daily-quote" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -w "\n"
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
