@@ -3,14 +3,16 @@ import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { motion, AnimatePresence, animate } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { VolumeX, Volume2 } from "lucide-react"
 
-const playAudio = (path: string, loop: boolean = false) => {
-  if (typeof window !== "undefined") {
+const playAudio = (path: string, loop: boolean = false, isMuted: boolean = false) => {
+  if (typeof window !== "undefined" && !isMuted) {
     const audio = new Audio(path);
     audio.loop = loop;
-    audio.play().catch((e) => console.log("Audio ignored by browser:", e));
+    audio.play().catch((e) => console.log("Audio ignored:", e));
     return audio;
   }
+  return null;
 };
 
 const AnimatedNumber = ({ from, to }: { from: number, to: number }) => {
@@ -35,6 +37,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   const [timer, setTimer] = useState(0);
   const [answersCount, setAnswersCount] = useState(0);
   const [isIntro, setIsIntro] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
 
   // أنيميشن المتصدرين والنهاية التشويقية
   const [displayGroups, setDisplayGroups] = useState(groups);
@@ -42,6 +45,37 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   const prevGroupsRef = useRef(groups); // حفظ المجموع القديم للأنيميشن
   const currentQuestion = quiz?.questions?.[gs.current_question_index] || null;
   const qTime = currentQuestion?.timeLimit || 20;
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // نقفل أي صوت شغال الأول
+    stopMusic();
+
+    if (gs.phase === 'question' && !isIntro && !isMuted) {
+      audioRef.current = new Audio("/sounds/question-music.mp3");
+      audioRef.current.loop = true;
+      audioRef.current.play().catch(e => console.log("Audio play error"));
+    }
+
+    return () => stopMusic();
+  }, [gs.phase, isIntro, gs.current_question_index]); // ضفنا isIntro هنا كشرط أساسي
+
+  useEffect(() => {
+    if (isMuted && audioRef.current) {
+      audioRef.current.pause();
+    } else if (!isMuted && gs.phase === 'question' && !isIntro) {
+      audioRef.current?.play();
+    }
+  }, [isMuted]);
+
+  // دالة إيقاف الصوت عند ظهور الإجابة أو انتهاء التايمر
+  const stopMusic = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
 
   // حفظ الفرق قبل التحديث لعرضها في السكوربورد
   useEffect(() => {
@@ -153,6 +187,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   };
 
   const handlePhaseEnd = () => {
+    stopMusic(); // وقف الموسيقى فوراً
     if (gs.phase === 'question') {
       goToPhase('result');
     } else if (gs.phase === 'result') {
@@ -319,6 +354,18 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
             </Button>
           </motion.div>
         )}
+        <div className="fixed bottom-6 left-6 z-50">
+          <button
+            onClick={() => setIsMuted(!isMuted)}
+            className="p-1 bg-white/20 backdrop-blur-lg border-2 border-white/30 rounded-full hover:scale-110 transition-all shadow-2xl"
+          >
+            {isMuted ? (
+              <VolumeX className="text-red-500" size={16} />
+            ) : (
+              <Volume2 className="text-white" size={16} />
+            )}
+          </button>
+        </div>
       </AnimatePresence>
     </div>
   );

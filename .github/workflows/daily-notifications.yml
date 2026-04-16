@@ -1,0 +1,19 @@
+name: Daily Bible & Quotes Notifications
+
+on:
+  schedule:
+    # المواعيد بتوقيت UTC (زود ساعتين لتوقيت مصر)
+    - cron: '0 7 * * *'  # الساعة 9 صباحاً بتوقيت مصر
+  workflow_dispatch: # عشان تقدر تشغله يدوي للتجربة
+
+jobs:
+  send_notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Notification API
+        run: |
+          curl -X GET "https://abona-faltaus.vercel.app/api/daily-verse" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -w "\n"
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}

@@ -3,7 +3,7 @@ verses_to_add = [
     "John 3:16",
     "Matthew 5:8",
     "Psalms 23:1",
-    "Romans 8:28",
+    "Romans 15:33",
     "Proverbs 3:5"
 ]
 

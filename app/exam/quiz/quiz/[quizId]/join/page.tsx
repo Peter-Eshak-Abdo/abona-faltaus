@@ -50,6 +50,9 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
       }, (payload) => {
         setTakenSaints(prev => [...prev, payload.new.group_name]);
         setTakenMembers(prev => [...prev, ...(payload.new.members || [])]);
+        if (payload.new.phase === "question" && hasJoined) {
+          router.push(`/exam/quiz/quiz/${quizId}/play`);
+        }
         // if (payload.new.is_active && hasJoined) {
         //   router.push(`/exam/quiz/quiz/${quizId}/play`);
         // }

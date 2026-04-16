@@ -1,17 +1,17 @@
-name: Send Fathers-quotes Notification
+name: Daily Quotes Notifications
 
 on:
   schedule:
-    - cron: '0 15 * * *' # بيشتغل تلقائي كل يوم الساعة 3 بتوقيت جرينتش (5 مساءً بتوقيت مصر)
-    - cron: '0 19 * * *' # بيشتغل تلقائي كل يوم 7 مساءً بتوقيت جرينتش (9 مساءً بتوقيت مصر)
-
-  workflow_dispatch: # السطر ده هو الحل لمشكلة الـ Test! بيعملك زرار في جيت هاب تشغله وقت ما تحب
+    # المواعيد بتوقيت UTC (زود ساعتين لمصر)
+    - cron: '0 15 * * *' # الساعة 5 مساءً
+    - cron: '0 20 * * *' # الساعة 11 مساءً
+  workflow_dispatch: # للسماح بالتشغيل اليدوي للتجربة
 
 jobs:
-  trigger-api:
+  send_quote:
     runs-on: ubuntu-latest
     steps:
-      - name: Hit Next.js API
+      - name: Hit Quotes API
         run: |
-          curl -X GET "https://abona-faltaus.vercel.app/api/add-fav-from-notification" \
-          -H "Authorization: Bearer Peter123456SecretTofa7a"
+          curl -X GET "https://abona-faltaus.vercel.app/api/daily-quotes" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

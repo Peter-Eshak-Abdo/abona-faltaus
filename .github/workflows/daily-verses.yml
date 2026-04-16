@@ -1,4 +1,4 @@
-name: Send Daily Notification
+name: Send Daily Verses
 
 on:
   schedule:

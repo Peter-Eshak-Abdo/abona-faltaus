@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   // 1. حماية الـ API أولاً
+  const { searchParams } = new URL(request.url);
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -48,7 +49,7 @@ export async function GET(request: Request) {
           {
             id: "save-fav",
             text: "❤️ حفظ في المفضلة",
-            icon: "رابط_صورة_قلب_صغيرة_لو_تحب.png",
+            // icon: "رابط_صورة_قلب_صغيرة_لو_تحب.png",
             url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/add-fav-from-notification?bIdx=${verse.book_idx}&cIdx=${verse.chapter_idx}&vNum=${verse.verse_number}`,
           },
         ],
