@@ -22,16 +22,16 @@ const sections = [
   { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
   { name: "حول", href: "/about", icon: <FaInfoCircle /> },
   { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
-  { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
+  // { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },
   // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
-  { name: "العظات", href: "/3zat", icon: <FaChurch /> },
-  { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
+  // { name: "العظات", href: "/3zat", icon: <FaChurch /> },
+  // { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
   { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
   { name: "القطمارس", href: "/readings", icon: <FaBook /> },
-  { name: "الخولاجي", href: "/prayers", icon: <FaBook /> },
+  // { name: "الخولاجي", href: "/prayers", icon: <FaBook /> },
 ];
 
 export default function HomeClient() {
