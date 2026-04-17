@@ -35,6 +35,11 @@ next-env.d.ts
 .firebase
 lib/firebase.ts
 
+# Supabase
+skills-lock.json
+/.agents/
+/.idx/
+
 public/sitemap-*.xml
 public/sitemap.xml
 public/robots.txt

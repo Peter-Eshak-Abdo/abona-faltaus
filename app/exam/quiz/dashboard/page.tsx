@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getUserQuizzes, deleteQuiz, createClient } from "@/lib/supabase-utils";
-import CreateQuizDialog from "@/components/quiz/create-quiz-dialog-old";
+import CreateQuizDialog from "@/components/quiz/CreateQuizDialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { QuizCard } from "@/components/quiz/QuizCard";

@@ -1,12 +1,12 @@
 "use client"
 import { useEffect, useState, use } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { GroupsSection } from "@/components/quiz/groups-section"
-import QRCodeSection from "@/components/quiz/qr-code-section"
-import { QuizStats } from "@/components/quiz/quiz-stats"
+import { GroupsSection } from "@/components/quiz/GroupsSection"
+import QRCodeSection from "@/components/quiz/QRCodeSection"
+import { QuizStats } from "@/components/quiz/QuizStats"
 import { Button } from "@/components/ui/button"
 import { Play, Loader2, RefreshCcw } from "lucide-react"
-import QuizHostGame from "@/components/quiz/quiz-host-game"
+import QuizHostGame from "@/components/quiz/QuizHostGame"
 
 export default function HostPage({ params: paramsPromise }: { params: Promise<{ quizId: string }> }) {
   const params = use(paramsPromise);
@@ -126,7 +126,7 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
             <Play className="w-3 h-3 ml-1 fill-current" />
             <p className="text-xl">ابدأ الآن</p>
           </Button>
-        </div> 
+        </div>
       </div>
 
       <div className="grid grid-cols-12 gap-1">
