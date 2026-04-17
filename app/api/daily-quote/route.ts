@@ -23,7 +23,7 @@ export async function GET(request: Request) {
       // تصفير الجدول بالكامل
       await supabase
         .from("fathers_quotes")
-        .update({ used_date: null })
+        .update({ used_date: new Date().toISOString().split("T")[0] })
         .neq("id", 0); // شرط وهمي لتحديث كل الصفوف
 
       // المحاولة مرة تانية بعد التصفير

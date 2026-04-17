@@ -21,7 +21,7 @@ export async function GET(request: Request) {
       // تصفير الجدول بالكامل
       const { error: resetError } = await supabase
         .from("daily_verses_pool")
-        .update({ used_date: null })
+        .update({ used_date: new Date().toISOString().split("T")[0] })
         .not("id", "is", null); // شرط وهمي لتحديث كل الصفوف
 
       if (resetError)
