@@ -60,7 +60,7 @@ export default function Dashboard() {
       {loading ? (
         <div className="text-center py-1 font-bold text-gray-500 text-xl animate-pulse">جاري تحميل المسابقات...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1">
           {quizzes.map((quiz) => (
             <QuizCard key={quiz.id} quiz={quiz} onEdit={handleEdit} onDelete={handleDelete} />
           ))}

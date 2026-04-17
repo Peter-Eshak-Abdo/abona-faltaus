@@ -55,11 +55,12 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     if (gs.phase === 'question' && !isIntro && !isMuted) {
       audioRef.current = new Audio("/sounds/question-music.mp3");
       audioRef.current.loop = true;
+      audioRef.current.volume = 0.7;
       audioRef.current.play().catch(e => console.log("Audio play error"));
     }
 
     return () => stopMusic();
-  }, [gs.phase, isIntro, gs.current_question_index]); // ضفنا isIntro هنا كشرط أساسي
+  }, [gs.phase, isIntro, isMuted, gs.current_question_index]); // ضفنا isIntro هنا كشرط أساسي
 
   useEffect(() => {
     if (isMuted && audioRef.current) {
@@ -96,7 +97,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     const interval = setInterval(() => {
       setTimer((p) => {
         const newTime = p > 0 ? p - 1 : 0;
-        if (newTime <= 5 && newTime > 0) playAudio('/sounds/tick.mp3'); // صوت التايمر آخر 5 ثواني
+        if (newTime <= 5 && newTime > 0) playAudio('/sounds/tick.mp3',false ,isMuted); // صوت التايمر آخر 5 ثواني
         return newTime;
       });
     }, 1000);
@@ -139,9 +140,9 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   // تتابع المرحلة النهائية (التشويق)
   useEffect(() => {
     if (gs.phase === 'final') {
-      const t1 = setTimeout(() => { setPodiumStep(1); playAudio('/sounds/podium3.mp3'); }, 5000); // يظهر الثالث
-      const t2 = setTimeout(() => { setPodiumStep(2); playAudio('/sounds/podium2.m4a'); }, 10000); // يظهر الثاني
-      const t3 = setTimeout(() => { setPodiumStep(3); playAudio('/sounds/podium1.mp3', true); }, 15000); // يظهر الأول
+      const t1 = setTimeout(() => { setPodiumStep(1); playAudio('/sounds/podium3.mp3', false, isMuted); }, 5000); // يظهر الثالث
+      const t2 = setTimeout(() => { setPodiumStep(2); playAudio('/sounds/podium2.m4a', false, isMuted); }, 10000); // يظهر الثاني
+      const t3 = setTimeout(() => { setPodiumStep(3); playAudio('/sounds/podium1.mp3', true, isMuted); }, 15000); // يظهر الأول
       return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
     }
   }, [gs.phase]);
@@ -354,15 +355,15 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
             </Button>
           </motion.div>
         )}
-        <div className="fixed bottom-6 left-6 z-50">
+        <div className="fixed bottom-2 left-2 z-50">
           <button
             onClick={() => setIsMuted(!isMuted)}
             className="p-1 bg-white/20 backdrop-blur-lg border-2 border-white/30 rounded-full hover:scale-110 transition-all shadow-2xl"
           >
             {isMuted ? (
-              <VolumeX className="text-red-500" size={16} />
+              <VolumeX className="text-red-500" size={18} />
             ) : (
-              <Volume2 className="text-white" size={16} />
+              <Volume2 className="text-white" size={18} />
             )}
           </button>
         </div>

@@ -47,7 +47,7 @@ export default function ExamPage() {
           </motion.div>
 
           {/* كارت الأسئلة المجمعة اونلاين */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -86,7 +86,7 @@ export default function ExamPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </motion.div> */}
 
           {/* كارت الأسئلة الفردية */}
           <motion.div

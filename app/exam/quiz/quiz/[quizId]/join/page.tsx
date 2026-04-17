@@ -41,35 +41,30 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
     fetchQuiz();
 
     const groupsChannel = supabase
-      .channel(`game-state-${quizId}`)
+      .channel(`groups-${quizId}`)
       .on('postgres_changes', {
-        event: 'UPDATE',
+        event: 'INSERT',
         schema: 'public',
-        table: 'game_state',
+        table: 'quiz_groups',
         filter: `quiz_id=eq.${quizId}`
       }, (payload) => {
         setTakenSaints(prev => [...prev, payload.new.group_name]);
         setTakenMembers(prev => [...prev, ...(payload.new.members || [])]);
-        if (payload.new.phase === "question" && hasJoined) {
-          router.push(`/exam/quiz/quiz/${quizId}/play`);
-        }
-        // if (payload.new.is_active && hasJoined) {
-        //   router.push(`/exam/quiz/quiz/${quizId}/play`);
-        // }
       })
       .subscribe();
 
     const gameChannel = supabase.channel(`game-state-${quizId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${quizId}` },
         (payload) => {
-          if (payload.new.is_active && hasJoined) {
+          // if (payload.new.is_active && hasJoined) {
+          if (payload.new.phase === "question" && hasJoined) {
             router.push(`/exam/quiz/quiz/${quizId}/play`);
           }
         }
       ).subscribe();
 
     return () => { supabase.removeChannel(groupsChannel); supabase.removeChannel(gameChannel); };
-  }, [quizId, hasJoined, router]);
+  }, [quizId, router]);
 
   const handleJoin = async () => {
     if (!selectedSaint) return alert("يرجى اختيار اسم الفريق (الشفيع)");

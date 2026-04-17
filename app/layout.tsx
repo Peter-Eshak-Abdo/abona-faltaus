@@ -24,7 +24,7 @@ const vazirmatn = Vazirmatn({
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:3000'; // عشان يشتغل معاك لوكال برضه
+  : 'http://localhost:3000';
 
 export const viewport: Viewport = {
   width: "device-width",

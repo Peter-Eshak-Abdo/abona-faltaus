@@ -77,7 +77,7 @@ export function QuizCard({ quiz, onEdit, onDelete }: any) {
           <div className="col-span-2 bg-zinc-50 p-1 rounded-lg flex items-center gap-1"><Calendar size={14} className="text-green-500" /> أُنشئت: {createdDate}</div>
         </div>
 
-        <Button onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl py-1 font-black text-lg shadow-[0_4px_0_#1d4ed8] active:translate-y-1 active:shadow-none transition-all">
+        <Button onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl py-1 font-black text-lg shadow-[0_4px_0_#1d4ed8] active:translate-y-0.5 active:shadow-none transition-all">
           <Play size={20} className="ml-1 fill-current" /> بدء المسابقة
         </Button>
       </div>
