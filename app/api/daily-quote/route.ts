@@ -63,6 +63,11 @@ export async function GET(request: Request) {
             en: message,
             ar: message,
           },
+          url:
+            process.env.NEXT_PUBLIC_SITE_URL ||
+            "https://abona-faltaus.vercel.app",
+          chrome_web_icon:
+            "https://abona-faltaus.vercel.app/_next/image?url=%2Fimages%2Flogo.webp&w=640&q=75",
         }),
       },
     );
