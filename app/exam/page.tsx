@@ -11,7 +11,7 @@ export default function ExamPage() {
   return (
     <div className="min-h-screen bg-linear-to-br flex items-center justify-center">
       <div className="w-full max-w-7xl space-y-1 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-4xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
-        <div className="text-center mb-2">
+        <div className="text-center mb1">
           <h1 className="text-5xl font-bold mb-1 text-black drop-shadow-lg">نظام الاختبارات الإلكتروني</h1>
           <p className="text-black/90 drop-shadow-md">اختر نوع الاختبار المناسب لك</p>
         </div>
@@ -28,7 +28,7 @@ export default function ExamPage() {
                   الأسئلة المجمعة
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col justify-between space-y-2">
+              <CardContent className="flex flex-col justify-between space-y-1">
                 <p className="text-center text-gray-600">
                   نظام تقسيم الأسئلة لمجموعات مع وقت محدد لكل مجموعة.
                 </p>
@@ -124,7 +124,7 @@ export default function ExamPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="h-full space-y-4">
+            <Card className="h-full space-y-1">
               <CardHeader>
                 <CardTitle className="text-center text-green-600 font-bold text-2xl">
                   الأسئلة الكاهوتية
