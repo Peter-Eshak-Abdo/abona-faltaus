@@ -129,7 +129,7 @@ export default function RootLayout({
       <body suppressHydrationWarning={true}>
         <ServiceWorkerRegister />
         <FixProcess />
-        <div className="background-blur" />
+        <div className="background-blur-overlay" />
         <GlobalLoadingProvider>
           <OfflineNotification />
           <OneSignal />

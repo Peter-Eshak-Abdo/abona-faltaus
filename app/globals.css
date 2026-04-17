@@ -1,11 +1,115 @@
-@import "tw-animate-css";
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-/* 1. Global Variables (Cleaned & Merged) */
+@theme inline {
+  --spacing: 1rem;
+  /* --spacing: 0.25rem; */
+  /* 1. Colors & Variables (Cleaned) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Radius System */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* 2. Custom Animations (Tailwind v4 Way) */
+  --animate-glow: glowPulse 8s ease-in-out infinite;
+  --animate-draw: drawLine 1.5s ease-out forwards;
+  --animate-blob: blob 7s infinite;
+  --animate-spin-slow: spin 3s linear infinite;
+
+  @keyframes glowPulse {
+
+    0%,
+    100% {
+      opacity: 0.65;
+      transform: scale(1);
+      filter: blur(2px);
+    }
+
+    50% {
+      opacity: 0.8;
+      transform: scale(1.02);
+      filter: blur(3px);
+    }
+  }
+
+  @keyframes drawLine {
+    from {
+      width: 0%;
+    }
+
+    to {
+      width: 100%
+    }
+  }
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
 :root {
-  --background: oklch(1 0 0);
+  --background: rgb(231, 208, 174);
+  /* الخلفية البيج رجعت هنا */
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -20,18 +124,13 @@
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
 
-  /* Sidebar Variables */
+  /* Sidebar */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -40,13 +139,12 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-
-  --spacing: 1rem;
 }
 
-/* 2. Dark Mode Overrides */
+/* 🌑 الوضع المظلم (Dark Mode) 🌑 */
 .dark {
   --background: oklch(0.145 0 0);
+  /* اللون الغامق مش البيج */
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -60,62 +158,20 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --destructive: oklch(0.396 0.141 25.723);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+
+  /* Sidebar Dark */
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
-/* 3. Theme Configuration (Tailwind v4) */
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
 }
 
 /* 4. Base Styles */
@@ -131,11 +187,10 @@
   }
 
   body {
-    @apply bg-background text-foreground;
-    /* Custom override for your specific beige theme */
-    background: rgb(231, 208, 174) !important;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply bg-background text-foreground antialiased;
+    max-width: 100vw;
+    overflow-x: hidden;
+    /* background: rgb(231, 208, 174) !important; */
   }
 
   a {
@@ -143,37 +198,37 @@
   }
 }
 
-/* 5. Custom Utilities & Components */
+/* 3. Utilities & Custom Components */
+@layer utilities {
+  .background-blur-overlay {
+    @apply fixed inset-0 -z-10 pointer-events-none;
+    background-image: linear-gradient(rgba(231, 208, 174, 0.7), rgba(231, 208, 174, 0.7)), url('/images/bg.webp');
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: lighten;
+    filter: blur(2px);
 
-/* Background Effects */
-.background-blur {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(rgba(231, 208, 174, 0.7), rgba(231, 208, 174, 0.7)), url('/images/bg.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-blend-mode: lighten;
-  filter: blur(2px);
-  animation: glowPulse 8s ease-in-out infinite;
-  z-index: -1;
-  pointer-events: none;
+    /* top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    animation: glowPulse 8s ease-in-out infinite;
+    z-index: -1; */
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
 }
 
 /* Verse Styling */
 #verses p {
-  position: relative;
-  padding-left: 2.5rem;
+  @apply relative pl-10;
 }
 
 #verses .verse-num {
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-weight: bold;
+  @apply absolute left-0 top-0 font-bold;
 }
 
 /* Loading Spinner (Legacy CSS) */
@@ -182,75 +237,5 @@
 }
 
 .spinner {
-  width: 60px;
-  height: 60px;
-  border: 6px solid #ccc;
-  border-top: 6px solid #4fc3f7;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-/* Animations */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes glowPulse {
-  0%,
-  100% {
-    opacity: 0.65;
-    transform: scale(1);
-    filter: blur(2px);
-  }
-
-  50% {
-    opacity: 0.8;
-    transform: scale(1.02);
-    filter: blur(3px);
-  }
-}
-
-@keyframes drawLine {
-  0% {
-    width: 0%;
-  }
-
-  100% {
-    width: 100%;
-  }
-}
-
-.animate-draw {
-  animation: drawLine 1.5s ease-out forwards;
-}
-
-/* Blob Animation (404 Page) */
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-}
-
-.animate-blob {
-  animation: blob 7s infinite;
-}
-
-@layer utilities {
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
+  @apply w-[60px] h-[60px] rounded-full border-[6px] border-gray-300 border-t-sky-400 animate-spin;
 }
