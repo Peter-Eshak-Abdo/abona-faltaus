@@ -69,7 +69,7 @@ export function QuizCard({ quiz, onEdit, onDelete }: any) {
         </div>
 
         <h3 className="text-2xl font-black mb-1 text-zinc-800 truncate">{quiz.title}</h3>
-        <p className="text-sm font-bold text-zinc-500 mb-1 line-clamp-2 h-10">{quiz.description || "لا يوجد وصف"}</p>
+        <p className="text-sm font-bold text-zinc-500 mb-1 line-clamp-2 h-4">{quiz.description || "لا يوجد وصف"}</p>
 
         <div className="grid grid-cols-2 gap-1 mb-1 text-xs font-bold text-zinc-600">
           <div className="bg-zinc-50 p-1 rounded-lg flex items-center gap-1"><Clock size={14} className="text-blue-500" /> {quiz.questions?.length || 0} سؤال</div>

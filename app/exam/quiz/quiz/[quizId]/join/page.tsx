@@ -13,15 +13,11 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
   const quizId = params.quizId;
   const router = useRouter();
   const supabase = createClient();
-
-  // --- الـ States المختصرة ---
   const [quiz, setQuiz] = useState<any>(null);
   const [selectedSaint, setSelectedSaint] = useState<any>(null);
-  // مصفوفة واحدة تبدأ بـ 5 خانات فارغة
   const [members, setMembers] = useState<string[]>(Array(5).fill(""));
   const [loading, setLoading] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
-  // States جديدة للحفظ اللحظي للبيانات المحجوزة
   const [takenSaints, setTakenSaints] = useState<string[]>([]);
   const [takenMembers, setTakenMembers] = useState<string[]>([]);
 
@@ -31,7 +27,6 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
     const fetchQuiz = async () => {
       const { data } = await supabase.from("quizzes").select("*").eq("id", quizId).single();
       setQuiz(data);
-      // جلب الفرق المسجلة حالياً
       const { data: groupsData } = await supabase.from("quiz_groups").select("group_name, members").eq("quiz_id", quizId);
       if (groupsData) {
         setTakenSaints(groupsData.map(g => g.group_name));
@@ -56,8 +51,9 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
     const gameChannel = supabase.channel(`game-state-${quizId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${quizId}` },
         (payload) => {
+          const teamId = localStorage.getItem(`team_id_${quizId}`);
           // if (payload.new.is_active && hasJoined) {
-          if (payload.new.phase === "question" && hasJoined) {
+          if (payload.new.phase === "question" && teamId) {
             router.push(`/exam/quiz/quiz/${quizId}/play`);
           }
         }
@@ -149,7 +145,7 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
         </CardHeader>
 
         <CardContent className="p-1 space-y-1">
-          {/* 1. اختيار الشفيع */}
+          {/* اختيار الشفيع */}
           <section>
             <h3 className="text-xl font-black mb-1 text-slate-800 flex items-center gap-1">
               <span className="bg-blue-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-sm">1</span>
@@ -180,7 +176,7 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
             </div>
           </section>
 
-          {/* 2. أسماء الأعضاء */}
+          {/* أسماء الأعضاء */}
           <section ref={membersSectionRef} className="pt-1 border-t">
             <div className="flex justify-between items-center mb-1">
               <h3 className="text-xl font-black text-slate-800 flex items-center gap-1">

@@ -49,7 +49,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-1 max-w-7xl mx-auto font-sans" dir="rtl">
+    <div className="p-1 max-w-8xl mx-auto font-sans" dir="rtl">
       <div className="flex justify-between items-center mb-1">
         <h1 className="text-3xl font-black text-gray-800">مسابقاتي</h1>
         <Button onClick={handleCreateNew} className="gap-1 bg-blue-600 hover:bg-blue-700 font-bold text-lg rounded-xl">

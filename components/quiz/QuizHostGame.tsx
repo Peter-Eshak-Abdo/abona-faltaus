@@ -38,18 +38,19 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   const [answersCount, setAnswersCount] = useState(0);
   const [isIntro, setIsIntro] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
-
-  // أنيميشن المتصدرين والنهاية التشويقية
   const [displayGroups, setDisplayGroups] = useState(groups);
   const [podiumStep, setPodiumStep] = useState(0);
   const prevGroupsRef = useRef(groups); // حفظ المجموع القديم للأنيميشن
   const currentQuestion = quiz?.questions?.[gs.current_question_index] || null;
   const qTime = currentQuestion?.timeLimit || 20;
-
+  const isMutedRef = useRef(isMuted);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // نقفل أي صوت شغال الأول
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
+
+  useEffect(() => {
     stopMusic();
 
     if (gs.phase === 'question' && !isIntro && !isMuted) {
@@ -61,14 +62,6 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
 
     return () => stopMusic();
   }, [gs.phase, isIntro, isMuted, gs.current_question_index]); // ضفنا isIntro هنا كشرط أساسي
-
-  useEffect(() => {
-    if (isMuted && audioRef.current) {
-      audioRef.current.pause();
-    } else if (!isMuted && gs.phase === 'question' && !isIntro) {
-      audioRef.current?.play();
-    }
-  }, [isMuted]);
 
   // دالة إيقاف الصوت عند ظهور الإجابة أو انتهاء التايمر
   const stopMusic = () => {
@@ -97,7 +90,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     const interval = setInterval(() => {
       setTimer((p) => {
         const newTime = p > 0 ? p - 1 : 0;
-        if (newTime <= 5 && newTime > 0) playAudio('/sounds/tick.mp3',false ,isMuted); // صوت التايمر آخر 5 ثواني
+        if (newTime <= 5 && newTime > 0) playAudio('/sounds/tick.mp3', false, isMutedRef.current); // صوت التايمر آخر 5 ثواني
         return newTime;
       });
     }, 1000);
@@ -117,7 +110,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     if (gs.phase === 'question') {
       setIsIntro(true);
       setTimer(4); // مدة عرض السؤال في المنتصف
-      playAudio('/sounds/intro.mp3'); // صوت حماسي للسؤال
+      playAudio('/sounds/intro.mp3', false, isMutedRef.current); // صوت حماسي للسؤال
       const timeout = setTimeout(() => { setIsIntro(false); setTimer(qTime); }, 4000);
       return () => clearTimeout(timeout);
     } else {
@@ -129,7 +122,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   // تأخير تحديث السكوربورد لعمل أنيميشن الصعود والنزول
   useEffect(() => {
     if (gs.phase === 'scoreboard') {
-      playAudio('/sounds/score-up.mp3');
+      playAudio('/sounds/score-up.mp3', false, isMutedRef.current);
       const t = setTimeout(() => setDisplayGroups(groups), 1500); // يعرض القديم لثانية ونص ثم يطبق الجديد
       return () => clearTimeout(t);
     } else {
@@ -140,9 +133,9 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   // تتابع المرحلة النهائية (التشويق)
   useEffect(() => {
     if (gs.phase === 'final') {
-      const t1 = setTimeout(() => { setPodiumStep(1); playAudio('/sounds/podium3.mp3', false, isMuted); }, 5000); // يظهر الثالث
-      const t2 = setTimeout(() => { setPodiumStep(2); playAudio('/sounds/podium2.m4a', false, isMuted); }, 10000); // يظهر الثاني
-      const t3 = setTimeout(() => { setPodiumStep(3); playAudio('/sounds/podium1.mp3', true, isMuted); }, 15000); // يظهر الأول
+      const t1 = setTimeout(() => { setPodiumStep(1); playAudio('/sounds/podium3.mp3', false, isMutedRef.current); }, 5000); // يظهر الثالث
+      const t2 = setTimeout(() => { setPodiumStep(2); playAudio('/sounds/podium2.m4a', false, isMutedRef.current); }, 10000); // يظهر الثاني
+      const t3 = setTimeout(() => { setPodiumStep(3); playAudio('/sounds/podium1.mp3', true, isMutedRef.current); }, 15000); // يظهر الأول
       return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
     }
   }, [gs.phase]);
