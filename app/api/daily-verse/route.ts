@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
@@ -21,8 +23,9 @@ export async function GET(request: Request) {
       // تصفير الجدول بالكامل
       const { error: resetError } = await supabase
         .from("daily_verses_pool")
-        .update({ used_date: new Date().toISOString().split("T")[0] })
-        .not("id", "is", null); // شرط وهمي لتحديث كل الصفوف
+        .update({ used_date: null })
+        .gte("id", 1);
+        // .not("id", "is", null); // شرط وهمي لتحديث كل الصفوف
 
       if (resetError)
         throw new Error("Failed to reset pool: " + resetError.message);
@@ -101,7 +104,7 @@ export async function GET(request: Request) {
     if (response.ok) {
       await supabase
         .from("daily_verses_pool")
-        .update({ used_date: new Date().toISOString() })
+        .update({ used_date: new Date().toISOString().split("T")[0] })
         .eq("id", poolEntry.id);
     }
 

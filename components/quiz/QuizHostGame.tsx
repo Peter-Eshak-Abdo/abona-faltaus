@@ -53,15 +53,16 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   useEffect(() => {
     stopMusic();
 
-    if (gs.phase === 'question' && !isIntro && !isMuted) {
+    if (gs.phase === 'question' && !isIntro ) {
       audioRef.current = new Audio("/sounds/question-music.mp3");
       audioRef.current.loop = true;
       audioRef.current.volume = 0.7;
+      audioRef.current.muted = isMuted; // يأخذ حالة الكتم الحالية عند التشغيل
       audioRef.current.play().catch(e => console.log("Audio play error"));
     }
 
     return () => stopMusic();
-  }, [gs.phase, isIntro, isMuted, gs.current_question_index]); // ضفنا isIntro هنا كشرط أساسي
+  }, [gs.phase, isIntro, gs.current_question_index]);
 
   // دالة إيقاف الصوت عند ظهور الإجابة أو انتهاء التايمر
   const stopMusic = () => {
@@ -70,6 +71,13 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
       audioRef.current.currentTime = 0;
     }
   };
+
+  // 2. التحكم في كتم الصوت بسلاسة أثناء تشغيل الأغنية
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
 
   // حفظ الفرق قبل التحديث لعرضها في السكوربورد
   useEffect(() => {
@@ -148,26 +156,29 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
       const { count, error } = await supabase
         .from('answers')
         .select('*', { count: 'exact', head: true })
-        .eq('question_id', currentQuestion.id);
+        .eq('quiz_id', quiz.id).eq('question_id', gs.current_question_index.toString());
       if (count !== null) setAnswersCount(count);
     };
 
     fetchInitialAnswers();
+
     const channel = supabase.channel(`ans-${gs.current_question_index}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'answers',
-        filter: `question_id=eq.${quiz.id}`
+        filter: `quiz_id=eq.${quiz.id}`
       }, (payload) => {
-        setAnswersCount(prev => {
-          const newCount = prev + 1;
-          if (newCount >= groups.length) setTimer(0);
-          return newCount;
-        });
+        if (payload.new.question_id === gs.current_question_index.toString()) {
+          setAnswersCount(prev => {
+            const newCount = prev + 1;
+            if (newCount >= groups.length) setTimer(0);
+            return newCount;
+          });
+        }
       }).subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [gs.phase, gs.current_question_index, currentQuestion?.id, groups.length]);
+  }, [gs.phase, gs.current_question_index, quiz.id, groups.length]);
 
   const goToPhase = async (newPhase: string, nextIndex?: number) => {
     const updateData: any = { phase: newPhase, current_question_index: nextIndex ?? gs.current_question_index };
@@ -222,7 +233,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           {winners[2] && (
             <motion.div initial={{ y: "100%" }} animate={{ y: podiumStep >= 1 ? 0 : "100%" }} transition={{ type: "spring", bounce: 0.3 }}
               className="bg-orange-800 w-1/3 p-1 flex flex-col items-center rounded-t-2xl shadow-lg border-t-4 border-orange-500" style={{ height: '50%' }}>
-              <img src={winners[2].saint_image || '/placeholder.png'} className="w-[8vw] h-[8vw] rounded-full object-cover mb-1 shadow-2xl border-2 border-white" />
+              <img src={winners[2].saint_image || '/placeholder.png'} className="w-[6vw] h-[7vw] rounded-full object-cover mb-1 shadow-2xl border-2 border-white" />
               <span className="text-[3vw] font-black text-center truncate w-full">{winners[2].group_name}</span>
               <div className="flex flex-wrap justify-center gap-1 opacity-80 text-[1.5vw]">{winners[2].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
               <div className="mt-auto text-[6vw] font-black text-white/40">3</div>
@@ -234,7 +245,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           {winners[0] && (
             <motion.div initial={{ y: "100%" }} animate={{ y: podiumStep >= 3 ? 0 : "100%" }} transition={{ type: "spring", bounce: 0.4 }}
               className="bg-yellow-500 w-1/3 p-1 flex flex-col items-center rounded-t-2xl shadow-[0_0_50px_rgba(234,179,8,0.8)] border-t-8 border-white z-20" style={{ height: '95%' }}>
-              <img src={winners[0].saint_image || '/placeholder.png'} className="w-[12vw] h-[12vw] rounded-full object-cover mb-1 shadow-2xl border-4 border-white" />
+              <img src={winners[0].saint_image || '/placeholder.png'} className="w-[9vw] h-[10vw] rounded-full object-cover mb-1 shadow-2xl border-4 border-white" />
               <span className="text-[4vw] font-black text-center truncate w-full drop-shadow-lg">{winners[0].group_name}</span>
               <div className="flex flex-wrap justify-center gap-1 opacity-90 text-[1.8vw]">{winners[0].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
               <div className="mt-auto text-[8vw] font-black text-white/50 drop-shadow-md">1</div>
@@ -246,7 +257,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           {winners[1] && (
             <motion.div initial={{ y: "100%" }} animate={{ y: podiumStep >= 2 ? 0 : "100%" }} transition={{ type: "spring", bounce: 0.3 }}
               className="bg-gray-400 w-1/3 p-1 flex flex-col items-center rounded-t-2xl shadow-lg border-t-4 border-gray-200" style={{ height: '70%' }}>
-              <img src={winners[1].saint_image || '/placeholder.png'} className="w-[9vw] h-[9vw] rounded-full object-cover mb-1 shadow-2xl border-2 border-white" />
+              <img src={winners[1].saint_image || '/placeholder.png'} className="w-[6vw] h-[7vw] rounded-full object-cover mb-1 shadow-2xl border-2 border-white" />
               <span className="text-[3.5vw] font-black text-center truncate w-full">{winners[1].group_name}</span>
               <div className="flex flex-wrap justify-center gap-1 opacity-80 text-[1.5vw]">{winners[1].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
               <div className="mt-auto text-[7vw] font-black text-white/40">2</div>
