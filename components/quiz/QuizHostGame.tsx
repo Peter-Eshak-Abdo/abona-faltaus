@@ -48,50 +48,10 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
 
   useEffect(() => {
     isMutedRef.current = isMuted;
+    if (audioRef.current) {
+      audioRef.current.muted = isMuted;
+    }
   }, [isMuted]);
-
-  // التحكم في التشغيل والإيقاف الآمن جداً
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (gs.phase === 'question' && !isIntro) {
-      audio.volume = 0.7;
-      // بنمسك الـ Promise عشان نمنع الـ AbortError
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log("تم تجاهل التشغيل التلقائي:", error);
-        });
-      }
-    } else {
-      audio.pause();
-      audio.currentTime = 0; // تصفير الصوت لما السؤال يخلص
-    }
-  }, [gs.phase, isIntro]);
-
-  useEffect(() => {
-    // stopMusic();
-
-    let localAudio: HTMLAudioElement | null = null;// الاحتفاظ بنسخة محلية لضمان إيقافها
-
-    if (gs.phase === 'question' && !isIntro) {
-      localAudio = new Audio("/sounds/question-music.mp3");
-      // audioRef.current = new Audio("/sounds/question-music.mp3");
-      localAudio.loop = true;
-      localAudio.volume = 0.7;
-      localAudio.muted = isMutedRef.current; // يأخذ حالة الكتم الحالية عند التشغيل
-      localAudio.play().catch(e => console.log("Audio play error", e));
-      audioRef.current = localAudio; // تخزين المرجع في الريف
-    }
-    return () => {
-      if (localAudio) {
-        localAudio.pause();
-        localAudio.currentTime = 0;
-      }
-    };
-    // return () => stopMusic();
-  }, [gs.phase, isIntro]);
 
   // دالة إيقاف الصوت عند ظهور الإجابة أو انتهاء التايمر
   const stopMusic = () => {
@@ -101,12 +61,52 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     }
   };
 
-  // التحكم في كتم الصوت بسلاسة أثناء تشغيل الأغنية
+  // التحكم في التشغيل والإيقاف الآمن جداً
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.muted = isMuted;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (gs.phase === 'question' && !isIntro) {
+      audio.volume = 0.7;
+      // بنمسك الـ Promise عشان نمنع الـ AbortError
+      if (!audio.src.includes('question-music.mp3')) {
+        audio.src = "/sounds/question-music.mp3";
+      }
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("تم تجاهل التشغيل التلقائي:", error);
+        });
+      }
+    } else {
+      stopMusic();
+      // audio.pause();
+      // audio.currentTime = 0; // تصفير الصوت لما السؤال يخلص
     }
-  }, [isMuted]);
+  }, [gs.phase, isIntro]);
+
+  // useEffect(() => {
+  //   // stopMusic();
+
+  //   let localAudio: HTMLAudioElement | null = null;// الاحتفاظ بنسخة محلية لضمان إيقافها
+
+  //   if (gs.phase === 'question' && !isIntro) {
+  //     localAudio = new Audio("/sounds/question-music.mp3");
+  //     // audioRef.current = new Audio("/sounds/question-music.mp3");
+  //     localAudio.loop = true;
+  //     localAudio.volume = 0.7;
+  //     localAudio.muted = isMutedRef.current; // يأخذ حالة الكتم الحالية عند التشغيل
+  //     localAudio.play().catch(e => console.log("Audio play error", e));
+  //     audioRef.current = localAudio; // تخزين المرجع في الريف
+  //   }
+  //   return () => {
+  //     if (localAudio) {
+  //       localAudio.pause();
+  //       localAudio.currentTime = 0;
+  //     }
+  //   };
+  //   // return () => stopMusic();
+  // }, [gs.phase, isIntro]);
 
   // حفظ الفرق قبل التحديث لعرضها في السكوربورد
   useEffect(() => {
