@@ -25,7 +25,7 @@ export async function GET(request: Request) {
         .from("daily_verses_pool")
         .update({ used_date: null })
         .gte("id", 1);
-        // .not("id", "is", null); // شرط وهمي لتحديث كل الصفوف
+      // .not("id", "is", null); // شرط وهمي لتحديث كل الصفوف
 
       if (resetError)
         throw new Error("Failed to reset pool: " + resetError.message);
@@ -60,9 +60,9 @@ export async function GET(request: Request) {
     if (verseError || !verse) throw new Error("Verse details not found");
 
     const cleanBookName = verse.book_name.replace(/^\d+-/, "");
-    const reference = `(${cleanBookName} ${verse.chapter_number}:${verse.verse_number})`;
+    const reference = `(${cleanBookName} ${verse.chapter_number} : ${verse.verse_number})`;
     const notificationTitle = "آية اليوم";
-    const notificationBody = `${verse.vocalized_text} ${reference}`;
+    const notificationBody = `(${verse.verse_number}) ${verse.vocalized_text} ${reference}`;
 
     const appId = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
     const apiKey = process.env.ONESIGNAL_REST_API_KEY;

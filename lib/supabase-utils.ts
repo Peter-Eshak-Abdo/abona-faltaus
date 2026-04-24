@@ -354,4 +354,3 @@ export const restoreQuiz = async (trashId: string) => {
   }
 };
 export { createClient };
-

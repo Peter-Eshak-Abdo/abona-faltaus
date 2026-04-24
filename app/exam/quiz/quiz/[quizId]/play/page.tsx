@@ -91,13 +91,19 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
       return;
     }
 
-    await supabase.from("answers").insert({
+    const {error} = await supabase.from("answers").insert({
       quiz_id: quizId,
       question_id: gameState.current_question_index.toString(),
       team_id: team.id,
       answer_index: choiceIndex,
       is_correct: isCorrect
     });
+    if (error) {
+      console.error("❌ خطأ في إرسال الإجابة:", error);
+      alert("حصلت مشكلة في إرسال الإجابة، بص على الكونسول!");
+    } else {
+      console.log("✅ الإجابة اتسجلت بنجاح في الداتابيز!");
+    }
   };
 
   if (!gameState || !currentQuestion) {

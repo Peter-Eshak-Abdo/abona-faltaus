@@ -44,11 +44,31 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   const currentQuestion = quiz?.questions?.[gs.current_question_index] || null;
   const qTime = currentQuestion?.timeLimit || 20;
   const isMutedRef = useRef(isMuted);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     isMutedRef.current = isMuted;
   }, [isMuted]);
+
+  // التحكم في التشغيل والإيقاف الآمن جداً
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (gs.phase === 'question' && !isIntro) {
+      audio.volume = 0.7;
+      // بنمسك الـ Promise عشان نمنع الـ AbortError
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("تم تجاهل التشغيل التلقائي:", error);
+        });
+      }
+    } else {
+      audio.pause();
+      audio.currentTime = 0; // تصفير الصوت لما السؤال يخلص
+    }
+  }, [gs.phase, isIntro]);
 
   useEffect(() => {
     // stopMusic();
@@ -81,7 +101,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     }
   };
 
-  // 2. التحكم في كتم الصوت بسلاسة أثناء تشغيل الأغنية
+  // التحكم في كتم الصوت بسلاسة أثناء تشغيل الأغنية
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.muted = isMuted;
@@ -380,6 +400,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
               <Volume2 className="text-white" size={18} />
             )}
           </button>
+          <audio ref={audioRef} src="/sounds/question-music.mp3" loop />
         </div>
       </AnimatePresence>
     </div>
