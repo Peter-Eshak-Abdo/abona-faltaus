@@ -51,18 +51,27 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   }, [isMuted]);
 
   useEffect(() => {
-    stopMusic();
+    // stopMusic();
 
-    if (gs.phase === 'question' && !isIntro ) {
-      audioRef.current = new Audio("/sounds/question-music.mp3");
-      audioRef.current.loop = true;
-      audioRef.current.volume = 0.7;
-      audioRef.current.muted = isMuted; // يأخذ حالة الكتم الحالية عند التشغيل
-      audioRef.current.play().catch(e => console.log("Audio play error"));
+    let localAudio: HTMLAudioElement | null = null;// الاحتفاظ بنسخة محلية لضمان إيقافها
+
+    if (gs.phase === 'question' && !isIntro) {
+      localAudio = new Audio("/sounds/question-music.mp3");
+      // audioRef.current = new Audio("/sounds/question-music.mp3");
+      localAudio.loop = true;
+      localAudio.volume = 0.7;
+      localAudio.muted = isMutedRef.current; // يأخذ حالة الكتم الحالية عند التشغيل
+      localAudio.play().catch(e => console.log("Audio play error", e));
+      audioRef.current = localAudio; // تخزين المرجع في الريف
     }
-
-    return () => stopMusic();
-  }, [gs.phase, isIntro, gs.current_question_index]);
+    return () => {
+      if (localAudio) {
+        localAudio.pause();
+        localAudio.currentTime = 0;
+      }
+    };
+    // return () => stopMusic();
+  }, [gs.phase, isIntro]);
 
   // دالة إيقاف الصوت عند ظهور الإجابة أو انتهاء التايمر
   const stopMusic = () => {
@@ -150,7 +159,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
 
   // تتبع الإجابات
   useEffect(() => {
-    if (!currentQuestion?.id || gs.phase !== 'question') return;
+    if (!currentQuestion || gs.phase !== 'question') return;
     // أولاً: نجلب عدد الإجابات اللي اتسجلت بالفعل للسؤال ده (عشان لو حد جاوب بسرعة)
     const fetchInitialAnswers = async () => {
       const { count, error } = await supabase
@@ -162,6 +171,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
 
     fetchInitialAnswers();
 
+    // الاستماع للإجابات الجديدة لايف
     const channel = supabase.channel(`ans-${gs.current_question_index}`)
       .on('postgres_changes', {
         event: 'INSERT',
@@ -178,7 +188,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
         }
       }).subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [gs.phase, gs.current_question_index, quiz.id, groups.length]);
+  }, [gs.phase, gs.current_question_index, quiz.id, groups.length, currentQuestion]);
 
   const goToPhase = async (newPhase: string, nextIndex?: number) => {
     const updateData: any = { phase: newPhase, current_question_index: nextIndex ?? gs.current_question_index };

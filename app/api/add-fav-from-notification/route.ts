@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"; // تأكد من استدعاء نسخة السيرفر
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -36,5 +36,5 @@ export async function GET(request: Request) {
   ); // تأكد إنك عامل Unique Constraint على العواميد دي في الجدول
 
   // بعد ما يحفظها بنجاح، نحوله أوتوماتيك لصفحة المفضلة اللي أنت عاملها عشان يشوفها هناك
-  return NextResponse.redirect(new URL("/bible/favorits", request.url));
+  return NextResponse.redirect(new URL("/bible/favorites", request.url));
 }
