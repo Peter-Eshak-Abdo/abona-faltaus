@@ -1,0 +1,6 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#F0F0F0"/>
+  <path d="M100 20L20 80V180L100 120L180 180V80L100 20Z" fill="#2C3E50"/>
+  <path d="M100 40L40 80V160L100 120L160 160V80L100 40Z" fill="#3498DB"/>
+  <text x="100" y="115" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#ECF0F1" text-anchor="middle" alignment-baseline="middle">E</text>
+</svg>
