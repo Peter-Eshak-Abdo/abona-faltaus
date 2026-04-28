@@ -112,7 +112,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
-      { protocol: "https", hostname: "archive.org" }, // ضيف أرشيف هنا كمان
+      { protocol: "https", hostname: "archive.org" },
+      {
+        protocol: "https",
+        hostname: "xginokdunnhesgohymja.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
   },
   async headers() {
