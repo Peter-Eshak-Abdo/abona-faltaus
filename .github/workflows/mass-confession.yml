@@ -1,0 +1,34 @@
+name: Mass & Confession Notifications
+
+on:
+  schedule:
+    # الخميس 9:00 مساءً بتوقيت مصر (19:00 UTC)
+    - cron: '0 19 * * 4'
+    # الجمعة 7:30 صباحاً بتوقيت مصر (05:30 UTC)
+    - cron: '30 5 * * 5'
+    # أول يوم سبت من كل شهر الساعة 10:00 صباحاً (للاعتراف)
+    - cron: '0 8 1-7 * *'
+
+jobs:
+  send-notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Notification API for Mass & Confession
+        run: |
+          # تحديد أي API سيتم طلبه بناءً على الوقت أو اليوم
+          HOUR=$(date +%H)
+          DAY=$(date +%u) # 4=الخميس, 5=الجمعة
+          DOM=$(date +%d) # يوم الشهر
+
+          if [ "$DAY" -eq "4" ] || [ "$DAY" -eq "5" ]; then
+            echo "Triggering Mass Notification..."
+            curl -X GET "${{ secrets.VERCEL_URL }}/api/send-mass-notification" \
+                 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          fi
+
+          # إرسال إشعار الاعتراف في أول سبت من الشهر (كمثال ليوم محدد شهرياً)
+          if [ "$DOM" -le 7 ] && [ "$DAY" -eq "6" ]; then
+            echo "Triggering Confession Notification..."
+            curl -X GET "${{ secrets.VERCEL_URL }}/api/send-confession-notification" \
+                 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          fi
