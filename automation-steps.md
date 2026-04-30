@@ -40,5 +40,11 @@ git push origin main
 
 ## الخطوة 7: التنظيف (Cleanup)
 حذفه محلياً: git branch -d feat/notion-task-1
-
 حذفه من GitHub: git push origin --delete feat/notion-task-1
+
+### --------------
+git fetch origin
+git checkout feature/
+git push origin feature/
+git branch -d feature/
+git push origin -d feature/
