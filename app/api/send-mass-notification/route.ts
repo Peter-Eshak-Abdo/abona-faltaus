@@ -1,25 +1,42 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server'; // Assuming a Supabase client utility
+import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 export async function GET() {
+  const authHeader = (await headers()).get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const hour = new Date().getUTCHours() + 2; // لتوقيت مصر
+
+  const message =
+    hour > 12
+      ? {
+          title: "استعداد للقداس",
+          body: "ينبغي لنا أن نستعد للتناول بالصوم والتوبة.. نلتقي في القداس غداً ✨",
+        }
+      : {
+          title: "صباح البركة",
+          body: "يوم جديد مع المسيح.. حان وقت الذهاب للقداس والتناول من الأسرار المقدسة 🍞🍷",
+        };
+
   try {
-    const supabase = createClient(); // Initialize Supabase client
+    const response = await fetch("https://onesignal.com/api/v1/notifications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        Authorization: `Basic ${process.env.ONESIGNAL_REST_API_KEY}`,
+      },
+      body: JSON.stringify({
+        app_id: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
+        included_segments: ["All"], 
+        headings: { en: message.title, ar: message.title },
+        contents: { en: message.body, ar: message.body },
+      }),
+    });
 
-    // In a real application, you would:
-    // 1. Fetch users who have opted in for weekly Mass notifications from your database.
-    //    Example: const { data: users, error } = await supabase.from('profiles').select('id, push_token').eq('receive_mass_notifications', true);
-    // 2. Iterate through users and send notifications using your preferred notification service.
-    //    Example: for (const user of users) {
-    //      await sendPushNotification(user.push_token, { title: 'تذكير بالقداس الأسبوعي', body: 'لا تنسَ حضور القداس هذا الأسبوع!' });
-    //    }
-
-    console.log('Weekly Mass notification trigger received. Initiating notification process...');
-    // Placeholder for actual notification sending logic
-    // await sendMassNotificationsToUsers();
-
-    return NextResponse.json({ message: 'Weekly Mass notification process initiated successfully.' }, { status: 200 });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error initiating weekly Mass notifications:', error);
-    return NextResponse.json({ error: 'Failed to initiate weekly Mass notifications.' }, { status: 500 });
+    return NextResponse.json({ error: "Failed to send" }, { status: 500 });
   }
 }
