@@ -5,7 +5,8 @@ import { ReactNode } from "react";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+    {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem> */}
       {children}
     </ThemeProvider>
   );
