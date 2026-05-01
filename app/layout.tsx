@@ -13,6 +13,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import OneSignal from "@/components/OneSignal";
+import { Providers } from './providers';
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -77,7 +78,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl" className={vazirmatn.variable}>
+    <html lang="ar" dir="rtl" className={vazirmatn.variable} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -134,8 +135,10 @@ export default function RootLayout({
           <OfflineNotification />
           <OneSignal />
           <LoadingProvider>
-            <PwaManager/>
-            <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
+            <PwaManager />
+            <Providers>
+              <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
+            </Providers>
           </LoadingProvider>
         </GlobalLoadingProvider>
         <Analytics />

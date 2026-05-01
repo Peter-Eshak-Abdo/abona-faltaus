@@ -6,226 +6,215 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User } from "lucide-react";
+import { User, Bell, Palette } from "lucide-react"; // ضفنا Palette أيقونة للمظهر
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import OneSignal from 'react-onesignal';
-import { Bell } from "lucide-react";
 
-interface UserSettings {
-  // notificationsEnabled: boolean;
-  // soundEnabled: boolean;
-  // language: string;
-  // theme: string;
-  displayName: string;
-  email: string;
-}
+// تعريف أنواع الإشعارات المتاحة
+const NOTIFICATION_CATEGORIES = [
+  { id: 'verse_enabled', name: 'آية اليوم', desc: 'استلام آية يومية وأقوال آباء' },
+  { id: 'mass_enabled', name: 'تذكير القداسات', desc: 'تنبيهات بمواعيد القداسات والخدمات' },
+  { id: 'confession_enabled', name: 'مواعيد الاعتراف', desc: 'تذكير بمواعيد الاعتراف الخاصة بك' },
+  { id: 'hymns_enabled', name: 'ألحان وترانيم جديدة', desc: 'إشعار عند إضافة محتوى روحي جديد' },
+];
 
 export default function SettingsView() {
   const [user, setUser] = useState<any>(null);
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const supabase = createClient();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
-  const [settings, setSettings] = useState<UserSettings>({
-    // notificationsEnabled: true,
-    // soundEnabled: true,
-    // language: "ar",
-    // theme: "light",
-    displayName: "",
-    email: "",
-  });
+  // حالات الإشعارات
+  const [isOptedIn, setIsOptedIn] = useState(false);
+  const [tags, setTags] = useState<Record<string, string>>({});
+
+  const [settings, setSettings] = useState({ displayName: "", email: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const checkOneSignal = async () => {
+    setMounted(true);
+
+    const initNotifications = async () => {
       if (typeof window !== "undefined") {
-        const state = OneSignal.User.PushSubscription.optedIn;
-        setNotificationsEnabled(!!state);
+        // 1. التحقق من الاشتراك العام
+        const optedIn = OneSignal.User.PushSubscription.optedIn;
+        setIsOptedIn(!!optedIn);
+
+        // 2. جلب الـ Tags الحالية من OneSignal
+        try {
+          const currentTags = await OneSignal.User.getTags();
+          setTags(currentTags || {});
+        } catch (err) {
+          console.error("Error fetching tags:", err);
+        }
       }
     };
-    checkOneSignal();
-    const loadUserSettings = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
 
+    const loadProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
-        try {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("full_name")
-            .eq("id", user.id)
-            .single();
-
-          if (profile) {
-            setSettings({
-              displayName: profile.full_name || user.user_metadata?.full_name || "",
-              email: user.email || "",
-            });
-          }
-        } catch (error) {
-          console.error("Error loading settings:", error);
-        }
+        const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
+        if (profile) setSettings({ displayName: profile.full_name || user.user_metadata?.full_name || "", email: user.email || "" });
       }
       setLoading(false);
     };
 
-    loadUserSettings();
-  }, [setTheme]);
+    initNotifications();
+    loadProfile();
+  }, []);
 
-  const saveSettings = async () => {
-    if (!user) return;
-
-    setSaving(true);
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          full_name: settings.displayName,
-        })
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      toast.success("تم حفظ الإعدادات بنجاح!");
-    } catch (error) {
-      console.error("Error saving settings:", error);
-      toast.error("حدث خطأ في حفظ الإعدادات");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const toggleNotifications = async () => {
-    if (notificationsEnabled) {
+  // دالة التحكم في الاشتراك العام
+  const toggleMainSubscription = async () => {
+    if (isOptedIn) {
       await OneSignal.User.PushSubscription.optOut();
-      setNotificationsEnabled(false);
-      toast.success("تم إيقاف الإشعارات");
+      setIsOptedIn(false);
+      toast.success("تم إيقاف جميع الإشعارات");
     } else {
       await OneSignal.User.PushSubscription.optIn();
-      setNotificationsEnabled(true);
-      toast.success("تم تفعيل الإشعارات");
+      setIsOptedIn(true);
+      toast.success("تم تفعيل الإشعارات بنجاح");
     }
   };
 
-  const handleSettingChange = (key: keyof UserSettings, value: boolean | string) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+  // دالة التحكم في الـ Tags (الأقسام الفرعية)
+  const toggleTag = async (tagId: string) => {
+    if (!isOptedIn) {
+      toast.error("برجاء تفعيل الإشعارات الرئيسية أولاً");
+      return;
+    }
+
+    const isCurrentlyEnabled = tags[tagId] === 'true';
+    const newValue = !isCurrentlyEnabled;
+
+    try {
+      // تحديث OneSignal
+      await OneSignal.User.addTag(tagId, newValue.toString());
+
+      // تحديث الواجهة محلياً
+      setTags(prev => ({ ...prev, [tagId]: newValue.toString() }));
+
+      toast.success(`تم ${newValue ? 'تفعيل' : 'إيقاف'} قسم ${NOTIFICATION_CATEGORIES.find(c => c.id === tagId)?.name}`);
+    } catch (err) {
+      toast.error("فشل تحديث الإعدادات");
+    }
   };
 
-  if (loading) {
+  const saveProfile = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("profiles").update({ full_name: settings.displayName }).eq("id", user?.id);
+    if (!error) toast.success("تم حفظ البيانات");
+    else toast.error("خطأ في الحفظ");
+    setSaving(false);
+  };
+
+  if (loading || !mounted) return <div className="flex justify-center items-center min-h-screen"><div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div></div>;
+
+  // لو الصفحة لسه بتعمل Load أو الـ Theme لسه متحددش
+  if (loading || !mounted) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br flex items-center justify-center p-1" dir="rtl">
-      <div className="w-full max-w-4xl space-y-1 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
-        <div className="text-center mb-1">
-          <h1 className="text-3xl font-bold mb-1 text-black drop-shadow-lg">الإعدادات</h1>
-          <p className="text-black/90 drop-shadow-md">تخصيص تجربتك في التطبيق</p>
+    <div className="min-h-screen bg-transparent flex items-center justify-center p-1" dir="rtl">
+      <div className="w-full max-w-7xl space-y-1">
+
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-black dark:text-white">الإعدادات</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">تحكم في حسابك وتفضيلاتك</p>
         </div>
 
-        {/* Profile Settings */}
-        <Card className="backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-1 text-black drop-shadow-md">
-              <User className="w-5 h-5" />
-              الملف الشخصي
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1">
-            <div className="space-y-1">
-              <Label htmlFor="displayName" className="text-black font-semibold">الاسم المعروض</Label>
-              <Input
-                id="displayName"
-                value={settings.displayName}
-                onChange={(e) => handleSettingChange("displayName", e.target.value)}
-                placeholder="أدخل اسمك"
-                className="bg-white/30 border-white/40 text-black placeholder:text-gray-600 font-medium"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="email" className="text-black font-semibold">البريد الإلكتروني</Label>
-              <Input
-                id="email"
-                type="email"
-                value={settings.email}
-                disabled
-                className="bg-white/20 border-white/30 text-gray-800 font-medium cursor-not-allowed"
-              />
-              <p className="text-sm text-black/80">
-                لا يمكن تغيير البريد الإلكتروني من هنا
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="mt-1 backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-1 text-black drop-shadow-md">
-              <Bell className="w-5 h-5" />
-              إعدادات الإشعارات
-            </CardTitle>
+        {/* المظهر */}
+        <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-2"><Palette className="w-5 h-5 text-blue-500" /> مظهر التطبيق</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <Label className="text-black font-semibold text-lg">إشعارات الآيات والأقوال</Label>
-                <p className="text-sm text-black/80">استلام رسائل يومية (آية اليوم وأقوال الآباء)</p>
-              </div>
-              {/* سويتش بسيط */}
-              <button
-                onClick={toggleNotifications}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notificationsEnabled ? 'bg-green-500' : 'bg-gray-400'}`}
+              <span className="font-medium">اختر النمط المفضل</span>
+              <select
+                value={theme}
+                onChange={(e) => setTheme(e.target.value)}
+                className="bg-white dark:bg-zinc-800 border rounded-lg p-1 outline-none focus:ring-2 ring-blue-500"
               >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notificationsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
-              </button>
+                <option value="system">تلقائي (النظام)</option>
+                <option value="light">مضيء</option>
+                <option value="dark">داكن</option>
+              </select>
             </div>
           </CardContent>
         </Card>
 
-        {/* Save Button */}
-        <div className="flex justify-center pt-1">
-          <Button
-            onClick={saveSettings}
-            disabled={saving}
-            size="normal"
-            className="p-1 text-lg bg-white/30 hover:bg-white/40 border-white/40 text-black font-bold shadow-xl/30 inset-shadow-sm transition-all"
-          >
-            {saving ? "جاري الحفظ..." : "حفظ الإعدادات"}
-          </Button>
-        </div>
+        {/* الإشعارات المتقدمة */}
+        <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-1"><Bell className="w-5 h-5 text-red-500" /> تفضيلات الإشعارات</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-1">
+            {/* المفتاح الرئيسي */}
+            <div className="flex items-center justify-between p-1 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+              <div>
+                <p className="font-bold text-blue-900 dark:text-blue-100">استقبال الإشعارات</p>
+                <p className="text-sm text-blue-700 dark:text-blue-300">المفتاح الرئيسي للخدمة</p>
+              </div>
+              <button
+                onClick={toggleMainSubscription}
+                className={`w-4 h-2 rounded-full transition-all relative ${isOptedIn ? 'bg-green-500' : 'bg-gray-400'}`}
+              >
+                <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isOptedIn ? 'left-1' : 'left-7'}`} />
+              </button>
+            </div>
 
-        {/* User Info */}
-        {user && (
-          <Card className="mt-1 backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
-            <CardHeader>
-              <CardTitle className="text-black drop-shadow-md font-semibold">معلومات الحساب</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-1">
-              <div className="flex justify-between items-center border-b border-white/10 pb-1">
-                <span className="text-black font-semibold">رقم الحساب (ID):</span>
-                <Badge variant="secondary" className="bg-white/30 text-black border-white/40 font-semibold text-xs">{user.id}</Badge>
-              </div>
-              <div className="flex justify-between items-center border-b border-white/10 pb-1">
-                <span className="text-black font-semibold">تاريخ الإنشاء:</span>
-                <span className="text-sm text-black/80 font-medium">
-                  {user.created_at ? new Date(user.created_at).toLocaleDateString('ar-EG') : 'غير محدد'}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-black font-semibold">آخر دخول:</span>
-                <span className="text-sm text-black/80 font-medium">
-                  {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString('ar-EG') : 'غير محدد'}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+            {/* الأقسام الفرعية */}
+            <div className="grid gap-1 opacity-100 transition-opacity" style={{ opacity: isOptedIn ? 1 : 0.5 }}>
+              <p className="text-sm font-semibold text-gray-500 mr-1">تخصيص أنواع الرسائل:</p>
+              {NOTIFICATION_CATEGORIES.map((cat) => (
+                <div key={cat.id} className="flex items-center justify-between p-1 border-b border-black/5 dark:border-white/5 last:border-0">
+                  <div>
+                    <p className="font-medium dark:text-gray-200">{cat.name}</p>
+                    <p className="text-xs text-gray-500">{cat.desc}</p>
+                  </div>
+                  <button
+                    disabled={!isOptedIn}
+                    onClick={() => toggleTag(cat.id)}
+                    className={`w-10 h-5 rounded-full transition-all relative ${tags[cat.id] === 'true' && isOptedIn ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-700'}`}
+                  >
+                    <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${tags[cat.id] === 'true' && isOptedIn ? 'left-1' : 'left-5'}`} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* الملف الشخصي */}
+        <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
+          <CardHeader><CardTitle className="flex items-center gap-1"><User className="w-5 h-5 text-green-500" /> البيانات الأساسية</CardTitle></CardHeader>
+          <CardContent className="space-y-1">
+            <div className="space-y-1">
+              <Label>الاسم المعروض</Label>
+              <Input
+                value={settings.displayName}
+                onChange={(e) => setSettings({ ...settings, displayName: e.target.value })}
+                className="bg-white/50 dark:bg-black/20"
+              />
+            </div>
+            <div className="space-y-1 text-left" dir="ltr">
+              <Label className="block text-right">Email (Read Only)</Label>
+              <Input value={settings.email} disabled className="opacity-60" />
+            </div>
+            <Button onClick={saveProfile} disabled={saving} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              {saving ? "جاري الحفظ..." : "حفظ التعديلات"}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
