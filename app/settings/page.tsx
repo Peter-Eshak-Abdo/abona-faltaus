@@ -1,107 +1,221 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from 'react';
-import { useTheme } from 'next-themes';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { User, Bell, Palette } from "lucide-react"; // ضفنا Palette أيقونة للمظهر
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
+import { createClient } from "@/lib/supabase/client";
+import OneSignal from 'react-onesignal';
 
-// Define a type for notification settings
-interface NotificationSetting {
-  id: string;
-  name: string;
-  description: string;
-  enabled: boolean;
-}
+// تعريف أنواع الإشعارات المتاحة
+const NOTIFICATION_CATEGORIES = [
+  { id: 'verse_enabled', name: 'آية اليوم', desc: 'استلام آية يومية وأقوال آباء' },
+  { id: 'mass_enabled', name: 'تذكير القداسات', desc: 'تنبيهات بمواعيد القداسات والخدمات' },
+  { id: 'confession_enabled', name: 'مواعيد الاعتراف', desc: 'تذكير بمواعيد الاعتراف الخاصة بك' },
+  { id: 'hymns_enabled', name: 'ألحان وترانيم جديدة', desc: 'إشعار عند إضافة محتوى روحي جديد' },
+];
 
-export default function SettingsPage() {
+export default function SettingsView() {
+  const [user, setUser] = useState<any>(null);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const supabase = createClient();
 
-  // Mock notification settings. In a real app, these would be fetched from a backend.
-  const [notificationSettings, setNotificationSettings] = useState<NotificationSetting[]>([
-    { id: 'daily-verse', name: 'Daily Verse', description: 'Receive a daily Bible verse notification.', enabled: true },
-    { id: 'mass-reminders', name: 'Mass Reminders', description: 'Get reminders for upcoming masses and services.', enabled: false },
-    { id: 'confession-reminders', name: 'Confession Reminders', description: 'Receive reminders for confession appointments.', enabled: true },
-    { id: 'new-hymns', name: 'New Hymns & Al7an', description: 'Be notified when new hymns or Al7an are added.', enabled: true },
-    { id: 'app-updates', name: 'App Updates', description: 'Get alerts for important app updates and features.', enabled: false }
-  ]);
+  // حالات الإشعارات
+  const [isOptedIn, setIsOptedIn] = useState(false);
+  const [tags, setTags] = useState<Record<string, string>>({});
 
-  // useEffect to ensure theme is only rendered client-side
+  const [settings, setSettings] = useState({ displayName: "", email: "" });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
   useEffect(() => {
     setMounted(true);
+
+    const initNotifications = async () => {
+      if (typeof window !== "undefined") {
+        // 1. التحقق من الاشتراك العام
+        const optedIn = OneSignal.User.PushSubscription.optedIn;
+        setIsOptedIn(!!optedIn);
+
+        // 2. جلب الـ Tags الحالية من OneSignal
+        try {
+          const currentTags = await OneSignal.User.getTags();
+          setTags(currentTags || {});
+        } catch (err) {
+          console.error("Error fetching tags:", err);
+        }
+      }
+    };
+
+    const loadProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUser(user);
+        const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
+        if (profile) setSettings({ displayName: profile.full_name || user.user_metadata?.full_name || "", email: user.email || "" });
+      }
+      setLoading(false);
+    };
+
+    initNotifications();
+    loadProfile();
   }, []);
 
-  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setTheme(e.target.value);
+  // دالة التحكم في الاشتراك العام
+  const toggleMainSubscription = async () => {
+    if (isOptedIn) {
+      await OneSignal.User.PushSubscription.optOut();
+      setIsOptedIn(false);
+      toast.success("تم إيقاف جميع الإشعارات");
+    } else {
+      await OneSignal.User.PushSubscription.optIn();
+      setIsOptedIn(true);
+      toast.success("تم تفعيل الإشعارات بنجاح");
+    }
   };
 
-  const handleNotificationToggle = (id: string) => {
-    setNotificationSettings(prevSettings =>
-      prevSettings.map(setting =>
-        setting.id === id ? { ...setting, enabled: !setting.enabled } : setting
-      )
+  // دالة التحكم في الـ Tags (الأقسام الفرعية)
+  const toggleTag = async (tagId: string) => {
+    if (!isOptedIn) {
+      toast.error("برجاء تفعيل الإشعارات الرئيسية أولاً");
+      return;
+    }
+
+    const isCurrentlyEnabled = tags[tagId] === 'true';
+    const newValue = !isCurrentlyEnabled;
+
+    try {
+      // تحديث OneSignal
+      await OneSignal.User.addTag(tagId, newValue.toString());
+
+      // تحديث الواجهة محلياً
+      setTags(prev => ({ ...prev, [tagId]: newValue.toString() }));
+
+      toast.success(`تم ${newValue ? 'تفعيل' : 'إيقاف'} قسم ${NOTIFICATION_CATEGORIES.find(c => c.id === tagId)?.name}`);
+    } catch (err) {
+      toast.error("فشل تحديث الإعدادات");
+    }
+  };
+
+  const saveProfile = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("profiles").update({ full_name: settings.displayName }).eq("id", user?.id);
+    if (!error) toast.success("تم حفظ البيانات");
+    else toast.error("خطأ في الحفظ");
+    setSaving(false);
+  };
+
+  if (loading || !mounted) return <div className="flex justify-center items-center min-h-screen"><div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div></div>;
+
+  // لو الصفحة لسه بتعمل Load أو الـ Theme لسه متحددش
+  if (loading || !mounted) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-primary"></div>
+      </div>
     );
-    // In a real application, you would send an API request here to update the backend.
-    // Example: updateNotificationSetting(id, !setting.enabled);
-  };
-
-  if (!mounted) {
-    return null; // Render nothing on the server to prevent hydration mismatch
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">Settings</h1>
+    <div className="min-h-screen bg-transparent flex items-center justify-center p-1" dir="rtl">
+      <div className="w-full max-w-7xl space-y-1">
 
-      {/* Dark Mode Section */}
-      <section className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Display Settings</h2>
-        <div className="flex items-center justify-between">
-          <label htmlFor="theme-select" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
-            Theme
-          </label>
-          <select
-            id="theme-select"
-            value={theme}
-            onChange={handleThemeChange}
-            className="mt-1 block w-48 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md
-                       dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          >
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-black dark:text-white">الإعدادات</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">تحكم في حسابك وتفضيلاتك</p>
         </div>
-      </section>
 
-      {/* Notifications Section */}
-      <section className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Notifications</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Manage which notifications you receive.
-        </p>
-        <ul className="space-y-4">
-          {notificationSettings.map((setting) => (
-            <li key={setting.id} className="flex items-center justify-between">
+        {/* المظهر */}
+        <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-2"><Palette className="w-5 h-5 text-blue-500" /> مظهر التطبيق</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <span className="font-medium">اختر النمط المفضل</span>
+              <select
+                value={theme}
+                onChange={(e) => setTheme(e.target.value)}
+                className="bg-white dark:bg-zinc-800 border rounded-lg p-1 outline-none focus:ring-2 ring-blue-500"
+              >
+                <option value="system">تلقائي (النظام)</option>
+                <option value="light">مضيء</option>
+                <option value="dark">داكن</option>
+              </select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* الإشعارات المتقدمة */}
+        <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-1"><Bell className="w-5 h-5 text-red-500" /> تفضيلات الإشعارات</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-1">
+            {/* المفتاح الرئيسي */}
+            <div className="flex items-center justify-between p-1 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
               <div>
-                <p className="text-lg font-medium text-gray-900 dark:text-gray-100">{setting.name}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{setting.description}</p>
+                <p className="font-bold text-blue-900 dark:text-blue-100">استقبال الإشعارات</p>
+                <p className="text-sm text-blue-700 dark:text-blue-300">المفتاح الرئيسي للخدمة</p>
               </div>
-              {/* Toggle switch using Tailwind CSS peer utility */}
-              <label htmlFor={`toggle-${setting.id}`} className="flex items-center cursor-pointer">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    id={`toggle-${setting.id}`}
-                    className="sr-only peer"
-                    checked={setting.enabled}
-                    onChange={() => handleNotificationToggle(setting.id)}
-                  />
-                  <div className="w-14 h-8 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600 dark:peer-checked:bg-blue-600"></div>
+              <button
+                onClick={toggleMainSubscription}
+                className={`w-4 h-2 rounded-full transition-all relative ${isOptedIn ? 'bg-green-500' : 'bg-gray-400'}`}
+              >
+                <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isOptedIn ? 'left-1' : 'left-7'}`} />
+              </button>
+            </div>
+
+            {/* الأقسام الفرعية */}
+            <div className="grid gap-1 opacity-100 transition-opacity" style={{ opacity: isOptedIn ? 1 : 0.5 }}>
+              <p className="text-sm font-semibold text-gray-500 mr-1">تخصيص أنواع الرسائل:</p>
+              {NOTIFICATION_CATEGORIES.map((cat) => (
+                <div key={cat.id} className="flex items-center justify-between p-1 border-b border-black/5 dark:border-white/5 last:border-0">
+                  <div>
+                    <p className="font-medium dark:text-gray-200">{cat.name}</p>
+                    <p className="text-xs text-gray-500">{cat.desc}</p>
+                  </div>
+                  <button
+                    disabled={!isOptedIn}
+                    onClick={() => toggleTag(cat.id)}
+                    className={`w-10 h-5 rounded-full transition-all relative ${tags[cat.id] === 'true' && isOptedIn ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-700'}`}
+                  >
+                    <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${tags[cat.id] === 'true' && isOptedIn ? 'left-1' : 'left-5'}`} />
+                  </button>
                 </div>
-              </label>
-            </li>
-          ))}
-        </ul>
-      </section>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* الملف الشخصي */}
+        <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
+          <CardHeader><CardTitle className="flex items-center gap-1"><User className="w-5 h-5 text-green-500" /> البيانات الأساسية</CardTitle></CardHeader>
+          <CardContent className="space-y-1">
+            <div className="space-y-1">
+              <Label>الاسم المعروض</Label>
+              <Input
+                value={settings.displayName}
+                onChange={(e) => setSettings({ ...settings, displayName: e.target.value })}
+                className="bg-white/50 dark:bg-black/20"
+              />
+            </div>
+            <div className="space-y-1 text-left" dir="ltr">
+              <Label className="block text-right">Email (Read Only)</Label>
+              <Input value={settings.email} disabled className="opacity-60" />
+            </div>
+            <Button onClick={saveProfile} disabled={saving} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              {saving ? "جاري الحفظ..." : "حفظ التعديلات"}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
