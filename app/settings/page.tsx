@@ -1,232 +1,107 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { User } from "lucide-react";
-import { useTheme } from "next-themes";
-import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
-import OneSignal from 'react-onesignal';
-import { Bell } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 
-interface UserSettings {
-  // notificationsEnabled: boolean;
-  // soundEnabled: boolean;
-  // language: string;
-  // theme: string;
-  displayName: string;
-  email: string;
+// Define a type for notification settings
+interface NotificationSetting {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
 }
 
-export default function SettingsView() {
-  const [user, setUser] = useState<any>(null);
+export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
-  const supabase = createClient();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const [settings, setSettings] = useState<UserSettings>({
-    // notificationsEnabled: true,
-    // soundEnabled: true,
-    // language: "ar",
-    // theme: "light",
-    displayName: "",
-    email: "",
-  });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  // Mock notification settings. In a real app, these would be fetched from a backend.
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSetting[]>([
+    { id: 'daily-verse', name: 'Daily Verse', description: 'Receive a daily Bible verse notification.', enabled: true },
+    { id: 'mass-reminders', name: 'Mass Reminders', description: 'Get reminders for upcoming masses and services.', enabled: false },
+    { id: 'confession-reminders', name: 'Confession Reminders', description: 'Receive reminders for confession appointments.', enabled: true },
+    { id: 'new-hymns', name: 'New Hymns & Al7an', description: 'Be notified when new hymns or Al7an are added.', enabled: true },
+    { id: 'app-updates', name: 'App Updates', description: 'Get alerts for important app updates and features.', enabled: false }
+  ]);
 
+  // useEffect to ensure theme is only rendered client-side
   useEffect(() => {
-    const checkOneSignal = async () => {
-      if (typeof window !== "undefined") {
-        const state = OneSignal.User.PushSubscription.optedIn;
-        setNotificationsEnabled(!!state);
-      }
-    };
-    checkOneSignal();
-    const loadUserSettings = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+    setMounted(true);
+  }, []);
 
-      if (user) {
-        setUser(user);
-        try {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("full_name")
-            .eq("id", user.id)
-            .single();
-
-          if (profile) {
-            setSettings({
-              displayName: profile.full_name || user.user_metadata?.full_name || "",
-              email: user.email || "",
-            });
-          }
-        } catch (error) {
-          console.error("Error loading settings:", error);
-        }
-      }
-      setLoading(false);
-    };
-
-    loadUserSettings();
-  }, [setTheme]);
-
-  const saveSettings = async () => {
-    if (!user) return;
-
-    setSaving(true);
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          full_name: settings.displayName,
-        })
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      toast.success("تم حفظ الإعدادات بنجاح!");
-    } catch (error) {
-      console.error("Error saving settings:", error);
-      toast.error("حدث خطأ في حفظ الإعدادات");
-    } finally {
-      setSaving(false);
-    }
+  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTheme(e.target.value);
   };
 
-  const toggleNotifications = async () => {
-    if (notificationsEnabled) {
-      await OneSignal.User.PushSubscription.optOut();
-      setNotificationsEnabled(false);
-      toast.success("تم إيقاف الإشعارات");
-    } else {
-      await OneSignal.User.PushSubscription.optIn();
-      setNotificationsEnabled(true);
-      toast.success("تم تفعيل الإشعارات");
-    }
-  };
-
-  const handleSettingChange = (key: keyof UserSettings, value: boolean | string) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
+  const handleNotificationToggle = (id: string) => {
+    setNotificationSettings(prevSettings =>
+      prevSettings.map(setting =>
+        setting.id === id ? { ...setting, enabled: !setting.enabled } : setting
+      )
     );
+    // In a real application, you would send an API request here to update the backend.
+    // Example: updateNotificationSetting(id, !setting.enabled);
+  };
+
+  if (!mounted) {
+    return null; // Render nothing on the server to prevent hydration mismatch
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br flex items-center justify-center p-1" dir="rtl">
-      <div className="w-full max-w-4xl space-y-1 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-2xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
-        <div className="text-center mb-1">
-          <h1 className="text-3xl font-bold mb-1 text-black drop-shadow-lg">الإعدادات</h1>
-          <p className="text-black/90 drop-shadow-md">تخصيص تجربتك في التطبيق</p>
-        </div>
+    <div className="container mx-auto p-4 max-w-2xl">
+      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">Settings</h1>
 
-        {/* Profile Settings */}
-        <Card className="backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-1 text-black drop-shadow-md">
-              <User className="w-5 h-5" />
-              الملف الشخصي
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1">
-            <div className="space-y-1">
-              <Label htmlFor="displayName" className="text-black font-semibold">الاسم المعروض</Label>
-              <Input
-                id="displayName"
-                value={settings.displayName}
-                onChange={(e) => handleSettingChange("displayName", e.target.value)}
-                placeholder="أدخل اسمك"
-                className="bg-white/30 border-white/40 text-black placeholder:text-gray-600 font-medium"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="email" className="text-black font-semibold">البريد الإلكتروني</Label>
-              <Input
-                id="email"
-                type="email"
-                value={settings.email}
-                disabled
-                className="bg-white/20 border-white/30 text-gray-800 font-medium cursor-not-allowed"
-              />
-              <p className="text-sm text-black/80">
-                لا يمكن تغيير البريد الإلكتروني من هنا
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="mt-1 backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-1 text-black drop-shadow-md">
-              <Bell className="w-5 h-5" />
-              إعدادات الإشعارات
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <Label className="text-black font-semibold text-lg">إشعارات الآيات والأقوال</Label>
-                <p className="text-sm text-black/80">استلام رسائل يومية (آية اليوم وأقوال الآباء)</p>
-              </div>
-              {/* سويتش بسيط */}
-              <button
-                onClick={toggleNotifications}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notificationsEnabled ? 'bg-green-500' : 'bg-gray-400'}`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notificationsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Save Button */}
-        <div className="flex justify-center pt-1">
-          <Button
-            onClick={saveSettings}
-            disabled={saving}
-            size="normal"
-            className="p-1 text-lg bg-white/30 hover:bg-white/40 border-white/40 text-black font-bold shadow-xl/30 inset-shadow-sm transition-all"
+      {/* Dark Mode Section */}
+      <section className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-8">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Display Settings</h2>
+        <div className="flex items-center justify-between">
+          <label htmlFor="theme-select" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
+            Theme
+          </label>
+          <select
+            id="theme-select"
+            value={theme}
+            onChange={handleThemeChange}
+            className="mt-1 block w-48 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md
+                       dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
-            {saving ? "جاري الحفظ..." : "حفظ الإعدادات"}
-          </Button>
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
         </div>
+      </section>
 
-        {/* User Info */}
-        {user && (
-          <Card className="mt-1 backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl/30 inset-shadow-sm border-white/30 dark:border-white/20">
-            <CardHeader>
-              <CardTitle className="text-black drop-shadow-md font-semibold">معلومات الحساب</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-1">
-              <div className="flex justify-between items-center border-b border-white/10 pb-1">
-                <span className="text-black font-semibold">رقم الحساب (ID):</span>
-                <Badge variant="secondary" className="bg-white/30 text-black border-white/40 font-semibold text-xs">{user.id}</Badge>
+      {/* Notifications Section */}
+      <section className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Notifications</h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Manage which notifications you receive.
+        </p>
+        <ul className="space-y-4">
+          {notificationSettings.map((setting) => (
+            <li key={setting.id} className="flex items-center justify-between">
+              <div>
+                <p className="text-lg font-medium text-gray-900 dark:text-gray-100">{setting.name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{setting.description}</p>
               </div>
-              <div className="flex justify-between items-center border-b border-white/10 pb-1">
-                <span className="text-black font-semibold">تاريخ الإنشاء:</span>
-                <span className="text-sm text-black/80 font-medium">
-                  {user.created_at ? new Date(user.created_at).toLocaleDateString('ar-EG') : 'غير محدد'}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-black font-semibold">آخر دخول:</span>
-                <span className="text-sm text-black/80 font-medium">
-                  {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString('ar-EG') : 'غير محدد'}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+              {/* Toggle switch using Tailwind CSS peer utility */}
+              <label htmlFor={`toggle-${setting.id}`} className="flex items-center cursor-pointer">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    id={`toggle-${setting.id}`}
+                    className="sr-only peer"
+                    checked={setting.enabled}
+                    onChange={() => handleNotificationToggle(setting.id)}
+                  />
+                  <div className="w-14 h-8 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600 dark:peer-checked:bg-blue-600"></div>
+                </div>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }
