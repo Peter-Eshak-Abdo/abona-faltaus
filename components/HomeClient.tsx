@@ -25,6 +25,7 @@ const sections = [
   // { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },
+  { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
   // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
   // { name: "العظات", href: "/3zat", icon: <FaChurch /> },
   // { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
