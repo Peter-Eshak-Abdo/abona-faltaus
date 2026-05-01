@@ -1,134 +1,98 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export default function ReviewClient() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [reviews, setReviews] = useState<any[]>([]);
   const [feedback, setFeedback] = useState('');
   const [rating, setRating] = useState<number | null>(null);
+  const [isPublic, setIsPublic] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState('');
-  const router = useRouter();
+
+  // جلب تاريخ التقييمات
+  const fetchHistory = async () => {
+    const res = await fetch('/api/feedback');
+    const data = await res.json();
+    if (Array.isArray(data)) setReviews(data);
+  };
+
+  useEffect(() => { fetchHistory(); }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setMessage('');
+    const response = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ feedback, rating, is_public: isPublic }),
+    });
 
-    if (!feedback || rating === null) {
-      setMessage('الرجاء تعبئة جميع الحقول المطلوبة (الملاحظات والتقييم).');
-      setIsSubmitting(false);
-      return;
+    if (response.ok) {
+      setFeedback('');
+      setRating(null);
+      fetchHistory(); // تحديث القائمة فوراً
     }
-
-    try {
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, feedback, rating }),
-      });
-
-      if (response.ok) {
-        setMessage('شكراً لك! تم استلام ملاحظاتك بنجاح.');
-        setName('');
-        setEmail('');
-        setFeedback('');
-        setRating(null);
-        // Optionally redirect or show a success state
-        // router.push('/thank-you-for-feedback');
-      } else {
-        const errorData = await response.json();
-        setMessage(`حدث خطأ: ${errorData.error || 'الرجاء المحاولة مرة أخرى.'}`);
-      }
-    } catch (error) {
-      console.error('Failed to submit feedback:', error);
-      setMessage('حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    setIsSubmitting(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-      {message && (
-        <div className={`mb-4 p-3 rounded-md ${message.includes('شكراً') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-          {message}
-        </div>
-      )}
+    <div className="max-w-2xl mx-auto space-y-1 p-1">
+      {/* عرض التقييمات السابقة (نظام المحادثة) */}
+      <div className="bg-gray-50 p-1 rounded-xl h-96 overflow-y-auto border space-y-1">
+        {reviews.map((rev) => (
+          <div key={rev.id} className={`flex flex-col ${rev.user_id ? 'items-end' : 'items-start'}`}>
+            <div className={`max-w-[80%] p-1 rounded-2xl ${rev.is_public ? 'bg-white' : 'bg-blue-50 border-blue-200 border'}`}>
+              <p className="text-sm font-bold text-gray-600 mb-1">
+                {rev.is_public ? 'تقييم عام' : 'رسالة خاصة للمسؤول'}
+              </p>
+              <p>{rev.feedback_text}</p>
+              <div className="text-xs text-gray-400 mt-1 flex justify-between">
+                <span>{'⭐'.repeat(rev.rating)}</span>
+                <span>{new Date(rev.created_at).toLocaleDateString('ar-EG')}</span>
+              </div>
+            </div>
 
-      <div className="mb-4">
-        <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
-          اسمك (اختياري):
-        </label>
-        <input
-          type="text"
-          id="name"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+            {/* رد المسؤول */}
+            {rev.admin_reply && (
+              <div className="max-w-[80%] mt-1 p-1 rounded-2xl bg-green-100 self-start border-r-4 border-green-500">
+                <p className="text-xs font-bold text-green-700">رد الإدارة:</p>
+                <p className="text-sm">{rev.admin_reply}</p>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
-          بريدك الإلكتروني (اختياري، للتواصل):
-        </label>
-        <input
-          type="email"
-          id="email"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="feedback" className="block text-gray-700 text-sm font-bold mb-2">
-          ملاحظاتك أو اقتراحاتك: <span className="text-red-500">*</span>
-        </label>
+      {/* نموذج إرسال تقييم جديد */}
+      <form onSubmit={handleSubmit} className="bg-white p-1 rounded-xl shadow-lg border">
         <textarea
-          id="feedback"
-          rows={5}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="w-full p-1 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          placeholder="اكتب ملاحظاتك هنا..."
           value={feedback}
           onChange={(e) => setFeedback(e.target.value)}
           required
-        ></textarea>
-      </div>
+        />
 
-      <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          ما مدى رضاك عن التطبيق؟ <span className="text-red-500">*</span>
-        </label>
-        <div className="flex items-center space-x-4">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              className={`text-2xl ${rating && star <= rating ? 'text-yellow-500' : 'text-gray-300'} focus:outline-none`}
-              onClick={() => setRating(star)}
-              aria-label={`${star} star rating`}
-            >
-              ★
-            </button>
-          ))}
+        <div className="flex items-center justify-between mt-1">
+          <div className="flex space-x-1">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+              <button key={star} type="button" onClick={() => setRating(star)} className={`text-2xl ${rating && star <= rating ? 'text-yellow-500' : 'text-gray-300'}`}>★</button>
+            ))}
+          </div>
+
+          <label className="flex items-center space-x-1 cursor-pointer">
+            <span className="text-sm text-gray-600">تقييم عام للجميع؟</span>
+            <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} className="w-4 h-4" />
+          </label>
         </div>
-        {rating === null && <p className="text-red-500 text-xs italic mt-2">الرجاء اختيار تقييم.</p>}
-      </div>
 
-      <div className="flex items-center justify-between">
         <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
-          disabled={isSubmitting || !feedback || rating === null}
+          disabled={isSubmitting || !feedback || !rating}
+          className="w-full mt-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
         >
-          {isSubmitting ? 'جاري الإرسال...' : 'إرسال الملاحظات'}
+          {isSubmitting ? 'جاري الإرسال...' : 'إرسال التقييم'}
         </button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }

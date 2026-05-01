@@ -1,0 +1,16 @@
+name: Daily Feedback Cron
+
+on:
+  schedule:
+    # سيتم التنفيذ يومياً الساعة 10 مساءً بتوقيت مصر (8 مساءً UTC)
+    - cron: '0 20 * * *'
+  workflow_dispatch: # يتيح لك تشغيل الـ Cron يدوياً للتجربة
+
+jobs:
+  hit-cron-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Cron API
+        run: |
+          curl -X GET "https://abona-faltaus.vercel.app/api/cron/daily-summary" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
