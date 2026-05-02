@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { useState, useEffect, useRef } from "react";
 import localforage from "localforage";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaCopy, FaShareAlt, FaStar, FaPlay, FaStop, FaSearch, FaTimes, FaHeart } from "react-icons/fa";
+import { FaCopy, FaShareAlt, FaStar, FaPlay, FaStop, FaSearch, FaTimes, FaHeart, FaSpinner } from "react-icons/fa";
 import { bookNames, shortBookNames } from "@/lib/books";
 import BibleSearch from "@/components/BibleSearch";
 import Link from "next/link";
@@ -21,24 +21,28 @@ export default function BibleReaderPage() {
   const [fontSize, setFontSize] = useState(24);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<number[]>([]);
+
+  // حالات الصوت الجديدة
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const [favorites, setFavorites] = useState<{ bIdx: number, cIdx: number, vNum: number }[]>([]);
   const [loadProgress, setLoadProgress] = useState(0);
   const [tipIndex, setTipIndex] = useState(0);
 
   const isInitialized = useRef(false);
   const touchStartPos = useRef({ x: 0, y: 0 });
-  let synth = typeof window !== "undefined" ? window.speechSynthesis : null;
 
   const tips = [
     "هذا الإصدار يعمل بالكامل بدون إنترنت بعد التحميل الأول.",
     "يمكنك الضغط مطولاً على الآية لمشاركتها مع أصدقائك.",
     "جرب خاصية البحث السريع للوصول لأي آية في ثوانٍ.",
     "يتم حفظ آخر مكان قرأت فيه تلقائياً لتعود إليه لاحقاً.",
-    "يمكنك إضافة الآيات التي لمست قلبك إلى قائمة المفضلة."
+    "يمكنك إضافة الآيات التي لمست قلبك إلى قائمة المفضلة.",
+    "الصوت يعمل بدون إنترنت للمرات القادمة بمجرد استماعه لأول مرة!"
   ];
 
-  // تحديث النصائح كل 2.5 ثانية
   useEffect(() => {
     if (isLoading) {
       const interval = setInterval(() => {
@@ -48,7 +52,6 @@ export default function BibleReaderPage() {
     }
   }, [isLoading]);
 
-  // 1. دالة موحدة لتحميل البيانات (تبحث أوفلاين أولاً ثم أونلاين)
   useEffect(() => {
     const initData = async () => {
       try {
@@ -56,26 +59,18 @@ export default function BibleReaderPage() {
         setLoadProgress(0);
         setLoadingStatus("جاري فحص البيانات المحفوظة...");
 
-        // الخطوة الأولى: محاولة التحميل من ذاكرة الجهاز (LocalForage)
         let data = await localforage.getItem<BookObj[]>("offline_bible_data");
 
         if (!data || data.length === 0) {
-          // الخطوة الثانية: لو مفيش داتا، حمل من Supabase باستخدام الدالة الجديدة
           setLoadingStatus("جاري تحميل الكتاب المقدس (لأول مرة)...");
-
-          // استدعاء الدالة مع الـ Progress
           const data = await loadBible((p) => setLoadProgress(p));
-
-          // حفظ البيانات في الجهاز للأبد
           await localforage.setItem("offline_bible_data", data);
         } else {
-          // لو الداتا موجودة أصلاً، خلي الـ Progress 100% فوراً
           setLoadProgress(100);
         }
 
         setBibleData(data || []);
 
-        // استرجاع آخر مكان قراءة
         const lastRead = localStorage.getItem("bible_last_read");
         if (lastRead && data) {
           const { bIdx, cIdx } = JSON.parse(lastRead);
@@ -85,7 +80,6 @@ export default function BibleReaderPage() {
           }
         }
 
-        // تحميل المفضلة
         const favs = await localforage.getItem<any[]>("bible_favorites");
         if (favs) setFavorites(favs);
 
@@ -98,7 +92,7 @@ export default function BibleReaderPage() {
     };
 
     initData();
-}, []);
+  }, []);
 
   useEffect(() => {
     const savedSize = localStorage.getItem("bible_font_size");
@@ -111,30 +105,28 @@ export default function BibleReaderPage() {
     localStorage.setItem("bible_font_size", fontSize.toString());
   }, [fontSize]);
 
-  // حفظ آخر قراءة وإلغاء التحديد عند تغيير الإصحاح
+  // إيقاف الصوت القديم عند تغيير الإصحاح
   useEffect(() => {
     if (isInitialized.current && bibleData.length > 0) {
       localStorage.setItem("bible_last_read", JSON.stringify({ bIdx: currentBookIdx, cIdx: currentChapterIdx }));
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setSelectedVerses([]); // مسح التحديد
-      if (!isPlaying) stopAudio();
+      setSelectedVerses([]);
+      stopAudio(); // تأكيد إيقاف الصوت عند التنقل
     }
   }, [currentBookIdx, currentChapterIdx]);
 
-  // دالة الشواهد الذكية (حسب طلبك بالظبط)
   const formatCitation = () => {
     const activeBook = bibleData[currentBookIdx];
     const shortName = shortBookNames[activeBook.abbrev as keyof typeof shortBookNames] || activeBook.name;
     const chapterNum = currentChapterIdx + 1;
 
-    // ترتيب الأرقام تصاعدياً
     const sorted = [...selectedVerses].sort((a, b) => a - b);
     let blocks: number[][] = [];
     let temp = [sorted[0]];
 
     for (let i = 1; i < sorted.length; i++) {
       if (sorted[i] === sorted[i - 1] + 1) {
-        temp.push(sorted[i]); // لو متتاليين ضيفهم في نفس البلوك
+        temp.push(sorted[i]);
       } else {
         blocks.push(temp);
         temp = [sorted[i]];
@@ -143,9 +135,9 @@ export default function BibleReaderPage() {
     if (temp.length > 0) blocks.push(temp);
 
     const parts = blocks.map(b => {
-      if (b.length >= 3) return `${b[0]}-${b[b.length - 1]}`; // مت 3 : 5-9
-      if (b.length === 2) return `${b[1]}،${b[0]}`; // مت 3 : 6،5
-      return `${b[0]}`; // مت 3 : 5
+      if (b.length >= 3) return `${b[0]}-${b[b.length - 1]}`;
+      if (b.length === 2) return `${b[1]}،${b[0]}`;
+      return `${b[0]}`;
     });
 
     return `(${shortName} ${chapterNum} : ${parts.join(" ، ")})`;
@@ -163,12 +155,12 @@ export default function BibleReaderPage() {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(getSelectedText());
-    setSelectedVerses([]); // إخفاء بعد النسخ
+    setSelectedVerses([]);
   };
 
   const handleShare = () => {
     if (navigator.share) {
-      navigator.share({ title: "آيات من موثع ابونا فلتاؤس تفاحة", text: getSelectedText() });
+      navigator.share({ title: "آيات من موقع ابونا فلتاؤس تفاحة", text: getSelectedText() });
     } else {
       handleCopy();
       alert("تم النسخ للحافظة!");
@@ -187,11 +179,9 @@ export default function BibleReaderPage() {
       const exists = newFavs.some(f => f.bIdx === currentBookIdx && f.cIdx === currentChapterIdx && f.vNum === vNum);
 
       if (exists) {
-        // إزالة من المفضلة
         newFavs = newFavs.filter(f => !(f.bIdx === currentBookIdx && f.cIdx === currentChapterIdx && f.vNum === vNum));
         removedFavs.push(vNum);
       } else {
-        // إضافة للمفضلة
         newFavs.push({ bIdx: currentBookIdx, cIdx: currentChapterIdx, vNum });
         if (userId) {
           addedFavs.push({ book_idx: currentBookIdx, chapter_idx: currentChapterIdx, verse_num: vNum, user_id: userId });
@@ -200,10 +190,9 @@ export default function BibleReaderPage() {
     });
 
     setFavorites(newFavs);
-    await localforage.setItem("bible_favorites", newFavs); // حفظ أوفلاين
-    setSelectedVerses([]); // إخفاء التحديد
+    await localforage.setItem("bible_favorites", newFavs);
+    setSelectedVerses([]);
 
-    // مزامنة مع Supabase لو فيه نت وهو مسجل دخول
     if (userId) {
       if (addedFavs.length > 0) {
         await supabase.from("bible_favorites").upsert(addedFavs, { onConflict: 'user_id, book_idx, chapter_idx, verse_num' });
@@ -222,40 +211,77 @@ export default function BibleReaderPage() {
     );
   };
 
-  // القراءة الصوتية للإصحاح بالكامل
-  const toggleAudio = () => {
-    const synth = window.speechSynthesis;
-    if (!synth) return;
-    if (isPlaying) {
-      synth.cancel();
-      setIsPlaying(false);
-    } else {
-      const activeBook = bibleData[currentBookIdx];
-      const activeChapter = activeBook.chapters[currentChapterIdx];
+  // --- دوال الصوت الجديدة باستخدام ElevenLabs و Offline Cache ---
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+    setIsPlaying(false);
+    setIsAudioLoading(false);
+  };
 
-      let textToRead = `${activeBook.name}، الإصحَاحُ ${currentChapterIdx + 1}. `;
-      textToRead += activeChapter.map(v => v.text_vocalized).join(". ");
+  const toggleAudio = async () => {
+    if (isPlaying || isAudioLoading) {
+      stopAudio();
+      return;
+    }
 
-      const utterance = new SpeechSynthesisUtterance(textToRead);
-      utterance.lang = "ar-SA";
-      // محاولة اختيار صوت جوجل لو متاح
-      const voices = synth.getVoices();
-      const arabicVoice = voices.find(v => v.lang.includes("ar") && v.name.includes("Google"));
-      if (arabicVoice) utterance.voice = arabicVoice;
+    setIsAudioLoading(true);
 
-      utterance.onend = () => setIsPlaying(false);
-      synth.speak(utterance);
+    // مفتاح فريد لحفظ الصوت لكل إصحاح في السفر
+    const cacheKey = `audio_offline_${currentBookIdx}_${currentChapterIdx}`;
+
+    try {
+      // 1. البحث في الذاكرة (Offline Cache)
+      let audioBlob = await localforage.getItem<Blob>(cacheKey);
+
+      // 2. إذا لم يكن موجوداً، نجلبه من ElevenLabs (أونلاين لأول مرة)
+      if (!audioBlob) {
+        const activeBook = bibleData[currentBookIdx];
+        const activeChapter = activeBook.chapters[currentChapterIdx];
+
+        let textToRead = `${activeBook.name}، الإصحَاحُ ${currentChapterIdx + 1}. `;
+        textToRead += activeChapter.map(v => v.text_vocalized).join(". ");
+
+        const response = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: textToRead }),
+        });
+
+        if (!response.ok) {
+          throw new Error('فشل جلب الصوت من الخادم');
+        }
+
+        audioBlob = await response.blob();
+
+        // 3. حفظه للعمل أوفلاين في المرات القادمة
+        await localforage.setItem(cacheKey, audioBlob);
+      }
+
+      // 4. تشغيل الصوت (سواء من الكاش أو من السيرفر)
+      const url = URL.createObjectURL(audioBlob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+
+      audio.onended = () => {
+        setIsPlaying(false);
+        URL.revokeObjectURL(url); // تنظيف الذاكرة
+      };
+
+      await audio.play();
       setIsPlaying(true);
+
+    } catch (error) {
+      console.error('Error with audio:', error);
+      alert("حدث خطأ أثناء تشغيل الصوت. قد تحتاج للإنترنت في المرة الأولى لتحميل هذا الإصحاح.");
+    } finally {
+      setIsAudioLoading(false);
     }
   };
 
-  const stopAudio = () => {
-    // if (synth) synth.cancel();
-    window.speechSynthesis.cancel();
-    setIsPlaying(false);
-  };
-
-  // دوال التنقل (السابق والتالي)
   const handleNextChapter = () => {
     const currentBook = bibleData[currentBookIdx];
     if (currentChapterIdx < currentBook.chapters.length - 1) {
@@ -276,11 +302,7 @@ export default function BibleReaderPage() {
     }
   };
 
-  let touchStartX = 0;
-  let touchEndX = 0;
-
   const handleTouchStart = (e: React.TouchEvent) => {
-    // touchStartX = e.targetTouches[0].clientX;
     touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
   };
 
@@ -290,10 +312,9 @@ export default function BibleReaderPage() {
     const diffX = touchStartPos.current.x - touchEndX;
     const diffY = Math.abs(touchStartPos.current.y - touchEndY);
 
-    // لو الحركة الأفقية أكبر من 70 والحركة الرأسية صغيرة (عشان نفرق بين السوايب والـ Scroll)
     if (Math.abs(diffX) > 70 && diffY < 50) {
-      if (diffX > 0) handlePrevChapter(); // سحب يسار -> تالي
-      else handleNextChapter(); // سحب يمين -> سابق
+      if (diffX > 0) handlePrevChapter();
+      else handleNextChapter();
     }
   }
 
@@ -305,7 +326,6 @@ export default function BibleReaderPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-md text-center space-y-1"
         >
-          {/* أيقونة أو لوجو بسيط */}
           <div className="text-6xl mb-1">📖</div>
 
           <div className="space-y-1">
@@ -313,7 +333,6 @@ export default function BibleReaderPage() {
             <p className="text-zinc-500 dark:text-zinc-400 font-medium">يتم الآن تجهيز نسخة الأوفلاين الخاصة بك...</p>
           </div>
 
-          {/* Progres Bar */}
           <div className="relative w-full h-4 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden border dark:border-zinc-700">
             <motion.div
               className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-blue-700"
@@ -324,7 +343,6 @@ export default function BibleReaderPage() {
           </div>
           <span className="text-sm font-bold text-blue-600">{loadProgress}%</span>
 
-          {/* مميزات التطبيق (Tips) */}
           <div className="bg-zinc-50 dark:bg-zinc-900/50 p-1 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 min-h-[120px] flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.p
@@ -352,17 +370,15 @@ export default function BibleReaderPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pb-1 text-zinc-900 dark:text-zinc-100">
-      {/* شريط التحكم العلوي (Sticky) */}
       <div className="sticky top-0 z-40 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 p-1 shadow-sm flex flex-wrap gap-1 items-center justify-between">
 
         <div className="flex gap-1 w-full md:w-auto">
-          {/* اختيار السفر */}
           <select
             className="flex-1 md:flex-none p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
             value={currentBookIdx}
             onChange={(e) => {
               setCurrentBookIdx(Number(e.target.value));
-              setCurrentChapterIdx(0); // لما يغير السفر نرجعه للإصحاح الأول
+              setCurrentChapterIdx(0);
             }}
           >
             {bibleData.map((book, idx) => (
@@ -372,7 +388,6 @@ export default function BibleReaderPage() {
             ))}
           </select>
 
-          {/* اختيار الإصحاح */}
           <select
             className="w-8 p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
             value={currentChapterIdx}
@@ -386,7 +401,6 @@ export default function BibleReaderPage() {
           </select>
         </div>
 
-        {/* 1. أزرار التحكم في الخط فوق الآيات */}
         <div className="flex justify-center gap-1 mb-1">
           <button onClick={() => setFontSize(prev => prev + 2)} className="p-1 bg-zinc-200 dark:bg-zinc-800 rounded">A+</button>
           <button onClick={() => setFontSize(prev => prev - 2)} className="p-1 bg-zinc-200 dark:bg-zinc-800 rounded">A-</button>
@@ -396,22 +410,25 @@ export default function BibleReaderPage() {
           <button onClick={() => setIsSearchOpen(true)} className="p-1 bg-blue-100 text-blue-600 rounded-lg font-bold">
             <FaSearch size={10} />
           </button>
-        <button
-          onClick={toggleAudio}
-          className={`mx-auto flex items-center gap-1 p-1 rounded-full font-bold transition-all ${isPlaying ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}
-        >
-          {isPlaying ? <FaStop /> : <FaPlay />}
-          {isPlaying ? "ايقاف القراءة" : "استماع للاصحاح"}
-        </button>
+
+          {/* زر التحكم بالصوت الجديد */}
+          <button
+            onClick={toggleAudio}
+            disabled={isAudioLoading}
+            className={`mx-auto flex items-center gap-1 p-1 rounded-full font-bold transition-all disabled:opacity-50
+              ${isPlaying ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}
+          >
+            {isAudioLoading ? (
+              <FaSpinner className="animate-spin" />
+            ) : isPlaying ? (
+              <FaStop />
+            ) : (
+              <FaPlay />
+            )}
+            {isAudioLoading ? "جاري التحضير..." : isPlaying ? "إيقاف القراءة" : "استماع للاصحاح"}
+          </button>
         </div>
       </div>
-
-      {/* منطقة عرض الآيات */}
-      {/* <div className="max-w-7xl mx-auto p-1" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}> */}
-        {/* <h1 className="text-3xl font-extrabold text-center mb-1 text-blue-800 dark:text-blue-400">
-          {activeBook.name} - الإصحاح {currentChapterIdx + 1}
-        </h1> */}
-      {/* </div> */}
 
       <div className="space-y-0 text-xl md:text-2xl leading-loose font-arabic px-1 max-w-8xl mx-auto" style={{ fontSize: `${fontSize}px` }} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         {activeChapter.length > 0 ? (
@@ -438,7 +455,6 @@ export default function BibleReaderPage() {
         )}
       </div>
 
-      {/* الـ Floating Action Bar عند تحديد الآيات */}
       <AnimatePresence>
         {selectedVerses.length > 0 && (
           <motion.div
@@ -475,10 +491,9 @@ export default function BibleReaderPage() {
           setCurrentBookIdx(bIdx);
           setCurrentChapterIdx(cIdx);
           setIsSearchOpen(false);
-          // عمل Scroll ناعم للآية بعد ثانية عشان يلحق يعمل Render
           setTimeout(() => {
             document.getElementById(`verse-${vNum}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            toggleVerseSelection(vNum); // نعلم عليها عشان يلاحظها
+            toggleVerseSelection(vNum);
           }, 500);
         }}
       />
