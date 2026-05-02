@@ -5,26 +5,16 @@ import { motion, AnimatePresence, animate } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { VolumeX, Volume2 } from "lucide-react"
 
-// const playAudio = (path: string, loop: boolean = false, isMuted: boolean = false) => {
-//   if (typeof window !== "undefined" && !isMuted) {
-//     const audio = new Audio(path);
-//     audio.loop = loop;
-//     audio.play().catch((e) => console.log("Audio ignored:", e));
-//     return audio;
-//   }
-//   return null;
-// };
-
 const AnimatedNumber = ({ from, to }: { from: number, to: number }) => {
   const nodeRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
-    // ننتظر نص ثانية قبل ما العداد يبدأ يزيد
+    // ننتظر ثانية قبل ما العداد يبدأ يزيد ليتزامن مع حركة ترتيب الفرق
     const timeout = setTimeout(() => {
       animate(from, to, {
         duration: 1.5,
         onUpdate(v) { if (nodeRef.current) nodeRef.current.textContent = Math.round(v).toString(); }
       });
-    }, 500);
+    }, 1000);
     if (nodeRef.current) nodeRef.current.textContent = from.toString();
     return () => clearTimeout(timeout);
   }, [from, to]);
@@ -36,37 +26,26 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   const [gs, setGs] = useState(initialGS);
   const [timer, setTimer] = useState(0);
   const [answersCount, setAnswersCount] = useState(0);
+  const [answerDistribution, setAnswerDistribution] = useState<number[]>([0, 0, 0, 0]); // لحفظ توزيع الإجابات
   const [isIntro, setIsIntro] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [displayGroups, setDisplayGroups] = useState(groups);
   const [podiumStep, setPodiumStep] = useState(0);
-  const prevGroupsRef = useRef(groups); // حفظ المجموع القديم للأنيميشن
+  const prevGroupsRef = useRef(groups);
+
   const currentQuestion = quiz?.questions?.[gs.current_question_index] || null;
   const qTime = currentQuestion?.timeLimit || 20;
   const isMutedRef = useRef(isMuted);
   const audioRef = useRef<HTMLAudioElement>(null);
   const activeAudiosRef = useRef<HTMLAudioElement[]>([]);
 
-  // دالة إيقاف الصوت عند ظهور الإجابة أو انتهاء التايمر
-  // const stopMusic = () => {
-  //   if (audioRef.current) {
-  //     audioRef.current.pause();
-  //     audioRef.current.currentTime = 0;
-  //   }
-  // };
-
   const playAudio = (path: string, loop: boolean = false) => {
     if (typeof window !== "undefined") {
       const audio = new Audio(path);
       audio.loop = loop;
       audio.muted = isMutedRef.current;
-
       audio.play().catch((e) => console.log("Audio ignored:", e));
-
-      // حفظ الصوت في الـ Ref عشان نقدر نتحكم فيه لاحقاً
       activeAudiosRef.current.push(audio);
-
-      // تنظيف المصفوفة لما الصوت يخلص لوحده
       audio.onended = () => {
         activeAudiosRef.current = activeAudiosRef.current.filter(a => a !== audio);
       };
@@ -76,99 +55,59 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   };
 
   const stopAllMusic = () => {
-    // إيقاف الصوت الأساسي
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
-    // إيقاف كل التأثيرات الصوتية المتطايرة (التايمر، المقدمة، الخ)
     activeAudiosRef.current.forEach(audio => {
       audio.pause();
       audio.currentTime = 0;
     });
-    activeAudiosRef.current = []; // تفريغ المصفوفة
+    activeAudiosRef.current = [];
   };
 
   useEffect(() => {
     isMutedRef.current = isMuted;
-    if (audioRef.current) {
-      audioRef.current.muted = isMuted;
-    }    // كتم أو تشغيل التأثيرات الصوتية الحالية فوراً
-    activeAudiosRef.current.forEach(audio => {
-      audio.muted = isMuted;
-    });
+    if (audioRef.current) audioRef.current.muted = isMuted;
+    activeAudiosRef.current.forEach(audio => { audio.muted = isMuted });
   }, [isMuted]);
-  // التحكم في التشغيل والإيقاف الآمن جداً
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
     if (gs.phase === 'question' && !isIntro) {
       audio.volume = 0.7;
-      // بنمسك الـ Promise عشان نمنع الـ AbortError
       if (!audio.src.includes('question-music.mp3')) {
         audio.src = "/sounds/question-music.mp3";
       }
       const playPromise = audio.play();
       if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log("تم تجاهل التشغيل التلقائي:", error);
-        });
+        playPromise.catch(error => console.log("تم تجاهل التشغيل:", error));
       }
-    } else {
-      stopAllMusic();
-      // audio.pause();
-      // audio.currentTime = 0; // تصفير الصوت لما السؤال يخلص
-    }
+    } else stopAllMusic();
   }, [gs.phase, isIntro]);
 
-  // useEffect(() => {
-  //   // stopMusic();
-
-  //   let localAudio: HTMLAudioElement | null = null;// الاحتفاظ بنسخة محلية لضمان إيقافها
-
-  //   if (gs.phase === 'question' && !isIntro) {
-  //     localAudio = new Audio("/sounds/question-music.mp3");
-  //     // audioRef.current = new Audio("/sounds/question-music.mp3");
-  //     localAudio.loop = true;
-  //     localAudio.volume = 0.7;
-  //     localAudio.muted = isMutedRef.current; // يأخذ حالة الكتم الحالية عند التشغيل
-  //     localAudio.play().catch(e => console.log("Audio play error", e));
-  //     audioRef.current = localAudio; // تخزين المرجع في الريف
-  //   }
-  //   return () => {
-  //     if (localAudio) {
-  //       localAudio.pause();
-  //       localAudio.currentTime = 0;
-  //     }
-  //   };
-  //   // return () => stopMusic();
-  // }, [gs.phase, isIntro]);
-
-  // حفظ الفرق قبل التحديث لعرضها في السكوربورد
+  // تجميد الاسكور القديم في بداية السؤال فقط عشان نقارن بيه في السكوربورد
   useEffect(() => {
-    if (gs.phase !== 'scoreboard') {
+    if (gs.phase === 'question' && isIntro) {
       prevGroupsRef.current = groups;
     }
-  }, [gs.phase, groups]);
+  }, [gs.phase, isIntro, groups]);
 
-  // إدارة التايمر والصوت في آخر 5 ثواني
+  // إدارة التايمر للسؤال
   useEffect(() => {
     if (gs.phase !== 'question') return;
-
     if (timer <= 0 && !isIntro) {
       handlePhaseEnd();
       return;
     }
-
     const interval = setInterval(() => {
       setTimer((p) => {
         const newTime = p > 0 ? p - 1 : 0;
-        if (newTime <= 5 && newTime > 0) playAudio('/sounds/tick.mp3', false); // صوت التايمر آخر 5 ثواني
+        if (newTime <= 5 && newTime > 0) playAudio('/sounds/tick.mp3', false);
         return newTime;
       });
     }, 1000);
-
     return () => clearInterval(interval);
   }, [timer, gs.phase, isIntro]);
 
@@ -179,25 +118,59 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     }
   }, [answersCount, groups.length, gs.phase, isIntro]);
 
-  // تحديث التايمر فور تغير المرحلة أو السؤال
+  // إعداد التايمر للمرحلة الجديدة
   useEffect(() => {
     if (gs.phase === 'question') {
       setIsIntro(true);
-      setTimer(4); // مدة عرض السؤال في المنتصف
-      playAudio('/sounds/intro.mp3', false); // صوت حماسي للسؤال
+      setTimer(4);
+      playAudio('/sounds/intro.mp3', false);
       const timeout = setTimeout(() => { setIsIntro(false); setTimer(qTime); }, 4000);
       return () => clearTimeout(timeout);
-    } else {
-      setTimer(5);
-      setIsIntro(false);
     }
   }, [gs.phase, gs.current_question_index, qTime]);
 
-  // تأخير تحديث السكوربورد لعمل أنيميشن الصعود والنزول
+  // الانتقال التلقائي بعد 5 ثواني للـ Result و Scoreboard
+  useEffect(() => {
+    if (gs.phase === 'result' || gs.phase === 'scoreboard') {
+      const autoSkip = setTimeout(() => {
+        handlePhaseEnd();
+      }, 5000); // 5 ثواني وتنتقل للمرحلة اللي بعدها
+      return () => clearTimeout(autoSkip);
+    }
+  }, [gs.phase]);
+
+  // جلب إحصائيات الإجابات في مرحلة النتيجة
+  useEffect(() => {
+    if (gs.phase === 'result') {
+      const fetchDistribution = async () => {
+        const { data } = await supabase
+          .from('answers')
+          .select('selected_option')
+          .eq('quiz_id', quiz.id)
+          .eq('question_id', gs.current_question_index.toString());
+
+        if (data) {
+          const dist = [0, 0, 0, 0];
+          data.forEach((ans: any) => {
+            if (ans.selected_option !== null && ans.selected_option < 4) {
+              dist[ans.selected_option]++;
+            }
+          });
+          setAnswerDistribution(dist);
+        }
+      };
+      fetchDistribution();
+    }
+  }, [gs.phase, gs.current_question_index, quiz.id]);
+
+  // أنيميشن السكوربورد: نعرض القديم أولاً، وبعد ثانية نعرض الجديد لتبدأ الحركة
   useEffect(() => {
     if (gs.phase === 'scoreboard') {
       playAudio('/sounds/score-up.mp3', false);
-      const t = setTimeout(() => setDisplayGroups(groups), 1500); // يعرض القديم لثانية ونص ثم يطبق الجديد
+      setDisplayGroups(prevGroupsRef.current); // عرض الترتيب القديم أولاً
+      const t = setTimeout(() => {
+        setDisplayGroups(groups); // تحديث للترتيب الجديد بعد ثانية لتفعيل الأنيميشن
+      }, 1000);
       return () => clearTimeout(t);
     } else {
       setDisplayGroups(groups);
@@ -214,61 +187,42 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     }
   }, [gs.phase]);
 
-  // تتبع الإجابات
+  // تتبع عدد الإجابات أثناء السؤال
   useEffect(() => {
     if (!currentQuestion || gs.phase !== 'question') return;
-    // أولاً: نجلب عدد الإجابات اللي اتسجلت بالفعل للسؤال ده (عشان لو حد جاوب بسرعة)
     const fetchInitialAnswers = async () => {
-      const { count, error } = await supabase
+      const { count } = await supabase
         .from('answers')
         .select('*', { count: 'exact', head: true })
         .eq('quiz_id', quiz.id).eq('question_id', gs.current_question_index.toString());
       if (count !== null) setAnswersCount(count);
     };
-
     fetchInitialAnswers();
 
-    // الاستماع للإجابات الجديدة لايف
     const channel = supabase.channel(`ans-${gs.current_question_index}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'answers',
-        filter: `quiz_id=eq.${quiz.id}`
-      }, (payload) => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'answers', filter: `quiz_id=eq.${quiz.id}` }, (payload) => {
         if (String(payload.new.question_id) === String(gs.current_question_index)) {
-        // if (payload.new.question_id === gs.current_question_index.toString()) {
-          setAnswersCount(prev => {
-            const newCount = prev + 1;
-            if (newCount >= groups.length) setTimer(0);
-            return newCount;
-          });
+          setAnswersCount(prev => prev + 1);
         }
       }).subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [gs.phase, gs.current_question_index, quiz.id, groups.length, currentQuestion]);
+  }, [gs.phase, gs.current_question_index, quiz.id, currentQuestion]);
 
   const goToPhase = async (newPhase: string, nextIndex?: number) => {
     const updateData: any = { phase: newPhase, current_question_index: nextIndex ?? gs.current_question_index };
     const { data } = await supabase.from("game_state").update(updateData).eq("quiz_id", quiz.id).select().single();
     if (data) {
       setGs(data);
-      if (newPhase === 'question') {
-        setAnswersCount(0);
-      }
+      if (newPhase === 'question') setAnswersCount(0);
     }
   };
 
   const handlePhaseEnd = () => {
-    stopAllMusic(); // وقف الموسيقى فوراً
-    if (gs.phase === 'question') {
-      goToPhase('result');
-    } else if (gs.phase === 'result') {
-      if (gs.current_question_index >= quiz.questions.length - 1) {
-        goToPhase('final');
-      } else {
-        goToPhase('scoreboard');
-      }
+    stopAllMusic();
+    if (gs.phase === 'question') goToPhase('result');
+    else if (gs.phase === 'result') {
+      if (gs.current_question_index >= quiz.questions.length - 1) goToPhase('final');
+      else goToPhase('scoreboard');
     } else if (gs.phase === 'scoreboard') {
       goToPhase('question', gs.current_question_index + 1);
     }
@@ -302,9 +256,9 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
             <motion.div initial={{ y: "100%" }} animate={{ y: podiumStep >= 1 ? 0 : "100%" }} transition={{ type: "spring", bounce: 0.3 }}
               className="bg-orange-800 w-1/3 p-1 flex flex-col items-center rounded-t-2xl shadow-lg border-t-4 border-orange-500" style={{ height: '50%' }}>
               <img src={winners[2].saint_image || '/placeholder.png'} className="w-[6vw] h-[7vw] rounded-full object-cover mb-1 shadow-2xl border-2 border-white" />
-              <span className="text-[3vw] font-black text-center truncate w-full">{winners[2].group_name}</span>
+              <span className="text-[2vw] font-black text-center truncate w-full">{winners[2].group_name}</span>
               <div className="flex flex-wrap justify-center gap-1 opacity-80 text-[1.5vw]">{winners[2].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
-              <div className="mt-auto text-[6vw] font-black text-white/40">3</div>
+              <div className="mt-auto text-[5vw] font-black text-white/40">3</div>
               <div className="text-[3vw] font-black text-orange-300">{winners[2].score}</div>
             </motion.div>
           )}
@@ -341,6 +295,11 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   return (
     <div className="h-screen w-screen bg-[#46178f] text-white p-1 flex flex-col items-center font-sans overflow-hidden">
 
+      {/* مؤشر رقم السؤال */}
+      <div className="absolute top-2 right-2 bg-black/40 px-4 py-2 rounded-full text-[2.5vh] font-black shadow-lg z-50">
+        {gs.current_question_index + 1} of {quiz.questions?.length || 0}
+      </div>
+
       {/* الشريط التقدمي والتايمر في الأعلى */}
       {gs.phase === 'question' && !isIntro && (
         <div className="w-full h-[6vh] bg-black/40 rounded-xl mb-1 relative overflow-hidden flex items-center shadow-inner">
@@ -370,7 +329,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
         {gs.phase === 'question' && (
           <motion.div key="q" className="flex-1 flex flex-col w-full h-full">
             <motion.h1 layout transition={{ duration: 0.5, type: "spring" }}
-              className={`flex items-center justify-center text-center font-black leading-tight px-1 drop-shadow-xl ${isIntro ? "flex-1 text-[8vw]" : "h-[30vh] text-[6vw]"}`}>
+              className={`flex items-center justify-center text-center font-black leading-tight px-1 drop-shadow-xl ${isIntro ? "flex-1 text-[8vw]" : "h-[30vh] text-[5vw]"}`}>
               {currentQuestion?.text}
             </motion.h1>
 
@@ -388,45 +347,84 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
 
         {/* عرض الإجابة الصحيحة بخط عملاق */}
         {gs.phase === 'result' && (
-          <motion.div key="r" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex-1 flex flex-col items-center justify-center w-full p-1">
-            <span className="text-[4vw] opacity-70 font-black mb-1 uppercase tracking-widest">الإجابة الصحيحة</span>
-            <div className="bg-green-500 w-full p-1 rounded-[3vw] text-[8vw] font-black text-center shadow-[0_10px_0_#15803d] border-4 border-white">
-              {currentQuestion?.choices[currentQuestion?.correctAnswer]}
+          <motion.div key="r" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col w-full h-full">
+            <div className="h-[10vh] flex items-center justify-center">
+              <span className="text-[4vw] opacity-80 font-black uppercase tracking-widest text-center">النتيجة</span>
             </div>
-            <Button onClick={handlePhaseEnd} className="mt-1 h-[8vh] px-1 text-[4vh] font-black bg-blue-600 rounded-full shadow-xl">
-              {gs.current_question_index >= quiz.questions.length - 1 ? 'النتيجة النهائية!' : 'عرض الترتيب'}
-            </Button>
+            <div className="flex-1 grid grid-cols-2 gap-1 p-1 w-full max-w-6xl mx-auto">
+              {currentQuestion?.choices.map((opt: any, i: number) => {
+                const isCorrect = i === currentQuestion.correctAnswer;
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ scale: 0.8 }}
+                    animate={{
+                      scale: isCorrect ? 1.05 : 0.95,
+                      opacity: isCorrect ? 1 : 0.6
+                    }}
+                    className={`relative rounded-2xl flex flex-col items-center justify-center p-1 text-center border-4 transition-all duration-500
+                        ${['bg-red-500', 'bg-blue-500', 'bg-yellow-500', 'bg-green-500'][i]}
+                        ${isCorrect ? 'border-white shadow-[0_0_40px_rgba(255,255,255,0.5)] z-10' : 'border-transparent shadow-none'}
+                      `}
+                  >
+                    {/* علامة الصح للاختيار الصحيح */}
+                    {isCorrect && <div className="absolute -top-6 -right-6 bg-white rounded-full p-1 text-green-500 shadow-xl text-4xl">✅</div>}
+
+                    <span className="text-[3.5vw] font-black drop-shadow-lg mb-1">{opt}</span>
+
+                    {/* عدد الفرق التي اختارت هذه الإجابة */}
+                    <div className="bg-black/50 px-2 py-1 rounded-full text-[2.5vw] font-black flex items-center gap-1 mt-auto">
+                      👤 {answerDistribution[i] || 0}
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+            <div className="p-1 flex justify-end">
+              <Button onClick={handlePhaseEnd} className="h-[8vh] px-1 text-[3vh] font-black bg-white text-black hover:bg-gray-200 rounded-full shadow-xl">
+                التالي ❯
+              </Button>
+            </div>
           </motion.div>
         )}
 
         {/* السكوربورد مع الأنيميشن */}
         {gs.phase === 'scoreboard' && (
           <motion.div key="s" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto p-1">
-            <h2 className="text-[5vw] font-black mb-1 text-yellow-400 drop-shadow-lg">المتصدرين 🏆</h2>
-            <div className="w-full flex flex-col gap-1">
+            <h2 className="text-[5vw] font-black mb-1 text-white drop-shadow-lg bg-white/20 px-1 py-1 rounded-lg">Scoreboard</h2>
+            <div className="w-full flex flex-col gap-1 relative">
               <AnimatePresence>
-                {displayGroups.sort((a: any, b: any) => b.score - a.score).slice(0, 5).map((g: any, i: number) => {
+                {[...displayGroups].sort((a: any, b: any) => b.score - a.score).slice(0, 5).map((g: any, i: number) => {
                   const oldGroupData = prevGroupsRef.current.find((pg: any) => pg.id === g.id);
                   const oldScore = oldGroupData ? oldGroupData.score : 0;
 
                   return (
-                    <motion.div layout key={g.id} initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      className="flex justify-between items-center p-1 bg-black/40 rounded-2xl border-l-[1vw] border-yellow-500 text-[4vw] font-black shadow-lg">
+                    <motion.div
+                      layout
+                      key={g.id}
+                      initial={{ x: -50, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                      className="flex justify-between items-center p-1 bg-[#46178f]/80 rounded-sm border-l-[1vw] border-yellow-500 text-[3.5vw] font-black shadow-[0_4px_0_rgba(0,0,0,0.2)]"
+                    >
                       <div className="flex items-center gap-1">
-                        <span className="text-white/50 w-[5vw]">{i + 1}.</span>
+                        <span className="bg-white/10 w-[5vw] h-[5vw] flex items-center justify-center rounded-full text-white/80">{i + 1}</span>
                         <span>{g.group_name}</span>
                       </div>
-                      <span className="text-yellow-400"><AnimatedNumber from={oldScore} to={g.score} /></span>
+                      <span className="text-white">
+                        <AnimatedNumber from={oldScore} to={g.score} />
+                      </span>
                     </motion.div>
                   )
                 })}
               </AnimatePresence>
             </div>
-            <Button onClick={handlePhaseEnd} className="w-full max-w-2xl mt-1 h-[8vh] text-[4vh] font-black bg-blue-500 rounded-full shadow-xl">
-              {gs.current_question_index < quiz.questions.length - 1 ? 'السؤال القادم' : 'إلى النهاية!'}
+            <Button onClick={handlePhaseEnd} className="absolute bottom-6 right-6 h-[8vh] px-1 text-[3vh] font-black bg-white text-black hover:bg-gray-200 rounded-full shadow-xl">
+              التالي ❯
             </Button>
           </motion.div>
         )}
+
         <div className="fixed bottom-2 left-2 z-50">
           <button
             onClick={() => setIsMuted(!isMuted)}
