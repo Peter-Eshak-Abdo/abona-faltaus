@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const {
       text,
-      voiceId = process.env.ELEVENLABS_DEFAULT_VOICE_ID,
+      // voiceId = process.env.ELEVENLABS_DEFAULT_VOICE_ID,
     } = await req.json();
 
     if (!text) {
@@ -13,9 +13,11 @@ export async function POST(req: NextRequest) {
     }
 
     const elevenLabsApiKey = process.env.ELEVENLABS_API_KEY;
-    if (!elevenLabsApiKey) {
+    const voiceId = process.env.ELEVENLABS_DEFAULT_VOICE_ID;
+
+    if (!elevenLabsApiKey || !voiceId) {
       return NextResponse.json(
-        { error: "ElevenLabs API key not configured" },
+        { error: "ElevenLabs API key or default voice ID not configured" },
         { status: 500 },
       );
     }
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           text: text,
-          model_id: "eleven_multilingual_v2", // ممتاز جداً للغة العربية
+          model_id: "eleven_multilingual_v2",
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
