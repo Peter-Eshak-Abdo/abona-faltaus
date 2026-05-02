@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User, Bell, Palette } from "lucide-react"; // ضفنا Palette أيقونة للمظهر
+import { User, Bell, Palette } from "lucide-react"; 
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";

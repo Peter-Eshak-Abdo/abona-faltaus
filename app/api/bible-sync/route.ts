@@ -1,54 +1,73 @@
-import { createClient } from '@/utils/supabase/server'; // Assuming server-side Supabase client
-import { NextResponse } from 'next/server';
+// app/api/bible-sync/route.ts
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const chapter = searchParams.get('chapter');
-  const verse = searchParams.get('verse');
-
-  // This is a placeholder. In a real application, you would fetch
-  // specific Bible content based on `chapter` and `verse` from your database.
-  // For offline capabilities, this endpoint could be designed to:
-  // 1. Return entire books/chapters in a single request.
-  // 2. Include metadata for client-side caching (e.g., ETag, Last-Modified).
-  // 3. Handle pagination for very large books.
-
+export async function GET() {
   try {
-    const supabase = createClient(); // Assuming this function exists
-
-    // Example: Fetch a specific verse or chapter
-    let query = supabase.from('bible_verses').select('*');
-
-    if (chapter) {
-      query = query.eq('chapter', chapter);
-    }
-    if (verse) {
-      query = query.eq('verse_number', verse);
-    }
-
-    const { data, error } = await query;
+    // 1. جلب كافة الآيات مرتبة لضمان بناء الهيكل بشكل صحيح
+    const { data, error } = await supabase
+      .from("bible_verses")
+      .select(
+        "book_name, book_display_name, chapter_number, verse_number, text_plain, text_vocalized",
+      )
+      .order("id", { ascending: true }); // أو الترتيب حسب ترتيب الأسفار إذا كان لديك عمود لذلك
 
     if (error) {
-      console.error('Error fetching Bible data:', error);
+      console.error("Supabase Error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // For offline download, you might want to return more comprehensive data
-    // or allow fetching larger chunks. The client would then store this data locally.
+    if (!data || data.length === 0) {
+      return NextResponse.json({ error: "No data found" }, { status: 404 });
+    }
 
-    return NextResponse.json({
-      message: 'Bible sync data (conceptual for offline)',
-      data: data,
-      // Add a flag or timestamp to indicate this data is suitable for offline caching
-      offlineReady: true,
-      timestamp: new Date().toISOString(),
+    // 2. معالجة البيانات لتحويلها من "صفوف" إلى "هيكل أسفار وإصحاحات"
+    const books: any[] = [];
+    let currentBookName = "";
+    let currentChapterNum = -1;
+
+    data.forEach((row: { book_name: string; book_display_name: any; chapter_number: number; verse_number: any; text_plain: any; text_vocalized: any; }) => {
+      // إذا تغير السفر، ننشئ كائن سفر جديد
+      if (row.book_name !== currentBookName) {
+        currentBookName = row.book_name;
+        books.push({
+          abbrev: row.book_name,
+          name: row.book_display_name || row.book_name,
+          chapters: [],
+        });
+        currentChapterNum = -1; // إعادة تعيين العداد للسفر الجديد
+      }
+
+      const lastBook = books[books.length - 1];
+
+      // إذا تغير الإصحاح داخل السفر، ننشئ مصفوفة إصحاح جديدة
+      if (row.chapter_number !== currentChapterNum) {
+        currentChapterNum = row.chapter_number;
+        lastBook.chapters.push([]);
+      }
+
+      const lastChapter = lastBook.chapters[lastBook.chapters.length - 1];
+
+      // إضافة الآية للإصحاح الحالي
+      lastChapter.push({
+        verse: row.verse_number,
+        text_plain: row.text_plain,
+        text_vocalized: row.text_vocalized,
+      });
     });
 
-  } catch (error) {
-    console.error('Unexpected error in bible-sync API:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    // 3. إرسال البيانات النهائية المرتبة
+    // استخدمنا NextResponse لضبط الرؤوس (Headers) بشكل أفضل
+    return NextResponse.json(books, {
+      headers: {
+        "Cache-Control": "public, max-age=86400", // تخزين مؤقت على السيرفر لمدة يوم
+      },
+    });
+  } catch (err) {
+    console.error("Unexpected Error:", err);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
-
-// You might also have a POST route for client-side updates/syncing,
-// but the task focuses on downloading for offline reading.
