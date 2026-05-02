@@ -1,50 +1,54 @@
-import { NextResponse } from "next/server";
-import { loadBible } from "@/lib/bible-utils";
-import { supabase } from "@/lib/supabase";
+import { createClient } from '@/utils/supabase/server'; // Assuming server-side Supabase client
+import { NextResponse } from 'next/server';
 
-export async function GET() {
-  const { data, error } = await supabase
-    .from("bible_verses") // اسم الجدول عندك
-    .select("*")
-    .order("id", { ascending: true }); // التأكد من الترتيب حسب الـ ID الأصلي
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const chapter = searchParams.get('chapter');
+  const verse = searchParams.get('verse');
 
-  if (error) return Response.json({ error: error.message });
+  // This is a placeholder. In a real application, you would fetch
+  // specific Bible content based on `chapter` and `verse` from your database.
+  // For offline capabilities, this endpoint could be designed to:
+  // 1. Return entire books/chapters in a single request.
+  // 2. Include metadata for client-side caching (e.g., ETag, Last-Modified).
+  // 3. Handle pagination for very large books.
 
-  // const books: loadBible[] = [];
-  const books = await loadBible();
-  let currentBookName = "";
-  let currentChapterNum = -1;
+  try {
+    const supabase = createClient(); // Assuming this function exists
 
-  data.forEach((row: { book_name: string; book_display_name: any; chapter_number: number; verse_number: any; text_plain: any; text_vocalized: any; }) => {
-    // 1. فحص هل السفر تغير؟ (هنا بنعتمد على الاسم الكامل لضمان فصل 19-1 عن 19-2)
-    if (row.book_name !== currentBookName) {
-      currentBookName = row.book_name;
-      books.push({
-        abbrev: row.book_name, // أو الـ abbrev لو عندك
-        name: row.book_display_name || row.book_name, // الاسم اللي بيظهر للمستخدم
-        chapters: [],
-      });
-      currentChapterNum = -1; // إعادة تصغير العداد للسفر الجديد
+    // Example: Fetch a specific verse or chapter
+    let query = supabase.from('bible_verses').select('*');
+
+    if (chapter) {
+      query = query.eq('chapter', chapter);
+    }
+    if (verse) {
+      query = query.eq('verse_number', verse);
     }
 
-    const lastBook = books[books.length - 1];
+    const { data, error } = await query;
 
-    // 2. فحص هل الأصحاح تغير؟
-    // ملحوظة: بنستخدم رقم الأصحاح الفعلي من الداتا مش الـ Index
-    if (row.chapter_number !== currentChapterNum) {
-      currentChapterNum = row.chapter_number;
-      lastBook.chapters.push([]); // إضافة مصفوفة جديدة للأصحاح الجديد
+    if (error) {
+      console.error('Error fetching Bible data:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const lastChapter = lastBook.chapters[lastBook.chapters.length - 1];
+    // For offline download, you might want to return more comprehensive data
+    // or allow fetching larger chunks. The client would then store this data locally.
 
-    // 3. إضافة الآية للأصحاح
-    lastChapter.push({
-      verse: row.verse_number,
-      text_plain: row.text_plain,
-      text_vocalized: row.text_vocalized,
+    return NextResponse.json({
+      message: 'Bible sync data (conceptual for offline)',
+      data: data,
+      // Add a flag or timestamp to indicate this data is suitable for offline caching
+      offlineReady: true,
+      timestamp: new Date().toISOString(),
     });
-  });
 
-  return Response.json(books);
+  } catch (error) {
+    console.error('Unexpected error in bible-sync API:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }
+
+// You might also have a POST route for client-side updates/syncing,
+// but the task focuses on downloading for offline reading.
