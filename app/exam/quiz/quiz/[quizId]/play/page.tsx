@@ -141,7 +141,7 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
       <AnimatePresence mode="wait">
         {gameState?.phase === 'question' && !hasAnswered ? (
           showButtons ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full grid grid-cols-2 gap-1">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-[90vh] grid grid-cols-2 gap-1">
               {COLORS.slice(0, currentQuestion?.choices?.length).map((c, i) => (
                 <button key={i} onClick={() => submitAnswer(i)} className={`${c.color} flex items-center justify-center rounded-2xl active:scale-95 transition-transform shadow-[0_6px_0_rgba(0,0,0,0.3)]`}>
                   <span className="text-[20vw] text-white drop-shadow-lg">{c.icon}</span>
@@ -151,12 +151,12 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-white">
               <div className="w-[15vw] h-[15vw] border-8 border-t-transparent border-white rounded-full animate-spin mb-1"></div>
-              <h2 className="text-[8vw] font-black animate-pulse">اقرأ السؤال 🧐</h2>
+              <h2 className="text-[9vw] font-black animate-pulse">اقرأ السؤال 🧐</h2>
             </div>
           )
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-white bg-[#46178f]">
-            <h2 className="text-[10vw] font-black">{hasAnswered ? "تم الإرسال! ✅" : "استعد..."}</h2>
+            <h2 className="text-[15vw] font-black">{hasAnswered ? "تم الإرسال! ✅" : "استعد..."}</h2>
             <p className="text-[5vw] opacity-60 mt-1 font-bold">بص على الشاشة الرئيسية</p>
           </div>
         )}

@@ -19,7 +19,7 @@ interface CreateQuizDialogProps {
   initialData?: Quiz | null
 }
 
-const COLORS = ["bg-red-500", "bg-green-500", "bg-blue-500", "bg-amber-500"];
+const COLORS = ["bg-red-500", "bg-green-500", "bg-blue-500", "bg-yellow-500"];
 
 export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initialData }: CreateQuizDialogProps) {
   const supabase = createClient();
@@ -300,7 +300,7 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                       <div className="grid grid-cols-2 gap-0.5">
                         {q.choices.map((choice, cIdx) => (
                           <div key={cIdx} className={`flex items-center gap-0.5 p-0.5 rounded-2xl transition-all border-2 ${q.correctAnswer === cIdx ? 'border-green-500 bg-green-50 dark:bg-green-900/20 shadow-md' : 'border-transparent bg-zinc-50 dark:bg-zinc-900/50'}`}>
-                            <div className={`w-3 h-3 rounded-lg ${COLORS[cIdx]} flex items-center justify-center text-white font-black`}>
+                            <div className={`w-2 h-2 rounded-lg ${COLORS[cIdx]} flex items-center justify-center text-white font-black`}>
                               {String.fromCharCode(65 + cIdx)}
                             </div>
                             <input

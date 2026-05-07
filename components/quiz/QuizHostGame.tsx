@@ -147,21 +147,35 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           .from('answers')
           .select('selected_option')
           .eq('quiz_id', quiz.id)
-          .eq('question_id', gs.current_question_index.toString());
+          .eq('question_id', String(gs.current_question_index));
 
         if (data) {
           const dist = [0, 0, 0, 0];
           data.forEach((ans: any) => {
-            if (ans.selected_option !== null && ans.selected_option < 4) {
-              dist[ans.selected_option]++;
+            let optionIndex = -1;
+            // 1. لو الإجابة محفوظة كرقم (Number) أو رقم جوه نص (String Number)
+            if (ans.selected_option !== null && !isNaN(ans.selected_option)) {
+              optionIndex = Number(ans.selected_option);
             }
+            // 2. لو الإجابة محفوظة كنص الإجابة نفسه (Text) وليس الـ Index
+            else if (typeof ans.selected_option === 'string' && currentQuestion) {
+              optionIndex = currentQuestion.choices.indexOf(ans.selected_option);
+            }
+
+            // إضافة الإجابة للمصفوفة إذا كانت صحيحة ومن 0 لـ 3
+            if (optionIndex >= 0 && optionIndex < 4) {
+              dist[optionIndex]++;
+            }
+            // if (ans.selected_option !== null && ans.selected_option < 4) {
+            //   dist[ans.selected_option]++;
+            // }
           });
           setAnswerDistribution(dist);
         }
       };
       fetchDistribution();
     }
-  }, [gs.phase, gs.current_question_index, quiz.id]);
+  }, [gs.phase, gs.current_question_index, quiz.id, currentQuestion]);
 
   // أنيميشن السكوربورد: نعرض القديم أولاً، وبعد ثانية نعرض الجديد لتبدأ الحركة
   useEffect(() => {
@@ -295,10 +309,6 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   return (
     <div className="h-screen w-screen bg-[#46178f] text-white p-1 flex flex-col items-center font-sans overflow-hidden">
 
-      {/* مؤشر رقم السؤال */}
-      <div className="absolute top-2 right-2 bg-black/40 px-4 py-2 rounded-full text-[2.5vh] font-black shadow-lg z-50">
-        {gs.current_question_index + 1} of {quiz.questions?.length || 0}
-      </div>
 
       {/* الشريط التقدمي والتايمر في الأعلى */}
       {gs.phase === 'question' && !isIntro && (
@@ -320,7 +330,10 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
       {/* زر التخطي وعدد الإجابات تحت الشريط مباشرة */}
       {gs.phase === 'question' && !isIntro && (
         <div className="w-full flex justify-between items-center px-1 mb-1">
-          <span className="bg-black/30 px-1 py-1 rounded-lg text-[3vh] font-black">إجابات: <span className="text-yellow-400">{answersCount}</span> / {groups.length}</span>
+          <div className="absolute top-2 right-2 bg-black/40 p-1 rounded-full text-[2.5vh] font-black shadow-lg z-50">
+            {gs.current_question_index + 1} / {quiz.questions?.length || 0}
+          </div>
+          <span className="bg-black/30 p-1 rounded-lg text-[3vh] font-black">إجابات: <span className="text-yellow-400">{answersCount}</span> / {groups.length}</span>
           <Button onClick={handlePhaseEnd} className="bg-white text-black hover:bg-gray-200 text-[3vh] h-[6vh] px-1 font-black shadow-lg">تخطي</Button>
         </div>
       )}
@@ -345,13 +358,13 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           </motion.div>
         )}
 
-        {/* عرض الإجابة الصحيحة بخط عملاق */}
+        {/* عرض الإجابة الصحيحة */}
         {gs.phase === 'result' && (
           <motion.div key="r" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col w-full h-full">
-            <div className="h-[10vh] flex items-center justify-center">
+            <div className="h-[6vh] flex items-center justify-center">
               <span className="text-[4vw] opacity-80 font-black uppercase tracking-widest text-center">النتيجة</span>
             </div>
-            <div className="flex-1 grid grid-cols-2 gap-1 p-1 w-full max-w-6xl mx-auto">
+            <div className="flex-1 grid grid-cols-2 gap-1 p-1 w-full max-w-7xl mx-auto">
               {currentQuestion?.choices.map((opt: any, i: number) => {
                 const isCorrect = i === currentQuestion.correctAnswer;
                 return (
@@ -359,29 +372,29 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
                     key={i}
                     initial={{ scale: 0.8 }}
                     animate={{
-                      scale: isCorrect ? 1.05 : 0.95,
+                      scale: isCorrect ? 1.00 : 0.90,
                       opacity: isCorrect ? 1 : 0.6
                     }}
                     className={`relative rounded-2xl flex flex-col items-center justify-center p-1 text-center border-4 transition-all duration-500
-                        ${['bg-red-500', 'bg-blue-500', 'bg-yellow-500', 'bg-green-500'][i]}
+                        ${['bg-red-500', 'bg-green-500', 'bg-blue-500', 'bg-yellow-500'][i]}
                         ${isCorrect ? 'border-white shadow-[0_0_40px_rgba(255,255,255,0.5)] z-10' : 'border-transparent shadow-none'}
                       `}
                   >
                     {/* علامة الصح للاختيار الصحيح */}
-                    {isCorrect && <div className="absolute -top-6 -right-6 bg-white rounded-full p-1 text-green-500 shadow-xl text-4xl">✅</div>}
+                    {isCorrect && <div className="absolute -top-3 -right-3 bg-white rounded-full p-1 text-green-500 shadow-xl text-4xl">✅</div>}
 
                     <span className="text-[3.5vw] font-black drop-shadow-lg mb-1">{opt}</span>
 
                     {/* عدد الفرق التي اختارت هذه الإجابة */}
-                    <div className="bg-black/50 px-2 py-1 rounded-full text-[2.5vw] font-black flex items-center gap-1 mt-auto">
+                    <div className="bg-black/50 p-1 rounded-full text-[2vw] font-black flex items-center gap-1 mt-auto">
                       👤 {answerDistribution[i] || 0}
                     </div>
                   </motion.div>
                 )
               })}
             </div>
-            <div className="p-1 flex justify-end">
-              <Button onClick={handlePhaseEnd} className="h-[8vh] px-1 text-[3vh] font-black bg-white text-black hover:bg-gray-200 rounded-full shadow-xl">
+            <div className="p-1 flex justify-start">
+              <Button onClick={handlePhaseEnd} className="h-[6vh] px-1 text-[3vh] font-black bg-white text-black hover:bg-gray-200 rounded-full shadow-xl">
                 التالي ❯
               </Button>
             </div>

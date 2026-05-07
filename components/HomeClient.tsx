@@ -25,13 +25,13 @@ const sections = [
   { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },
-  { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
+  // { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
   // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
   // { name: "العظات", href: "/3zat", icon: <FaChurch /> },
   // { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
   { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
-  { name: "القطمارس", href: "/readings", icon: <FaBook /> },
+  // { name: "القطمارس", href: "/readings", icon: <FaBook /> },
   // { name: "الخولاجي", href: "/prayers", icon: <FaBook /> },
 ];
 
@@ -44,11 +44,9 @@ export default function HomeClient() {
   const [commitCount, setCommitCount] = useState(0);
 
   useEffect(() => {
-    // أول ما يسجل دخول، بنمسح الـ Hash من الرابط عشان ما يهنقش
     if (window.location.hash) {
       const { data: authListener } = supabase.auth.onAuthStateChange((event: string) => {
         if (event === 'SIGNED_IN') {
-          // بيمسح الـ access_token من الرابط بدون ما يعمل ريفريش
           window.history.replaceState(null, '', window.location.pathname);
         }
       });

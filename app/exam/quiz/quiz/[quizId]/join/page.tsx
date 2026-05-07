@@ -52,7 +52,6 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${quizId}` },
         (payload) => {
           const teamId = localStorage.getItem(`team_id_${quizId}`);
-          // if (payload.new.is_active && hasJoined) {
           if (payload.new.phase === "question" && teamId) {
             router.push(`/exam/quiz/quiz/${quizId}/play`);
           }
@@ -138,7 +137,7 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-1" dir="rtl">
+    <div className="min-h-screen bg-zinc-50 p-0.5" dir="rtl">
       <Card className="max-w-4xl mx-auto shadow-2xl border-none overflow-hidden">
         <CardHeader className="bg-[#46178f] text-white text-center py-1">
           <CardTitle className="text-5xl font-black">{quiz.title}</CardTitle>
@@ -148,7 +147,7 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
           {/* اختيار الشفيع */}
           <section>
             <h3 className="text-xl font-black mb-1 text-slate-800 flex items-center gap-1">
-              <span className="bg-blue-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-sm">1</span>
+              <span className="bg-blue-600 text-white w-3 h-4 rounded-full flex items-center justify-center text-xl">1</span>
               اختار اسم الفريق (شفيعك)
             </h3>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-0.5">
@@ -164,10 +163,10 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
                       setSelectedSaint(saint);
                       setTimeout(() => membersSectionRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
                     }}
-                    className={`flex flex-col items-center p-0.5 rounded-2xl transition-all border-2
+                    className={`flex flex-col items-center rounded-2xl transition-all border-2
                       ${isSelected ? 'border-blue-500 bg-blue-50 scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'}`}
                   >
-                    <img src={saint.src} className="w-5 h-8 rounded-full object-cover mb-1 shadow-sm" alt={saint.name} />
+                    <img src={saint.src} className="w-5 h-8 rounded-full object-cover mb-0.5 shadow-sm" alt={saint.name} />
                     <span className="text-xs font-black text-center">{saint.name}</span>
                     {isTaken && <span className="text-[10px] text-red-500 font-bold mt-1">محجوز</span>}
                   </button>
@@ -179,18 +178,18 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
           {/* أسماء الأعضاء */}
           <section ref={membersSectionRef} className="pt-1 border-t">
             <div className="flex justify-between items-center mb-1">
-              <h3 className="text-xl font-black text-slate-800 flex items-center gap-1">
-                <span className="bg-blue-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-sm">2</span>
+              <h3 className="text-xl font-black text-slate-800 flex items-center gap-0.5">
+                <span className="bg-blue-600 text-white w-3 h-4 rounded-full flex items-center justify-center text-xl">2</span>
                 أسماء الأعضاء
               </h3>
-              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl border">
-                <button onClick={() => handleCountChange(Math.max(1, members.length - 1))} className="w-3 h-3 bg-white rounded-xl shadow-sm font-black text-xl text-blue-600 hover:bg-blue-50">-</button>
+              <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-2xl border">
+                <button onClick={() => handleCountChange(Math.max(1, members.length - 1))} className="w-2 h-3 bg-white rounded-xl shadow-sm font-black text-xl text-blue-600 hover:bg-blue-50">-</button>
                 <span className="font-black text-2xl text-blue-700 w-2 text-center">{members.length}</span>
-                <button onClick={() => handleCountChange(Math.min(10, members.length + 1))} className="w-3 h-3 bg-white rounded-xl shadow-sm font-black text-xl text-blue-600 hover:bg-blue-50">+</button>
+                <button onClick={() => handleCountChange(Math.min(10, members.length + 1))} className="w-2 h-3 bg-white rounded-xl shadow-sm font-black text-xl text-blue-600 hover:bg-blue-50">+</button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5">
               {members.map((name, index) => (
                 <motion.div key={index} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <input
