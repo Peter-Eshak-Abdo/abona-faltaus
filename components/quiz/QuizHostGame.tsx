@@ -123,7 +123,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     if (gs.phase === 'question') {
       setIsIntro(true);
       setTimer(4);
-      playAudio('/sounds/intro.mp3', false);
+      // playAudio('/sounds/intro.mp3', false);
       const timeout = setTimeout(() => { setIsIntro(false); setTimer(qTime); }, 4000);
       return () => clearTimeout(timeout);
     }
