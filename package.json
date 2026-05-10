@@ -54,7 +54,7 @@
     "cors": "^2.8.6",
     "data-fns": "^1.1.0",
     "date-fns": "^4.1.0",
-    "dompurify": "^3.3.3",
+    "dompurify": "^3.4.0",
     "dotenv": "^17.3.1",
     "edge-tts-node": "^1.5.7",
     "embla-carousel-react": "^8.6.0",
