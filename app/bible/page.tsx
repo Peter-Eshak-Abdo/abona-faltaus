@@ -25,7 +25,10 @@ export default function BibleReaderPage() {
   // حالات الصوت الجديدة
   const [isPlaying, setIsPlaying] = useState(false);
   const [isAudioLoading, setIsAudioLoading] = useState(false);
+  const [isBrowserFallback, setIsBrowserFallback] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isTTSLoading, setIsTTSLoading] = useState(false);
+  const [ttsLoadingMessage, setTtsLoadingMessage] = useState("");
 
   const [favorites, setFavorites] = useState<{ bIdx: number, cIdx: number, vNum: number }[]>([]);
   const [loadProgress, setLoadProgress] = useState(0);
@@ -284,13 +287,18 @@ export default function BibleReaderPage() {
       audioRef.current.currentTime = 0;
       audioRef.current = null;
     }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
     setIsPlaying(false);
     setIsAudioLoading(false);
+    setIsBrowserFallback(false);
   };
 
   const toggleAudio = async () => {
     if (isPlaying || isAudioLoading) {
       stopAudio();
+      setIsTTSLoading(false); // إخفاء شريط التحميل إذا أوقف المستخدم القراءة
       return;
     }
 
@@ -298,15 +306,18 @@ export default function BibleReaderPage() {
 
     const cacheKey = `audio_offline_${currentBookIdx}_${currentChapterIdx}`;
 
+    const activeBook = bibleData[currentBookIdx];
+    const activeChapter = activeBook.chapters[currentChapterIdx];
+    let textToRead = `${activeBook.name}، الإصحَاحُ ${currentChapterIdx + 1}. `;
+    textToRead += activeChapter.map(v => v.text_vocalized).join(". ");
+
     try {
       let audioBlob = await localforage.getItem<Blob>(cacheKey);
 
       if (!audioBlob) {
-        const activeBook = bibleData[currentBookIdx];
-        const activeChapter = activeBook.chapters[currentChapterIdx];
-
-        let textToRead = `${activeBook.name}، الإصحَاحُ ${currentChapterIdx + 1}. `;
-        textToRead += activeChapter.map(v => v.text_vocalized).join(". ");
+        // إذا لم يكن الصوت في الكاش (أول مرة)، نعرض شاشة التحميل المطولة
+        setIsTTSLoading(true);
+        setTtsLoadingMessage("جاري تجهيز الملف الصوتي لأول مرة... قد يستغرق بضع ثوانٍ (سيعمل لاحقاً بدون إنترنت)");
 
         const response = await fetch('/api/tts', {
           method: 'POST',
@@ -315,16 +326,22 @@ export default function BibleReaderPage() {
         });
 
         if (!response.ok) {
-          throw new Error('فشل جلب الصوت من الخادم');
+          throw new Error('السيرفر غير متاح أو الخدمة متوقفة');
         }
 
         audioBlob = await response.blob();
+        // تخزين الملف الصوتي في كاش الـ IndexedDB للعمل أوفلاين كلياً في المرات القادمة
         await localforage.setItem(cacheKey, audioBlob);
       }
 
       const url = URL.createObjectURL(audioBlob);
       const audio = new Audio(url);
       audioRef.current = audio;
+
+      // إخفاء التحميل بمجرد أن يصبح الصوت جاهزاً للتشغيل
+      audio.oncanplaythrough = () => {
+        setIsTTSLoading(false);
+      };
 
       audio.onended = () => {
         setIsPlaying(false);
@@ -333,10 +350,38 @@ export default function BibleReaderPage() {
 
       await audio.play();
       setIsPlaying(true);
+      setIsTTSLoading(false); // ضمان إخفاء التحميل
 
     } catch (error) {
-      console.error('Error with audio:', error);
-      alert("حدث خطأ أثناء تشغيل الصوت. قد تحتاج للإنترنت في المرة الأولى لتحميل هذا الإصحاح.");
+      setIsTTSLoading(false);
+      console.warn('Network TTS failed, triggering Level 3 Offline Fallback (Web Speech API)...', error);
+
+      // الـ Level 3 الـ Fallback النهائي: تشغيل محرك المتصفح الداخلي
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(textToRead);
+        utterance.lang = 'ar-EG';
+
+        const voices = window.speechSynthesis.getVoices();
+        const arabicVoice = voices.find(v => v.lang.startsWith('ar'));
+        if (arabicVoice) utterance.voice = arabicVoice;
+
+        utterance.onend = () => {
+          setIsPlaying(false);
+          setIsBrowserFallback(false);
+        };
+
+        utterance.onerror = () => {
+          stopAudio();
+        };
+
+        window.speechSynthesis.speak(utterance);
+        setIsPlaying(true);
+        setIsBrowserFallback(true);
+      } else {
+        alert("نظام قراءة النصوص غير مدعوم على هذا الجهاز بالكامل بالوضع الحالي.");
+      }
     } finally {
       setIsAudioLoading(false);
     }
@@ -474,7 +519,7 @@ export default function BibleReaderPage() {
           <button
             onClick={toggleAudio}
             disabled={isAudioLoading}
-            className={`mx-auto flex items-center gap-1 p-1 rounded-full font-bold transition-all disabled:opacity-50
+            className={`mx-auto flex items-center gap-0.5 p-0.5 rounded-full font-bold transition-all disabled:opacity-50
               ${isPlaying ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}
           >
             {isAudioLoading ? (
@@ -487,6 +532,23 @@ export default function BibleReaderPage() {
             {isAudioLoading ? "جاري التحضير..." : isPlaying ? "إيقاف القراءة" : "استماع للاصحاح"}
           </button>
         </div>
+          {isTTSLoading && (
+            <div className="flex flex-col items-center justify-center p-1 my-1 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/30 dark:border-blue-800">
+              <div className="flex items-center gap-1">
+                {/* أيقونة تحميل (Spinner) */}
+                <svg className="w-3 h-3 text-blue-600 animate-spin dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                  {ttsLoadingMessage}
+                </span>
+              </div>
+              <div className="w-full bg-blue-200 rounded-full h-1.5 mt-1 dark:bg-blue-700 overflow-hidden">
+                <div className="bg-blue-600 h-1.5 rounded-full animate-pulse w-full"></div>
+              </div>
+            </div>
+          )}
       </div>
 
       <div className="space-y-0 text-xl md:text-2xl leading-loose font-arabic px-1 max-w-8xl mx-auto" style={{ fontSize: `${fontSize}px` }} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
