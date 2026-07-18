@@ -139,14 +139,14 @@ export default function ChatBot() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen bg-white" dir="rtl">
+    <div className="flex flex-col h-full w-full max-w-full bg-white p-0.5" dir="rtl">
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right" className="w-80 p-0 flex flex-col">
+        <SheetContent side="right" className="w-90 p-0 flex flex-col">
           <SheetHeader className="p-1 border-b bg-amber-50">
-            <SheetTitle className="text-right text-amber-900 font-bold">المحادثات السابقة</SheetTitle>
-            <Button onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }} variant="outline" className="w-full mt-1 border-amber-200 text-amber-800">
-              <Plus size={8} className="ml-1" /> محادثة جديدة
-            </Button>
+            <SheetTitle className="text-right text-amber-900 font-bold pb-1">المحادثات السابقة</SheetTitle>
+              <Button onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }} variant="outline" className="w-full mt-1 border-amber-200 text-amber-800 float-end">
+                <Plus size={5} className="ml-1" /> محادثة جديدة
+              </Button>
           </SheetHeader>
           <ScrollArea className="flex-1">
             {convs.map((c) => (
@@ -158,19 +158,19 @@ export default function ChatBot() {
         </SheetContent>
       </Sheet>
 
-      <header className="h-14 flex items-center justify-between px-1 bg-amber-600 text-white shrink-0">
-        <div className="flex items-center gap-1">
-          <Sparkles className="h-5 w-5" />
+      <header className="h-6 flex items-center justify-between px-1 bg-amber-600 text-white shrink-0">
+        <div className="flex items-center gap-1 ">
+          <Sparkles className="h-3 w-3" />
           <span className="font-bold">مساعد ابونا فلتاؤس</span>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => setSheetOpen(true)} className="text-white">
-          <PanelRight />
+        <Button variant="ghost" size="smallIcon" onClick={() => setSheetOpen(true)} className="text-white ">
+          <PanelRight className="h-3 w-3" />
         </Button>
       </header>
 
-      <main className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <div className="max-w-3xl mx-auto p-1 space-y-1">
+      <main className="flex-1 overflow-hidden" dir="rtl">
+        <ScrollArea className="h-full" dir="rtl">
+          <div className="mx-auto p-1 space-y-1" dir="rtl">
             {messages.map((m) => (
               <div key={m.id} className={cn("flex", m.role === "user" ? "justify-start" : "justify-end")}>
                 <div className={cn("rounded-2xl p-1 max-w-[85%] text-sm shadow-sm", m.role === "user" ? "bg-amber-500 text-white rounded-tr-none" : "bg-gray-100 text-gray-800 rounded-tl-none")}>
@@ -189,7 +189,7 @@ export default function ChatBot() {
       </main>
 
       <footer className="p-1 border-t bg-white">
-        <form onSubmit={onFormSubmit} className="max-w-3xl mx-auto flex gap-1 items-end">
+        <form onSubmit={onFormSubmit} className="max-w-3xl mx-auto flex gap-1 items-center">
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -198,8 +198,8 @@ export default function ChatBot() {
             disabled={!user || isLoading}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onFormSubmit(e); } }}
           />
-          <Button type="submit" size="icon" className="h-[50px] w-[50px] bg-amber-600 hover:bg-amber-700 shrink-0" disabled={!input.trim() || isLoading || !user}>
-            <Send className="h-5 w-5" />
+          <Button type="submit" size="smallIcon" className="h-4.5 w-4.5 bg-amber-600 hover:bg-amber-700 shrink-0" disabled={!input.trim() || isLoading || !user}>
+            <Send className="h-2 w-2" />
           </Button>
         </form>
       </footer>

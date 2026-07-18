@@ -99,7 +99,7 @@ export default function RootLayout({
         />
         {process.env.GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={process.env.GOOGLE_SITE_VERIFICATION} />}
         {/* AdSense Script - Optimized */}
-        {process.env.GOOGLE_ADSENSE_CLIENT_ID && (
+        {/* {process.env.GOOGLE_ADSENSE_CLIENT_ID && (
           <Script
             id="adsense-init"
             async
@@ -107,7 +107,7 @@ export default function RootLayout({
             crossOrigin="anonymous"
             strategy="afterInteractive"
           />
-        )}
+        )} */}
 
         {/* Google Analytics - Optimized */}
         {process.env.GOOGLE_TAG_ID && (

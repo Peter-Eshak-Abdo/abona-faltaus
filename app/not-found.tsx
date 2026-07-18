@@ -46,7 +46,8 @@ export default function NotFound() {
             src="/images/IMG-20240512-WA0001.jpg"
             alt="404 Image"
             width={300}
-            height={200}
+            // height={200}
+            loading="eager"
             className="rounded-2xl shadow-lg object-cover max-h-[250px]"
           />
         </motion.div>

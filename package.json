@@ -1,6 +1,6 @@
 {
   "name": "abona-faltaus-tofa7a",
-  "version": "3.1.2",
+  "version": "3.2.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,7 +17,7 @@
     "test": "jest --watchAll=false --passWithNoTests"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.58",
+    "@ai-sdk/google": "^4.0.18",
     "@ai-sdk/openai": "^3.0.41",
     "@ai-sdk/react": "^3.0.148",
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -46,7 +46,7 @@
     "@tanstack/react-query": "^5.95.2",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "ai": "^5.0.52",
+    "ai": "^7.0.31",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
