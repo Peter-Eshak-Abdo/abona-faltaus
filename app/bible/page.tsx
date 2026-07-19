@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { useState, useEffect, useRef } from "react";
 import localforage from "localforage";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaCopy, FaShareAlt, FaStar, FaPlay, FaStop, FaSearch, FaTimes, FaHeart, FaSpinner } from "react-icons/fa";
+import { FaCopy, FaShareAlt, FaStar, FaPlay, FaStop, FaSearch, FaTimes, FaHeart, FaSpinner, FaPlusSquare } from "react-icons/fa";
 import { bookNames, shortBookNames } from "@/lib/books";
 import BibleSearch from "@/components/BibleSearch";
 import Link from "next/link";
@@ -22,7 +22,6 @@ export default function BibleReaderPage() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<number[]>([]);
 
-  // حالات الصوت الجديدة
   const [isPlaying, setIsPlaying] = useState(false);
   const [isAudioLoading, setIsAudioLoading] = useState(false);
   const [isBrowserFallback, setIsBrowserFallback] = useState(false);
@@ -37,11 +36,16 @@ export default function BibleReaderPage() {
   const isInitialized = useRef(false);
   const touchStartPos = useRef({ x: 0, y: 0 });
 
-  // إضافات الأوتوميشن: مرجع الآيات وحالة نتائج البحث
   const verseRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [searchResults, setSearchResults] = useState<
     { bookIndex: number; chapterIndex: number; verseNumber: number; text: string; bookName: string; chapterNum: number }[]
   >([]);
+
+  // حالات خاصة بالإضافة إلى يوم
+  const [isDayModalOpen, setIsDayModalOpen] = useState(false);
+  const [dayCodeInput, setDayCodeInput] = useState("");
+  const [isAddingToDay, setIsAddingToDay] = useState(false);
+  const [dayMessage, setDayMessage] = useState("");
 
   const tips = [
     "هذا الإصدار يعمل بالكامل بدون إنترنت بعد التحميل الأول.",
@@ -92,6 +96,9 @@ export default function BibleReaderPage() {
         const favs = await localforage.getItem<any[]>("bible_favorites");
         if (favs) setFavorites(favs);
 
+        const savedDayCode = localStorage.getItem("last_day_code");
+        if (savedDayCode) setDayCodeInput(savedDayCode);
+
         setIsLoading(false);
         isInitialized.current = true;
       } catch (error) {
@@ -114,17 +121,15 @@ export default function BibleReaderPage() {
     localStorage.setItem("bible_font_size", fontSize.toString());
   }, [fontSize]);
 
-  // إيقاف الصوت القديم عند تغيير الإصحاح
   useEffect(() => {
     if (isInitialized.current && bibleData.length > 0) {
       localStorage.setItem("bible_last_read", JSON.stringify({ bIdx: currentBookIdx, cIdx: currentChapterIdx }));
       window.scrollTo({ top: 0, behavior: "smooth" });
       setSelectedVerses([]);
-      stopAudio(); // تأكيد إيقاف الصوت عند التنقل
+      stopAudio();
     }
   }, [currentBookIdx, currentChapterIdx, bibleData.length]);
 
-  // دالة البحث المتقدمة (من الأوتوميشن)
   const handleSearch = (searchTerm: string) => {
     if (!searchTerm.trim()) {
       setSearchResults([]);
@@ -164,19 +169,16 @@ export default function BibleReaderPage() {
     setSearchResults(results);
   };
 
-  // دالة التوجه للآية المحددة من البحث (معدلة لتناسب الهيكل الجديد)
   const handleSelectSearchResult = (bookIdx: number, chapterIdx: number, verseNumber: number) => {
     setCurrentBookIdx(bookIdx);
     setCurrentChapterIdx(chapterIdx);
-    setIsSearchOpen(false); // إغلاق نافذة البحث
+    setIsSearchOpen(false);
 
-    // استخدام الـ setTimeout لضمان تحميل الإصحاح قبل التمرير
     setTimeout(() => {
-      toggleVerseSelection(verseNumber); // تحديد الآية
+      toggleVerseSelection(verseNumber);
       const verseKey = `${bookIdx}-${chapterIdx}-${verseNumber}`;
       const verseElement = verseRefs.current[verseKey];
 
-      // التمرير عبر React Ref وإذا فشل نستخدم Fallback للـ ID القديم
       if (verseElement) {
         verseElement.scrollIntoView({ behavior: "smooth", block: "center" });
       } else {
@@ -275,6 +277,67 @@ export default function BibleReaderPage() {
     }
   }
 
+  const handleAddToDay = async () => {
+    if (!dayCodeInput || dayCodeInput.length !== 12) {
+      setDayMessage("يرجى إدخال كود صحيح مكون من 12 رقم");
+      return;
+    }
+
+    setIsAddingToDay(true);
+    setDayMessage("");
+
+    try {
+      const { data: dayData, error: fetchError } = await supabase
+        .from('meeting_days')
+        .select('verses')
+        .eq('code', dayCodeInput)
+        .single();
+
+      if (fetchError || !dayData) {
+        setDayMessage("لم يتم العثور على يوم بهذا الكود");
+        setIsAddingToDay(false);
+        return;
+      }
+
+      const activeBook = bibleData[currentBookIdx];
+      const shortName = shortBookNames[activeBook.abbrev as keyof typeof shortBookNames] || activeBook.name;
+      const chapterNum = currentChapterIdx + 1;
+      const activeChapter = activeBook.chapters[currentChapterIdx];
+
+      const newVerses = selectedVerses.sort((a, b) => a - b).map(vNum => {
+        const vObj = activeChapter.find(v => v.verse === vNum);
+        return {
+          id: Math.random().toString(36).substring(2, 11),
+          text: vObj?.text_vocalized || "",
+          ref: `${shortName} ${chapterNum}:${vNum}`,
+          wordsConfig: {}
+        };
+      });
+
+      const updatedVerses = [...(dayData.verses || []), ...newVerses];
+
+      const { error: updateError } = await supabase
+        .from('meeting_days')
+        .update({ verses: updatedVerses })
+        .eq('code', dayCodeInput);
+
+      if (updateError) throw updateError;
+
+      localStorage.setItem("last_day_code", dayCodeInput);
+      setDayMessage("تمت الإضافة بنجاح!");
+      setTimeout(() => {
+        setIsDayModalOpen(false);
+        setDayMessage("");
+        setSelectedVerses([]);
+      }, 1500);
+
+    } catch (error) {
+      console.error(error);
+      setDayMessage("حدث خطأ أثناء الإضافة");
+    }
+    setIsAddingToDay(false);
+  };
+
   const toggleVerseSelection = (verseNum: number) => {
     setSelectedVerses(prev =>
       prev.includes(verseNum) ? prev.filter(v => v !== verseNum) : [...prev, verseNum]
@@ -298,7 +361,7 @@ export default function BibleReaderPage() {
   const toggleAudio = async () => {
     if (isPlaying || isAudioLoading) {
       stopAudio();
-      setIsTTSLoading(false); // إخفاء شريط التحميل إذا أوقف المستخدم القراءة
+      setIsTTSLoading(false);
       return;
     }
 
@@ -315,7 +378,6 @@ export default function BibleReaderPage() {
       let audioBlob = await localforage.getItem<Blob>(cacheKey);
 
       if (!audioBlob) {
-        // إذا لم يكن الصوت في الكاش (أول مرة)، نعرض شاشة التحميل المطولة
         setIsTTSLoading(true);
         setTtsLoadingMessage("جاري تجهيز الملف الصوتي لأول مرة... قد يستغرق بضع ثوانٍ (سيعمل لاحقاً بدون إنترنت)");
 
@@ -330,7 +392,6 @@ export default function BibleReaderPage() {
         }
 
         audioBlob = await response.blob();
-        // تخزين الملف الصوتي في كاش الـ IndexedDB للعمل أوفلاين كلياً في المرات القادمة
         await localforage.setItem(cacheKey, audioBlob);
       }
 
@@ -338,7 +399,6 @@ export default function BibleReaderPage() {
       const audio = new Audio(url);
       audioRef.current = audio;
 
-      // إخفاء التحميل بمجرد أن يصبح الصوت جاهزاً للتشغيل
       audio.oncanplaythrough = () => {
         setIsTTSLoading(false);
       };
@@ -350,13 +410,12 @@ export default function BibleReaderPage() {
 
       await audio.play();
       setIsPlaying(true);
-      setIsTTSLoading(false); // ضمان إخفاء التحميل
+      setIsTTSLoading(false);
 
     } catch (error) {
       setIsTTSLoading(false);
       console.warn('Network TTS failed, triggering Level 3 Offline Fallback (Web Speech API)...', error);
 
-      // الـ Level 3 الـ Fallback النهائي: تشغيل محرك المتصفح الداخلي
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
 
@@ -506,14 +565,17 @@ export default function BibleReaderPage() {
           </select>
         </div>
 
-        <div className="flex justify-center gap-1 mb-1">
-          <button onClick={() => setFontSize(prev => prev + 2)} className="p-1 bg-zinc-200 dark:bg-zinc-800 rounded">A+</button>
-          <button onClick={() => setFontSize(prev => prev - 2)} className="p-1 bg-zinc-200 dark:bg-zinc-800 rounded">A-</button>
-          <Link href="/bible/favorites" className="p-1 bg-yellow-100 text-yellow-600 rounded-lg font-bold" title="المفضلة">
-            <FaStar size={10} />
+        <div className="flex justify-center gap-0.5 mb-1">
+          <button onClick={() => setFontSize(prev => prev + 2)} className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded">A+</button>
+          <button onClick={() => setFontSize(prev => prev - 2)} className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded">A-</button>
+          <Link href="/bible/favorites" className="p-0.5 bg-yellow-100 text-yellow-600 rounded-lg font-bold" title="المفضلة">
+            <FaStar size={8} />
           </Link>
-          <button onClick={() => setIsSearchOpen(true)} className="p-1 bg-blue-100 text-blue-600 rounded-lg font-bold">
-            <FaSearch size={10} />
+          <Link href="/bible/day" className="text-blue-600 bg-amber-200 text-sm rounded-lg font-bold p-0.5" title="إضافة إلى يوم">
+            <FaPlusSquare size={8} />
+          </Link>
+          <button onClick={() => setIsSearchOpen(true)} className="p-0.5 bg-blue-100 text-blue-600 rounded-lg font-bold">
+            <FaSearch size={8} />
           </button>
 
           <button
@@ -523,32 +585,31 @@ export default function BibleReaderPage() {
               ${isPlaying ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}
           >
             {isAudioLoading ? (
-              <FaSpinner className="animate-spin" />
+              <FaSpinner size={8} className="animate-spin" />
             ) : isPlaying ? (
-              <FaStop />
+                <FaStop size={8} />
             ) : (
-              <FaPlay />
+                  <FaPlay size={8} />
             )}
             {isAudioLoading ? "جاري التحضير..." : isPlaying ? "إيقاف القراءة" : "استماع للاصحاح"}
           </button>
         </div>
-          {isTTSLoading && (
-            <div className="flex flex-col items-center justify-center p-1 my-1 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/30 dark:border-blue-800">
-              <div className="flex items-center gap-1">
-                {/* أيقونة تحميل (Spinner) */}
-                <svg className="w-3 h-3 text-blue-600 animate-spin dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                  {ttsLoadingMessage}
-                </span>
-              </div>
-              <div className="w-full bg-blue-200 rounded-full h-1.5 mt-1 dark:bg-blue-700 overflow-hidden">
-                <div className="bg-blue-600 h-1.5 rounded-full animate-pulse w-full"></div>
-              </div>
+        {isTTSLoading && (
+          <div className="flex flex-col items-center justify-center p-1 my-1 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/30 dark:border-blue-800">
+            <div className="flex items-center gap-1">
+              <svg className="w-3 h-3 text-blue-600 animate-spin dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                {ttsLoadingMessage}
+              </span>
             </div>
-          )}
+            <div className="w-full bg-blue-200 rounded-full h-1.5 mt-1 dark:bg-blue-700 overflow-hidden">
+              <div className="bg-blue-600 h-1.5 rounded-full animate-pulse w-full"></div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-0 text-xl md:text-2xl leading-loose font-arabic px-1 max-w-8xl mx-auto" style={{ fontSize: `${fontSize}px` }} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
@@ -582,13 +643,17 @@ export default function BibleReaderPage() {
       </div>
 
       <AnimatePresence>
-        {selectedVerses.length > 0 && (
+        {selectedVerses.length > 0 && !isDayModalOpen && (
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             className="fixed bottom-2 left-1/2 -translate-x-1/2 md:left-6 md:translate-x-0 bg-white dark:bg-zinc-800 shadow-2xl rounded-2xl p-1 border border-zinc-200 dark:border-zinc-700 z-50 flex gap-1"
           >
+            <button onClick={() => setIsDayModalOpen(true)} className="flex flex-col items-center p-1 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-zinc-700 rounded-xl transition">
+              <FaPlusSquare size={10} />
+              <span className="text-sm font-bold mt-1">يوم</span>
+            </button>
             <button onClick={handleShare} className="flex flex-col items-center p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-zinc-700 rounded-xl transition">
               <FaShareAlt size={10} />
               <span className="text-sm font-bold mt-1">مشاركة</span>
@@ -610,13 +675,61 @@ export default function BibleReaderPage() {
         )}
       </AnimatePresence>
 
-      {/* تمرير الخصائص القديمة والجديدة لضمان التوافق مع مكون BibleSearch */}
+      <AnimatePresence>
+        {isDayModalOpen && (
+          <div className="fixed inset-0 bg-black/60 z-100 flex items-center justify-center p-1">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white dark:bg-zinc-900 rounded-2xl p-1 w-full max-w-sm shadow-2xl"
+            >
+              <h3 className="text-xl font-bold mb-1 text-center">إضافة الآيات ليوم</h3>
+              <p className="text-sm text-zinc-500 mb-1 text-center">أدخل كود اليوم المكون من 12 رقم لإضافة الآيات إليه.</p>
+
+              <input
+                type="text"
+                maxLength={12}
+                value={dayCodeInput}
+                onChange={e => setDayCodeInput(e.target.value.replace(/[^0-9]/g, ''))}
+                placeholder="مثال: 123456789012"
+                className="w-full p-1 border rounded-xl text-center tracking-[0.2em] font-bold text-lg bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500 mb-1"
+                dir="ltr"
+              />
+
+              {dayMessage && <p className="text-center text-sm font-bold text-red-500 mb-1">{dayMessage}</p>}
+
+              <div className="flex gap-1">
+                <button
+                  onClick={handleAddToDay}
+                  disabled={isAddingToDay || dayCodeInput.length !== 12}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 rounded-xl transition disabled:opacity-50"
+                >
+                  {isAddingToDay ? "جاري الإضافة..." : "إضافة الآن"}
+                </button>
+                <button
+                  onClick={() => setIsDayModalOpen(false)}
+                  className="flex-1 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 font-bold py-1 rounded-xl transition"
+                >
+                  إلغاء
+                </button>
+              </div>
+              <div className="mt-1 text-center">
+                <Link href="/bible/day" className="text-blue-600 text-sm font-bold underline">
+                  لا تملك كود؟ أنشئ يوم جديد من هنا
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <BibleSearch
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
-        bibleData={bibleData} // Assuming BibleSearch handles internal search logic based on bibleData
+        bibleData={bibleData}
         onGoToVerse={handleSelectSearchResult}
       />
-    </div >
+    </div>
   );
 }

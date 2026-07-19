@@ -4,11 +4,14 @@ import {
   newTestament,
   shortBookNames,
 } from "@/lib/books";
-import { createClient } from "@supabase/supabase-js";
+// import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+// const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// const supabase = createClient(supabaseUrl, supabaseKey);
+// let cachedBible: any = null;
+
 let cachedBible: any = null;
 
 export type VerseObj = {

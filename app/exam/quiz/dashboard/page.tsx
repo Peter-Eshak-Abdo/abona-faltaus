@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getUserQuizzes, deleteQuiz, createClient } from "@/lib/supabase-utils";
+import { getUserQuizzes, deleteQuiz } from "@/lib/supabase-utils";
+import { supabase } from "@/lib/supabase";
 import CreateQuizDialog from "@/components/quiz/CreateQuizDialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -11,13 +12,11 @@ export default function Dashboard() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
 
   // جلب البيانات عند فتح الصفحة
   const refreshQuizzes = async () => {
     setLoading(true);
     try {
-      // استخدم getSession بدلاً من getUser لو المشكلة استمرت، أو اتأكد من وجود الـ User مرة واحدة
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         const data = await getUserQuizzes(session.user.id);
@@ -28,9 +27,9 @@ export default function Dashboard() {
 
   useEffect(() => { refreshQuizzes(); }, []);
 
-  // دالة إنشاء مسابقة جديدة (تصفير الـ State)
+  // دالة إنشاء مسابقة جديدة
   const handleCreateNew = () => {
-    setSelectedQuiz(null); // أهم خطوة لحل مشكلتك
+    setSelectedQuiz(null);
     setIsDialogOpen(true);
   };
 
