@@ -35,6 +35,18 @@ const sections = [
   // { name: "الخولاجي", href: "/prayers", icon: <FaBook /> },
 ];
 
+const getCopticDate = () => {
+  const date = new Date();
+  const copticEpoch = new Date(Date.UTC(284, 7, 29));
+  const diffInDays = Math.floor((date.getTime() - copticEpoch.getTime()) / (1000 * 60 * 60 * 24));
+  const copticYear = Math.floor(diffInDays / 365.25) + 1;
+  const dayOfYear = diffInDays - Math.floor((copticYear - 1) * 365.25);
+  const copticMonth = Math.floor(dayOfYear / 30);
+  const copticDay = Math.floor(dayOfYear % 30) + 1;
+  const months = ["توت", "بابة", "هاتور", "كيهك", "طوبة", "أمشير", "برمهات", "برمودة", "بشنس", "بؤونة", "أبيب", "مسرى", "نسيئ"];
+  return `${copticDay} ${months[copticMonth]} ${copticYear} ش`;
+};
+
 export default function HomeClient() {
   const [showMenu, setShowMenu] = useState(false);
   const [logoPos, setLogoPos] = useState("center");
@@ -42,8 +54,10 @@ export default function HomeClient() {
   const [lastUpdate, setLastUpdate] = useState("");
   const [lastMessage, setLastMessage] = useState("");
   const [commitCount, setCommitCount] = useState(0);
+  const [copticDate, setCopticDate] = useState("");
 
   useEffect(() => {
+    setCopticDate(getCopticDate());
     if (window.location.hash) {
       const { data: authListener } = supabase.auth.onAuthStateChange((event: string) => {
         if (event === 'SIGNED_IN') {
@@ -58,13 +72,11 @@ export default function HomeClient() {
     const fetchLastCommit = async () => {
       try {
         const baseApiUrl = 'https://api.github.com/repos/Peter-Eshak-Abdo/abona-faltaus';
-
         const commitRes = await fetch(`${baseApiUrl}/commits?sha=main&per_page=5`);
         const commits = await commitRes.json();
 
         if (commits && commits.length > 0) {
           const myCommit = commits.find((c: { commit: { author: { name: string | string[]; }; }; }) => !c.commit.author.name.includes('dependabot')) || commits[0];
-
           const commitObj = myCommit.commit;
           const commitDate = new Date(commitObj.committer.date);
 
@@ -103,9 +115,9 @@ export default function HomeClient() {
   useEffect(() => {
     if (showMenu) {
       eagleControls.start({
-        rotateX: [0, 10, -10, 0],
-        rotateY: [0, 10, -10, 0],
-        transition: { repeat: Infinity, duration: 6, ease: "easeInOut" },
+        y: [0, -15, 0],
+        rotate: [0, 2, -2, 0],
+        transition: { repeat: Infinity, duration: 4, ease: "easeInOut" },
       });
     }
   }, [showMenu, eagleControls]);
@@ -158,7 +170,6 @@ export default function HomeClient() {
         </motion.button>
       </motion.div>
 
-      {/* النسر في النص بحجم متجاوب وحركة تلقائية */}
       <AnimatePresence>
         {showMenu && (
           <motion.div
@@ -189,7 +200,6 @@ export default function HomeClient() {
         )}
       </AnimatePresence>
 
-      {/* العناصر الدائرية حول النسر */}
       <AnimatePresence>
         {showMenu &&
           sections.map((section, index) => {
@@ -202,12 +212,7 @@ export default function HomeClient() {
                 initial={{ x: 0, y: 0, opacity: 0 }}
                 animate={{ x, y, opacity: 1 }}
                 exit={{ x: 0, y: 0, opacity: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 120,
-                  damping: 15,
-                  delay: index * 0.04,
-                }}
+                transition={{ type: "spring", stiffness: 120, damping: 15, delay: index * 0.04 }}
                 className="absolute left-1/2 top-1/2 mx-auto"
                 style={{ transform: "translate(-50%, -50%)" }}
               >
@@ -224,6 +229,9 @@ export default function HomeClient() {
 
       <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-1 ltr:left-1 rtl:right-1">
         <div className="flex flex-col gap-0.5">
+          <p className="font-bold text-amber-600 dark:text-amber-400">
+            التاريخ القبطي: {copticDate}
+          </p>
           <p>
             <strong>آخر تحديث:</strong> {lastUpdate || "..."}
           </p>
