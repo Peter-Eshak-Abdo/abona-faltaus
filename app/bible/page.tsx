@@ -41,7 +41,6 @@ export default function BibleReaderPage() {
     { bookIndex: number; chapterIndex: number; verseNumber: number; text: string; bookName: string; chapterNum: number }[]
   >([]);
 
-  // حالات خاصة بالإضافة إلى يوم
   const [isDayModalOpen, setIsDayModalOpen] = useState(false);
   const [dayCodeInput, setDayCodeInput] = useState("");
   const [isAddingToDay, setIsAddingToDay] = useState(false);
@@ -60,7 +59,7 @@ export default function BibleReaderPage() {
     if (isLoading) {
       const interval = setInterval(() => {
         setTipIndex((prev) => (prev + 1) % tips.length);
-      }, 2500);
+      }, 3000);
       return () => clearInterval(interval);
     }
   }, [isLoading]);
@@ -73,11 +72,13 @@ export default function BibleReaderPage() {
         setLoadingStatus("جاري فحص البيانات المحفوظة...");
 
         let data = await localforage.getItem<BookObj[]>("offline_bible_data");
+        let shouldRefresh = false;
 
         if (!data || data.length === 0) {
           setLoadingStatus("جاري تحميل الكتاب المقدس (لأول مرة)...");
           const data = await loadBible((p) => setLoadProgress(p));
           await localforage.setItem("offline_bible_data", data);
+          shouldRefresh = true;
         } else {
           setLoadProgress(100);
         }
@@ -101,6 +102,10 @@ export default function BibleReaderPage() {
 
         setIsLoading(false);
         isInitialized.current = true;
+
+        if (shouldRefresh) {
+          window.location.reload();
+        }
       } catch (error) {
         console.error("Error during initialization:", error);
         setLoadingStatus("حدث خطأ، يرجى التأكد من الإنترنت وإعادة المحاولة.");
@@ -275,7 +280,7 @@ export default function BibleReaderPage() {
           .match({ book_idx: currentBookIdx, chapter_idx: currentChapterIdx, verse_num: vNum, user_id: userId });
       }
     }
-  }
+  };
 
   const handleAddToDay = async () => {
     if (!dayCodeInput || dayCodeInput.length !== 12) {
@@ -480,11 +485,11 @@ export default function BibleReaderPage() {
       if (diffX > 0) handlePrevChapter();
       else handleNextChapter();
     }
-  }
+  };
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-white dark:bg-zinc-950 flex flex-col items-center justify-center p-1 z-100">
+      <div className="fixed inset-0 bg-white dark:bg-zinc-950 flex flex-col items-center justify-center p-1 z-50">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -494,7 +499,7 @@ export default function BibleReaderPage() {
 
           <div className="space-y-1">
             <h2 className="text-2xl font-black text-blue-600 dark:text-blue-400">جاري مزامنة الكتاب المقدس</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 font-medium">يتم الآن تجهيز نسخة الأوفلاين الخاصة بك...</p>
+            <p className="text-zinc-500 dark:text-zinc-400 font-medium">{loadingStatus}</p>
           </div>
 
           <div className="relative w-full h-4 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden border dark:border-zinc-700">

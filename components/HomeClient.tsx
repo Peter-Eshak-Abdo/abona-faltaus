@@ -13,6 +13,7 @@ import {
   FaPlayCircle,
   FaCog,
   FaInfoCircle,
+  FaGoogle,
 } from "react-icons/fa";
 import LogoHeader from "@/components/LogoHeader";
 import UserHeader from "@/components/UserHeader";
@@ -55,12 +56,22 @@ export default function HomeClient() {
   const [lastMessage, setLastMessage] = useState("");
   const [commitCount, setCommitCount] = useState(0);
   const [copticDate, setCopticDate] = useState("");
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     setCopticDate(getCopticDate());
+
+    // فحص تسجيل الدخول
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    checkUser();
+
     if (window.location.hash) {
-      const { data: authListener } = supabase.auth.onAuthStateChange((event: string) => {
+      const { data: authListener } = supabase.auth.onAuthStateChange((event: string, session: any) => {
         if (event === 'SIGNED_IN') {
+          setUser(session?.user);
           window.history.replaceState(null, '', window.location.pathname);
         }
       });
@@ -73,39 +84,34 @@ export default function HomeClient() {
       try {
         const baseApiUrl = 'https://api.github.com/repos/Peter-Eshak-Abdo/abona-faltaus';
         const commitRes = await fetch(`${baseApiUrl}/commits?sha=main&per_page=5`);
+        if (!commitRes.ok) throw new Error("Failed to fetch");
+
         const commits = await commitRes.json();
 
         if (commits && commits.length > 0) {
-          const myCommit = commits.find((c: { commit: { author: { name: string | string[]; }; }; }) => !c.commit.author.name.includes('dependabot')) || commits[0];
+          const myCommit = commits.find((c: any) => !c.commit.author.name.includes('dependabot')) || commits[0];
           const commitObj = myCommit.commit;
           const commitDate = new Date(commitObj.committer.date);
 
           setLastUpdate(commitDate.toLocaleString('ar-EG', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', hour12: true
           }));
-
           setLastMessage(commitObj.message);
         }
+
         const countRes = await fetch(`${baseApiUrl}/commits?sha=main&per_page=1`);
         const linkHeader = countRes.headers.get('link');
-
         if (linkHeader) {
           const match = linkHeader.match(/page=(\d+)>; rel="last"/);
-          if (match) {
-            setCommitCount(parseInt(match[1], 10));
-          }
+          if (match) setCommitCount(parseInt(match[1], 10));
         } else {
           const allCommits = await countRes.json();
           setCommitCount(allCommits.length);
         }
-
       } catch (error) {
-        console.error("Error fetching commit:", error);
+        setLastUpdate("وضع الأوفلاين");
+        setLastMessage("لا يوجد اتصال بالإنترنت لجلب التحديثات");
       }
     };
 
@@ -131,44 +137,54 @@ export default function HomeClient() {
     <motion.div className="min-h-screen relative overflow-hidden">
       <LogoHeader />
       <UserHeader />
+
+      {/* تنبيه تسجيل الدخول بجوجل */}
+      {!user && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute top-10 left-1/2 -translate-x-1/2 z-30"
+        >
+          <Link href="/auth/signin">
+            <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 shadow-lg px-1 py-0.5 rounded-full flex items-center gap-1 cursor-pointer hover:scale-105 transition-transform text-xs sm:text-sm">
+              <FaGoogle className="text-blue-500" />
+              <span className="font-bold text-gray-800 dark:text-gray-200">سجل دخولك بحساب جوجل لحفظ تقدمك</span>
+            </div>
+          </Link>
+        </motion.div>
+      )}
+
       {/* اللوجو الأساسي */}
       <motion.div
         className="z-20 rounded-full border-blue-300 shadow-xl absolute bg-transparent"
         animate={
           logoPos === "center"
-            ? {
-              top: "50%",
-              left: "50%",
-              translateX: "-50%",
-              translateY: "-50%",
-              scale: 1,
-            }
-            : {
-              top: "90%",
-              left: "50%",
-              translateX: "-50%",
-              translateY: "-50%",
-              scale: 0.30,
-            }
+            ? { top: "50%", left: "50%", translateX: "-50%", translateY: "-50%", scale: 1 }
+            : { top: "90%", left: "50%", translateX: "-50%", translateY: "-50%", scale: 0.30 }
         }
         transition={{ duration: 0.5, ease: "easeInOut" }}
       >
         <motion.button
           onClick={toggleMenu}
           whileTap={{ scale: 0.95 }}
-          className="rounded-full bg-transparent shadow-none"
+          className="rounded-full bg-transparent shadow-none relative"
           style={{ outline: "none" }}
         >
-          <Image
-            src="/images/logo.webp"
-            alt="Logo"
-            width={250}
-            height={250}
-            className="rounded-full border-blue-300"
-            priority
-          />
+          <Image src="/images/logo.webp" alt="Logo" width={250} height={250} className="rounded-full border-blue-300" priority />
         </motion.button>
       </motion.div>
+
+      {/* رسالة "اضغط هنا" التوجيهية */}
+      {logoPos === "center" && !showMenu && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, -10, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          className="absolute top-[68%] left-1/2 -translate-x-1/2 z-10 bg-blue-600/90 text-white px-1 py-0.5 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm pointer-events-none"
+        >
+          اضغط على الدائرة للبدء
+        </motion.div>
+      )}
 
       <AnimatePresence>
         {showMenu && (
@@ -178,23 +194,8 @@ export default function HomeClient() {
             transition={{ duration: 1 }}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           >
-            <motion.div
-              animate={{ rotate: [0, 5, -5, 5, 0] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="mx-auto"
-              style={{
-                width: '50vw',
-                maxWidth: '250px',
-                height: 'auto',
-              }}
-            >
-              <Image
-                src="/images/eagle.webp"
-                alt="Eagle"
-                width={210}
-                height={140}
-                sizes="auto"
-              />
+            <motion.div animate={{ rotate: [0, 5, -5, 5, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="mx-auto" style={{ width: '50vw', maxWidth: '250px', height: 'auto' }}>
+              <Image src="/images/eagle.webp" alt="Eagle" width={210} height={140} sizes="auto" />
             </motion.div>
           </motion.div>
         )}
@@ -227,22 +228,12 @@ export default function HomeClient() {
           })}
       </AnimatePresence>
 
-      <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-1 ltr:left-1 rtl:right-1">
+      <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-1 ltr:left-1 rtl:right-1 z-0">
         <div className="flex flex-col gap-0.5">
-          <p className="font-bold text-amber-600 dark:text-amber-400">
-            التاريخ القبطي: {copticDate}
-          </p>
-          <p>
-            <strong>آخر تحديث:</strong> {lastUpdate || "..."}
-          </p>
-          {lastMessage && (
-            <p className="italic opacity-70 border-r-2 border-primary pr-1">
-              "{lastMessage}"
-            </p>
-          )}
-          <p className="text-[10px]">
-            إجمالي التحديثات: <span className="font-bold text-primary">{commitCount}</span>
-          </p>
+          <p className="font-bold text-amber-600 dark:text-amber-400">التاريخ القبطي: {copticDate}</p>
+          <p><strong>آخر تحديث:</strong> {lastUpdate || "..."}</p>
+          {lastMessage && <p className="italic opacity-70 border-r-2 border-primary pr-1">"{lastMessage}"</p>}
+          <p className="text-[10px]">إجمالي التحديثات: <span className="font-bold text-primary">{commitCount}</span></p>
         </div>
       </footer>
     </motion.div>

@@ -4,7 +4,7 @@ const withPWA = withPWAInit({
   dest: "public",
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === "development", // تعطيل في وضع التطوير
+  disable: process.env.NODE_ENV === "development",
 
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
@@ -12,11 +12,10 @@ const withPWA = withPWAInit({
 
   workboxOptions: {
     disableDevLogs: true,
-    // globPatterns: [
-    //   "**/*.{js,css,html,png,jpg,jpeg,svg,ico,webp,json,woff2}", // تحميل كل أنواع الملفات دي فوراً
-    // ],
-    // زيادة المساحة المسموح بتخزينها (تجنب مشاكل الملفات الكبيرة)
-    maximumFileSizeToCacheInBytes: 150 * 1024 * 1024, // 150 ميجا لكل ملف كحد أقصى
+    maximumFileSizeToCacheInBytes: 150 * 1024 * 1024,
+    fallbacks: {
+      document: "/~offline",
+    },
     runtimeCaching: [
       {
         urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/,
@@ -28,16 +27,14 @@ const withPWA = withPWAInit({
       },
       {
         urlPattern: /\/api\/.*/,
-        handler: "NetworkOnly", // الـ API لا يُحفظ في الكاش عشان البيانات تكون طازجة
+        handler: "NetworkOnly",
         options: {
           cacheName: "api-calls",
         },
       },
-      // قاعدة مهمة جداً لصفحات الموقع نفسه (App Router)
       {
-        // استراتيجية الصفحات: حاول تجيب من النت، لو مفيش هات من الكاش
         urlPattern: ({ request }) => request.mode === "navigate",
-        handler: "NetworkFirst", // حاول تجيب الصفحة من النت، لو مفيش هات من الكاش
+        handler: "NetworkFirst",
         options: {
           cacheName: "pages-cache",
           expiration: { maxEntries: 100, maxAgeSeconds: 365 * 24 * 60 * 60 },
@@ -62,10 +59,9 @@ const withPWA = withPWAInit({
         },
       },
       {
-        // الصور والملفات الخارجية (مثل Firebase)
         urlPattern:
           /https:\/\/(?:firebasestorage\.googleapis\.com|lh3\.googleusercontent\.com)\/.*/,
-        handler: "StaleWhileRevalidate", // يعرض الكاش ويحدثه في الخلفية
+        handler: "StaleWhileRevalidate",
         options: {
           cacheName: "remote-images",
           expiration: { maxEntries: 100, maxAgeSeconds: 365 * 24 * 60 * 60 },
@@ -73,17 +69,17 @@ const withPWA = withPWAInit({
       },
       {
         urlPattern: /^https:\/\/archive\.org\/download\/.*/,
-        handler: "CacheFirst", // اسحب من الكاش أولاً لأن الألحان مش هتتغير
+        handler: "CacheFirst",
         options: {
           cacheName: "archive-audio-cache",
           expiration: {
-            maxEntries: 500, // عدد الألحان القصوى
-            maxAgeSeconds: 60 * 60 * 24 * 365 * 5, // سنة كاملة 5 سنوات عشان الألحان مش هتتغير
+            maxEntries: 500,
+            maxAgeSeconds: 60 * 60 * 24 * 365 * 5,
           },
           cacheableResponse: {
-            statuses: [0, 200], // 0 مهمة جداً لروابط الـ CORS الخارجية
+            statuses: [0, 200],
           },
-          rangeRequests: true, // مهم جداً لملفات الصوت عشان تقدر تقدم وترجع في اللحن
+          rangeRequests: true,
         },
       },
     ],
@@ -100,18 +96,9 @@ const nextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "via.placeholder.com",
-      },
-      {
-        protocol: "https",
-        hostname: "firebasestorage.googleapis.com",
-      },
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-      },
+      { protocol: "https", hostname: "via.placeholder.com" },
+      { protocol: "https", hostname: "firebasestorage.googleapis.com" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "archive.org" },
       {
         protocol: "https",

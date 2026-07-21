@@ -1,11 +1,13 @@
+// components/AccountInfo.tsx
 "use client";
-import { useEffect, useState } from "react";
-import { Copy, Share2, LogOut, X, Loader2 } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Copy, LogOut, X, Loader2, Camera, UserCircle, Calendar, Hash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { createClient } from '@/lib/supabase/client';
+import { Card, CardContent } from "@/components/ui/card";
 
 interface UserProfile {
   id: string;
@@ -16,47 +18,39 @@ interface UserProfile {
 }
 
 export default function AccountInfo() {
-  const supabase = createClient();
+  const supabaseClient = createClient();
   const [user, setUser] = useState<UserProfile | null>(null);
-  // const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const { data: { user }, error } = await supabaseClient.auth.getUser();
       if (!user || error) {
-        console.log("No user found, redirecting...");
         router.push("/auth/signin");
       }
     };
-
-    // استنى ثانية بسيطة عشان السيشن تستقر
     const timeout = setTimeout(checkUser, 500);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [router, supabaseClient.auth]);
 
   useEffect(() => {
     const getProfile = async () => {
-      // const { data: { user } } = await supabase.auth.getUser();
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) {
-        setError(sessionError.message);
+      const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+      if (sessionError || !session) {
+        setError(sessionError?.message || "لا يوجد جلسة");
         setLoading(false);
-        return;
-      }
-
-      if (!session) {
         router.push('/auth/signin');
         return;
       }
 
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles') // Assuming a 'profiles' table with user data
+      const { data: profile, error: profileError } = await supabaseClient
+        .from('profiles')
         .select('id, full_name, avatar_url, updated_at')
         .eq('id', session.user.id)
         .single();
@@ -75,200 +69,124 @@ export default function AccountInfo() {
       setLoading(false);
     };
 
-    // if (user) {
-    // setUser(user);
-    // const { data } = await supabase
-    // .from('profiles')
-    // .select('full_name')
-    // .eq('id', user.id)
-    //  .single();
-    // setProfile(data);
-    // } else {
-    // router.push("/auth/signin");
-    // }
-    // setLoading(false);
-    // };
     getProfile();
-  }, [supabase, router]);
-
-  // const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (!e.target.files || !user) return;
-  //   setUploading(true);
-  //   const file = e.target.files[0];
-  //   const fileExt = file.name.split('.').pop();
-  //   const filePath = `${user.id}/avatar.${fileExt}`;
-
-  //   // 1. رفع الصورة لـ Storage (Bucket اسمه 'avatars')
-  //   const { error: uploadError } = await supabase.storage
-  //     .from('avatars')
-  //     .upload(filePath, file, { upsert: true });
-
-  //   if (uploadError) {
-  //     console.error(uploadError);
-  //     setUploading(false);
-  //     return;
-  //   }
-
-  //   // 2. الحصول على رابط الصورة العام
-  //   const { data: { publicUrl } } = supabase.storage
-  //     .from('avatars')
-  //     .getPublicUrl(filePath);
-
-  //   // 3. تحديث الداتابيز برابط الصورة الجديد
-  //   await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', user.id);
-
-  //   setProfile({ ...profile, avatar_url: publicUrl });
-  //   setUploading(false);
-  //   setSuccessMsg("تم تحديث الصورة الشخصية");
-  //   setTimeout(() => setSuccessMsg(""), 3000);
-  // };
+  }, [supabaseClient, router]);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || event.target.files.length === 0) {
-      setError('You must select an image to upload.');
-      return;
-    }
+    if (!event.target.files || event.target.files.length === 0 || !user) return;
 
     const file = event.target.files[0];
     const fileExt = file.name.split('.').pop();
-    // Ensure user is not null before proceeding
-    if (!user) {
-      setError('User not loaded. Please try again.');
-      return;
-    }
-    const fileName = `${user.id}-${Math.random()}.${fileExt}`; // Unique file name
-    const filePath = `${fileName}`; // Path within the bucket
+    const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+    const filePath = `${fileName}`;
 
     setUploading(true);
     setError(null);
 
     try {
-      // Upload to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('avatars') // Assuming an 'avatars' bucket for profile pictures
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true,
-        });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      const { error: uploadError } = await supabaseClient.storage
         .from('avatars')
-        .getPublicUrl(filePath);
+        .upload(filePath, file, { cacheControl: '3600', upsert: true });
 
-      // Update avatar_url in the profiles table
-      const { error: updateError } = await supabase
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+
+      const { error: updateError } = await supabaseClient
         .from('profiles')
         .update({ avatar_url: publicUrl })
         .eq('id', user.id);
 
-      if (updateError) {
-        throw updateError;
-      }
+      if (updateError) throw updateError;
 
       setUser((prevUser) => prevUser ? { ...prevUser, avatar_url: publicUrl } : null);
-      alert('Profile picture updated successfully!');
-
-    } catch (error: any) {
-      setError(error.message || 'Error uploading file.');
-      console.error('Upload error:', error);
+      setSuccessMsg("تم تحديث الصورة الشخصية بنجاح!");
+      setTimeout(() => setSuccessMsg(""), 3000);
+    } catch (err: any) {
+      setError(err.message || 'حدث خطأ أثناء الرفع');
     } finally {
       setUploading(false);
-      // Clear the file input
-      event.target.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     router.push("/auth/signin");
   };
 
-  if (loading) return <div className="flex justify-center p-1"><Loader2 className="animate-spin" /></div>;
-
-  if (error) return <div className="min-h-screen flex items-center justify-center bg-gray-100"><p className="text-lg text-red-500">Error: {error}</p></div>;
-
-  if (!user) return <div className="min-h-screen flex items-center justify-center bg-gray-100"><p className="text-lg text-gray-700">No user profile found. Please sign in.</p></div>;
+  if (loading) return <div className="flex justify-center items-center h-48"><Loader2 className="w-8 h-8 text-amber-700 animate-spin" /></div>;
+  if (error && !user) return <div className="p-1 text-center text-red-600 bg-red-50 rounded-lg m-1">{error}</div>;
+  if (!user) return null;
 
   return (
-    <div className="max-w-md mx-auto p-1 mt-7 bg-white shadow-lg rounded-2xl border" dir="rtl">
+    <Card className="max-w-md mx-auto p-1 bg-white shadow-xl rounded-2xl border-amber-900/10 overflow-hidden" dir="rtl">
       {successMsg && (
-        <div className="fixed top-4 left-4 bg-green-500 text-white p-1 rounded-md shadow-xl flex gap-1 items-center">
+        <div className="mb-1 bg-green-50 border border-green-200 text-green-700 p-1 rounded-lg flex justify-between items-center text-sm font-medium">
           <span>{successMsg}</span>
-          <X size={8} className="cursor-pointer" onClick={() => setSuccessMsg("")} />
+          <X className="w-4 h-4 cursor-pointer hover:text-green-900" onClick={() => setSuccessMsg("")} />
         </div>
       )}
 
-      <div className="text-center space-y-1">
-        <div className="relative w-12 h-12 mx-auto">
-          <div className="flex flex-col items-center mb-1">
-            {user.avatar_url ? (
-              <Image
-                src={user.avatar_url}
-                alt="Profile Picture"
-                width={128}
-                height={128}
-                className="rounded-full object-cover border-4 border-blue-300"
-              />
-            ) : (
-              <div className="w-18 h-18 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-sm">
-                <Image
-                  src={user.avatar_url || "/images/eagle.webp"}
-                  alt="Profile"
-                  fill
-                  className="rounded-full object-cover border-3 border-amber-100"
-                />
-                No Image
+      <CardContent className="p-1 space-y-1">
+        <div className="flex flex-col items-center relative">
+          <div className="relative group">
+            <div className="w-24 h-24 rounded-full p-1 bg-linear-to-tr from-amber-700 to-amber-300 shadow-md">
+              <div className="w-full h-full rounded-full overflow-hidden bg-white relative flex items-center justify-center">
+                {user.avatar_url ? (
+                  <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" />
+                ) : (
+                  <UserCircle className="w-12 h-12 text-stone-300" />
+                )}
               </div>
-            )}
-            <p className="mt-1 text-lg font-semibold text-gray-700">{user.full_name || "مستخدم جديد"}</p>
-            <p className="text-gray-500 text-sm">{user?.email}</p>
+            </div>
+
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="absolute bottom-0 right-0 bg-stone-900 text-white p-1 rounded-full shadow-lg border-2 border-white hover:bg-stone-800 transition-colors disabled:opacity-50"
+            >
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+            </button>
+            <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
+          </div>
+
+          <div className="text-center mt-1">
+            <h2 className="text-xl font-bold text-stone-900">{user.full_name || "مستخدم أرثوذكسي"}</h2>
+            <p className="text-stone-500 text-sm font-medium">{user.email}</p>
           </div>
         </div>
-      </div>
 
-      <div className="mt-1 space-y-1">
-        <div className="text-sm">
-          <label htmlFor="profilePicture" className="block text-sm font-medium text-gray-700 mb-1">
-            Upload New Profile Picture
-          </label>
-          <input
-            type="file"
-            id="profilePicture"
-            accept="image/*"
-            onChange={handleFileChange}
-            disabled={uploading}
-            className="block w-full text-sm text-gray-500
-                       file:mr-1 file:py-1 file:px-1
-                       file:rounded-full file:border-0
-                       file:text-sm file:font-semibold
-                       file:bg-blue-50 file:text-blue-700
-                       hover:file:bg-blue-100"
-          />
-          {uploading && <p className="mt-1 text-sm text-blue-600">Uploading...</p>}
-          {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
-          {/* <label className="block font-medium mb-1">تغيير الصورة</label>
-          <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} className="text-xs" /> */}
+        {error && <p className="text-sm text-red-600 text-center bg-red-50 p-1 rounded-md">{error}</p>}
+
+        <div className="bg-stone-50 p-1 rounded-xl space-y-1 mt-1 border border-stone-100">
+          <div className="flex items-center justify-between text-sm text-stone-700">
+            <div className="flex items-center gap-1"><Hash className="w-4 h-4 text-amber-700" /> <span className="font-semibold">رقم الحساب</span></div>
+            <span className="font-mono text-xs text-stone-500 bg-stone-200 p-1 rounded">{user.id.substring(0, 12)}...</span>
+          </div>
+          <div className="flex items-center justify-between text-sm text-stone-700">
+            <div className="flex items-center gap-1"><Calendar className="w-4 h-4 text-amber-700" /> <span className="font-semibold">تاريخ الانضمام</span></div>
+            <span className="text-xs font-medium text-stone-600">{new Date(user.updated_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          </div>
         </div>
 
-        <div className="bg-gray-50 p-1 rounded-lg space-y-1 text-sm">
-          <div className="flex justify-between"><strong>رقم الحساب:</strong> <span className="text-[10px]">{user?.id}</span></div>
-          <div className="flex justify-between"><strong>تاريخ الانضمام:</strong> <span>{new Date(user?.updated_at).toLocaleDateString('ar-EG')}</span></div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-1">
-          <Button onClick={() => { navigator.clipboard.writeText(user.id); setCopied(true); setTimeout(() => setCopied(false), 2000); }} variant="outline" className="text-xs">
-            <Copy size={7} className="ml-1" /> {copied ? "تم!" : "نسخ ID"}
+        <div className="grid grid-cols-2 gap-1 mt-1">
+          <Button
+            onClick={() => { navigator.clipboard.writeText(user.id); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+            variant="outline"
+            className="flex gap-1 items-center justify-center border-stone-200 text-stone-700 hover:bg-stone-100 rounded-lg text-sm font-bold"
+          >
+            {copied ? <span className="text-green-600">تم النسخ</span> : <><Copy className="w-4 h-4" /> نسخ المعرف</>}
           </Button>
-          <Button onClick={handleLogout} variant="destructive" className="text-xs">
-            <LogOut size={7} className="ml-1" /> خروج
+          <Button
+            onClick={handleLogout}
+            variant="destructive"
+            className="flex gap-1 items-center justify-center bg-red-700 hover:bg-red-800 text-white rounded-lg text-sm font-bold"
+          >
+            <LogOut className="w-4 h-4" /> تسجيل الخروج
           </Button>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

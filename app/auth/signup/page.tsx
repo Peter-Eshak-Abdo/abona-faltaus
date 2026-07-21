@@ -1,3 +1,4 @@
+// app/auth/signup/page.tsx
 "use client";
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from "react";
@@ -5,6 +6,11 @@ import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { User, Mail, Lock } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -17,11 +23,9 @@ export default function SignUpPage() {
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
       if (event === "SIGNED_IN" && session) {
-        console.log("✅ Session captured, redirecting...");
         router.push("/auth/profile");
       }
     });
-
     return () => authListener.subscription.unsubscribe();
   }, [router]);
 
@@ -31,28 +35,17 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
-      // بنبعت الـ full_name جوه الـ user_metadata
-      // الـ Database Trigger هيسحب الاسم من هنا ويحطه في جدول البروفايلات
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
-        options: {
-          data: {
-            full_name: name
-          }
-        },
+        options: { data: { full_name: name } },
       });
 
       if (signUpError) throw signUpError;
-
       if (data.user) {
-        console.log("✅ Auth Success! Database Trigger will handle profile creation.");
-        // إذا كان التسجيل يتطلب تأكيد إيميل، يفضل إظهار رسالة للمستخدم
-        // أما إذا كان الدخول مباشر، الـ useEffect فوق هيعمل الـ redirect
         alert("تم إنشاء الحساب بنجاح! افحص بريدك الإلكتروني إذا تطلب الأمر.");
       }
     } catch (err: any) {
-      console.error("💥 Error:", err.message);
       setError(err.message || "حدث خطأ ما");
     } finally {
       setLoading(false);
@@ -60,31 +53,55 @@ export default function SignUpPage() {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-stone-50 text-stone-800 flex flex-col items-center" dir="rtl">
       <LogoHeader />
-      <div className="max-w-md mx-auto my-1 p-1">
-        <h2 className="text-2xl font-bold mb-1 text-center">إنشاء حساب جديد</h2>
-        {error && <div className="bg-red-100 border border-red-400 text-red-700 p-1 rounded mb-1 text-sm">{error}</div>}
+      <div className="w-full max-w-md mx-auto my-1 px-1">
+        <Card className="bg-white shadow-xl border-amber-900/10 rounded-2xl overflow-hidden">
+          <CardHeader className="bg-stone-100 border-b border-stone-200 pb-1">
+            <CardTitle className="text-center text-amber-900 font-bold text-lg">
+              إنشاء حساب جديد
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-1 p-1 mt-1">
+            {error && (
+              <div className="bg-red-50 text-red-700 p-1 rounded-lg text-sm border border-red-200 flex items-center gap-1">
+                <span>⚠️</span> {error}
+              </div>
+            )}
 
-        <form onSubmit={handleSignUp} className="bg-white p-1 rounded-lg shadow-md space-y-1">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">الاسم</label>
-            <input type="text" className="w-full p-1 border rounded-md" value={name} onChange={(e) => setName(e.target.value)} required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
-            <input type="email" className="w-full p-1 border rounded-md" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">كلمة المرور</label>
-            <input type="password" className="w-full p-1 border rounded-md" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          </div>
-          <button type="submit" disabled={loading} className="w-full bg-green-600 text-white p-1 rounded hover:bg-green-700 disabled:opacity-50">
-            {loading ? "جاري الإنشاء..." : "إنشاء حساب"}
-          </button>
-          <p className="text-center text-sm">لديك حساب؟ <Link href="/auth/signin" className="underline">سجل الدخول</Link></p>
-        </form>
+            <form onSubmit={handleSignUp} className="space-y-1">
+              <div className="space-y-1">
+                <Label className="text-stone-700 font-semibold text-sm">الاسم</Label>
+                <div className="relative">
+                  <User className="absolute right-1 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                  <Input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="pr-6 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-stone-700 font-semibold text-sm">البريد الإلكتروني</Label>
+                <div className="relative">
+                  <Mail className="absolute right-1 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="pr-2 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-stone-700 font-semibold text-sm">كلمة المرور</Label>
+                <div className="relative">
+                  <Lock className="absolute right-1 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="pr-2 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
+                </div>
+              </div>
+              <Button type="submit" disabled={loading} className="w-full bg-amber-700 hover:bg-amber-800 text-white rounded-lg font-bold">
+                {loading ? "جاري الإنشاء..." : "إنشاء حساب"}
+              </Button>
+            </form>
+
+            <p className="text-center text-sm text-stone-600 font-medium mt-1">
+              لديك حساب؟ <Link href="/auth/signin" className="text-amber-700 hover:text-amber-800 font-bold underline decoration-amber-300 underline-offset-4">سجل الدخول</Link>
+            </p>
+          </CardContent>
+        </Card>
       </div>
-    </>
+    </div>
   );
 }

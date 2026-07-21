@@ -1,3 +1,4 @@
+// app/auth/signin/page.tsx
 "use client";
 import { useEffect, useState } from "react";
 import LogoHeader from "@/components/LogoHeader";
@@ -8,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
+import { Mail, Lock } from "lucide-react";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -17,47 +19,13 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // لو الرابط فيه access_token، الكلاينت بتاع Supabase هيلقطه أوتوماتيك
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
       if (event === "SIGNED_IN" && session) {
-        console.log("✅ Session captured from URL hash!");
         router.push("/auth/profile");
       }
     });
-
-    const debugAuth = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      console.log("1. Client Session:", session ? "✅ Found" : "❌ Not Found");
-
-      const cookies = document.cookie;
-      console.log("2. Browser Cookies:", cookies.includes("sb-") ? "✅ Auth Cookies Exist" : "❌ No Auth Cookies");
-
-      if (error) console.error("3. Auth Error:", error.message);
-    };
-    debugAuth()
-
-    // const testCookies = async () => {
-    //   console.log("--- فحص شامل للكوكيز والسيشن ---");
-
-    //   // 1. فحص المتصفح (Client-side)
-    //   const { data: { session } } = await supabase.auth.getSession();
-    //   console.log("1. السيشن في المتصفح:", session ? "✅ موجودة" : "❌ مفقودة");
-
-    //   // 2. فحص الكوكيز الخام
-    //   const allCookies = document.cookie;
-    //   console.log("2. كوكيز المتصفح الحالية:", allCookies || "empty");
-
-    //   // 3. فحص كود التحقق (PKCE Verifier) - ده أهم واحد للـ Google Login
-    //   const hasVerifier = allCookies.includes('sb-') && allCookies.includes('-auth-token-code-verifier');
-    //   console.log("3. هل كود Verifier موجود؟:", hasVerifier ? "✅ نعم (جيد)" : "❌ لا (سبب فشل جوجل)");
-
-    //   // 4. فحص الـ Local Storage
-    //   const localStorageData = window.localStorage.getItem(`sb-${process.env.NEXT_PUBLIC_SUPABASE_URL?.split('.')[0].split('//')[1]}-auth-token`);
-    //   console.log("4. هل توجد بيانات في LocalStorage؟:", localStorageData ? "✅ نعم" : "❌ لا");
-    // };
-    // testCookies()
     return () => authListener.subscription.unsubscribe();
-  }, []);
+  }, [router]);
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,64 +42,82 @@ export default function SignInPage() {
     }
   };
 
-  // const handleGoogleSignIn = async () => {
-  //   await supabase.auth.signInWithOAuth({
-  //     provider: 'google',
-  //     options: { redirectTo: `${window.location.origin}/auth/callback` }
-  //   });
-  // };
-
   const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-        // ده بيحل مشاكل الـ localhost
+        redirectTo: `${window.location.origin}/api/callback`,
+        queryParams: { access_type: 'offline', prompt: 'consent' },
         skipBrowserRedirect: false,
       }
     });
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-stone-50 text-stone-800 flex flex-col items-center" dir="rtl">
       <LogoHeader />
-      <div className="max-w-md mx-auto my-1 px-1">
-        <Card className="bg-white shadow-lg">
-          <CardHeader><CardTitle className="text-center">تسجيل الدخول</CardTitle></CardHeader>
-          <CardContent className="space-y-1">
-            {error && <div className="bg-red-50 text-red-600 p-1 rounded text-sm border border-red-200">{error}</div>}
+      <div className="w-full max-w-md mx-auto my-1 px-1">
+        <Card className="bg-white shadow-xl border-amber-900/10 rounded-2xl overflow-hidden">
+          <CardHeader className="bg-stone-100 border-b border-stone-200 pb-1">
+            <CardTitle className="text-center text-amber-900 font-bold text-lg">
+              تسجيل الدخول
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-1 p-1 mt-1">
+            {error && (
+              <div className="bg-red-50 text-red-700 p-1 rounded-lg text-sm border border-red-200 flex items-center gap-1">
+                <span>⚠️</span> {error}
+              </div>
+            )}
 
             <form onSubmit={handleEmailSignIn} className="space-y-1">
               <div className="space-y-1">
-                <Label>البريد الإلكتروني</Label>
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <Label className="text-stone-700 font-semibold text-sm">البريد الإلكتروني</Label>
+                <div className="relative">
+                  <Mail className="absolute right-1 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="pr-2 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg"
+                  />
+                </div>
               </div>
               <div className="space-y-1">
-                <Label>كلمة المرور</Label>
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <Label className="text-stone-700 font-semibold text-sm">كلمة المرور</Label>
+                <div className="relative">
+                  <Lock className="absolute right-1 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="pr-2 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg"
+                  />
+                </div>
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "جاري الدخول..." : "دخول بالبريد الإلكتروني"}
+              <Button type="submit" className="w-full bg-amber-700 hover:bg-amber-800 text-white rounded-lg font-bold" disabled={loading}>
+                {loading ? "جاري الدخول..." : "دخول"}
               </Button>
             </form>
 
             <div className="relative my-1">
-              <div className="absolute inset-0 flex items-center"><span className="w-full border-t"></span></div>
-              <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-1 text-gray-500">أو</span></div>
+              <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-stone-200"></span></div>
+              <div className="relative flex justify-center text-xs"><span className="bg-white px-1 text-stone-500 font-medium">أو</span></div>
             </div>
 
-            <Button variant="outline" onClick={handleGoogleSignIn} className="w-full border-red-600 text-red-600 hover:bg-red-50">
-              الدخول باستخدام Google
+            <Button variant="outline" onClick={handleGoogleSignIn} className="w-full border-stone-300 text-stone-700 hover:bg-stone-100 rounded-lg flex gap-1 items-center justify-center">
+              <svg className="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>
+              Google
             </Button>
 
-            <p className="text-center text-sm">ليس لديك حساب؟ <Link href="/auth/signup" className="underline">أنشئ حساب جديد</Link></p>
+            <p className="text-center text-sm text-stone-600 font-medium">
+              ليس لديك حساب؟ <Link href="/auth/signup" className="text-amber-700 hover:text-amber-800 font-bold underline decoration-amber-300 underline-offset-4">أنشئ حساب جديد</Link>
+            </p>
           </CardContent>
         </Card>
       </div>
-    </>
+    </div>
   );
 }

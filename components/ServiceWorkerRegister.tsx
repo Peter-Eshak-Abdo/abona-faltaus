@@ -15,7 +15,7 @@ export default function ServiceWorkerRegister() {
       navigator.serviceWorker
         .register("/sw.js")
         .then((reg) => {
-          console.log("✅ SW registered", reg.scope);
+          // console.log("✅ SW registered", reg.scope);
 
           const hasAsked = localStorage.getItem("asked_offline_download");
           if (!hasAsked) {
