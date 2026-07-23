@@ -10,12 +10,13 @@ const withPWA = withPWAInit({
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
 
+  fallbacks: {
+    document: "/~offline",
+  },
+  
   workboxOptions: {
     disableDevLogs: true,
     maximumFileSizeToCacheInBytes: 150 * 1024 * 1024,
-    fallbacks: {
-      document: "/~offline",
-    },
     runtimeCaching: [
       {
         urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/,
