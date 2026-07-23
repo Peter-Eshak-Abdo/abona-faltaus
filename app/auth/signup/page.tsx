@@ -55,7 +55,7 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen bg-stone-50 text-stone-800 flex flex-col items-center" dir="rtl">
       <LogoHeader />
-      <div className="w-full max-w-md mx-auto my-1 px-1">
+      <div className="w-full max-w-md mx-auto my-1 px-1 mt-8">
         <Card className="bg-white shadow-xl border-amber-900/10 rounded-2xl overflow-hidden">
           <CardHeader className="bg-stone-100 border-b border-stone-200 pb-1">
             <CardTitle className="text-center text-amber-900 font-bold text-lg">
@@ -73,22 +73,22 @@ export default function SignUpPage() {
               <div className="space-y-1">
                 <Label className="text-stone-700 font-semibold text-sm">الاسم</Label>
                 <div className="relative">
-                  <User className="absolute right-1 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
-                  <Input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="pr-6 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
+                  <User className="absolute right-0.5 top-1/2 transform -translate-y-1/2 text-stone-400 w-2 h-2" />
+                  <Input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="pr-3 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
                 </div>
               </div>
               <div className="space-y-1">
                 <Label className="text-stone-700 font-semibold text-sm">البريد الإلكتروني</Label>
                 <div className="relative">
-                  <Mail className="absolute right-1 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="pr-2 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
+                  <Mail className="absolute right-0.5 top-1/2 transform -translate-y-1/2 text-stone-400 w-2 h-2" />
+                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="pr-3 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
                 </div>
               </div>
               <div className="space-y-1">
                 <Label className="text-stone-700 font-semibold text-sm">كلمة المرور</Label>
                 <div className="relative">
-                  <Lock className="absolute right-1 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
-                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="pr-2 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
+                  <Lock className="absolute right-0.5 top-1/2 transform -translate-y-1/2 text-stone-400 w-2 h-2" />
+                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="pr-3 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
                 </div>
               </div>
               <Button type="submit" disabled={loading} className="w-full bg-amber-700 hover:bg-amber-800 text-white rounded-lg font-bold">

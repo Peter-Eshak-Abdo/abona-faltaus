@@ -13,7 +13,7 @@ const withPWA = withPWAInit({
   fallbacks: {
     document: "/~offline",
   },
-  
+
   workboxOptions: {
     disableDevLogs: true,
     maximumFileSizeToCacheInBytes: 150 * 1024 * 1024,
@@ -103,7 +103,7 @@ const nextConfig = {
       { protocol: "https", hostname: "archive.org" },
       {
         protocol: "https",
-        hostname: "xginokdunnhesgohymja.supabase.co",
+        hostname: process.env.NEXT_PUBLIC_SUPABASE_HOST_URL,
         pathname: "/storage/v1/object/public/**",
       },
     ],
