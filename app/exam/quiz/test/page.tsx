@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase"
 import {
   createQuiz,
   updateQuiz,
@@ -15,7 +15,6 @@ export default function FullTestPage() {
   const [log, setLog] = useState<string[]>([]);
   const [testQuizId, setTestQuizId] = useState<string | null>(null);
   const [testGroupId, setTestGroupId] = useState<string | null>(null);
-  const supabase = createClient();
 
   const addLog = (msg: string) => {
     const time = new Date().toLocaleTimeString();

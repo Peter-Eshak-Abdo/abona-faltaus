@@ -1,13 +1,12 @@
 "use client"
 import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { RotateCcw, Trash2, X } from "lucide-react"
 
 export default function TrashSection({ userId, onClose, onRestore }: any) {
   const [trashed, setTrashed] = useState<any[]>([])
-  const supabase = createClient()
 
   const loadTrash = async () => {
     const { data } = await supabase

@@ -1,12 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase"
 
 export default function UserHeader() {
   const [user, setUser] = useState<any>(null);
   const [customDisplayName, setCustomDisplayName] = useState<string | null>(null);
-  const supabase = createClient();
 
   useEffect(() => {
     // جلب المستخدم الحالي

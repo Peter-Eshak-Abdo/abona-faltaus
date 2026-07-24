@@ -1,7 +1,5 @@
-import { createClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase"
 import type { Quiz, Group, GameState } from "@/types/quiz";
-
-const supabase = createClient();
 
 // --- Quiz Operations ---
 export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt">) => {
@@ -353,4 +351,4 @@ export const restoreQuiz = async (trashId: string) => {
     await supabase.from("trashed_quizzes").delete().eq("id", trashId);
   }
 };
-export { createClient };
+export { supabase };

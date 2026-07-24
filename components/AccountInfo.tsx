@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent } from "@/components/ui/card";
 
 interface UserProfile {
@@ -18,7 +17,6 @@ interface UserProfile {
 }
 
 export default function AccountInfo() {
-  const supabaseClient = createClient();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -30,18 +28,18 @@ export default function AccountInfo() {
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { user }, error } = await supabaseClient.auth.getUser();
+      const { data: { user }, error } = await supabase.auth.getUser();
       if (!user || error) {
         router.push("/auth/signin");
       }
     };
     const timeout = setTimeout(checkUser, 500);
     return () => clearTimeout(timeout);
-  }, [router, supabaseClient.auth]);
+  }, [router, supabase.auth]);
 
   useEffect(() => {
     const getProfile = async () => {
-      const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
         setError(sessionError?.message || "لا يوجد جلسة");
         setLoading(false);
@@ -49,7 +47,7 @@ export default function AccountInfo() {
         return;
       }
 
-      const { data: profile, error: profileError } = await supabaseClient
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('id, full_name, avatar_url, updated_at')
         .eq('id', session.user.id)
@@ -70,7 +68,7 @@ export default function AccountInfo() {
     };
 
     getProfile();
-  }, [supabaseClient, router]);
+  }, [supabase, router]);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0 || !user) return;
@@ -84,15 +82,15 @@ export default function AccountInfo() {
     setError(null);
 
     try {
-      const { error: uploadError } = await supabaseClient.storage
+      const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, { cacheControl: '3600', upsert: true });
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
 
-      const { error: updateError } = await supabaseClient
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
         .eq('id', user.id);
@@ -111,7 +109,7 @@ export default function AccountInfo() {
   };
 
   const handleLogout = async () => {
-    await supabaseClient.auth.signOut();
+    await supabase.auth.signOut();
     router.push("/auth/signin");
   };
 
@@ -120,7 +118,7 @@ export default function AccountInfo() {
   if (!user) return null;
 
   return (
-    <Card className="max-w-md mx-auto p-1 bg-white shadow-xl rounded-2xl border-amber-900/10 overflow-hidden" dir="rtl">
+    <Card className="max-w-md mx-auto p-1 shadow-xl rounded-2xl border-amber-900/10 overflow-hidden mt-6" dir="rtl">
       {successMsg && (
         <div className="mb-1 bg-green-50 border border-green-200 text-green-700 p-1 rounded-lg flex justify-between items-center text-sm font-medium">
           <span>{successMsg}</span>
@@ -134,7 +132,7 @@ export default function AccountInfo() {
             <div className="w-24 h-24 rounded-full p-1 bg-linear-to-tr from-amber-700 to-amber-300 shadow-md">
               <div className="w-full h-full rounded-full overflow-hidden bg-white relative flex items-center justify-center">
                 {user.avatar_url ? (
-                  <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" />
+                  <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" sizes="auto" />
                 ) : (
                   <UserCircle className="w-12 h-12 text-stone-300" />
                 )}

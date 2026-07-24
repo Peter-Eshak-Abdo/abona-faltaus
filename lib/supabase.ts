@@ -13,7 +13,7 @@
 //         persistSession: true,
 //         autoRefreshToken: true,
 //         detectSessionInUrl: true,
-//         storageKey: "abona-faltaus-auth-token", // اسم ثابت عشان النسخ ما تضيعش من بعض
+//         // storageKey: "abona-faltaus-auth-token", // اسم ثابت عشان النسخ ما تضيعش من بعض
 //       },
 //     },
 //   );
@@ -22,29 +22,35 @@
 
 // export const supabase = createClient();
 //-----------------------------------------------------------------------
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+// import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+// const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-let supabaseInstance: SupabaseClient;
+// const getSupabase = () => {
+//   if (typeof window === "undefined") {
+//     return createClient(supabaseUrl, supabaseKey);
+//   }
 
-if (typeof window === "undefined") {
-  const globalForSupabase = globalThis as unknown as {
-    supabase: SupabaseClient;
-  };
-  if (!globalForSupabase.supabase) {
-    globalForSupabase.supabase = createClient(supabaseUrl, supabaseKey);
-  }
-  supabaseInstance = globalForSupabase.supabase;
-} else {
-  if (!(window as any).supabaseClientInstance) {
-    (window as any).supabaseClientInstance = createClient(
-      supabaseUrl,
-      supabaseKey,
-    );
-  }
-  supabaseInstance = (window as any).supabaseClientInstance;
-}
+//   if (!(window as any).supabaseClientInstance) {
+//     (window as any).supabaseClientInstance = createClient(supabaseUrl, supabaseKey, {
+//       auth: {
+//         persistSession: true,
+//         autoRefreshToken: true,
+//         detectSessionInUrl: true,
+//       },
+//     });
+//   }
 
-export const supabase = supabaseInstance;
+//   return (window as any).supabaseClientInstance;
+// };
+
+// export const supabase = getSupabase() as SupabaseClient;
+//-----------------------------------------------------------------------------------
+import { createBrowserClient } from "@supabase/ssr";
+
+// حزمة @supabase/ssr تقوم تلقائياً بمنع تكرار النسخ (Singleton) في المتصفح
+export const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);

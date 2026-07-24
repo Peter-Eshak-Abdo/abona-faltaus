@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
-import { createClient } from "@/lib/supabase/client"
+import { supabase } from "@/lib/supabase"
 import { createQuiz, updateQuiz } from "@/lib/supabase-utils"
 import { Plus, Trash2, Check, Clock, X, Upload, Eye, EyeOff, LayoutDashboard, Settings2 } from "lucide-react"
 import type { Question, Quiz } from "@/types/quiz"
@@ -22,7 +22,6 @@ interface CreateQuizDialogProps {
 const COLORS = ["bg-red-500", "bg-green-500", "bg-blue-500", "bg-yellow-500"];
 
 export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initialData }: CreateQuizDialogProps) {
-  const supabase = createClient();
   const [user, setUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"edit">("edit");
   const fileInputRef = useRef<HTMLInputElement>(null);

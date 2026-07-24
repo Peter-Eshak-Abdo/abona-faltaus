@@ -7,8 +7,22 @@ import { Send, Loader2, Sparkles, Plus, Trash2, PanelRight } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
+
+// مكون اللودينج اللزيز (Typing Indicator)
+const TypingIndicator = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="flex space-x-1 space-x-reverse p-1 bg-gray-100 rounded-2xl rounded-tl-none w-fit shadow-sm"
+  >
+    <motion.div className="w-2 h-2 bg-gray-500 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} />
+    <motion.div className="w-2 h-2 bg-gray-500 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} />
+    <motion.div className="w-2 h-2 bg-gray-500 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} />
+  </motion.div>
+);
 
 export default function ChatBot() {
   const endRef = useRef<HTMLDivElement>(null);
@@ -33,19 +47,23 @@ export default function ChatBot() {
   }, []);
 
   useEffect(() => {
-    const initAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
       if (session?.user) {
-        setUser(session.user);
         fetchConversations(session.user.id);
       }
-    };
-    initAuth();
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchConversations(session.user.id);
     });
-    return () => authListener.subscription.unsubscribe();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchConversations(session.user.id);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [fetchConversations]);
 
   const handleSelect = async (id: string) => {
@@ -139,7 +157,7 @@ export default function ChatBot() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full w-full max-w-full bg-white p-0.5" dir="rtl">
+    <div className="flex flex-col h-full w-full max-w-full bg-transparent p-0.5" dir="rtl">
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="right" className="w-90 p-0 flex flex-col">
           <SheetHeader className="p-1 border-b bg-amber-50">
@@ -155,6 +173,9 @@ export default function ChatBot() {
               </div>
             ))}
           </ScrollArea>
+          {/* <SheetDescription className="sr-only">
+            المحادثات كلها
+          </SheetDescription> */}
         </SheetContent>
       </Sheet>
 
@@ -171,18 +192,36 @@ export default function ChatBot() {
       <main className="flex-1 overflow-hidden" dir="rtl">
         <ScrollArea className="h-full" dir="rtl">
           <div className="mx-auto p-1 space-y-1" dir="rtl">
-            {messages.map((m) => (
-              <div key={m.id} className={cn("flex", m.role === "user" ? "justify-start" : "justify-end")}>
-                <div className={cn("rounded-2xl p-1 max-w-[85%] text-sm shadow-sm", m.role === "user" ? "bg-amber-500 text-white rounded-tr-none" : "bg-gray-100 text-gray-800 rounded-tl-none")}>
-                  {m.role === "user" ? m.content : <div className="prose prose-sm wrap-break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />}
+            <AnimatePresence>
+              {messages.map((m) => (
+                <motion.div
+                  key={m.id}
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  layout
+                  className={cn("flex", m.role === "user" ? "justify-start" : "justify-end")}
+                >
+                  <div className={cn(
+                    "rounded-2xl p-1 max-w-[85%] text-sm shadow-sm md:text-base leading-relaxed",
+                    m.role === "user"
+                      ? "bg-amber-600 text-white rounded-tr-none"
+                      : "bg-gray-100 text-gray-900 rounded-tl-none border border-gray-200"
+                  )}>
+                    {m.role === "user"
+                      ? m.content
+                      : <div className="prose prose-sm md:prose-base prose-amber wrap-break-words" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />
+                    }
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* ظهور اللودينج */}
+              {isLoading && messages[messages.length - 1]?.role === 'user' && (
+                <div className="flex justify-end w-full">
+                  <TypingIndicator />
                 </div>
-              </div>
-            ))}
-            {isLoading && messages[messages.length - 1]?.role === 'user' && (
-              <div className="flex justify-end p-1">
-                <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
-              </div>
-            )}
+              )}
+            </AnimatePresence>
             <div ref={endRef} />
           </div>
         </ScrollArea>

@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, use } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { supabase } from "@/lib/supabase"
 import { motion, AnimatePresence } from "framer-motion"
 
 const COLORS = [
@@ -13,7 +13,6 @@ const COLORS = [
 export default function PlayPage({ params: paramsPromise }: { params: Promise<{ quizId: string }> }) {
   const params = use(paramsPromise);
   const quizId = params.quizId;
-  const supabase = createClient();
 
   const [gameState, setGameState] = useState<any>(null);
   const [currentQuestion, setCurrentQuestion] = useState<any>(null);

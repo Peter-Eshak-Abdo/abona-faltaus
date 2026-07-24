@@ -167,12 +167,15 @@ import { supabase } from "@/lib/supabase";
 // الاستيراد المباشر يمنع أخطاء الـ fs (File System) على سيرفرات Vercel
 import quotesCacheData from "@/public/quotes.json";
 import topicsCacheData from "@/public/verses_topics.json";
+import { CopticSystemPrompt } from "@/lib/prompt";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-const quotesCache: { quote: string; author: string; topic: string }[] = quotesCacheData as any;
-const topicsCache: { topic: string; verse: string; ref: string }[] = topicsCacheData as any;
+const quotesCache: { quote: string; author: string; topic: string }[] =
+  quotesCacheData as any;
+const topicsCache: { topic: string; verse: string; ref: string }[] =
+  topicsCacheData as any;
 
 function normalize(term: string): string {
   if (!term) return "";
@@ -220,28 +223,16 @@ async function buildSystemPrompt(searchTerm: string): Promise<string> {
     .filter(
       (q) =>
         normalize(q.quote).includes(searchTerm) ||
-        normalize(q.topic).includes(searchTerm)
+        normalize(q.topic).includes(searchTerm),
     )
     .slice(0, 5);
 
-  return `أنت مساعد مسيحي أرثوذكسي روحاني يسمى "مساعد اجتماع النسور".
-أجب بعمق وتفصيل كامل على الأسئلة الروحية والطقسية.
+  return ` ${CopticSystemPrompt}
 
-**قواعد السلوك:**
-1. ابدأ الرد فوراً بالدخول في صلب الموضوع بأسلوب روحي.
-2. لا تذكر معلومات المطور (Peter Eshak) أو روابط الاجتماع إلا إذا سألك المستخدم صراحة عن هويتك أو من طورك.
-3. معلوماتك للرجوع إليها عند الحاجة فقط:
-   - المطور: Peter Eshak Abdo
-   - التابع لـ: اجتماع النسور - كنيسة العذراء بالاسماعيلية.
-4- المراجع الروحية لتفسير الكتاب المقدس او شرح للعقيدة اوللطقس او تاريخ الكنيسة من موقع (https://st-takla.org)
-
-المراجع المتاحة حالياً:
+المراجع المتاحة لسؤال المستخدم الحالي:
 الآيات: ${finalVerses.map((v) => `${v.text} (${v.ref})`).join(" | ")}
 الأقوال: ${finalQuotes.map((q) => `"${q.quote}" - ${q.author}`).join(" | ")}
-
-تنسيق الرد:
-- استخدم HTML: فقرات <p>، عناوين <h3>، خط عريض <strong>.
-- الآيات الكتابية داخل: <span dir="rtl" style="direction:rtl;unicode-bidi:embed;">نص الآية</span>`;
+  `;
 }
 
 export async function POST(request: Request) {
@@ -250,7 +241,10 @@ export async function POST(request: Request) {
 
     const lastMsg = messages[messages.length - 1];
     const lastUserMessage = Array.isArray(lastMsg.parts)
-      ? lastMsg.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("")
+      ? lastMsg.parts
+          .filter((p: any) => p.type === "text")
+          .map((p: any) => p.text)
+          .join("")
       : (lastMsg.content ?? "");
 
     const systemPrompt = await buildSystemPrompt(normalize(lastUserMessage));
@@ -258,7 +252,10 @@ export async function POST(request: Request) {
     const coreMessages = messages.map((m: any) => ({
       role: m.role as "user" | "assistant",
       content: Array.isArray(m.parts)
-        ? m.parts.filter((p: any) => p.type === "text").map((p: any) => p.text).join("")
+        ? m.parts
+            .filter((p: any) => p.type === "text")
+            .map((p: any) => p.text)
+            .join("")
         : (m.content ?? ""),
     }));
 
@@ -274,7 +271,7 @@ export async function POST(request: Request) {
       "gemini-2.5-flash",
       "gemini-3-pro-preview",
       "gemini-2.5-pro",
-      "gemini-3.1-pro"
+      "gemini-3.1-pro",
     ];
 
     let lastError: any = null;
@@ -289,18 +286,19 @@ export async function POST(request: Request) {
 
         return result.toTextStreamResponse();
       } catch (err) {
-        console.warn(`Model ${modelName} failed. Falling back to the next model...`);
+        console.warn(
+          `Model ${modelName} failed. Falling back to the next model...`,
+        );
         lastError = err; // الاحتفاظ بالخطأ في حال فشل كل النماذج
       }
     }
 
     throw lastError;
-
   } catch (error: any) {
     console.error("All Gemini API models failed:", error);
     return NextResponse.json(
       { error: "خطأ في السيرفر أو في مفتاح الـ API", details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

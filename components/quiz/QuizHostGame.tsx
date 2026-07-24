@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { supabase } from "@/lib/supabase"
 import { motion, AnimatePresence, animate } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { VolumeX, Volume2 } from "lucide-react"
@@ -22,7 +22,6 @@ const AnimatedNumber = ({ from, to }: { from: number, to: number }) => {
 };
 
 export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any) {
-  const supabase = createClient();
   const [gs, setGs] = useState(initialGS);
   const [timer, setTimer] = useState(0);
   const [answersCount, setAnswersCount] = useState(0);

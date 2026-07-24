@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
+import { supabase } from "@/lib/supabase"
 import { SAINTS_DATA } from "@/lib/saints-data"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,7 +12,6 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
   const params = use(paramsPromise);
   const quizId = params.quizId;
   const router = useRouter();
-  const supabase = createClient();
   const [quiz, setQuiz] = useState<any>(null);
   const [selectedSaint, setSelectedSaint] = useState<any>(null);
   const [members, setMembers] = useState<string[]>(Array(5).fill(""));

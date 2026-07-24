@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState, use } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { supabase } from "@/lib/supabase"
 import { GroupsSection } from "@/components/quiz/GroupsSection"
 import QRCodeSection from "@/components/quiz/QRCodeSection"
 import { QuizStats } from "@/components/quiz/QuizStats"
@@ -11,7 +11,6 @@ import QuizHostGame from "@/components/quiz/QuizHostGame"
 export default function HostPage({ params: paramsPromise }: { params: Promise<{ quizId: string }> }) {
   const params = use(paramsPromise);
   const quizId = params.quizId;
-  const supabase = createClient();
 
   const [quiz, setQuiz] = useState<any>(null);
   const [groups, setGroups] = useState<any[]>([]);

@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Bell, Palette, HardDrive, WifiOff } from "lucide-react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase"
 import OneSignal from 'react-onesignal';
 
 const NOTIFICATION_CATEGORIES = [
@@ -23,7 +23,6 @@ export default function SettingsView() {
   const [user, setUser] = useState<any>(null);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const supabase = createClient();
 
   const [isOptedIn, setIsOptedIn] = useState(false);
   const [tags, setTags] = useState<Record<string, string>>({});

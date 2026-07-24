@@ -53,11 +53,11 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-800 flex flex-col items-center" dir="rtl">
+    <div className="min-h-screen text-stone-800 flex flex-col items-center" dir="rtl">
       <LogoHeader />
       <div className="w-full max-w-md mx-auto my-1 px-1 mt-8">
-        <Card className="bg-white shadow-xl border-amber-900/10 rounded-2xl overflow-hidden">
-          <CardHeader className="bg-stone-100 border-b border-stone-200 pb-1">
+        <Card className="shadow-xl border-amber-900/10 rounded-2xl overflow-hidden">
+          <CardHeader className="border-b border-stone-200 pb-1">
             <CardTitle className="text-center text-amber-900 font-bold text-lg">
               إنشاء حساب جديد
             </CardTitle>

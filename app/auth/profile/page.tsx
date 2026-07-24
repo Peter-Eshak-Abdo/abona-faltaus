@@ -7,7 +7,7 @@ import AccountInfo from '@/components/AccountInfo';
 
 export default function ProfilePage() {
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen">
       <LogoHeader />
       <div className="py-1">
         <AccountInfo />
