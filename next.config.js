@@ -103,7 +103,7 @@ const nextConfig = {
       { protocol: "https", hostname: "archive.org" },
       {
         protocol: "https",
-        hostname: process.env.NEXT_PUBLIC_SUPABASE_HOST_URL,
+        hostname: "xginokdunnhesgohymja.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
     ],
