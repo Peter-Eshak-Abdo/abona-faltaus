@@ -85,6 +85,7 @@
     "react-onesignal": "^3.5.1",
     "react-pdf": "^10.4.1",
     "react-resizable-panels": "^4.7.3",
+    "react-textarea-autosize": "^8.5.9",
     "recharts": "^3.8.0",
     "slugify": "^1.6.8",
     "socket.io": "^4.8.3",

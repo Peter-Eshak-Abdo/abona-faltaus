@@ -4,7 +4,6 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import DOMPurify from "dompurify";
-// import { Send, Loader2, Sparkles, Plus, Trash2, PanelRight, Mic } from "lucide-react";
 import { Send, Loader2, Sparkles, Plus, UserCircle, Trash2, PanelRight, BookOpen, HeartPulse, ScrollText, Mic, Paperclip } from "lucide-react";
 // import { Send, Loader2, Sparkles, Plus, Trash2, PanelRight, Mic, AttachFile, MenuBook, AutoAwesome, HistoryEdu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Button } from "react-day-picker";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import TextareaAutosize from "react-textarea-autosize";
 
 // --- الألوان والخطوط (مستوحاة من تصميم Stitch الجديد) ---
 // يمكنك إضافة هذه الألوان لملف tailwind.config.js الخاص بك، أو استخدام فئات الألوان التقريبية كما فعلنا هنا لتسهيل النقل المباشر.
@@ -197,11 +197,11 @@ export default function ChatBot() {
 
   return (
     // الحاوية الرئيسية (شاشة كاملة)
-    <div className="flex flex-col h-[calc(100vh-80px)] md:h-full w-full relative overflow-hidden bg-[#fcf9f8]" dir="rtl" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div className="flex flex-col h-full w-full relative overflow-hidden bg-[#fcf9f8]" dir="rtl" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
       {/* --- Sidebar المحادثات (Sheet) --- */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right" className="w-90 p-0 flex flex-col">
+        <SheetContent side="right" className="w-20 p-0 flex flex-col">
           <SheetHeader className="p-1 border-b bg-amber-50">
             <SheetTitle className="text-right text-amber-900 font-bold pb-1">المحادثات السابقة</SheetTitle>
             <Button onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }} className="w-full mt-1 border-amber-200 text-amber-800 float-end">
@@ -222,15 +222,15 @@ export default function ChatBot() {
       </Sheet>
 
       {/* --- Header المحادثة --- */}
-      <div className="flex-none px-1 md:px-2 py-1 border-b border-[#dcc0c1]/30 bg-[#f6f3f2]/80 backdrop-blur-md flex items-center justify-between z-10">
+      <div className="flex-none border-b border-[#dcc0c1]/30 bg-[#f6f3f2]/80 backdrop-blur-md flex items-center justify-between z-10 shadow-2xl">
         <div className="flex items-center gap-1">
-            <button onClick={() => setSheetOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="القائمة">
-              <PanelRight size={20} />
+            <button onClick={() => setSheetOpen(true)} className="w-3 h-3 flex items-center justify-center rounded-full text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="القائمة">
+              <PanelRight size={18} />
             </button>
           <div className="relative">
             {/* صورة افتراضية لأبونا فلتاؤس (استبدل المسار بصورتك الحقيقية) */}
             {/* <div className="w-6 h-6 rounded-full bg-gray-300 border-2 border-[#4a0012]/20 flex items-center justify-center overflow-hidden"> */}
-            <div className="w-6 h-6 rounded-full overflow-hidden bg-white relative flex items-center justify-center">
+            <div className="w-3 h-3 rounded-full overflow-hidden bg-white relative flex items-center justify-center">
               {/* <span className="text-xl">📿</span> */}
               {user?.avatar_url ? (
                 <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" sizes="auto" />
@@ -264,8 +264,8 @@ export default function ChatBot() {
         <AnimatePresence>
           {messages.length === 0 && (
             // رسالة ترحيب أولية إذا كانت المحادثة فارغة
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-1 w-full md:w-4/5 max-w-3xl self-start">
-              <div className="bg-[#f0eded] rounded-t-3xl rounded-br-3xl rounded-bl-lg p-1 shadow-sm border border-[#ffdadb]/30 relative">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-0.5 w-full md:w-4/5 max-w-3xl self-start">
+              <div className="bg-[#f0eded] rounded-t-3xl rounded-br-3xl rounded-bl-lg p-0.5 shadow-sm border border-[#ffdadb]/30 relative">
                 <p className="text-[16px] text-[#1b1b1c] leading-relaxed">
                   سلام ونعمة يا ابني. كيف يمكنني مساعدتك اليوم؟ أنا هنا للإجابة على أسئلتك الروحية، ومشاركتك أقوال القديسين، أو الصلاة معك.
                 </p>
@@ -277,7 +277,7 @@ export default function ChatBot() {
             <motion.div
               key={m.id}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} layout
-              className={cn("flex items-end gap-1 w-full md:w-4/5", m.role === "user" ? "self-end justify-end max-w-2xl" : "self-start max-w-3xl")}
+              className={cn("flex items-end gap-0.5 w-full md:w-4/5", m.role === "user" ? "self-end justify-end max-w-2xl" : "self-start max-w-3xl")}
             >
               {/* صورة الـ AI (تظهر فقط في رسائل الـ AI وعلى الشاشات الكبيرة) */}
               {m.role !== "user" && (
@@ -287,7 +287,7 @@ export default function ChatBot() {
               )}
 
               <div className={cn(
-                "p-4 shadow-sm relative",
+                "p-0.5 shadow-sm relative",
                 m.role === "user"
                   ? "bg-[#4a0012] text-white rounded-t-3xl rounded-bl-3xl rounded-br-lg shadow-md"
                   : "bg-[#f0eded] text-[#1b1b1c] rounded-t-3xl rounded-br-3xl rounded-bl-lg border border-[#dcc0c1]/40"
@@ -310,16 +310,16 @@ export default function ChatBot() {
       </main>
 
       {/* --- Quick Suggestions (Chips) --- */}
-      <div className="flex-none px-1 md:px-2 py-1 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-[#dcc0c1]/10 bg-linear-to-t from-[#fcf9f8] to-transparent z-10">
-        <div className="flex gap-1">
+      <div className="flex-none p-0.5 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-[#dcc0c1]/10 bg-linear-to-t from-[#fcf9f8] to-transparent z-10">
+        <div className="flex gap-0.5">
           {[
-            { label: "أقوال القديسين", icon: BookOpen },
-            { label: "صلوات للمرضى", icon: HeartPulse },
+            // { label: "أقوال القديسين", icon: BookOpen },
+            // { label: "صلوات للمرضى", icon: HeartPulse },
             { label: "تفسير آية", icon: Sparkles },
-            { label: "سيرة قديس", icon: ScrollText }
+            { label: "تفسير مثل", icon: ScrollText }
           ].map((item, idx) => (
             <button key={idx} onClick={() => handleSuggestionClick(item.label)} className="inline-flex items-center gap-0.5 px-1 py-0.5 bg-[#eae7e7] hover:bg-[#ffe088]/20 text-[#564243] hover:text-[#4a0012] transition-all duration-300 rounded-full border border-[#dcc0c1]/30 text-xs font-semibold shadow-sm hover:shadow-md">
-              <item.icon size={4} />
+              <item.icon size={18} />
               {item.label}
             </button>
           ))}
@@ -331,32 +331,56 @@ export default function ChatBot() {
         <form onSubmit={onFormSubmit} className="max-w-4xl mx-auto">
           <div className="relative flex items-end gap-1 bg-[#fcf9f8] rounded-3xl border border-[#dcc0c1]/40 shadow-sm focus-within:border-[#4a0012]/50 focus-within:ring-1 focus-within:ring-[#4a0012]/20 transition-all p-1">
 
-            <button type="button" className="w-3 h-3 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
+            {/* <button type="button" className="w-3 h-3 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
               <Paperclip size={18} className="group-hover:text-[#4a0012] transition-colors" />
-            </button>
+            </button> */}
 
-            <textarea
+            <TextareaAutosize
+            // <textarea
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e)=> setInput(e.target.value)}
+              // onChange={(e) => {
+              //   setInput(e.target.value)
+
+              //   e.target.style.height = "auto";
+              //   e.target.style.height = `${e.target.scrollHeight}px`;
+              // }}
+              // onInput={(e) => {
+              //   const target = e.currentTarget;
+              //   target.style.height = "auto";
+              //   target.style.height = `${target.scrollHeight}px`;
+              // }}
               placeholder={user ? "اكتب رسالتك هنا..." : "يرجى تسجيل الدخول"}
-              className="flex-1 max-h-32 min-h-1 bg-transparent resize-none outline-none py-1 px-0.5 text-[16px] text-[#1b1b1c] placeholder:text-[#564243]/50 leading-relaxed overflow-y-auto"
+              // className="flex-1 max-h-32 min-h-[30px] bg-transparent resize-none outline-none py-0.5 px-0.5 text-[16px] text-[#1b1b1c] placeholder:text-[#564243]/50 leading-relaxed overflow-y-auto"
+              className="flex-1 resize-none bg-transparent outline-none pe-0.5 text-[16px] leading-relaxed overflow-y-auto"
               disabled={!user || isLoading}
-              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onFormSubmit(e as any); } }}
-              rows={1}
-            // بسيط لتعديل الارتفاع تلقائياً (يمكنك استخدام مكتبة مثل react-textarea-autosize لاحقاً)
+              // onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onFormSubmit(e as any); } }}
+              minRows={1}
+              maxRows={6}
+              onKeyDown={(e) => {
+                if (
+                  e.key === "Enter" &&
+                  !e.nativeEvent.isComposing &&
+                  (e.ctrlKey || e.metaKey)
+                ) {
+                  e.preventDefault();
+                  onFormSubmit(e as any);
+                }
+              }}
+              // rows={1}
             />
 
             <div className="flex items-center gap-1">
-              <button type="button" className="w-3 h-3 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
+              {/* <button type="button" className="w-3 h-3 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
                 <Mic size={18} className="group-hover:text-[#4a0012] transition-colors" />
-              </button>
+              </button> */}
 
               <button type="submit" className="w-3 h-3 flex-none rounded-full bg-[#4a0012] flex items-center justify-center text-white hover:bg-[#6b1124] transition-all shadow-md transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none" disabled={!input.trim() || isLoading || !user}>
-                <Send size={18} className="rtl:rotate-180" />
+                <Send size={22} className="rtl:rotate-270" />
               </button>
             </div>
           </div>
-          <div className="text-center mt-1">
+          <div className="text-center mt-0.5">
             <span className="text-[10px] text-[#564243]/50 font-semibold">قد يخطئ الذكاء الاصطناعي أحياناً. يرجى مراجعة الإجابات اللاهوتية.</span>
           </div>
         </form>
