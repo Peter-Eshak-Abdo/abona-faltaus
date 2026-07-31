@@ -1,6 +1,9 @@
 # ابونا فلتاؤس — موقع كنسي أرثوذكسي
 
 ## https://abona-faltaus.vercel.app/
+
+### https://codewiki.google/github.com/peter-eshak-abdo/abona-faltaus
+
 ## أكتب علي اي متصفح (ابونا فلتاؤس تفاحة)
 موقع كنسي مسيحي ارثوكسي باسم **ابونا فلتاؤس**، مبني بـ Next.js وTypeScript ويحتوي واجهة أمامية غنيّة بميزات مثل صفحات تقديمية، امتحانات تجميعية/فردية، واستخدام Socket.IO للـ realtime (backend منفصل). الموقع منشور على Vercel (النسخة الحية).
 

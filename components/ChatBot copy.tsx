@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
-import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import DOMPurify from "dompurify";
 // import { Send, Loader2, Sparkles, Plus, Trash2, PanelRight, Mic } from "lucide-react";
-import { Send, Loader2, Sparkles, Plus, UserCircle, Trash2, PanelRight, BookOpen, HeartPulse, ScrollText, Mic, Paperclip } from "lucide-react";
+import { Send, Loader2, Sparkles, Plus, Trash2, PanelRight, BookOpen, HeartPulse, ScrollText, Mic, Paperclip } from "lucide-react";
 // import { Send, Loader2, Sparkles, Plus, Trash2, PanelRight, Mic, AttachFile, MenuBook, AutoAwesome, HistoryEdu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -33,21 +32,12 @@ const TypingIndicator = () => (
   </motion.div>
 );
 
-interface UserProfile {
-  id: string;
-  full_name: string;
-  avatar_url: string | null;
-  email: string;
-  updated_at: string;
-}
-
 export default function ChatBot() {
-  const [user, setUser] = useState<UserProfile | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [convId, setConvId] = useState<string | null>(null);
   const [convs, setConvs] = useState<any[]>([]);
-  // const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
 
   // إدارة الرسائل والـ Loading يدوياً لضمان الاستقرار
   const [messages, setMessages] = useState<any[]>([]);
@@ -66,34 +56,18 @@ export default function ChatBot() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
       if (session?.user) {
-        setUser({
-          id: session.user.id,
-          full_name: session.user.user_metadata?.full_name || "",
-          avatar_url: session.user.user_metadata?.avatar_url || null,
-          email: session.user.email || "",
-          updated_at: session.user.updated_at || "",
-        });
         fetchConversations(session.user.id);
-      } else {
-        setUser(null);
       }
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
       if (session?.user) {
-        setUser({
-          id: session.user.id,
-          full_name: session.user.user_metadata?.full_name || "",
-          avatar_url: session.user.user_metadata?.avatar_url || null,
-          email: session.user.email || "",
-          updated_at: session.user.updated_at || "",
-        });
         fetchConversations(session.user.id);
-      } else {
-        setUser(null);
       }
     });
 
@@ -202,70 +176,63 @@ export default function ChatBot() {
       {/* --- Sidebar المحادثات (Sheet) --- */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="right" className="w-90 p-0 flex flex-col">
-          <SheetHeader className="p-1 border-b bg-amber-50">
-            <SheetTitle className="text-right text-amber-900 font-bold pb-1">المحادثات السابقة</SheetTitle>
-            <Button onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }} className="w-full mt-1 border-amber-200 text-amber-800 float-end">
-              <Plus size={5} className="ml-1" /> محادثة جديدة
-            </Button>
+          <SheetHeader className="p-4 border-b bg-amber-50">
+            <SheetTitle className="text-right text-amber-900 font-bold pb-2">المحادثات السابقة</SheetTitle>
+            <SheetDescription className="hidden">سجل المحادثات</SheetDescription>
+            <button
+              onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }}
+              className="flex items-center justify-center gap-2 w-full mt-2 py-2 px-4 rounded-md border border-amber-200 text-amber-800 hover:bg-amber-100 transition-colors"
+            >
+              <Plus size={16} /> محادثة جديدة
+            </button>
           </SheetHeader>
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 overflow-y-auto">
             {convs.map((c) => (
-              <div key={c.id} onClick={() => handleSelect(c.id)} className={cn("p-1 border-b cursor-pointer text-right text-sm hover:bg-gray-50 transition-colors", convId === c.id && "bg-amber-100")}>
+              <div key={c.id} onClick={() => handleSelect(c.id)} className={cn("p-4 border-b cursor-pointer text-right text-sm hover:bg-gray-50 transition-colors", convId === c.id && "bg-amber-100")}>
                 {c.title}
               </div>
             ))}
           </ScrollArea>
-          {/* <SheetDescription className="sr-only">
-            المحادثات كلها
-          </SheetDescription> */}
         </SheetContent>
       </Sheet>
 
       {/* --- Header المحادثة --- */}
-      <div className="flex-none px-1 md:px-2 py-1 border-b border-[#dcc0c1]/30 bg-[#f6f3f2]/80 backdrop-blur-md flex items-center justify-between z-10">
-        <div className="flex items-center gap-1">
-            <button onClick={() => setSheetOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="القائمة">
-              <PanelRight size={20} />
-            </button>
+      <div className="flex-none px-4 md:px-6 py-3 border-b border-[#dcc0c1]/30 bg-[#f6f3f2]/80 backdrop-blur-md flex items-center justify-between z-10">
+        <div className="flex items-center gap-3">
+          <button onClick={() => setSheetOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="القائمة">
+            <PanelRight size={20} />
+          </button>
+
           <div className="relative">
-            {/* صورة افتراضية لأبونا فلتاؤس (استبدل المسار بصورتك الحقيقية) */}
-            {/* <div className="w-6 h-6 rounded-full bg-gray-300 border-2 border-[#4a0012]/20 flex items-center justify-center overflow-hidden"> */}
-            <div className="w-6 h-6 rounded-full overflow-hidden bg-white relative flex items-center justify-center">
-              {/* <span className="text-xl">📿</span> */}
-              {user?.avatar_url ? (
-                <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" sizes="auto" />
-              ) : (
-                <UserCircle className="w-5 h-5 text-stone-300" />
-              )}
+            <div className="w-10 h-10 rounded-full bg-gray-300 border-2 border-[#4a0012]/20 flex items-center justify-center overflow-hidden">
+              <span className="text-xl">📿</span>
             </div>
-            <div className="absolute bottom-0 right-0 w-1 h-1 bg-[#ffe088] rounded-full border-2 border-[#fcf9f8]"></div>
+            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#ffe088] rounded-full border-2 border-[#fcf9f8]"></div>
           </div>
           <div className="flex flex-col">
             <h1 className="text-xl font-bold text-[#1b1b1c]" style={{ fontFamily: "'Libre Caslon Text', serif" }}>شات أبونا فلتاؤس</h1>
             <span className="text-xs text-[#564243] flex items-center gap-1">
-              <span className="w-0.5 h-0.5 rounded-full bg-[#ffe088] animate-pulse"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#ffe088] animate-pulse"></span>
               متصل الآن
             </span>
           </div>
         </div>
-        <button className="w-4 h-4 rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="مسح المحادثة" onClick={() => setMessages([])}>
-          <Trash2 size={16} />
+        <button className="w-8 h-8 rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="مسح المحادثة" onClick={() => { setMessages([]); setConvId(null); }}>
+          <Trash2 size={20} />
         </button>
       </div>
 
       {/* --- منطقة الرسائل --- */}
-      <main className="flex-1 overflow-y-auto px-1 md:px-2 py-0.5 flex flex-col gap-1 relative z-10" id="chat-messages">
-        {/* خلفية مزخرفة شفافة (اختياري) */}
+      <main className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col gap-4 relative z-10" id="chat-messages">
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-[-1] opacity-30 mix-blend-multiply">
-          <div className="absolute -top-10 -right-10 w-24 h-24 bg-[#ffe088]/20 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/3 -left-5 w-18 h-18 bg-[#4a0012]/10 rounded-full blur-3xl"></div>
+          <div className="absolute -top-10 -right-10 w-64 h-64 bg-[#ffe088]/20 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/3 -left-10 w-48 h-48 bg-[#4a0012]/10 rounded-full blur-3xl"></div>
         </div>
 
         <AnimatePresence>
           {messages.length === 0 && (
-            // رسالة ترحيب أولية إذا كانت المحادثة فارغة
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-1 w-full md:w-4/5 max-w-3xl self-start">
-              <div className="bg-[#f0eded] rounded-t-3xl rounded-br-3xl rounded-bl-lg p-1 shadow-sm border border-[#ffdadb]/30 relative">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-2 w-full md:w-4/5 max-w-3xl self-start mt-4">
+              <div className="bg-[#f0eded] rounded-t-3xl rounded-br-3xl rounded-bl-lg p-4 shadow-sm border border-[#ffdadb]/30 relative">
                 <p className="text-[16px] text-[#1b1b1c] leading-relaxed">
                   سلام ونعمة يا ابني. كيف يمكنني مساعدتك اليوم؟ أنا هنا للإجابة على أسئلتك الروحية، ومشاركتك أقوال القديسين، أو الصلاة معك.
                 </p>
@@ -277,11 +244,10 @@ export default function ChatBot() {
             <motion.div
               key={m.id}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} layout
-              className={cn("flex items-end gap-1 w-full md:w-4/5", m.role === "user" ? "self-end justify-end max-w-2xl" : "self-start max-w-3xl")}
+              className={cn("flex items-end gap-2 w-full md:w-4/5", m.role === "user" ? "self-end justify-end max-w-2xl" : "self-start max-w-3xl")}
             >
-              {/* صورة الـ AI (تظهر فقط في رسائل الـ AI وعلى الشاشات الكبيرة) */}
               {m.role !== "user" && (
-                <div className="w-2 h-2 rounded-full bg-gray-200 hidden md:flex items-center justify-center opacity-70 shrink-0">
+                <div className="w-8 h-8 rounded-full bg-gray-200 hidden md:flex items-center justify-center opacity-70 shrink-0">
                   <span className="text-sm">📿</span>
                 </div>
               )}
@@ -301,7 +267,6 @@ export default function ChatBot() {
             </motion.div>
           ))}
 
-          {/* ظهور اللودينج */}
           {isLoading && messages[messages.length - 1]?.role === 'user' && (
             <TypingIndicator />
           )}
@@ -310,16 +275,16 @@ export default function ChatBot() {
       </main>
 
       {/* --- Quick Suggestions (Chips) --- */}
-      <div className="flex-none px-1 md:px-2 py-1 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-[#dcc0c1]/10 bg-linear-to-t from-[#fcf9f8] to-transparent z-10">
-        <div className="flex gap-1">
+      <div className="flex-none px-4 md:px-6 py-3 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-[#dcc0c1]/10 bg-gradient-to-t from-[#fcf9f8] to-transparent z-10">
+        <div className="flex gap-2">
           {[
             { label: "أقوال القديسين", icon: BookOpen },
             { label: "صلوات للمرضى", icon: HeartPulse },
             { label: "تفسير آية", icon: Sparkles },
             { label: "سيرة قديس", icon: ScrollText }
           ].map((item, idx) => (
-            <button key={idx} onClick={() => handleSuggestionClick(item.label)} className="inline-flex items-center gap-0.5 px-1 py-0.5 bg-[#eae7e7] hover:bg-[#ffe088]/20 text-[#564243] hover:text-[#4a0012] transition-all duration-300 rounded-full border border-[#dcc0c1]/30 text-xs font-semibold shadow-sm hover:shadow-md">
-              <item.icon size={4} />
+            <button key={idx} onClick={() => handleSuggestionClick(item.label)} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#eae7e7] hover:bg-[#ffe088]/20 text-[#564243] hover:text-[#4a0012] transition-all duration-300 rounded-full border border-[#dcc0c1]/30 text-sm font-semibold shadow-sm hover:shadow-md">
+              <item.icon size={14} />
               {item.label}
             </button>
           ))}
@@ -327,41 +292,40 @@ export default function ChatBot() {
       </div>
 
       {/* --- منطقة الإدخال (Input Area) --- */}
-      <footer className="flex-none bg-[#f6f3f2] p-1 md:px-1 md:py-1 border-t border-[#dcc0c1]/20 shadow-[0_-4px_20px_rgba(31,31,31,0.02)] z-20 pb-safe">
+      <footer className="flex-none bg-[#f6f3f2] p-3 md:px-6 md:py-4 border-t border-[#dcc0c1]/20 shadow-[0_-4px_20px_rgba(31,31,31,0.02)] z-20 pb-safe">
         <form onSubmit={onFormSubmit} className="max-w-4xl mx-auto">
-          <div className="relative flex items-end gap-1 bg-[#fcf9f8] rounded-3xl border border-[#dcc0c1]/40 shadow-sm focus-within:border-[#4a0012]/50 focus-within:ring-1 focus-within:ring-[#4a0012]/20 transition-all p-1">
+          <div className="relative flex items-end gap-2 bg-[#fcf9f8] rounded-3xl border border-[#dcc0c1]/40 shadow-sm focus-within:border-[#4a0012]/50 focus-within:ring-1 focus-within:ring-[#4a0012]/20 transition-all p-2">
 
-            <button type="button" className="w-3 h-3 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
-              <Paperclip size={18} className="group-hover:text-[#4a0012] transition-colors" />
+            <button type="button" onClick={handleAttachmentClick} className="w-10 h-10 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
+              <Paperclip size={20} className="group-hover:text-[#4a0012] transition-colors" />
             </button>
 
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={user ? "اكتب رسالتك هنا..." : "يرجى تسجيل الدخول"}
-              className="flex-1 max-h-32 min-h-1 bg-transparent resize-none outline-none py-1 px-0.5 text-[16px] text-[#1b1b1c] placeholder:text-[#564243]/50 leading-relaxed overflow-y-auto"
+              className="flex-1 max-h-32 min-h-[44px] bg-transparent resize-none outline-none py-2 px-2 text-[16px] text-[#1b1b1c] placeholder:text-[#564243]/50 leading-relaxed overflow-y-auto"
               disabled={!user || isLoading}
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onFormSubmit(e as any); } }}
               rows={1}
-            // بسيط لتعديل الارتفاع تلقائياً (يمكنك استخدام مكتبة مثل react-textarea-autosize لاحقاً)
             />
 
             <div className="flex items-center gap-1">
-              <button type="button" className="w-3 h-3 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
-                <Mic size={18} className="group-hover:text-[#4a0012] transition-colors" />
+              <button type="button" onClick={handleMicClick} className="w-10 h-10 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
+                <Mic size={20} className="group-hover:text-[#4a0012] transition-colors" />
               </button>
 
-              <button type="submit" className="w-3 h-3 flex-none rounded-full bg-[#4a0012] flex items-center justify-center text-white hover:bg-[#6b1124] transition-all shadow-md transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none" disabled={!input.trim() || isLoading || !user}>
+              <button type="submit" className="w-10 h-10 flex-none rounded-full bg-[#4a0012] flex items-center justify-center text-white hover:bg-[#6b1124] transition-all shadow-md transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none" disabled={!input.trim() || isLoading || !user}>
                 <Send size={18} className="rtl:rotate-180" />
               </button>
             </div>
           </div>
-          <div className="text-center mt-1">
-            <span className="text-[10px] text-[#564243]/50 font-semibold">قد يخطئ الذكاء الاصطناعي أحياناً. يرجى مراجعة الإجابات اللاهوتية.</span>
+          <div className="text-center mt-2">
+            <span className="text-[11px] text-[#564243]/60 font-semibold">قد يخطئ الذكاء الاصطناعي أحياناً. يرجى مراجعة الإجابات اللاهوتية.</span>
           </div>
         </form>
       </footer>
 
-    </div >
+    </div>
   );
 }
