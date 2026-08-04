@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* @import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap'); */
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -55,7 +59,7 @@
   --animate-draw: drawLine 1.5s ease-out forwards;
   --animate-blob: blob 7s infinite;
   --animate-spin-slow: spin 3s linear infinite;
-  
+
   --color-primary: var(--color-primary);
   --color-primary-container: var(--color-primary-container);
   --color-secondary-fixed: var(--color-secondary-fixed);
@@ -207,6 +211,18 @@
   a {
     @apply no-underline text-inherit;
   }
+
+  body {
+    overscroll-behavior: none;
+  }
+
+  main>:first-child {
+    margin-top: 0 !important;
+  }
+
+  main>:last-child {
+    margin-bottom: 0 !important;
+  }
 }
 
 /* 3. Utilities & Custom Components */
@@ -250,3 +266,7 @@
 .spinner {
   @apply w-[60px] h-[60px] rounded-full border-[6px] border-gray-300 border-t-sky-400 animate-spin;
 }
+
+/* ::-webkit-scrollbar {
+  display: none;
+} */

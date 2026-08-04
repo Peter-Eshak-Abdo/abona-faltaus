@@ -97,6 +97,21 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"
           rel="stylesheet"
         />
+        <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap"
+          as="style"
+        />
+        <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          as="style"
+        />
+        <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          as="style"
+        />
         {process.env.GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={process.env.GOOGLE_SITE_VERIFICATION} />}
         {/* AdSense Script - Optimized */}
         {/* {process.env.GOOGLE_ADSENSE_CLIENT_ID && (
