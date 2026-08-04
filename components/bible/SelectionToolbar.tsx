@@ -1,24 +1,39 @@
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaCopy, FaShareAlt, FaStar, FaTimes, FaPlusSquare } from "react-icons/fa";
-import { useState } from "react"
 import localforage from "localforage";
-import { bookNames, shortBookNames } from "@/lib/books";
+import { shortBookNames } from "@/lib/books";
 
 type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
 type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
 
-export default function SelectionToolbar() {
-  const [bibleData, setBibleData] = useState<BookObj[]>([]);
-  const [selectedVerses, setSelectedVerses] = useState<number[]>([]);
-  const [isDayModalOpen, setIsDayModalOpen] = useState(false);
-  const [currentBookIdx, setCurrentBookIdx] = useState(0);
-  const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
-  const [favorites, setFavorites] = useState<{ bIdx: number, cIdx: number, vNum: number }[]>([]);
+type SelectionToolbarProps = {
+  bibleData: BookObj[];
+  currentBookIdx: number;
+  currentChapterIdx: number;
+  selectedVerses: number[];
+  setSelectedVerses: (verses: number[]) => void;
+  favorites: { bIdx: number; cIdx: number; vNum: number }[];
+  setFavorites: (favs: { bIdx: number; cIdx: number; vNum: number }[]) => void;
+  isDayModalOpen: boolean;
+  setIsDayModalOpen: (open: boolean) => void;
+};
 
+export default function SelectionToolbar({
+  bibleData,
+  currentBookIdx,
+  currentChapterIdx,
+  selectedVerses,
+  setSelectedVerses,
+  favorites,
+  setFavorites,
+  isDayModalOpen,
+  setIsDayModalOpen,
+}: SelectionToolbarProps) {
 
   const formatCitation = () => {
     const activeBook = bibleData[currentBookIdx];
+    if (!activeBook) return "";
     const shortName = shortBookNames[activeBook.abbrev as keyof typeof shortBookNames] || activeBook.name;
     const chapterNum = currentChapterIdx + 1;
 
@@ -46,7 +61,7 @@ export default function SelectionToolbar() {
   };
 
   const getSelectedText = () => {
-    const activeChapter = bibleData[currentBookIdx].chapters[currentChapterIdx];
+    const activeChapter = bibleData[currentBookIdx]?.chapters?.[currentChapterIdx] || [];
     const sortedVerses = [...selectedVerses].sort((a, b) => a - b);
     const textArr = sortedVerses.map(vNum => {
       const vObj = activeChapter.find(v => v.verse === vNum);

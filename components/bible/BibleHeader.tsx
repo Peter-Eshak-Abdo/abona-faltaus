@@ -96,8 +96,8 @@ export default function BibleHeader() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface/70 backdrop-blur-md shadow-[0_4px_20px_rgba(31,31,31,0.04)]">
-        <div className="h-5 w-full px-1 flex items-center justify-between">
-          <div className="flex items-center gap-1">
+        <div className="h-5 w-full px-0.5 flex items-center justify-between">
+          <div className="flex items-center gap-0.5">
             {user?.avatar_url ? (
               <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" sizes="auto" />
             ) : (
