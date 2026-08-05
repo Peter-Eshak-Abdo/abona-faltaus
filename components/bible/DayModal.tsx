@@ -7,15 +7,26 @@ import { shortBookNames } from "@/lib/books";
 type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
 type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
 
-export default function DayModal({ onClose }: { onClose: () => void }) {
-  const [bibleData, setBibleData] = useState<BookObj[]>([]);
+type DayModalProps = {
+  bibleData: BookObj[];
+  currentBookIdx: number;
+  currentChapterIdx: number;
+  selectedVerses: number[];
+  setSelectedVerses: (verses: number[]) => void;
+  onClose: () => void;
+};
+
+export default function DayModal({
+  bibleData,
+  currentBookIdx,
+  currentChapterIdx,
+  selectedVerses,
+  setSelectedVerses,
+  onClose,
+}: DayModalProps) {
   const [dayCodeInput, setDayCodeInput] = useState("");
   const [dayMessage, setDayMessage] = useState("");
   const [isAddingToDay, setIsAddingToDay] = useState(false);
-  const [currentBookIdx, setCurrentBookIdx] = useState(0);
-  const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
-  const [selectedVerses, setSelectedVerses] = useState<number[]>([]);
-
 
   const handleAddToDay = async () => {
     if (!dayCodeInput || dayCodeInput.length !== 12) {
@@ -40,9 +51,16 @@ export default function DayModal({ onClose }: { onClose: () => void }) {
       }
 
       const activeBook = bibleData[currentBookIdx];
+      const activeChapter = activeBook?.chapters?.[currentChapterIdx];
+
+      if (!activeBook || !activeChapter) {
+        setDayMessage("حدث خطأ في تحديد الآيات المختارة");
+        setIsAddingToDay(false);
+        return;
+      }
+
       const shortName = shortBookNames[activeBook.abbrev as keyof typeof shortBookNames] || activeBook.name;
       const chapterNum = currentChapterIdx + 1;
-      const activeChapter = activeBook.chapters[currentChapterIdx];
 
       const newVerses = selectedVerses.sort((a, b) => a - b).map(vNum => {
         const vObj = activeChapter.find(v => v.verse === vNum);
@@ -77,7 +95,6 @@ export default function DayModal({ onClose }: { onClose: () => void }) {
     }
     setIsAddingToDay(false);
   };
-
 
   return (
     <AnimatePresence>

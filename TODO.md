@@ -1,8 +1,7 @@
-# TODO - Add `onClose` prop to DayModal
+# TODO - Fix Bible Search Functionality
 
 ## Steps
 
-- [x] 1. Add `onClose` prop to `components/bible/DayModal.tsx` component signature
-- [x] 2. Pass `onClose` handler from `app/bible/page.tsx` when rendering `<DayModal />`
-- [x] 3. Conditionally render the modal based on `isDayModalOpen` state in `app/bible/page.tsx`
-- [ ] 4. Verify no TypeScript/lint errors
+- [x] 1. Update `components/bible/ReadingControlsHeader.tsx` to accept `setIsSearchOpen` as a prop (remove local state)
+- [x] 2. Update `app/bible/page.tsx` to add `isSearchOpen` state, import & render `BibleSearch`, add `handleGoToVerse` handler, and pass search props to `ReadingControlsHeader`
+- [x] 3. Verify the implementation

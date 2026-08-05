@@ -55,34 +55,34 @@ export default function FavoritesPage() {
     }
   };
 
-  if (isLoading) return <div className="p-8 text-center">جاري تحميل المفضلة...</div>;
+  if (isLoading) return <div className="p-4 text-center">جاري تحميل المفضلة...</div>;
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-1 md:p-2 text-zinc-900 dark:text-zinc-100">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center gap-1 mb-1">
-          <Link href="/bible" className="p-1 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-1 text-zinc-900 dark:text-zinc-100">
+      <div className="max-w-8xl mx-auto">
+        <div className="flex items-center gap-0.5 mb-1">
+          <Link href="/bible" className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition">
             <FaArrowRight />
           </Link>
           <h1 className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">الآيات المفضلة</h1>
         </div>
 
         {favorites.length === 0 ? (
-          <div className="text-center py-2 text-zinc-500 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border dark:border-zinc-800">
-            <FaBookOpen size={48} className="mx-auto mb-4 opacity-20" />
+          <div className="text-center py-1 text-zinc-500 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border dark:border-zinc-800">
+            <FaBookOpen size={48} className="mx-auto mb-2 opacity-20" />
             <p>لا توجد آيات في المفضلة حتى الآن.</p>
           </div>
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {favorites.map((fav, i) => {
               const book = bibleData[fav.bIdx];
               const verseObj = book?.chapters[fav.cIdx]?.find((v: any) => v.verse === fav.vNum);
               if (!book || !verseObj) return null;
 
               return (
-                <div key={i} className="bg-white dark:bg-zinc-900 p-1 rounded-2xl shadow-sm border dark:border-zinc-800 flex flex-col md:flex-row gap-1 justify-between items-start md:items-center">
+                <div key={i} className="bg-white dark:bg-zinc-900 p-0.5 rounded-2xl shadow-sm border dark:border-zinc-800 flex flex-col md:flex-row gap-1 justify-between items-start md:items-center">
                   <div>
-                    <div className="text-blue-600 dark:text-blue-400 font-bold text-sm mb-1">
+                    <div className="text-blue-600 dark:text-blue-400 font-bold text-sm mb-0.5">
                       {book.name} - إصحاح {fav.cIdx + 1} : {fav.vNum}
                     </div>
                     <p className="font-arabic text-lg text-justify leading-loose">
@@ -90,20 +90,20 @@ export default function FavoritesPage() {
                     </p>
                   </div>
 
-                  <div className="flex gap-1 w-full md:w-auto mt-1 md:mt-0">
+                  <div className="flex gap-0.5 w-full md:w-auto md:mt-0">
                     {/* زرار الذهاب للآية بيحفظ المكان في localStorage ويوديه لصفحة الكتاب */}
                     <button
                       onClick={() => {
                         localStorage.setItem("bible_last_read", JSON.stringify({ bIdx: fav.bIdx, cIdx: fav.cIdx }));
                         window.location.href = "/bible";
                       }}
-                      className="flex-1 md:flex-none flex items-center justify-center gap-1 p-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition font-bold text-sm"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-0.5 p-0.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition font-bold text-sm"
                     >
                       <FaBookOpen /> اقرأ
                     </button>
                     <button
                       onClick={() => removeFavorite(fav.bIdx, fav.cIdx, fav.vNum)}
-                      className="flex-1 md:flex-none flex items-center justify-center gap-1 p-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition font-bold text-sm"
+                      className="flex-1 md:flex-none flex items-center justify-center gap-0.5 p-0.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition font-bold text-sm"
                     >
                       <FaTrash /> إزالة
                     </button>

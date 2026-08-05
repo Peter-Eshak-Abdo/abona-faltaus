@@ -5,6 +5,7 @@ import { loadBible } from "@/lib/bible-utils";
 
 // Components
 import BibleLoading from "@/components/bible/BibleLoading";
+import BibleSearch from "@/components/bible/BibleSearch";
 import SelectionToolbar from "@/components/bible/SelectionToolbar";
 import DayModal from "@/components/bible/DayModal";
 import ReadingControlsHeader from "@/components/bible/ReadingControlsHeader";
@@ -28,6 +29,7 @@ export default function BibleReaderPage() {
   const [selectedVerses, setSelectedVerses] = useState<number[]>([]);
   const [favorites, setFavorites] = useState<{ bIdx: number; cIdx: number; vNum: number }[]>([]);
   const [isDayModalOpen, setIsDayModalOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const isInitialized = useRef(false);
 
@@ -67,6 +69,9 @@ export default function BibleReaderPage() {
         const savedSize = localStorage.getItem("bible_font_size");
         if (savedSize) setFontSize(parseInt(savedSize));
 
+        const savedLineHeight = localStorage.getItem("bible_line_height");
+        if (savedLineHeight) setLineHeight(savedLineHeight);
+
         setIsLoading(false);
         isInitialized.current = true;
 
@@ -80,10 +85,47 @@ export default function BibleReaderPage() {
     initData();
   }, []);
 
+  // Persist the last-read position so it's restored on next visit
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    localStorage.setItem("bible_last_read", JSON.stringify({ bIdx: currentBookIdx, cIdx: currentChapterIdx }));
+  }, [currentBookIdx, currentChapterIdx]);
+
+  // Persist font size so it's restored on next visit
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    localStorage.setItem("bible_font_size", String(fontSize));
+  }, [fontSize]);
+
+  // Persist line height so it's restored on next visit
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    localStorage.setItem("bible_line_height", String(lineHeight));
+  }, [lineHeight]);
+
   const toggleVerseSelection = (verseNum: number) => {
     setSelectedVerses(prev =>
       prev.includes(verseNum) ? prev.filter(v => v !== verseNum) : [...prev, verseNum]
     );
+  };
+
+  const handleGoToVerse = (bookIdx: number, chapterIdx: number, verseNum: number) => {
+    setCurrentBookIdx(bookIdx);
+    setCurrentChapterIdx(chapterIdx);
+    setIsSearchOpen(false);
+
+    // Wait for the chapter to render, then scroll to the verse
+    setTimeout(() => {
+      const canvas = document.getElementById("reading-canvas");
+      const verseEl = document.getElementById(`verse-${verseNum}`);
+      if (canvas && verseEl) {
+        const canvasTop = canvas.getBoundingClientRect().top;
+        const verseTop = verseEl.getBoundingClientRect().top;
+        canvas.scrollTop += verseTop - canvasTop - canvas.clientHeight / 2 + verseEl.clientHeight / 2;
+      } else {
+        verseEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 200);
   };
 
   if (isLoading) {
@@ -96,7 +138,7 @@ export default function BibleReaderPage() {
   if (!bibleData.length) return null;
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pb-1 text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
       <main className="w-full pt-1">
         <div className="flex flex-col w-full h-full relative" id="bible-app">
           <div className="flex flex-col w-full bg-surface-container-low">
@@ -108,12 +150,13 @@ export default function BibleReaderPage() {
               setCurrentChapterIdx={setCurrentChapterIdx}
               fontSize={fontSize}
               setFontSize={setFontSize}
+              setIsSearchOpen={setIsSearchOpen}
             />
 
             <section className="grow flex flex-col relative max-w-8xl mx-auto w-full min-h-0">
               {/* Reading canvas: fixed height + internal scroll so the whole chapter is reachable */}
               <article
-                className="p-0.5 pb-1 flex flex-col gap-0.5 font-title-lg text-title-lg text-on-surface transition-all duration-300 overflow-y-auto h-[calc(100dvh-160px)]"
+                className="p-0.5 flex flex-col gap-0.5 font-title-lg text-title-lg text-on-surface transition-all duration-300 overflow-y-auto h-[calc(100dvh-160px)]"
                 id="reading-canvas"
                 style={{ fontSize: `${fontSize}px`, lineHeight: lineHeight || 1.8 }}
               >
@@ -148,8 +191,22 @@ export default function BibleReaderPage() {
         />
 
         {isDayModalOpen && (
-          <DayModal onClose={() => setIsDayModalOpen(false)} />
+          <DayModal
+            bibleData={bibleData}
+            currentBookIdx={currentBookIdx}
+            currentChapterIdx={currentChapterIdx}
+            selectedVerses={selectedVerses}
+            setSelectedVerses={setSelectedVerses}
+            onClose={() => setIsDayModalOpen(false)}
+          />
         )}
+
+        <BibleSearch
+          isOpen={isSearchOpen}
+          onClose={() => setIsSearchOpen(false)}
+          bibleData={bibleData}
+          onGoToVerse={handleGoToVerse}
+        />
       </main>
     </div>
   );

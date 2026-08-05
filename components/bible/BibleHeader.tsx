@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState, useRef } from "react";
 import { UserCircle } from "lucide-react";
 import {FaSearch} from "react-icons/fa";
-import BibleSearch from "../BibleSearch";
+import BibleSearch from "./BibleSearch";
 
 type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
 type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
@@ -103,12 +103,6 @@ export default function BibleHeader() {
             ) : (
               <UserCircle className="w-5 h-5 text-stone-300" />
             )}
-
-            {/* <img
-            alt="Logo"
-            className="h-3 w-auto object-contain"
-            src="https://lh3.googleusercontent.com/aida/AP1WRLuvvpt5WZuH9UmkRJl_yg9q_9zEkdEI8BIKQW7hKxDszaEfF0LZHmTklSnUwaLWzL4JXFcWxwxJhideKh1nNrbvMGQsW4kR75MJGV-8jpaENyoiAQmE4wqOmuhhcyzlkKsBpxMyvJHhH1xKiuWVRY5dDk5elYRzNgG8wVTYVtCD0170avoGLgMevSDsMOh9dedlm71KKKLksRqHpme51g_zvAjngMn6rzAclvvepyaxf9JmklWW9OtKxJI"
-          /> */}
             <span className="font-headline-md text-headline-md text-primary hidden sm:block">Abouna Faltaous</span>
           </div>
 

@@ -5,21 +5,14 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import DOMPurify from "dompurify";
 import { Send, Loader2, Sparkles, Plus, UserCircle, Trash2, PanelRight, BookOpen, HeartPulse, ScrollText, Mic, Paperclip } from "lucide-react";
-// import { Send, Loader2, Sparkles, Plus, Trash2, PanelRight, Mic, AttachFile, MenuBook, AutoAwesome, HistoryEdu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Button } from "react-day-picker";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import TextareaAutosize from "react-textarea-autosize";
-
-// --- الألوان والخطوط (مستوحاة من تصميم Stitch الجديد) ---
-// يمكنك إضافة هذه الألوان لملف tailwind.config.js الخاص بك، أو استخدام فئات الألوان التقريبية كما فعلنا هنا لتسهيل النقل المباشر.
-// الألوان المستخدمة في التصميم:
-// primary: '#4a0012' (نبيتي غامق)
-// primary-container: '#6b1124' (نبيتي فاتح)
-// secondary-fixed: '#ffe088' (ذهبي)
-// surface-container: '#f0eded' (رمادي فاتح جداً للمربعات)
+import Link from "next/link"
+import { FaArrowRight } from "react-icons/fa";
 
 const TypingIndicator = () => (
   <motion.div
@@ -47,7 +40,6 @@ export default function ChatBot() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [convId, setConvId] = useState<string | null>(null);
   const [convs, setConvs] = useState<any[]>([]);
-  // const [user, setUser] = useState<any>(null);
 
   // إدارة الرسائل والـ Loading يدوياً لضمان الاستقرار
   const [messages, setMessages] = useState<any[]>([]);
@@ -223,15 +215,12 @@ export default function ChatBot() {
 
       {/* --- Header المحادثة --- */}
       <div className="flex-none border-b border-[#dcc0c1]/30 bg-[#f6f3f2]/80 backdrop-blur-md flex items-center justify-between z-10 shadow-2xl">
+        <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
+          <FaArrowRight size={18} />
+        </Link>
         <div className="flex items-center gap-1">
-            <button onClick={() => setSheetOpen(true)} className="w-3 h-3 flex items-center justify-center rounded-full text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="القائمة">
-              <PanelRight size={18} />
-            </button>
           <div className="relative">
-            {/* صورة افتراضية لأبونا فلتاؤس (استبدل المسار بصورتك الحقيقية) */}
-            {/* <div className="w-6 h-6 rounded-full bg-gray-300 border-2 border-[#4a0012]/20 flex items-center justify-center overflow-hidden"> */}
             <div className="w-3 h-3 rounded-full overflow-hidden bg-white relative flex items-center justify-center">
-              {/* <span className="text-xl">📿</span> */}
               {user?.avatar_url ? (
                 <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" sizes="auto" />
               ) : (
@@ -248,8 +237,8 @@ export default function ChatBot() {
             </span>
           </div>
         </div>
-        <button className="w-4 h-4 rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="مسح المحادثة" onClick={() => setMessages([])}>
-          <Trash2 size={16} />
+        <button onClick={() => setSheetOpen(true)} className="w-3 h-3 flex items-center justify-center rounded-full text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="القائمة">
+          <PanelRight size={18} />
         </button>
       </div>
 
@@ -336,9 +325,9 @@ export default function ChatBot() {
             </button> */}
 
             <TextareaAutosize
-            // <textarea
+              // <textarea
               value={input}
-              onChange={(e)=> setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value)}
               // onChange={(e) => {
               //   setInput(e.target.value)
 
@@ -367,7 +356,7 @@ export default function ChatBot() {
                   onFormSubmit(e as any);
                 }
               }}
-              // rows={1}
+            // rows={1}
             />
 
             <div className="flex items-center gap-1">
