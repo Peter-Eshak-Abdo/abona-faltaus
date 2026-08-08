@@ -61,6 +61,7 @@ export default function HomeClient() {
   const [user, setUser] = useState<any>(null);
   const [showExploreHint, setShowExploreHint] = useState(false);
   const [menuRadius, setMenuRadius] = useState(135);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setCopticDate(getCopticDate());
@@ -85,9 +86,13 @@ export default function HomeClient() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) setMenuRadius(240);
-      else if (window.innerWidth >= 768) setMenuRadius(190);
-      else setMenuRadius(135);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      setIsMobile(w < 1024);
+      if (w >= 1024) setMenuRadius(240);
+      else if (w >= 768) setMenuRadius(190);
+      else if (w >= 400 && h >= 700) setMenuRadius(125);
+      else setMenuRadius(105);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -168,14 +173,14 @@ export default function HomeClient() {
       <div className="absolute inset-0 z-20 w-full h-full pointer-events-none">
         <div className="pointer-events-auto">
           <LogoHeader />
-          <UserHeader />
+          {user && < UserHeader />}
         </div>
         {/* تنبيه تسجيل الدخول بجوجل */}
         {!user && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute top-6 left-1/2 -translate-x-1/2 z-30 pointer-events-auto"
+            className="absolute top-5 left-1/2 -translate-x-1/2 z-30 pointer-events-auto"
           >
             <Link href="/auth/signin">
               <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 shadow-lg px-1 py-0.5 rounded-full flex items-center gap-0.5 cursor-pointer hover:scale-105 transition-transform text-xs sm:text-sm">
@@ -189,10 +194,16 @@ export default function HomeClient() {
         {/* Center Logo */}
         <motion.div
           className={`z-30 absolute flex items-center justify-center pointer-events-auto group ${!showMenu ? 'animate-breathe' : ''}`}
-          initial={{ top: "40%", left: "40%", x: "-50%", y: "-50%", scale: 1 }}
+          initial={
+            isMobile
+              ? { top: "48%", left: "50%", x: "-50%", y: "-50%", scale: 1 }
+              : { top: "40%", left: "40%", x: "-50%", y: "-50%", scale: 1 }
+          }
           animate={
             logoPos === "center"
-              ? { top: "40%", left: "40%", x: "-50%", y: "-50%", scale: 1 }
+              ? isMobile
+                ? { top: "40%", left: "31%", x: "-50%", y: "-50%", scale: 1 }
+                : { top: "40%", left: "40%", x: "-50%", y: "-50%", scale: 1 }
               : { top: "90%", left: "50%", x: "-50%", y: "-50%", scale: 0.35 }
           }
           transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -228,7 +239,7 @@ export default function HomeClient() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.8 }}
-              className="absolute top-[43%] left-[35%] z-10 flex items-center justify-center pointer-events-none"
+              className={`absolute ${isMobile ? 'top-[40%] left-[30%]' : 'top-[43%] left-[35%]'} z-10 flex items-center justify-center pointer-events-none`}
               style={{ transform: "translate(-50%, -50%)" }}
             >
               <motion.div animate={eagleControls} className="w-[50vw] max-w-12.25 md:max-w-18.75 lg:max-w-25">
@@ -251,13 +262,13 @@ export default function HomeClient() {
                   animate={{ x, y, opacity: 1, scale: 1 }}
                   exit={{ x: 0, y: 0, opacity: 0, scale: 0.5 }}
                   transition={{ type: "spring", stiffness: 120, damping: 15, delay: index * 0.04 }}
-                  className="absolute top-[49%] left-[45%] z-20 pointer-events-auto"
+                  className={`absolute ${isMobile ? 'top-[42%] left-[44%]' : 'top-[49%] left-[45%]'} z-20 pointer-events-auto`}
                   style={{ transform: "translate(-50%, -50%)" }}
                 >
                   <Link href={section.href}>
                     <div className="hover:bg-blue-500 bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-xl border border-gray-200 dark:border-gray-800 transition-all duration-300 cursor-pointer hover:scale-110 text-gray-800 dark:text-gray-200 hover:text-white group relative overflow-hidden">
                       <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      <div className="text-xl md:text-2xl lg:text-3xl mb-1 z-10">{section.icon}</div>
+                      <div className="text-xl md:text-2xl lg:text-3xl z-10">{section.icon}</div>
                       <div className="leading-tight text-[9px] md:text-[11px] lg:text-xs font-bold z-10 px-1">{section.name}</div>
                     </div>
                   </Link>
@@ -265,15 +276,16 @@ export default function HomeClient() {
               );
             })}
         </AnimatePresence>
-
-        <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-2 ltr:left-2 rtl:right-2 z-0 pointer-events-none">
-          <div className="flex flex-col gap-0.5">
-            <p className="font-bold text-amber-600 dark:text-amber-400">التاريخ القبطي: {copticDate}</p>
-            <p><strong>آخر تحديث:</strong> {lastUpdate || "..."}</p>
-            {lastMessage && <p className="italic opacity-70 border-r-2 border-primary pr-1">"{lastMessage}"</p>}
-            <p className="text-[10px]">إجمالي التحديثات: <span className="font-bold text-blue-500">{commitCount}</span></p>
-          </div>
-        </footer>
+        {!showMenu &&
+          <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-2 ltr:left-2 rtl:right-2 z-0 pointer-events-none">
+            <div className="flex flex-col gap-0.5">
+              <p className="font-bold text-amber-600 dark:text-amber-400">التاريخ القبطي: {copticDate}</p>
+              <p><strong>آخر تحديث:</strong> {lastUpdate || "..."}</p>
+              {lastMessage && <p className="italic opacity-70 border-r-2 border-primary pr-1">"{lastMessage}"</p>}
+              <p className="text-[10px]">إجمالي التحديثات: <span className="font-bold text-blue-500">{commitCount}</span></p>
+            </div>
+          </footer>
+        }
       </div>
     </motion.div>
   );

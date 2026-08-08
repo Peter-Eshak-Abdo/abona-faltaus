@@ -54,9 +54,11 @@ export default function UserHeader() {
     : "بعد إذنك تسجل دخول";
 
   return (
-    <Link href={href} className="absolute top-0 right-1/2 -translate-x-1/2 block text-center">
-      <div className="absolute top-7 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full flex flex-col items-center border-white/20 w-3/4 md:w-25 z-30 shadow-xl/30 inset-shadow-sm">
-        <p className="text-black text-xl font-semibold p-0.5">{subText}</p>
+    <Link href={href} className="absolute top-5 left-1/2 -translate-x-1/2 z-30 block text-center max-w-[80%] w-auto">
+      <div className="bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 px-1 py-0.5 shadow-xl/30 inset-shadow-sm">
+        <p className="text-black dark:text-white text-sm sm:text-sm md:text-base font-semibold whitespace-nowrap">
+          {subText}
+        </p>
       </div>
     </Link>
   );

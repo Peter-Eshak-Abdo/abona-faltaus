@@ -71,7 +71,7 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
   return (
     <>
       {/* Desktop Widgets */}
-      <div className="hidden lg:flex absolute inset-0 z-10 pointer-events-none justify-between p-2 items-center">
+      <div className="hidden lg:flex absolute inset-0 z-10 pointer-events-none justify-between p-0.5 items-center">
         {/* Right Widget: Daily Verse */}
         <AnimatePresence>
           {showMenu && (
@@ -82,9 +82,9 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
               transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
               className="w-[320px] pointer-events-auto hover:scale-[1.02] transition-transform duration-700"
             >
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-1.5 shadow-lg flex flex-col gap-1.5 relative overflow-hidden group">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-0.5 shadow-lg flex flex-col gap-0.5 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-transparent pointer-events-none"></div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-0.5">
                   <div className="w-3 h-3 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600">
                     <FaBookOpen size={16} />
                   </div>
@@ -93,7 +93,7 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
                 <p className="text-xl font-bold text-gray-900 dark:text-gray-100 leading-relaxed text-right relative z-10">
                   "{verse.text}"
                 </p>
-                <div className="flex justify-end mt-2">
+                <div className="flex justify-end mt-0.5">
                   <span className="font-bold text-xs text-blue-600 bg-blue-500/10 px-1 py-0.5 rounded-full">{verse.ref}</span>
                 </div>
               </div>
@@ -143,18 +143,57 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
-            className="lg:hidden absolute bottom-6 left-1.5 right-1.5 z-10 pointer-events-auto"
+            className="lg:hidden absolute bottom-8 left-1.5 right-1.5 z-10 pointer-events-auto"
           >
-            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-1 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
-              <div className="flex items-center gap-0.5 mb-1">
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-0.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
+              <div className="flex items-center gap-0.5 mb-0.5">
                 <FaSun className="text-amber-500" size={16} />
                 <span className="font-bold text-xs text-amber-500 uppercase tracking-wider">آية عشوائية</span>
               </div>
-              <p className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1 leading-relaxed">
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-0.5 leading-relaxed">
                 "{verse.text}"
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-600 dark:text-gray-400">{verse.ref}</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Widget: Prayer Status */}
+      <AnimatePresence>
+        {!showMenu && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+            className="lg:hidden absolute top-9 left-1.5 right-1.5 z-10 pointer-events-auto"
+          >
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-0.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
+              <div className="flex items-center gap-0.5 mb-0.5">
+                <div className="w-3 h-3 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+                  <FaSun size={12} />
+                </div>
+                <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">مواعيد الصلاة</span>
+              </div>
+              <div className="flex overflow-x-auto gap-0.5 pb-0.5 scrollbar-none">
+                {prayers.map((prayer) => {
+                  const isActive = activePrayer === prayer.id;
+                  return (
+                    <div
+                      key={prayer.id}
+                      className={`flex-none p-0.5 rounded-xl border text-center transition-all ${isActive
+                          ? "bg-blue-600 text-white border-blue-600 shadow-sm scale-105"
+                          : "bg-white/40 dark:bg-gray-800/40 border-gray-200/50 dark:border-gray-700/50 text-gray-700 dark:text-gray-300"
+                        }`}
+                    >
+                      <div className={`text-xs font-bold ${isActive ? "text-white" : ""}`}>{prayer.label}</div>
+                      <div className={`text-[10px] ${isActive ? "text-blue-100" : "text-gray-500 dark:text-gray-400"}`}>{prayer.time}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </motion.div>
