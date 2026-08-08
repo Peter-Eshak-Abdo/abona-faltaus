@@ -5,14 +5,27 @@
           "monasba": "snawi",
           "name": "لحن بينشتي الصغير",
           "duration": "4:31",
-          "src": "./al7an/لحن بينشتي الصغير.mp3",
-          "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0207.jpg"
+          "src": "لحن_بينشتي_الصغير",
+          "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0207.jpg",
+          "lyrics_ar": "الكلمات باللغة العربية هناالعظيم أنبا أنطونيوس، والبار أنبا بولا، والقديسون الثلاثة مقارات، أنبا يؤنس القصير، أنبا بيشوي، أنبا بولا، أبوانا القديسان الروميان مكسيموس ودوماديوس، أنبا موسى، أنبا يؤانس كاما، أنبا دانيال، أنبا ايسيذوروس، أنبا باخوم، أنبا شنودة، وأنبا بفنوتى، أنبا برسوم، أنبا رويس.وجميع الذين علموا كلمة الحق باستقامة، الأساقفة الارثوذكسيين والقسوس والإكليروس والعلمانيون. هؤلاء وجميع الارثوذكسيين. آمين.",
+          "lyrics_copt": "Pinis] abba Antwni@ nem pi`;myi abba Paule@ nem pisomt =e=;=u Makarioc@ abba Iwannyc pikoloboc@ abba Piswi@ abba Paule@ nenio] =e=;=u `nrwmeoc Maximoc nem Dometioc@ abba Mwcy@ abba Iwannyc <amy@ abba Daniyl@ abba Icidwroc@ abba Paqwm@ abba Senou]@ ke abba Pavnou]@ abba Parcwma@ abba Teji.Ke pantwn twn or;odidaxantwn@ ton logon@ tyc `aly;iac@ Or;odoxwn@ `epickopwn `precbuterwn@ diakonwn `klyrikwn ky laikwn ke toutwn ke pantwn@ Or;odoxwn@ `amyn.",
+          "lyrics_ar_copt": "بي نيشتي آقا أنطوني، نيم بي إثمي أقا باقلي، نيم بي شمت إثؤواب مكاريوس، آقا يؤانس بي كولوقوس، أقا بيشوي أقا باقلي، نين يوتي إثواب إنروميوس، ماكسيموس نيم دوميتيوس، أقا موسي، أقا يؤانس كامي، أقا دانييل، أقا اسي ذوروس أقا باخوم، أقا شينوتي، كي أقا بفنوتي، أقا برسوما، أقا تيجي.كي بأنطون طون، أورثوذيذاكسان طون، طون لوغون، تيبس آليثياس، أورثوذكسون، إبيسكوبون إبريسقيتيرون، ذياكونون إكليريكون كي لائكون كي طوطون كي بانطون، اورثوذوكسون أمين."
+        },
+        {
+          "monasba": "",
+          "name": "",
+          "duration": "4:31",
+          "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0207.jpg",
+          "hazatSrc2": "/al7an/hazat/الطقس السنوي_page-0208.jpg",
+          "lyrics_ar": "الكلمات باللغة العربية هنا...",
+          "lyrics_copt": "الكلمات باللغة القبطية هنا...",
+          "lyrics_en": "الكلمات باللغة الإنجليزية هنا..."
         },
         {
           "monasba": "snawi",
           "name": "لحن البركة (تين_أوأوشت)",
           "duration": "2:03",
-          "src": "./al7an/لحن_البركة_(تين_أوأوشت).mp3",
+          "src": "لحن_البركة_(تين_أوأوشت)",
           "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0066.jpg"
         }
       ]
@@ -23,42 +36,42 @@
           "monasba": "som-kebir",
           "name": "الليلويا إي ا ايخون",
           "duration": "2:04",
-          "src": "./al7an/الليلويا إي ا ايخون.mp3",
+          "src": "الليلويا_إي_ا_ايخون",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0031.jpg"
         },
         {
           "monasba": "som-kebir",
           "name": "لحن إنثو تي تي شوري",
           "duration": "3:06",
-          "src": "https://www.dropbox.com/scl/fi/i03y7cndra6lqxcz2mzog/anso-te-teshory.mp3?rlkey=ts1l7ps97knknc23e6m40rloq&st=rimr51r0&dl=1",
+          "src": "06_لحن_إنثو_تي_تي_شوري_الصيامي",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg"
         },
         {
           "monasba": "som-kebir",
           "name": "لحن شاري افنوتي",
           "duration": "3:45",
-          "src": "./al7an/لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti.mp3",
+          "src": "لحن_شاري_افنوتي_ϣⲁⲣⲉ_ⲫ_ⲛⲟⲩϯ___Hymn_Share_Efnouti",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0036.jpg"
         },
         {
           "monasba": "som-kebir",
           "name": "لحن ميغالو",
           "duration": "12:18",
-          "src": "./al7an/لحن ميغالو.mp3",
+          "src": "لحن_ميغالو",
           "hazatSrc": ""
         },
         {
           "monasba": "som-kebir",
           "name": "توزيع أيام صوم نينوى وأيام الصوم الكبير ",
           "duration": "14:40",
-          "src": "./al7an/توزيع أيام صوم نينوى وأيام الصوم الكبير _ Distribution for Weekdays of Lent.mp3",
+          "src": "توزيع_أيام_صوم_نينوى_وأيام_الصوم_الكبير___Distribution_for_Weekdays_of_Lent",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0047.jpg"
         },
         {
           "monasba": "som-kebir",
           "name": "سوماتوس ختام أيام الصوم الكبير",
           "duration": "2:45",
-          "src": "./al7an/سوماتوس ختام أيام الصوم الكبير _ Somatos Concluding Canon for Weekdays of Lent.mp3",
+          "src": "سوماتوس_ختام_أيام_الصوم_الكبير___Somatos_Concluding_Canon_for_Weekdays_of_Lent",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0059.jpg"
         }
       ]
@@ -69,28 +82,28 @@
           "monasba": "asbo3-alam",
           "name": "افلوجيمينوس",
           "duration": "6:33",
-          "src": "./al7an/لحن افلوجيمينوس.mp3",
+          "src": "لحن_افلوجيمينوس",
           "hazatSrc": "/al7an/hazat/سبت لعازر و احد الشعانين_page-0119.png"
         },
         {
           "monasba": "asbo3-alam",
           "name": " بيك إثرونوس",
           "duration": "18:23",
-          "src": "./al7an/لحن بيك إثرونوس.mp3",
+          "src": "لحن_بيك_إثرونوس",
           "hazatSrc": "/al7an/hazat/البصخة_page-0084.png"
         },
         {
           "monasba": "asbo3-alam",
           "name": " اومونوجنيس",
           "duration": "11:12",
-          "src": "./al7an/لحن_اومونوجنيس.mp3",
+          "src": "لحن_اومونوجنيس",
           "hazatSrc": "/al7an/hazat/البصخة_page-0067.png"
         },
         {
           "monasba": "asbo3-alam",
           "name": "مقدمه العظه اوكاتي",
           "duration": "11:08",
-          "src": "./al7an/لحن_مقدمه_العظه_اوكاتي.mp3",
+          "src": "لحن_مقدمه_العظه_اوكاتي",
           "hazatSrc": "/al7an/hazat/البصخة_page-0014.png"
         }
       ]
@@ -101,14 +114,14 @@
           "monasba": "khmacen",
           "name": "لحن السبع طرائق",
           "duration": "26:44",
-          "src": "./al7an/لحن السبع طرائق.mp3",
+          "src": "لحن_السبع_طرائق",
           "hazatSrc": "/al7an/hazat/الخماسين_page-0014.png"
         },
         {
           "monasba": "khmacen",
           "name": "لحن ني صافيف تيرو",
           "duration": "5:42",
-          "src": "./al7an/لحن ني صافيف تيرو.mp3",
+          "src": "لحن_ني_صافيف_تيرو",
           "hazatSrc": "/al7an/hazat/الخماسين_page-0079.png"
         }
       ]
@@ -119,31 +132,31 @@
           "monasba": "nhdet-al3dra",
           "name": "لحن سينا اتشو كثيره هي عجايبك",
           "duration": "1:57",
-          "src": "./al7an/لحن سينا اتشو كثيره هي عجايبك.mp3"
+          "src": "لحن_سينا_اتشو_كثيره_هي_عجايبك"
         },
         {
           "monasba": "nhdet-al3dra",
           "name": "لحن اوموف اممو",
           "duration": "7:40",
-          "src": "./al7an/لحن_اوموف_اممو.mp3"
+          "src": "لحن_اوموف_اممو"
         },
         {
           "monasba": "nhdet-al3dra",
           "name": "لحن راشي ني",
           "duration": "12:52",
-          "src": "./al7an/لحن_راشي_ني.mp3"
+          "src": "لحن_راشي_ني"
         },
         {
           "monasba": "nhdet-al3dra",
           "name": "مديحة يا أم النور يا فخر الأمة",
           "duration": "12:17",
-          "src": "./al7an/مديحة_يا_أم_النور_يا_فخر_الأمة.mp3"
+          "src": "مديحة_يا_أم_النور_يا_فخر_الأمة"
         },
         {
           "monasba": "nhdet-al3dra",
           "name": "لحن فاي بي إبليمين",
           "duration": "4:47",
-          "src": "./al7an/لحن فاي بي إبليمين.mp3"
+          "src": "لحن_فاي_بي_إبليمين"
         }
       ]
     },
@@ -153,63 +166,63 @@
           "monasba": "keahk",
           "name": "الهوس الاول عربى",
           "duration": "3:34",
-          "src" : "https://archive.org/download/abona-faltaus-audio/%D8%A7%D9%84%D9%87%D9%88%D8%B3+%D8%A7%D9%84%D8%A3%D9%88%D9%84+%D9%82%D8%A8%D8%B7%D9%8A.mp3",
+          "src" : "5_الهوس_الاول_عربى",
           "hazatSrc": null
         },
         {
           "monasba": "keahk",
           "name": "الهوس الثانى عربى",
           "duration": "5:53",
-          "src": "./al7an/8 الهوس الثانى عربى.mp3",
+          "src": "8_الهوس_الثانى_عربى",
           "hazatSrc": null
         },
         {
           "monasba": "keahk",
           "name": "الهوس الثالث عربى",
           "duration": "5:32",
-          "src": "./al7an/11 الهوس الثالث عربى.mp3",
+          "src": "11_الهوس_الثالث_عربى",
           "hazatSrc": null
         },
         {
           "monasba": "keahk",
           "name": "الهوس الرابع عربى",
           "duration": "7:02",
-          "src": "./al7an/15 الهوس الرابع عربى.mp3",
+          "src": "15_الهوس_الرابع_عربى",
           "hazatSrc": null
         },
         {
           "monasba": "keahk",
           "name": "طلبتك من عمق قلبى",
           "duration": "7:08",
-          "src": "./al7an/27 طلبتك من عمق قلبى.mp3",
+          "src": "27_طلبتك_من_عمق_قلبى",
           "hazatSrc": null
         },
         {
           "monasba": "keahk",
           "name": "أربسالين عربى",
           "duration": "6:25",
-          "src": "./al7an/أربسالين عربى.mp3",
+          "src": "أربسالين_عربى",
           "hazatSrc": null
         },
         {
           "monasba": "keahk",
           "name": "قوموا يا بنى النور",
           "duration": "4:05",
-          "src": "./al7an/قوموا يا بنى النور!s.mp3",
+          "src": "قوموا_يا_بنى_النور!s",
           "hazatSrc": null
         },
         {
           "monasba": "keahk",
           "name": "التوزيع الكيهكى",
           "duration": "1:40",
-          "src": "./al7an/التوزيع الكيهكى.mp3",
+          "src": "التوزيع_الكيهكى",
           "hazatSrc": "/al7an/hazat/كيهك و الميلاد_page-0052.jpg"
         },
         {
           "monasba": "keahk",
           "name": "ذكصولوجية كيهك كى غار",
           "duration": "4:18",
-          "src": "./al7an/ذكصولوجية شهر كيهك_كى غار.mp3",
+          "src": "ذكصولوجية_شهر_كيهك_كى_غار",
           "hazatSrc": "/al7an/hazat/كيهك و الميلاد_page-0009.jpg",
           "hazatSrc1": "/al7an/hazat/كيهك و الميلاد_page-0010.jpg",
           "hazatSrc2": "/al7an/hazat/كيهك و الميلاد_page-0011.jpg"
@@ -218,14 +231,14 @@
           "monasba": "keahk",
           "name": "لحن تي جاليلي اي",
           "duration": "11:42",
-          "src": "./al7an/لحن تي جاليلي اي.mp3",
+          "src": "لحن_تي_جاليلي_اي",
           "hazatSrc": null
         },
         {
           "monasba": "keahk",
           "name": "لحن تين اويه أنسوك",
           "duration": "7:02",
-          "src": "./al7an/لحن_تين_اويه_أنسوك.mp3",
+          "src": "لحن_تين_اويه_أنسوك",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0047.jpg",
           "hazatSrc1": "/al7an/hazat/التسبحة_page-0048.jpg",
           "hazatSrc2": "/al7an/hazat/التسبحة_page-0049.jpg"
@@ -234,7 +247,7 @@
           "monasba": "keahk",
           "name": "لحن تين ثينو الكبير",
           "duration": "11:18",
-          "src": "./al7an/لحن_تين_ثينو_الكبير.mp3",
+          "src": "لحن_تين_ثينو_الكبير",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0024.jpg",
           "hazatSrc1": "/al7an/hazat/التسبحة_page-0025.jpg"
         },
@@ -242,7 +255,7 @@
           "monasba": "keahk",
           "name": "لحن تينين",
           "duration": "7:25",
-          "src": "./al7an/لحن_تينين.mp3",
+          "src": "لحن_تينين",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0042.jpg",
           "hazatSrc1": "/al7an/hazat/التسبحة_page-0043.jpg",
           "hazatSrc2": "/al7an/hazat/التسبحة_page-0044.jpg",
@@ -253,7 +266,7 @@
           "monasba": "keahk",
           "name": "لحن سيموتى",
           "duration": "7:45",
-          "src": "./al7an/لحن_سيموتى.mp3",
+          "src": "لحن_سيموتى",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0056.jpg",
           "hazatSrc1": "/al7an/hazat/التسبحة_page-0057.jpg",
           "hazatSrc2": "/al7an/hazat/التسبحة_page-0058.jpg",
@@ -263,7 +276,7 @@
           "monasba": "keahk",
           "name": "لحن شيري نيه ماريا",
           "duration": "6:50",
-          "src": "./al7an/لحن_شيري_نيه_ماريا.mp3",
+          "src": "لحن_شيري_نيه_ماريا",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0053.jpg",
           "hazatSrc1": "/al7an/hazat/التسبحة_page-0054.jpg",
           "hazatSrc2": "/al7an/hazat/التسبحة_page-0055.jpg"
@@ -272,7 +285,7 @@
           "monasba": "keahk",
           "name": "لحن هوس إيروف (الهوس الثالث)",
           "duration": "7:55",
-          "src": "./al7an/لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس.mp3",
+          "src": "لحن_هوس_إيروف_(الهوس_الثالث)_-_الم_علم_جاد_لويس",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0038.jpg",
           "hazatSrc1": "/al7an/hazat/التسبحة_page-0039.jpg"
         },
@@ -280,7 +293,7 @@
           "monasba": "keahk",
           "name": "(الهوس_الثالث) لحن آسمو ابشويس",
           "duration": "20:35",
-          "src": "./al7an/لحن(الهوس_الثالث)آسمو_ابشويس.mp3",
+          "src": "لحن(الهوس_الثالث)آسمو_ابشويس",
           "hazatSrc": "/al7an/hazat/التسبحة_page-0036.jpg",
           "hazatSrc1": "/al7an/hazat/التسبحة_page-0037.jpg",
           "hazatSrc2": "/al7an/hazat/التسبحة_page-0038.jpg",
