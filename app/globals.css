@@ -116,6 +116,21 @@
   }
 }
 
+@font-face {
+  font-family: 'CopticStTakla';
+  src: url('/fonts/ABRAAM_0.ttf') format('truetype');
+  font-display: swap;
+}
+/* @font-face {
+  font-family: 'CopticFont';
+  src: url('/fonts/CS_Coptic.ttf') format('truetype');
+  font-display: swap;
+} */
+
+.font-coptic {
+  font-family: 'CopticStTakla';
+}
+
 :root {
   --background: rgb(231, 208, 174);
   /* الخلفية البيج رجعت هنا */
