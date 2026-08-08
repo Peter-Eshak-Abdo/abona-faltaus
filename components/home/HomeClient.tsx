@@ -18,16 +18,18 @@ import {
 import LogoHeader from "../LogoHeader";
 import UserHeader from "../UserHeader";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 import Background from "./Background";
 import Widgets from "./Widgets";
 
 const sections = [
-  { name: "الامتحانات", href: "/exam", icon: <FaPenFancy /> },
+  { name: "الامتحانات", href: "/exam/quiz/dashboard", icon: <FaPenFancy />, requiresAuth: true },
+  // { name: "الامتحانات", href: "/exam", icon: <FaPenFancy />, requiresAuth: true },
   { name: "حول", href: "/about", icon: <FaInfoCircle /> },
   { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
   { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
-  { name: "الشات بوت", href: "/chat", icon: <FaFileAlt /> },
+  { name: "الشات بوت", href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
   // { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
   // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
   // { name: "العظات", href: "/3zat", icon: <FaChurch /> },
@@ -255,6 +257,7 @@ export default function HomeClient() {
               const angle = (index / sections.length) * 2 * Math.PI;
               const x = Math.cos(angle) * menuRadius;
               const y = Math.sin(angle) * menuRadius;
+              const isLocked = section.requiresAuth && !user;
               return (
                 <motion.div
                   key={section.name}
@@ -265,13 +268,29 @@ export default function HomeClient() {
                   className={`absolute ${isMobile ? 'top-[42%] left-[44%]' : 'top-[49%] left-[45%]'} z-20 pointer-events-auto`}
                   style={{ transform: "translate(-50%, -50%)" }}
                 >
-                  <Link href={section.href}>
-                    <div className="hover:bg-blue-500 bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-xl border border-gray-200 dark:border-gray-800 transition-all duration-300 cursor-pointer hover:scale-110 text-gray-800 dark:text-gray-200 hover:text-white group relative overflow-hidden">
-                      <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  {isLocked ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toast.error("برجاء تسجيل الدخول أولاً");
+                      }}
+                      title="برجاء تسجيل الدخول أولاً"
+                      className="bg-gray-400/90 dark:bg-gray-700/90 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-md border border-gray-400 dark:border-gray-600 transition-all duration-300 cursor-not-allowed text-gray-200 dark:text-gray-400 group relative overflow-hidden opacity-75 grayscale"
+                    >
                       <div className="text-xl md:text-2xl lg:text-3xl z-10">{section.icon}</div>
                       <div className="leading-tight text-[9px] md:text-[11px] lg:text-xs font-bold z-10 px-1">{section.name}</div>
-                    </div>
-                  </Link>
+                    </button>
+                  ) : (
+                    <Link href={section.href}>
+                      <div className="hover:bg-blue-500 bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-xl border border-gray-200 dark:border-gray-800 transition-all duration-300 cursor-pointer hover:scale-110 text-gray-800 dark:text-gray-200 hover:text-white group relative overflow-hidden">
+                        <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="text-xl md:text-2xl lg:text-3xl z-10">{section.icon}</div>
+                        <div className="leading-tight text-[9px] md:text-[11px] lg:text-xs font-bold z-10 px-1">{section.name}</div>
+                      </div>
+                    </Link>
+                  )}
                 </motion.div>
               );
             })}

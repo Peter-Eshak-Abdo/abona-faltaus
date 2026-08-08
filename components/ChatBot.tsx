@@ -11,8 +11,9 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Button } from "react-day-picker";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import TextareaAutosize from "react-textarea-autosize";
-import Link from "next/link"
+import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
+import { toast } from "sonner";
 
 const TypingIndicator = () => (
   <motion.div
@@ -182,7 +183,13 @@ export default function ChatBot() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSuggestionClick = (suggestion: string) => { setInput(suggestion); };
+  const handleSuggestionClick = (suggestion: string) => {
+    if (!user) {
+      toast.error("برجاء تسجيل الدخول أولاً");
+      return;
+    }
+    setInput(suggestion);
+  };
 
   const handleMicClick = () => { alert("ميزة التسجيل الصوتي ستتوفر قريباً!"); };
   const handleAttachmentClick = () => { alert("ميزة إرفاق الملفات ستتوفر قريباً!"); };
@@ -251,7 +258,16 @@ export default function ChatBot() {
         </div>
 
         <AnimatePresence>
-          {messages.length === 0 && (
+          {!user && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="my-1 mx-auto p-1 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-2xl text-center max-w-md shadow-sm z-20">
+              <p className="text-amber-900 dark:text-amber-200 font-bold text-base mb-1">برجاء تسجيل الدخول أولاً لاستخدام شات أبونا فلتاؤس</p>
+              <Link href="/auth/signin" className="inline-block bg-amber-700 hover:bg-amber-800 text-white font-bold px-1 py-1 rounded-full text-sm transition-all shadow-md hover:scale-105">
+                تسجيل الدخول
+              </Link>
+            </motion.div>
+          )}
+
+          {messages.length === 0 && user && (
             // رسالة ترحيب أولية إذا كانت المحادثة فارغة
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-0.5 w-full md:w-4/5 max-w-3xl self-start">
               <div className="bg-[#f0eded] rounded-t-3xl rounded-br-3xl rounded-bl-lg p-0.5 shadow-sm border border-[#ffdadb]/30 relative">
@@ -307,7 +323,16 @@ export default function ChatBot() {
             { label: "تفسير آية", icon: Sparkles },
             { label: "تفسير مثل", icon: ScrollText }
           ].map((item, idx) => (
-            <button key={idx} onClick={() => handleSuggestionClick(item.label)} className="inline-flex items-center gap-0.5 px-1 py-0.5 bg-[#eae7e7] hover:bg-[#ffe088]/20 text-[#564243] hover:text-[#4a0012] transition-all duration-300 rounded-full border border-[#dcc0c1]/30 text-xs font-semibold shadow-sm hover:shadow-md">
+            <button
+              key={idx}
+              onClick={() => handleSuggestionClick(item.label)}
+              className={cn(
+                "inline-flex items-center gap-0.5 px-1 py-0.5 transition-all duration-300 rounded-full border text-xs font-semibold shadow-sm",
+                !user
+                  ? "bg-gray-300 dark:bg-gray-800 text-gray-500 border-gray-400 cursor-not-allowed grayscale opacity-75"
+                  : "bg-[#eae7e7] hover:bg-[#ffe088]/20 text-[#564243] hover:text-[#4a0012] border-[#dcc0c1]/30 hover:shadow-md"
+              )}
+            >
               <item.icon size={18} />
               {item.label}
             </button>
@@ -318,32 +343,25 @@ export default function ChatBot() {
       {/* --- منطقة الإدخال (Input Area) --- */}
       <footer className="flex-none bg-[#f6f3f2] p-1 md:px-1 md:py-1 border-t border-[#dcc0c1]/20 shadow-[0_-4px_20px_rgba(31,31,31,0.02)] z-20 pb-safe">
         <form onSubmit={onFormSubmit} className="max-w-4xl mx-auto">
-          <div className="relative flex items-end gap-1 bg-[#fcf9f8] rounded-3xl border border-[#dcc0c1]/40 shadow-sm focus-within:border-[#4a0012]/50 focus-within:ring-1 focus-within:ring-[#4a0012]/20 transition-all p-1">
-
-            {/* <button type="button" className="w-3 h-3 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
-              <Paperclip size={18} className="group-hover:text-[#4a0012] transition-colors" />
-            </button> */}
-
+          <div
+            onClickCapture={(e) => {
+              if (!user) {
+                toast.error("برجاء تسجيل الدخول أولاً");
+              }
+            }}
+            className={cn(
+              "relative flex items-end gap-1 rounded-3xl border transition-all p-1",
+              !user
+                ? "bg-gray-300/60 dark:bg-zinc-800/80 border-gray-400/60 cursor-not-allowed opacity-75 grayscale"
+                : "bg-[#fcf9f8] border-[#dcc0c1]/40 shadow-sm focus-within:border-[#4a0012]/50 focus-within:ring-1 focus-within:ring-[#4a0012]/20"
+            )}
+          >
             <TextareaAutosize
-              // <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              // onChange={(e) => {
-              //   setInput(e.target.value)
-
-              //   e.target.style.height = "auto";
-              //   e.target.style.height = `${e.target.scrollHeight}px`;
-              // }}
-              // onInput={(e) => {
-              //   const target = e.currentTarget;
-              //   target.style.height = "auto";
-              //   target.style.height = `${target.scrollHeight}px`;
-              // }}
-              placeholder={user ? "اكتب رسالتك هنا..." : "يرجى تسجيل الدخول"}
-              // className="flex-1 max-h-32 min-h-[30px] bg-transparent resize-none outline-none py-0.5 px-0.5 text-[16px] text-[#1b1b1c] placeholder:text-[#564243]/50 leading-relaxed overflow-y-auto"
+              placeholder={user ? "اكتب رسالتك هنا..." : "برجاء تسجيل الدخول أولاً"}
               className="flex-1 resize-none bg-transparent outline-none pe-0.5 text-[16px] leading-relaxed overflow-y-auto"
               disabled={!user || isLoading}
-              // onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onFormSubmit(e as any); } }}
               minRows={1}
               maxRows={6}
               onKeyDown={(e) => {
@@ -356,15 +374,25 @@ export default function ChatBot() {
                   onFormSubmit(e as any);
                 }
               }}
-            // rows={1}
             />
 
             <div className="flex items-center gap-1">
-              {/* <button type="button" className="w-3 h-3 flex-none rounded-full flex items-center justify-center text-[#564243] hover:bg-[#e5e2e1] transition-colors group">
-                <Mic size={18} className="group-hover:text-[#4a0012] transition-colors" />
-              </button> */}
-
-              <button type="submit" className="w-3 h-3 flex-none rounded-full bg-[#4a0012] flex items-center justify-center text-white hover:bg-[#6b1124] transition-all shadow-md transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none" disabled={!input.trim() || isLoading || !user}>
+              <button
+                type={user ? "submit" : "button"}
+                onClick={(e) => {
+                  if (!user) {
+                    e.preventDefault();
+                    toast.error("برجاء تسجيل الدخول أولاً");
+                  }
+                }}
+                className={cn(
+                  "w-3 h-3 flex-none rounded-full flex items-center justify-center text-white transition-all shadow-md",
+                  !user
+                    ? "bg-gray-400 dark:bg-gray-600 text-gray-200 cursor-not-allowed grayscale opacity-75"
+                    : "bg-[#4a0012] hover:bg-[#6b1124] transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+                )}
+                disabled={user ? (!input.trim() || isLoading) : false}
+              >
                 <Send size={22} className="rtl:rotate-270" />
               </button>
             </div>

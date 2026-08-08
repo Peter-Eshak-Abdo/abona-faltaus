@@ -16,6 +16,8 @@ interface UserProfile {
   updated_at: string;
 }
 
+import { toast } from "sonner";
+
 export default function BibleHeader() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [bibleData, setBibleData] = useState<BookObj[]>([]);
@@ -110,7 +112,18 @@ export default function BibleHeader() {
             <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-1 py-0.5" href="/">Home</Link>
             <Link aria-current="page" className="transition-all text-primary font-bold bg-primary-fixed/30 rounded-full px-1 py-0.5" href="#">الكتاب المقدس</Link>
             <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-1 py-0.5" href="/al7an">الألحان</Link>
-            <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-1 py-0.5" href="/chat">الشات بوت</Link>
+            {!user ? (
+              <button
+                type="button"
+                onClick={() => toast.error("برجاء تسجيل الدخول أولاً")}
+                className="font-label-sm text-label-sm text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-75 grayscale px-1 py-0.5"
+                title="برجاء تسجيل الدخول أولاً"
+              >
+                الشات بوت
+              </button>
+            ) : (
+              <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-1 py-0.5" href="/chat">الشات بوت</Link>
+            )}
           </nav>
 
           <div className="flex items-center gap-1">
