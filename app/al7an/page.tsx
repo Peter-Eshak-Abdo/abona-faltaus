@@ -3,6 +3,8 @@ import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import al7anData from "@/public/al7an-all.json";
+import Link from "next/link";
+import { FaArrowRight } from "react-icons/fa";
 
 type Hymn = {
   name: string;
@@ -14,8 +16,17 @@ type Hymn = {
   [key: string]: any;
 };
 type HymnMap = Record<string, Hymn[]>;
-
+const monasbaName = {
+  "snawi": "سنوي",
+  "som-kebir": "صوم كبير",
+  "asbo3-alam": "اسبوع الآلام",
+  "khmacen": "الخماسين",
+  "nhdet-al3dra": "نهضة العذراء",
+  "keahk": "كيهك",
+}
 const merged = (al7anData as any[]).reduce((acc, c) => ({ ...acc, ...c }), {}) as HymnMap;
+// const monasbatKeys = Object.keys(merged);
+// const monasbatList = monasbatKeys.map((key) => monasbaName[key as keyof typeof monasbaName] ?? key);
 const monasbatList = Object.keys(merged);
 const allHymnsFlat = Object.values(merged).flat();
 
@@ -101,9 +112,13 @@ export default function UnifiedAl7anClient() {
 
   return (
     <div className="flex flex-col lg:flex-row w-full h-[calc(100vh-20px)] overflow-hidden bg-surface" dir="rtl">
-
       <div className={`w-full ${selectedHymn ? 'hidden lg:flex' : 'flex'} lg:w-[35%] h-full flex-col bg-surface border-l border-outline-variant/30 z-10 overflow-hidden`}>
         <div className="p-0.5 shrink-0 flex flex-col gap-0.5">
+          <div className="flex-none border-b border-[#dcc0c1]/20 bg-[#f6f3f2]/10 backdrop-blur-md flex items-center justify-between z-10 shadow-2xl rounded-b-4xl">
+
+        <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
+          <FaArrowRight size={18} />
+        </Link>
           <input
             type="text"
             placeholder="بحث عن لحن..."
@@ -111,9 +126,9 @@ export default function UnifiedAl7anClient() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full p-0.5 rounded-lg border border-outline/30 bg-surface-container-highest text-on-surface focus:outline-primary"
           />
-
+</div>
           {!searchQuery && (
-            <div className="flex gap-2 overflow-x-auto pb-0.25 scrollbar-hide">
+            <div className="flex gap-0.5 overflow-x-auto pb-0.25 scrollbar-hide">
               {monasbatList.map((m) => (
                 <button
                   key={m}
@@ -121,7 +136,8 @@ export default function UnifiedAl7anClient() {
                   className={`px-0.5 py-0.25 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${activeMonasba === m ? "bg-primary text-white shadow-md" : "bg-surface-container-high hover:bg-surface-variant"
                     }`}
                 >
-                  {m}
+                  {/* {m} */}
+                  {monasbaName[m as keyof typeof monasbaName] ?? m}
                 </button>
               ))}
             </div>
@@ -145,7 +161,11 @@ export default function UnifiedAl7anClient() {
               >
                 <div>
                   <h3 className="font-bold text-sm">{h.name}</h3>
-                  <p className="text-xs text-muted-foreground">{searchQuery ? 'نتائج البحث' : activeMonasba}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {searchQuery ? 'نتائج البحث' :
+                      // activeMonasba
+                      monasbaName[activeMonasba as keyof typeof monasbaName] ?? activeMonasba
+                    }</p>
                 </div>
                 {h.duration && <span className="text-xs bg-primary/10 text-primary px-0.5 py-0.25 rounded">{h.duration}</span>}
               </motion.div>
@@ -182,7 +202,8 @@ export default function UnifiedAl7anClient() {
                 </div>
                 <div className="flex-1 overflow-hidden">
                   <h2 className="text-2xl font-bold truncate">{selectedHymn.name}</h2>
-                  <p className="text-sm text-white/50">{activeMonasba}</p>
+                  <p className="text-sm text-white/50">  {monasbaName[activeMonasba as keyof typeof monasbaName] ?? activeMonasba}</p>
+                  {/* <p className="text-sm text-white/50">{activeMonasba}</p> */}
                 </div>
               </div>
 
