@@ -241,7 +241,7 @@ export default function HomeClient() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.8 }}
-              className={`absolute ${isMobile ? 'top-[40%] left-[30%]' : 'top-[43%] left-[35%]'} z-10 flex items-center justify-center pointer-events-none`}
+              className={`absolute ${isMobile ? 'top-[48%] left-[29%]' : 'top-[58%] left-[34%]'} z-10 flex items-center justify-center pointer-events-none`}
               style={{ transform: "translate(-50%, -50%)" }}
             >
               <motion.div animate={eagleControls} className="w-[50vw] max-w-12.25 md:max-w-18.75 lg:max-w-25">
@@ -295,7 +295,7 @@ export default function HomeClient() {
               );
             })}
         </AnimatePresence>
-        {!showMenu &&
+        {!showMenu && !isMobile &&
           <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-2 ltr:left-2 rtl:right-2 z-0 pointer-events-none">
             <div className="flex flex-col gap-0.5">
               <p className="font-bold text-amber-600 dark:text-amber-400">التاريخ القبطي: {copticDate}</p>

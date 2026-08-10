@@ -5,7 +5,7 @@
           "monasba": "snawi",
           "name": "لحن بينشتي الصغير",
           "duration": "4:31",
-          "src": "لحن_بينشتي_الصغير",
+          "src": "لحن بينشتي الصغير",
           "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0207.jpg",
           "lyrics_ar": "العظيم أنبا أنطونيوس، والبار أنبا بولا، والقديسون الثلاثة مقارات، أنبا يؤنس القصير، أنبا بيشوي، أنبا بولا، أبوانا القديسان الروميان مكسيموس ودوماديوس، أنبا موسى، أنبا يؤانس كاما، أنبا دانيال، أنبا ايسيذوروس، أنبا باخوم، أنبا شنودة، وأنبا بفنوتى، أنبا برسوم، أنبا رويس.وجميع الذين علموا كلمة الحق باستقامة، الأساقفة الارثوذكسيين والقسوس والإكليروس والعلمانيون. هؤلاء وجميع الارثوذكسيين. آمين.",
           "lyrics_copt": "Pinis] abba Antwni@ nem pi`;myi abba Paule@ nem pisomt =e=;=u Makarioc@ abba Iwannyc pikoloboc@ abba Piswi@ abba Paule@ nenio] =e=;=u `nrwmeoc Maximoc nem Dometioc@ abba Mwcy@ abba Iwannyc <amy@ abba Daniyl@ abba Icidwroc@ abba Paqwm@ abba Senou]@ ke abba Pavnou]@ abba Parcwma@ abba Teji.Ke pantwn twn or;odidaxantwn@ ton logon@ tyc `aly;iac@ Or;odoxwn@ `epickopwn `precbuterwn@ diakonwn `klyrikwn ky laikwn ke toutwn ke pantwn@ Or;odoxwn@ `amyn.",
@@ -36,7 +36,7 @@
           "monasba": "som-kebir",
           "name": "الليلويا إي ا ايخون",
           "duration": "2:04",
-          "src": "الليلويا_إي_ا_ايخون",
+          "src": "الليلويا إي ا ايخون",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0031.jpg"
         },
         {
@@ -50,14 +50,14 @@
           "monasba": "som-kebir",
           "name": "لحن شاري افنوتي",
           "duration": "3:45",
-          "src": "لحن شاري افنوتي ϣⲁⲣⲉ ⲫ ⲛⲟⲩϯ _ Hymn Share Efnouti",
+          "src": "لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti",
           "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0036.jpg"
         },
         {
           "monasba": "som-kebir",
           "name": "لحن ميغالو",
           "duration": "12:18",
-          "src": "لحن_ميغالو",
+          "src": "لحن ميغالو",
           "hazatSrc": ""
         },
         {
@@ -114,14 +114,14 @@
           "monasba": "khmacen",
           "name": "لحن السبع طرائق",
           "duration": "26:44",
-          "src": "لحن_السبع_طرائق",
+          "src": "لحن السبع طرائق",
           "hazatSrc": "/al7an/hazat/الخماسين_page-0014.png"
         },
         {
           "monasba": "khmacen",
           "name": "لحن ني صافيف تيرو",
           "duration": "5:42",
-          "src": "لحن_ني_صافيف_تيرو",
+          "src": "لحن ني صافيف تيرو",
           "hazatSrc": "/al7an/hazat/الخماسين_page-0079.png"
         }
       ]
@@ -132,7 +132,7 @@
           "monasba": "nhdet-al3dra",
           "name": "لحن سينا اتشو كثيره هي عجايبك",
           "duration": "1:57",
-          "src": "لحن_سينا_اتشو_كثيره_هي_عجايبك"
+          "src": "لحن سينا اتشو كثيره هي عجايبك"
         },
         {
           "monasba": "nhdet-al3dra",
@@ -156,7 +156,7 @@
           "monasba": "nhdet-al3dra",
           "name": "لحن فاي بي إبليمين",
           "duration": "4:47",
-          "src": "لحن_فاي_بي_إبليمين"
+          "src": "لحن فاي بي إبليمين"
         }
       ]
     },
@@ -201,7 +201,7 @@
           "monasba": "keahk",
           "name": "أربسالين عربى",
           "duration": "6:25",
-          "src": "أربسالين_عربى",
+          "src": "لحن_اريبصالين",
           "hazatSrc": null
         },
         {
@@ -215,7 +215,7 @@
           "monasba": "keahk",
           "name": "التوزيع الكيهكى",
           "duration": "1:40",
-          "src": "التوزيع_الكيهكى",
+          "src": "التوزيع الكيهكى",
           "hazatSrc": "/al7an/hazat/كيهك و الميلاد_page-0052.jpg"
         },
         {
@@ -231,7 +231,7 @@
           "monasba": "keahk",
           "name": "لحن تي جاليلي اي",
           "duration": "11:42",
-          "src": "لحن_تي_جاليلي_اي",
+          "src": "لحن تي جاليلي اي",
           "hazatSrc": null
         },
         {

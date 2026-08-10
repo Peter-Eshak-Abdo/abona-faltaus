@@ -266,7 +266,7 @@ export default function UnifiedAl7anClient() {
 
                 <audio
                   ref={audioRef}
-                  src={getArchiveSrc(selectedHymn.name)}
+                  src={getArchiveSrc(selectedHymn.src)}
                   onLoadStart={() => { setIsLoading(true); setHasError(false); }}
                   onCanPlay={() => setIsLoading(false)}
                   onWaiting={() => setIsLoading(true)}

@@ -135,32 +135,6 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
         </AnimatePresence>
       </div>
 
-      {/* Mobile Widget: Daily Verse */}
-      <AnimatePresence>
-        {!showMenu && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
-            className="lg:hidden absolute bottom-8 left-1.5 right-1.5 z-10 pointer-events-auto"
-          >
-            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-0.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
-              <div className="flex items-center gap-0.5 mb-0.5">
-                <FaSun className="text-amber-500" size={16} />
-                <span className="font-bold text-xs text-amber-500 uppercase tracking-wider">آية عشوائية</span>
-              </div>
-              <p className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-0.5 leading-relaxed">
-                "{verse.text}"
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-600 dark:text-gray-400">{verse.ref}</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Mobile Widget: Prayer Status */}
       <AnimatePresence>
         {!showMenu && (
@@ -185,8 +159,8 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
                     <div
                       key={prayer.id}
                       className={`flex-none p-0.5 rounded-xl border text-center transition-all ${isActive
-                          ? "bg-blue-600 text-white border-blue-600 shadow-sm scale-105"
-                          : "bg-white/40 dark:bg-gray-800/40 border-gray-200/50 dark:border-gray-700/50 text-gray-700 dark:text-gray-300"
+                        ? "bg-blue-600 text-white border-blue-600 shadow-sm scale-105"
+                        : "bg-white/40 dark:bg-gray-800/40 border-gray-200/50 dark:border-gray-700/50 text-gray-700 dark:text-gray-300"
                         }`}
                     >
                       <div className={`text-xs font-bold ${isActive ? "text-white" : ""}`}>{prayer.label}</div>
@@ -194,6 +168,32 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Widget: Daily Verse */}
+      <AnimatePresence>
+        {!showMenu && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+            className="lg:hidden absolute bottom-1 left-1.5 right-1.5 z-10 pointer-events-auto"
+          >
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-0.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
+              <div className="flex items-center gap-0.5 mb-0.5">
+                <FaSun className="text-amber-500" size={16} />
+                <span className="font-bold text-xs text-amber-500 uppercase tracking-wider">آية اليوم</span>
+              </div>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-0.5 leading-relaxed">
+                "{verse.text}"
+              </p>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-600 dark:text-gray-400">{verse.ref}</span>
               </div>
             </div>
           </motion.div>
