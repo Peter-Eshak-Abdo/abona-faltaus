@@ -17,16 +17,31 @@
           "duration": "4:31",
           "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0207.jpg",
           "hazatSrc2": "/al7an/hazat/الطقس السنوي_page-0208.jpg",
-          "lyrics_ar": "الكلمات باللغة العربية هنا...",
-          "lyrics_copt": "الكلمات باللغة القبطية هنا...",
-          "lyrics_en": "الكلمات باللغة الإنجليزية هنا..."
+          "lyrics_ar": "...",
+          "lyrics_copt": "...",
+          "lyrics_ar_copt": "...",
+          "verses": [
+            {
+              "ar": "يرفع الله هناك، خطايا الشعب، من قبل المحرقات، ورائحة البخور",
+              "copt": "@are F5 `wli `mmav : `nninobi `nte pilaoc : `ebolhiten pislil : nem pi`c0oi `nte pi`c0oinov4i",
+              "ar_copt": "شاري إفنوتي أولي إمماﭫ : إنني نوفي إنتيه بي لاؤس : إيفول هيتين بي إتشليل : نيم بي إسطوي إنتيه بي إسطوي نوفي"
+            },
+            {
+              "ar": "مبارك أنت بالحقيقة، مع أبيك الصالح، والروح القدس، لأنك اتيت وخلصتنا . ارحمنا",
+              "copt": "`K`cmarwovt `al30wc : nem pekiwt `naja0oc : nem pi`pnevma e0ovab : ge ak`I akcw5 `mmon nai nan",
+              "ar_copt": "إك إسمارؤوت آليثوس : نيم بيك يوت إن آغاثوس : بيم بي إبنيفما إثؤواب : ﭽيه آك إي آك سوتي إممون ناي نان"
+            }
+          ]
         },
         {
           "monasba": "snawi",
           "name": "لحن البركة (تين_أوأوشت)",
           "duration": "2:03",
           "src": "لحن_البركة_(تين_أوأوشت)",
-          "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0066.jpg"
+          "hazatSrc": "/al7an/hazat/الطقس السنوي_page-0066.jpg",
+          "lyrics_ar": "نسجد لآب النور، وابنه الوحيد، والروح المعزى الثالوث المساوى ",
+          "lyrics_copt": "Ten`ouwst `m`Viwt `mpi`ouwini@ nem PefSyri `mmonogenyc@ nem pi`Pneuma `mParaklyton@ ]`Triac `nomooucioc.",
+          "lyrics_ar_copt": "تين أوؤشت ايم افيوت انتيه بى أوؤينى نيم بيف شيرى إم مونوجى نيس نيم بى ابنفما امباراكليطون تى اترياس ان أوموسيوس."
         }
       ]
     },
@@ -37,42 +52,42 @@
           "name": "الليلويا إي ا ايخون",
           "duration": "2:04",
           "src": "الليلويا إي ا ايخون",
-          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0031.jpg"
+          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0031.jpg",
+          "lyrics_ar": "هلليلويا، أدخل إلى مذبح الله أمام الله الذي يبتهج بشبابي. اعترف لك يا الله إلهي بالقيثارة اذكر يا رب داود وكل دعته، هلليلويا",
+          "lyrics_copt": "=A=l: ei`e`i `eqovn 2a pima `ner2wov2i `nte F5 : nahren `pho `mF5 f3`eta45 `m`povno4 `nte tamet`alov : 5naovwnh nak `ebol F5 panov5 qen ovkv0ara : `ari `fmev`i `ePu `ndavid nem te4metrem rav2 t3rc : al",
+          "lyrics_ar_copt": "الليلويا إى إى إيخون شابى ما إن إيرشو أوشى إنتى  افنوتى. ناهرين إبهو إم افنوتى نى إيطاف تى إم إبؤنوف إنتى طاميت آلو. تى نا أو أونه ناك إيفول افنوتى بانوتى خين أو كيثارا أرى إفمفيئي ابشويس إن دافيد نيم تيف ميت ريم رافش تيرس الليلويا"
         },
         {
           "monasba": "som-kebir",
           "name": "لحن إنثو تي تي شوري",
           "duration": "3:06",
           "src": "06 لحن إنثو تي تي شوري الصيامي",
-          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg"
+          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0033.jpg",
+          "lyrics_ar": "انت هي المجمرة الذهب النقي الحاملة جمر النار المبارك",
+          "lyrics_copt": "`N0o te 52ovr3 : `nnovb `nka0aroc : et4ai qa pigebc : `n`xrwm `et`cmarwovt",
+          "lyrics_ar_copt": "إنثوتي تيشوري إن نوب إنكاثاروس إت فاي خابي جيبس إن إكروم إت إسماروؤوت"
         },
         {
           "monasba": "som-kebir",
           "name": "لحن شاري افنوتي",
           "duration": "3:45",
           "src": "لحن شاري افنوتي ϣⲁⲣⲉ ⲫ_ⲛⲟⲩϯ _ Hymn Share Efnouti",
-          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0036.jpg"
-        },
-        {
-          "monasba": "som-kebir",
-          "name": "لحن ميغالو",
-          "duration": "12:18",
-          "src": "لحن ميغالو",
-          "hazatSrc": ""
-        },
-        {
-          "monasba": "som-kebir",
-          "name": "توزيع أيام صوم نينوى وأيام الصوم الكبير ",
-          "duration": "14:40",
-          "src": "توزيع أيام صوم نينوى وأيام الصوم الكبير _ Distribution for Weekdays of Lent",
-          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0047.jpg"
-        },
-        {
-          "monasba": "som-kebir",
-          "name": "سوماتوس ختام أيام الصوم الكبير",
-          "duration": "2:45",
-          "src": "سوماتوس ختام أيام الصوم الكبير _ Somatos Concluding Canon for Weekdays of Lent",
-          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0059.jpg"
+          "hazatSrc": "/al7an/hazat/الصوم الكبير و صوم نينوي_page-0036.jpg",
+          "lyrics_ar": "...",
+          "lyrics_copt": "...",
+          "lyrics_ar_copt": "...",
+          "verses": [
+            {
+              "ar": "يرفع الله هناك، خطايا الشعب، من قبل المحرقات، ورائحة البخور",
+              "copt": "@are F5 `wli `mmav : `nninobi `nte pilaoc : `ebolhiten pislil : nem pi`c0oi `nte pi`c0oinov4i",
+              "ar_copt": "شاري إفنوتي أولي إمماﭫ : إنني نوفي إنتيه بي لاؤس : إيفول هيتين بي إتشليل : نيم بي إسطوي إنتيه بي إسطوي نوفي"
+            },
+            {
+              "ar": "مبارك أنت بالحقيقة، مع أبيك الصالح، والروح القدس، لأنك اتيت وخلصتنا . ارحمنا",
+              "copt": "`K`cmarwovt `al30wc : nem pekiwt `naja0oc : nem pi`pnevma e0ovab : ge ak`I akcw5 `mmon nai nan",
+              "ar_copt": "إك إسمارؤوت آليثوس : نيم بيك يوت إن آغاثوس : بيم بي إبنيفما إثؤواب : ﭽيه آك إي آك سوتي إممون ناي نان"
+            }
+          ]
         }
       ]
     },
@@ -80,31 +95,77 @@
       "asbo3-alam": [
         {
           "monasba": "asbo3-alam",
-          "name": "افلوجيمينوس",
-          "duration": "6:33",
-          "src": "لحن افلوجيمينوس",
-          "hazatSrc": "/al7an/hazat/سبت لعازر و احد الشعانين_page-0119.png"
-        },
-        {
-          "monasba": "asbo3-alam",
           "name": " بيك إثرونوس",
           "duration": "18:23",
           "src": "لحن بيك إثرونوس",
-          "hazatSrc": "/al7an/hazat/البصخة_page-0084.png"
+          "hazatSrc": "/al7an/hazat/البصخة_page-0084.png",
+          "lyrics_ar": "كرسيك يا الله إلى دهر الدهور . هلليلويا",
+          "lyrics_copt": "Pek`0ronoc F5 2a `eneh `nte pi`eneh a=l",
+          "lyrics_ar_copt": "بيك اثرونوس افنوتى شا اينيه إنتى بى اينيه الليلويا"
         },
         {
           "monasba": "asbo3-alam",
           "name": " اومونوجنيس",
           "duration": "11:12",
           "src": "لحن_اومونوجنيس",
-          "hazatSrc": "/al7an/hazat/البصخة_page-0067.png"
+          "hazatSrc": "/al7an/hazat/البصخة_page-0067.png",
+          "lyrics_ar": "...",
+          "lyrics_copt": "...",
+          "lyrics_ar_copt": "...",
+          "verses": [
+            {
+              "ar": "أيها الإبن الوحيد الجنس وكلمة الله",
+              "copt": "A0anatoc `vparxwn ke kata De7amenoc : di`at3n `3metran cwt3rian carkw03ne: T3c ajiac 0eotokov ke ai -par0eno Mariac-",
+              "ar_copt": "أثاناطوس إب أرحون كى كاطا ذيكسامينوس: ذى أتين إيميتران سوتيريان: صاركوثيني تيس أجياس ثيؤتوكو كى أ إى (بارثينو مارياس)2"
+            },
+            {
+              "ar": "الذي لا يموت. الأزلي والقابل كل شيء من أجل خلاصنا. المتجسد من القديسة والدة الإله (الدائمة البتولية مريم)2",
+              "copt": "`K`cmarwovt `al30wc : nem pekiwt `naja0oc : nem pi`pnevma e0ovab : ge ak`I akcw5 `mmon nai nan",
+              "ar_copt": "إك إسمارؤوت آليثوس : نيم بيك يوت إن آغاثوس : بيم بي إبنيفما إثؤواب : ﭽيه آك إي آك سوتي إممون ناي نان"
+            },
+            {
+              "ar": "بغير استحالة المتأنس المصلوب المسيح الإله . بالموت داس الموت أحد الثالوث القدوس الممجد مع الآب والروح القدس. خلصنا",
+              "copt": "Atreptwc `enan `0rwpicac o `ctavrw0icte `xric Teo0eoc : 0anatw 0anaton Paticac ic wn t3c ajiac `tri `adoc : cvn zo7azomenoc : tw patr3i ke tw ajiw : pnevmati cwcon `3mac",
+              "ar_copt": "أتريبطوس إنان إثروبيساس أو إسطاﭭروتيس تيه إخريس تى أوثيؤس. ثاناطو ثاناطون باتيساس:يس أون تيس أجياس إترى أذوس:سين ذوكصا زومينوس. طو باترى كى طو أجيو بنيفما تى :سوسون إيماس"
+            },
+            {
+              "ar": "قدوس الله الذي من أجلنا صار إنسانا بغير استحالة وهو الإله",
+              "copt": "Ajioc `o0eoc: `odi`3mac `An`0rwpoc: jejonoc atreptwc ke minac 0eoc",
+              "ar_copt": "أجيوس أوثيؤس: أوذى إيماس أن إثروبوس جى جونوس أتريبتوس كى مى ناس ثيؤس"
+            },
+            {
+              "ar": "قدوس القوى الذي اظهر بالضعف ما هو أعظم من القوة",
+              "copt": "Ajioc icxvroc : `o`ena0eni`a tov `perxon : t3c icx3roc `epidi7amenoc",
+              "ar_copt": "أجيوس يسشيروس أو إنا ثنيا طو إي بيرخون. تيس يسشيروس إبى ذيكسامينوس"
+            },
+            {
+              "ar": "قدوس الذي لا يموت الذي صلب من أجلنا وصبر على موت الصليب وقبله في جسده وهو أزلي غير مائت.أيها الثالوث القدوس ارحمنا",
+              "copt": "Ajioc `a0anatoc `o`ctavrw0ic di`3mac : `otondi `a`ctavro 0anaton `vpominac : carki ke di7acwc ke en 0anatw : jejonoc `vparxic a0anatoc . Ajia `triac `ele`3con `3mac",
+              "ar_copt": "أجيوس أثاناتوس أو إسطاﭭروتيس ذى إيماس: أو طون ذى ا إسطاﭭرو ثاناطون إيبوميناس : ساركى كى ذيكساسوس كى إن ثاناطو: جى جونوس إيبارشيس أثاناطوس. أجيا ترياس اليسون إيماس"
+            }
+          ]
         },
         {
           "monasba": "asbo3-alam",
           "name": "مقدمه العظه اوكاتي",
           "duration": "11:08",
           "src": "لحن_مقدمه_العظه_اوكاتي",
-          "hazatSrc": "/al7an/hazat/البصخة_page-0014.png"
+          "hazatSrc": "/al7an/hazat/البصخة_page-0014.png",
+          "lyrics_ar": "...",
+          "lyrics_copt": "...",
+          "lyrics_ar_copt": "...",
+          "verses": [
+            {
+              "ar": "عظة لأبينا القديس انبا\n - شنودة رئيس المتوحدين\n- يوحنا فم الذهب\n- اثناسيوس الرسولى\n- ساويرس",
+              "copt": "Ovkathx3cic `nte peniwt e0ovab abba\n- @enov5 piarx3man`drat3c\n- Iwann3c pi`xrvcoctomoc\n- A0anacioc pi`apoctolikoc\n- Cev3rianoc",
+              "ar_copt": "أوكاتي كيسيس انتي بين يوت اثؤواب أفا\nشينوتي بي أرشي مانذريتيس\n- يوأنس بي اخريزوستوموس\n- أثناسيوس بي أبوسطوليكوس\n-سيفيريانوس"
+            },
+            {
+              "ar": "بركته المقدسة تكون معنا . آمين",
+              "copt": "ere pe4`cmov e0ovab 2wpi neman : `am3n",
+              "ar_copt": "ايري بيف اسمو اثؤواب شوبي نيمان : أمين"
+            }
+          ]
         }
       ]
     },
@@ -122,7 +183,10 @@
           "name": "لحن ني صافيف تيرو",
           "duration": "5:42",
           "src": "لحن ني صافيف تيرو",
-          "hazatSrc": "/al7an/hazat/الخماسين_page-0079.png"
+          "hazatSrc": "/al7an/hazat/الخماسين_page-0079.png",
+          "lyrics_ar": "يا كل حكماء إسرائيل صناع خيوط الذهب إصنعوا ثوبا هرونيًا لائقًا بكرامة كهنوت أبينا المكرم رئيس الكهنة ابابا أنبا (تواضروس) حبيب المسيح",
+          "lyrics_copt": "Ⲛⲓⲥⲁⲃⲉⲩ ⲧⲏⲣⲟⲩ ⲛ̀ⲧⲉ ⲡⲒⲥⲣⲁⲏⲗ: ⲛⲏⲉ̀ⲧⲉ̀ⲣϩⲱⲃ ⲉ̀ⲛⲓⲕⲁⲡ ⲛ̀ⲛⲟⲩⲃ: ⲙⲁⲑⲁⲙⲓⲟ ⲛ̀ⲟⲩϣ̀ⲑⲏⲛ ⲛ̀Ⲁⲁⲣⲱⲛ ⲕⲁⲧⲁ ⲡ̀ⲧⲁⲓⲟ ⲛ̀ϯⲙⲉⲧⲟ̀ⲩⲏ̀ⲃ: ⲙ̀ⲡⲉⲛⲓⲱⲧ ⲉⲧⲧⲁⲓⲏⲟⲩⲧ ⲛ̀ⲁ̀ⲣⲭⲓⲉ̀ⲣⲉⲩⲥ ⲡⲁⲡⲁ ⲁⲃⲃⲁ (Ⲑⲉⲟ̀ⲇⲟⲣⲟⲥ): ⲡⲓⲙⲉⲛⲣⲓⲧ ⲛ̀ⲧⲉ Ⲡⲓⲭ̀ⲣⲓⲥⲧⲟⲥ.",
+          "lyrics_ar_copt": "نى سافيف تيرو إنتى بى إسرائيل نى إت إيرهوب إنيكاب إن نوب ماثاميو إن أو إشتين إنتى آآرون كاطا إبطايو إنتى ميت أوويب إمبين يوت إت طايوت إن أرشى إيرفس بابا آفا (.....) بى مينيريت إنتى بى إخرستوس"
         }
       ]
     },
@@ -164,95 +228,6 @@
       "keahk": [
         {
           "monasba": "keahk",
-          "name": "الهوس الاول عربى",
-          "duration": "3:34",
-          "src" : "5  الهوس الاول عربى",
-          "hazatSrc": null
-        },
-        {
-          "monasba": "keahk",
-          "name": "الهوس الثانى عربى",
-          "duration": "5:53",
-          "src": "8 الهوس الثانى عربى",
-          "hazatSrc": null
-        },
-        {
-          "monasba": "keahk",
-          "name": "الهوس الثالث عربى",
-          "duration": "5:32",
-          "src": "11 الهوس الثالث عربى",
-          "hazatSrc": null
-        },
-        {
-          "monasba": "keahk",
-          "name": "الهوس الرابع عربى",
-          "duration": "7:02",
-          "src": "15 الهوس الرابع عربى",
-          "hazatSrc": null
-        },
-        {
-          "monasba": "keahk",
-          "name": "طلبتك من عمق قلبى",
-          "duration": "7:08",
-          "src": "27 طلبتك من عمق قلبى",
-          "hazatSrc": null
-        },
-        {
-          "monasba": "keahk",
-          "name": "أربسالين عربى",
-          "duration": "6:25",
-          "src": "لحن_اريبصالين",
-          "hazatSrc": null
-        },
-        {
-          "monasba": "keahk",
-          "name": "قوموا يا بنى النور",
-          "duration": "4:05",
-          "src": "قوموا يا بنى النور!s",
-          "hazatSrc": null
-        },
-        {
-          "monasba": "keahk",
-          "name": "التوزيع الكيهكى",
-          "duration": "1:40",
-          "src": "التوزيع الكيهكى",
-          "hazatSrc": "/al7an/hazat/كيهك و الميلاد_page-0052.jpg"
-        },
-        {
-          "monasba": "keahk",
-          "name": "ذكصولوجية كيهك كى غار",
-          "duration": "4:18",
-          "src": "ذكصولوجية شهر كيهك_كى غار",
-          "hazatSrc": "/al7an/hazat/كيهك و الميلاد_page-0009.jpg",
-          "hazatSrc1": "/al7an/hazat/كيهك و الميلاد_page-0010.jpg",
-          "hazatSrc2": "/al7an/hazat/كيهك و الميلاد_page-0011.jpg"
-        },
-        {
-          "monasba": "keahk",
-          "name": "لحن تي جاليلي اي",
-          "duration": "11:42",
-          "src": "لحن تي جاليلي اي",
-          "hazatSrc": null
-        },
-        {
-          "monasba": "keahk",
-          "name": "لحن تين اويه أنسوك",
-          "duration": "7:02",
-          "src": "لحن_تين_اويه_أنسوك",
-          "hazatSrc": "/al7an/hazat/التسبحة_page-0047.jpg",
-          "hazatSrc1": "/al7an/hazat/التسبحة_page-0048.jpg",
-          "hazatSrc2": "/al7an/hazat/التسبحة_page-0049.jpg"
-        },
-        {
-          "monasba": "keahk",
-          "name": "لحن تين ثينو الكبير",
-          "duration": "11:18",
-          "src": "لحن_تين_ثينو_الكبير",
-          "hazatSrc": "/al7an/hazat/التسبحة_page-0024.jpg",
-          "hazatSrc1": "/al7an/hazat/التسبحة_page-0025.jpg"
-        },
-        {
-          "monasba": "keahk",
           "name": "لحن تينين",
           "duration": "7:25",
           "src": "لحن_تينين",
@@ -260,7 +235,34 @@
           "hazatSrc1": "/al7an/hazat/التسبحة_page-0043.jpg",
           "hazatSrc2": "/al7an/hazat/التسبحة_page-0044.jpg",
           "hazatSrc3": "/al7an/hazat/التسبحة_page-0045.jpg",
-          "hazatSrc4": "/al7an/hazat/التسبحة_page-0046.jpg"
+          "hazatSrc4": "/al7an/hazat/التسبحة_page-0046.jpg",
+          "verses": [
+            {
+              "ar": "فمن ثم نقدم الذبيحة والعبادة العقلية ونرسل لك فى هذا اليوم التسابيح لدى مجدك يا مخلصنا. حنانيا وعزاريا وميصائيل.",
+              "copt": "Tenen `oqen cucian ke thn logikhn> latrian `anapempwmen ceautw chmeron `wdac> `proc do[a cou cwthr hmwn> ~Ananiac ~Azariac ke Micahl.",
+              "ar_copt": "تينين أوثين ثى سيان كى تين لوجى كين لاتريان: آنا بيم بومين سى آف توسى ميرون أوذاس: إبروس ذوكسا سو سوتير إيمون: آنانياس آزارياس كى ميصائيل"
+            },
+            {
+              "ar": "لما رفعوا ليأخذوا المجد فى أجسادهم انحدر ملاك وأطفأ اللهيب وصيره بارداً عن حنانيا وعزاريا وميصائيل.",
+              "copt": "Trion paiqon `nje melin natou peroc do[a `m`pcatetou> cematoc aggeloc gar cenacel qede> autokiqon `vligarthc> `eleucewn `hmwn> ~Ananiac ~Azariac ke Micahl.",
+              "ar_copt": "اتريس بى ذيس إس تين كامينون تو بيروس تين كى إميينين إفلى ثيسان: كى بير أوكى إبساتو تون سوماتون: إنجيلوس غار سيجكاتيفى كى إكسى تى ناكسى تين افلوجا تو بيروس كى إسوسين أفتوس: سيدراك ميساك أبديناغو"
+            },
+            {
+              "ar": "كانوا يباركون الرب الثلاثة. إذ هم فى وسط الأتون المتوقد. ولم يقو عليهم الحريق. لأن ملاك الرب كان فى وسطهم وخلصهم. ولم يدع شيئاً من الشر يدركهم. حنانيا وعزاريا وميصائيل.",
+              "copt": "Eulogoun ton kurion `nje `p]omt> eu'en `qmh; `n;`\\rw `ncate au`w `mpe `pkw\\t `]jemjom `erwou> `paggeloc gar `m~P_ ef\\en teumhte> afno\\em `mmwou> au`w `mpefkalaau `nnefta\\wou> ~Ananiac ~Azariac ke Micahl.",
+              "ar_copt": "ايفلوغون تون كيريون إنجى إب شمت: افخين إثميتى إن تى إهرو انساتى : افؤو إم بى إبكوهت اشجيم جوم إيروؤو: اب انجيلوس غار ام إبشويس إفهين يتميتى أفنوهيم أموؤو: أفؤو إم بيف كا لاف إم بيث هوؤو إنيف تاهوؤو أنانياس أزارياس كى ميسائيل"
+            },
+            {
+              "ar": "ومن بعد أن ننال من أسراره المقدسة نصرخ قائلين: قدوس الله. قدوس القوى. قدوس الذى هو وحده غير مائت. الذى أعطانا انعامه وتحنن على عدم معرفتنا. حنانيا وعزاريا وميصائيل.",
+              "copt": "Menenca `qre`nje `ebol\\en nefmucthrion `eqouab enw] `ebol enjw `mmoc> je `fouaab `nsi `pnoute> `fouaab `nsi petjwre> `fouaab `nsi petmou an `mmauatf> pentaf; nan `ebol\\en nef`\\mot af]ana\thf `ejen agni`a> ~Ananiac ~Azariac ke Micahl.",
+              "ar_copt": "مينينسا اثرينتثى ايفول خين نيف سيستى ريون اثؤاب انؤوش إيفول انجو اموس: جى اوؤاب إن اتشى بنوتى: افؤواب إن اتشى بيتجورى افؤواب إن إتشى بيتموؤو آن إما فتف: بين ات أفنى نان ايفول خين نيف اهموت أفشاناه تيف إيجين نين جنيًا: أنانياس أزارياس كى ميسائيل."
+            },
+            {
+              "ar": "وسبحوا وباركوا الله كل حين.",
+              "copt": "Eu\\wc eu`cmou `eV; `nchou niben.",
+              "ar_copt": "إفهوس اف إزمو إى افنوتى انسيو نيفين."
+            }
+          ]
         },
         {
           "monasba": "keahk",
@@ -270,24 +272,44 @@
           "hazatSrc": "/al7an/hazat/التسبحة_page-0056.jpg",
           "hazatSrc1": "/al7an/hazat/التسبحة_page-0057.jpg",
           "hazatSrc2": "/al7an/hazat/التسبحة_page-0058.jpg",
-          "hazatSrc3": "/al7an/hazat/التسبحة_page-0059.jpg"
-        },
-        {
-          "monasba": "keahk",
-          "name": "لحن شيري نيه ماريا",
-          "duration": "6:50",
-          "src": "لحن_شيري_نيه_ماريا",
-          "hazatSrc": "/al7an/hazat/التسبحة_page-0053.jpg",
-          "hazatSrc1": "/al7an/hazat/التسبحة_page-0054.jpg",
-          "hazatSrc2": "/al7an/hazat/التسبحة_page-0055.jpg"
-        },
-        {
-          "monasba": "keahk",
-          "name": "لحن هوس إيروف (الهوس الثالث)",
-          "duration": "7:55",
-          "src": "لحن هوس إيروف (الهوس الثالث) - الم_علم جاد لويس",
-          "hazatSrc": "/al7an/hazat/التسبحة_page-0038.jpg",
-          "hazatSrc1": "/al7an/hazat/التسبحة_page-0039.jpg"
+          "hazatSrc3": "/al7an/hazat/التسبحة_page-0059.jpg",
+          "verses": [
+            {
+              "ar": "مدعوة أنت، بالحقيقة، أيتها القديسة مريم، القبة التي للأقداس.",
+              "copt": "Cemou] `ero dikeoc@ `w ;ye;ouab Maria@ je ]mah`cnou] `n`ckyny@ `nte nye;ouab.",
+              "ar_copt": "سيموتي إيرو ذيكيؤس: أوثي إثؤاب ماريا: جي تي ماه إسنوتي إن إسكيني: إنتى ني إثؤواب."
+            },
+            {
+              "ar": "+ تلك الموضوع فيها، عصا هرون، والزهرة المقدسة، التي للبخور.",
+              "copt": "+ :y`etou,y `nqytc@ `nje pi`sbwt `nte `A`arwn@ nem ]`hryri e;ouab@ `nte pi`c;oinoufi.",
+              "ar_copt": "+ ثي إيتوكي إنخيتس: إنجي بي إشفوت إنتى آىرون: نيم تي إهريري إثؤواب: إنتى بي إستوي نوفي."
+            },
+            {
+              "ar": "أنت مشتملة بالطهارة، من داخل ومن خارج، أيتها القبة النقية، مسكن الصديقين.",
+              "copt": "Tejolh `mpitoubo@ caqoun nem cabol@ `w ]`ckyny `nka;aroc@ `vma `nswpi `nnidikeoc.",
+              "ar_copt": "تي جوله إمبي توفو: ساخون نيم سافول: أوتي إسكيني إنكاثاروس: إفما إنشوبي إن ني ذيكيئوس."
+            },
+            {
+              "ar": "+ طغمات العلاء، وصفوف الأبرار، يمجدون، طوباويتك.",
+              "copt": "+ Nitagma `nte `p[ici@ nem `p,oroc `nte ni`;myi@ ceereudoxazin@",
+              "ar_copt": "+ني تاغما إنتى إبتشيسي: نيم إيخوروس إنتى ني إثمي:سي إير إف ذوكسازين: إن ني ماكاريسموس"
+            },
+            {
+              "ar": "من أجل هذا، نعظمِك، بإستحقاقٍ، بتماجيد نبوية.",
+              "copt": "E;be vai ten[ici@ `mmo axiwc@ qen hanumnologia@ `m`provytikon.",
+              "ar_copt": "إثفي فاي تين إتشيسي: إممو أكسيوس: خين هان إيمنولوجيا: إم إبروفيتيكون."
+            },
+            {
+              "ar": "+ لأنهم تكلموا، من أجلِك بأعمال كريمة، أيتها المدينة المقدسة، التي للملك العظيم.",
+              "copt": "+ Je aucaji e;by]@ `nhan`hbyou`i eutaiyout@ ]baki e;ouab@ `nte pinis] `nOuro.",
+              "ar_copt": "+ جي أفساجي إثفيتي: إنهان إهفي أوي إفتايوت: تي فاكي إثؤواب: إنتى بي نيشتي إن أورو."
+            },
+            {
+              "ar": "نسأل ونطلب، أن نفوز برحمةٍ، بشفاعاتِك، عند محب البشر.",
+              "copt": "Ten]ho tentwbh@ e;rensasni eunai@ hiten ne`precbia@ `ntotf `mPimairwmi.",
+              "ar_copt": "تين تيهو تين توبه: إثرين شاشني إفتاي: هيتين ني إبريسفيا: إنتوتف إمبي ماي رومي."
+            }
+          ]
         },
         {
           "monasba": "keahk",
@@ -299,7 +321,19 @@
           "hazatSrc2": "/al7an/hazat/التسبحة_page-0038.jpg",
           "hazatSrc3": "/al7an/hazat/التسبحة_page-0039.jpg",
           "hazatSrc4": "/al7an/hazat/التسبحة_page-0040.jpg",
-          "hazatSrc5": "/al7an/hazat/التسبحة_page-0041.jpg"
+          "hazatSrc5": "/al7an/hazat/التسبحة_page-0041.jpg",
+          "verses": [
+            {
+              "ar": "باركوا الرب يا حنانيا وعزاريا وميصائيل سبحوه وزيدوه علوا الي الآباد",
+              "copt": "`Cmov `ePu `Ananiac `Azariac Mica3l : hwc `ero4 `arihov`o sac4 2a ni`eneh",
+              "ar_copt": "سيموتي إيرو ذيكيؤس: أوثي إثؤاب ماريا: جي تي ماه إسنوتي إن إسكيني: إنتى ني إثؤواب."
+            },
+            {
+              "ar": "باركوا الرب يا عابدي الرب اله آبائنا سبحوه وزيدة علواً الي الآباد",
+              "copt": "`Cmov `ePu n3`etercebec0e `mPu F5 nte nenio5 : hwc `ero4 `arihov`o sac4 2a ni`eneh",
+              "ar_copt": "اسمو ايه ابتشويس ني ات ايرسيه فيستيه امبتشويس افنوتي انتيه نين يوتي : هوس ايروف اري هؤو تشاسف شاني اينيه"
+            }
+          ]
         }
       ]
     }

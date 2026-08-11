@@ -1,10 +1,16 @@
 "use client";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, TouchEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import al7anData from "@/public/al7an-all.json";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
+
+type Verse = {
+  ar?: string;
+  copt?: string;
+  ar_copt?: string;
+};
 
 type Hymn = {
   name: string;
@@ -13,8 +19,10 @@ type Hymn = {
   lyrics_ar?: string;
   lyrics_copt?: string;
   lyrics_ar_copt?: string;
+  verses?: Verse[];
   [key: string]: any;
 };
+
 type HymnMap = Record<string, Hymn[]>;
 const monasbaName = {
   "snawi": "سنوي",
@@ -51,8 +59,19 @@ export default function UnifiedAl7anClient() {
   const [showCopt, setShowCopt] = useState(true);
   const [showArCopt, setShowArCopt] = useState(true);
 
+  // طريقة العرض: صفوف (rows) أو 3 أعمدة (cols)
+  const [layoutMode, setLayoutMode] = useState<"rows" | "cols">("rows");
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
   const [imageScale, setImageScale] = useState(1);
+  const touchStartDist = useRef<number | null>(null);
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [audioErrorDetails, setAudioErrorDetails] = useState<string>("");
+  const [audioData, setAudioData] = useState<number[]>([]);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
 
   const displayedHymns = useMemo(() => {
     if (searchQuery.trim()) {
@@ -98,6 +117,28 @@ export default function UnifiedAl7anClient() {
     }
   };
 
+  const copyToClipboard = async (text: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2000);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // تجميع النص لنسخه بضغطة واحدة
+  const getLyricsText = (type: "ar" | "copt" | "ar_copt") => {
+    if (!selectedHymn) return "";
+    if (selectedHymn.verses && selectedHymn.verses.length > 0) {
+      return selectedHymn.verses.map(v => v[type] || "").filter(Boolean).join("\n");
+    }
+    if (type === "ar") return selectedHymn.lyrics_ar || "";
+    if (type === "copt") return selectedHymn.lyrics_copt || "";
+    if (type === "ar_copt") return selectedHymn.lyrics_ar_copt || "";
+    return "";
+  };
+
   const formatTime = (time: number) => {
     if (!time || isNaN(time)) return "0:00";
     const min = Math.floor(time / 60);
@@ -110,23 +151,86 @@ export default function UnifiedAl7anClient() {
 
   const getImages = (hymn: Hymn) => Object.keys(hymn).filter(k => k.startsWith("hazatSrc") && hymn[k]).map(k => hymn[k] as string);
 
+  // التعامل مع التكبير والتصغير باللمس بأصبعين (Pinch Zoom)
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      touchStartDist.current = dist;
+    }
+  };
+
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2 && touchStartDist.current !== null) {
+      const currentDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const factor = currentDist / touchStartDist.current;
+      setImageScale((prev) => Math.min(Math.max(prev * factor, 0.5), 4));
+      touchStartDist.current = currentDist;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartDist.current = null;
+  };
+
+  const hasLyrics = selectedHymn && (
+    (selectedHymn.verses && selectedHymn.verses.length > 0) ||
+    selectedHymn.lyrics_ar ||
+    selectedHymn.lyrics_copt ||
+    selectedHymn.lyrics_ar_copt
+  );
+
+  const setupAudioAnalyser = () => {
+    if (!audioRef.current || audioCtxRef.current) return;
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioCtx();
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 64;
+      const source = ctx.createMediaElementSource(audioRef.current);
+      source.connect(analyser);
+      analyser.connect(ctx.destination);
+
+      audioCtxRef.current = ctx;
+      analyserRef.current = analyser;
+
+      const updateWaveform = () => {
+        if (analyserRef.current) {
+          const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+          analyserRef.current.getByteFrequencyData(dataArray);
+          const normalized = Array.from(dataArray).map(val => Math.max(15, (val / 255) * 100));
+          setAudioData(normalized);
+        }
+        requestAnimationFrame(updateWaveform);
+      };
+      updateWaveform();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row w-full h-[calc(100vh-20px)] overflow-hidden bg-surface" dir="rtl">
       <div className={`w-full ${selectedHymn ? 'hidden lg:flex' : 'flex'} lg:w-[35%] h-full flex-col bg-surface border-l border-outline-variant/30 z-10 overflow-hidden`}>
         <div className="p-0.5 shrink-0 flex flex-col gap-0.5">
           <div className="flex-none border-b border-[#dcc0c1]/20 bg-[#f6f3f2]/10 backdrop-blur-md flex items-center justify-between z-10 shadow-2xl rounded-b-4xl">
 
-        <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
-          <FaArrowRight size={18} />
-        </Link>
-          <input
-            type="text"
-            placeholder="بحث عن لحن..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-0.5 rounded-lg border border-outline/30 bg-surface-container-highest text-on-surface focus:outline-primary"
-          />
-</div>
+            <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
+              <FaArrowRight size={18} />
+            </Link>
+            <input
+              type="text"
+              placeholder="بحث عن لحن..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full p-0.5 rounded-lg border border-outline/30 bg-surface-container-highest text-on-surface focus:outline-primary"
+            />
+          </div>
           {!searchQuery && (
             <div className="flex gap-0.5 overflow-x-auto pb-0.25 scrollbar-hide">
               {monasbatList.map((m) => (
@@ -136,7 +240,6 @@ export default function UnifiedAl7anClient() {
                   className={`px-0.5 py-0.25 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${activeMonasba === m ? "bg-primary text-white shadow-md" : "bg-surface-container-high hover:bg-surface-variant"
                     }`}
                 >
-                  {/* {m} */}
                   {monasbaName[m as keyof typeof monasbaName] ?? m}
                 </button>
               ))}
@@ -156,6 +259,7 @@ export default function UnifiedAl7anClient() {
                   setIsLoading(true);
                   setHasError(false);
                   setCurrentTime(0);
+                  setDuration(0);
                 }}
                 className="group cursor-pointer rounded-lg border bg-surface-container-lowest p-0.5 flex justify-between items-center hover:shadow-sm transition-all"
               >
@@ -163,11 +267,15 @@ export default function UnifiedAl7anClient() {
                   <h3 className="font-bold text-sm">{h.name}</h3>
                   <p className="text-xs text-muted-foreground">
                     {searchQuery ? 'نتائج البحث' :
-                      // activeMonasba
                       monasbaName[activeMonasba as keyof typeof monasbaName] ?? activeMonasba
                     }</p>
                 </div>
-                {h.duration && <span className="text-xs bg-primary/10 text-primary px-0.5 py-0.25 rounded">{h.duration}</span>}
+                {h.duration && (
+                  <span className="text-xs bg-primary/10 text-primary px-0.5 py-0.25 rounded">
+                    {typeof h.duration === "number" ? formatTime(h.duration) : h.duration}
+                  </span>
+                )}
+                {/* {h.duration && <span className="text-xs bg-primary/10 text-primary px-0.5 py-0.25 rounded">{h.duration}</span>} */}
               </motion.div>
             ))}
             {displayedHymns.length === 0 && (
@@ -203,7 +311,6 @@ export default function UnifiedAl7anClient() {
                 <div className="flex-1 overflow-hidden">
                   <h2 className="text-2xl font-bold truncate">{selectedHymn.name}</h2>
                   <p className="text-sm text-white/50">  {monasbaName[activeMonasba as keyof typeof monasbaName] ?? activeMonasba}</p>
-                  {/* <p className="text-sm text-white/50">{activeMonasba}</p> */}
                 </div>
               </div>
 
@@ -216,9 +323,24 @@ export default function UnifiedAl7anClient() {
                   </div>
                 )}
                 {hasError && (
-                  <div className="absolute inset-0 bg-[#1e1e1e]/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-xl">
-                    <span className="text-red-500 mb-0.25">⚠️ تعذر تحميل الملف الصوتي</span>
-                    <button onClick={() => { setHasError(false); setIsLoading(true); audioRef.current?.load(); }} className="px-0.5 py-0.25 bg-white/10 rounded-full text-sm">إعادة المحاولة</button>
+                  <div className="absolute inset-0 bg-[#1e1e1e]/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-0.5 rounded-xl text-center">
+                    <span className="text-red-500 text-lg mb-0.25 font-bold">⚠️ تعذر تشغيل الملف الصوتي</span>
+                    <p className="text-xs text-red-300/80 mb-0.5 max-w-xs dir-ltr font-mono bg-black/40 p-0.25 rounded border border-red-500/20">
+                      {audioErrorDetails || "خطأ غير معروف في الاتصال بالسيرفر"}
+                    </p>
+                    <button
+                      onClick={() => {
+                        setHasError(false);
+                        setIsLoading(true);
+                        if (audioRef.current) {
+                          audioRef.current.load();
+                          audioRef.current.play().catch(() => { });
+                        }
+                      }}
+                      className="px-0.5 py-0.25 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-semibold transition"
+                    >
+                      إعادة المحاولة
+                    </button>
                   </div>
                 )}
 
@@ -227,7 +349,7 @@ export default function UnifiedAl7anClient() {
                   <span>{formatTime(duration)}</span>
                 </div>
 
-                <div
+                {/* <div
                   className="flex items-center gap-[2px] h-3 w-full cursor-pointer group"
                   onClick={handleWaveClick}
                   dir="ltr"
@@ -238,6 +360,24 @@ export default function UnifiedAl7anClient() {
                       <div
                         key={i}
                         className={`flex-1 rounded-full transition-colors duration-150 ${isActive ? 'bg-linear-to-t from-orange-600 to-orange-400' : 'bg-white/20 group-hover:bg-white/30'}`}
+                        style={{ height: `${h}%` }}
+                      />
+                    );
+                  })}
+                </div> */}
+                <div
+                  className="flex items-center gap-[2px] h-2 w-full cursor-pointer group"
+                  onClick={handleWaveClick}
+                  dir="ltr"
+                >
+                  {(audioData.length > 0 ? audioData : waveHeights).map((h, i) => {
+                    const totalBars = audioData.length > 0 ? audioData.length : WAVEFORM_BARS;
+                    const isActive = (i / totalBars) <= (currentTime / (duration || 1));
+                    return (
+                      <div
+                        key={i}
+                        className={`flex-1 rounded-full transition-all duration-75 ${isActive ? 'bg-linear-to-t from-orange-600 to-orange-400' : 'bg-white/20 group-hover:bg-white/30'
+                          }`}
                         style={{ height: `${h}%` }}
                       />
                     );
@@ -260,24 +400,41 @@ export default function UnifiedAl7anClient() {
                     )}
                   </button>
                   <button onClick={() => skipTime(5)} className="text-white/60 hover:text-white transition-colors">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18L13 12 3 3z" /><path d="M13 3v18l10-9-10-9z" /><text x="8" y="16" fontSize="8" fill="currentColor">-5</text></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18L13 12 3 3z" /><path d="M13 3v18l10-9-10-9z" /><text x="8" y="16" fontSize="8" fill="currentColor">-5</text></svg>
                   </button>
                 </div>
 
                 <audio
                   ref={audioRef}
                   src={getArchiveSrc(selectedHymn.src)}
-                  onLoadStart={() => { setIsLoading(true); setHasError(false); }}
+                  onPlay={() => {
+                    if (audioCtxRef.current?.state === 'suspended') {
+                      audioCtxRef.current.resume();
+                    }
+                    setupAudioAnalyser();
+                  }}
+                  onLoadStart={() => { setIsLoading(true); setHasError(false); setAudioErrorDetails(""); }}
+                  onLoadedMetadata={(e) => {
+                    setDuration(e.currentTarget.duration);
+                    setIsLoading(false);
+                  }}
                   onCanPlay={() => setIsLoading(false)}
                   onWaiting={() => setIsLoading(true)}
                   onPlaying={() => { setIsLoading(false); setIsPlaying(true); }}
                   onPause={() => setIsPlaying(false)}
-                  onError={() => { setIsLoading(false); setHasError(true); setIsPlaying(false); }}
+                  onError={(e) => {
+                    setIsLoading(false);
+                    setHasError(true);
+                    setIsPlaying(false);
+                    const err = e.currentTarget.error;
+                    if (err?.code === 1) setAudioErrorDetails("تم إلغاء تحميل الصوت بواسطة المستخدم (Aborted).");
+                    else if (err?.code === 2) setAudioErrorDetails("خطأ في شبكة الاتصال أثناء تحميل الصوت (Network Error).");
+                    else if (err?.code === 3) setAudioErrorDetails("خطأ في فك تشفير الملف الصوتي (Decode Error).");
+                    else if (err?.code === 4) setAudioErrorDetails("الملف غير موجود على السيرفر (404 Not Found).");
+                    else setAudioErrorDetails("تعذر الوصول لملف الصوت.");
+                  }}
                   onTimeUpdate={() => {
-                    if (audioRef.current) {
-                      setCurrentTime(audioRef.current.currentTime);
-                      setDuration(audioRef.current.duration || 0);
-                    }
+                    if (audioRef.current) setCurrentTime(audioRef.current.currentTime);
                   }}
                   onEnded={() => setIsPlaying(false)}
                   className="hidden"
@@ -292,30 +449,94 @@ export default function UnifiedAl7anClient() {
                   </label>
                   <label className="flex items-center gap-0.25 cursor-pointer text-sm font-coptic">
                     <input type="checkbox" checked={showCopt} onChange={e => setShowCopt(e.target.checked)} className="accent-orange-500 w-2 h-2" />
-                    Qop;
+                    قبطي
                   </label>
                   <label className="flex items-center gap-0.25 cursor-pointer text-sm" dir="ltr">
                     <input type="checkbox" checked={showArCopt} onChange={e => setShowArCopt(e.target.checked)} className="accent-orange-500 w-2 h-2" />
-                    ArCopt
+                    معرب
                   </label>
                 </div>
               )}
+
               <div className="flex-1 overflow-y-auto scrollbar-hide px-0.25">
-                {(selectedHymn.lyrics_ar || selectedHymn.lyrics_copt || selectedHymn.lyrics_ar_copt) ? (
-                  <div className="flex flex-col gap-0.5 pb-1 pt-0.5 text-center bg-white/5 rounded-xl p-0.5">
-                    {showAr && selectedHymn.lyrics_ar && (
-                      <div className="text-lg font-bold text-white whitespace-pre-wrap leading-relaxed">
-                        {selectedHymn.lyrics_ar}
-                      </div>
-                    )}
-                    {showCopt && selectedHymn.lyrics_copt && (
-                      <div className="text-xl font-coptic tracking-wide text-white/90 whitespace-pre-wrap mt-0.5 border-t border-white/10 pt-0.5">
-                        {selectedHymn.lyrics_copt}
-                      </div>
-                    )}
-                    {showArCopt && selectedHymn.lyrics_ar_copt && (
-                      <div className="text-lg font-serif text-white/70 whitespace-pre-wrap mt-0.5 border-t border-white/10 pt-0.5" dir="ltr">
-                        {selectedHymn.lyrics_ar_copt}
+                {hasLyrics ? (
+                  <div className="flex flex-col gap-0.5 pb-0.5 pt-0.5 text-center bg-white/5 rounded-xl p-0.5">
+                    {/* 🟢 الزرارين هنا لاختيار طريقة العرض */}
+                    <div className="flex justify-center gap-0.25 my-0.25">
+                      <button
+                        onClick={() => setLayoutMode("rows")}
+                        className={`px-0.5 py-0.25 rounded-lg text-xs font-semibold transition ${layoutMode === "rows"
+                            ? "bg-orange-500 text-white shadow-md"
+                            : "bg-white/10 hover:bg-white/20 text-white/70"
+                          }`}
+                      >
+                        صفوف 📜
+                      </button>
+                      <button
+                        onClick={() => setLayoutMode("cols")}
+                        className={`px-0.5 py-0.25 rounded-lg text-xs font-semibold transition ${layoutMode === "cols"
+                            ? "bg-orange-500 text-white shadow-md"
+                            : "bg-white/10 hover:bg-white/20 text-white/70"
+                          }`}
+                      >
+                        أعمدة 📑
+                      </button>
+                    </div>
+                    {selectedHymn.verses && selectedHymn.verses.length > 0 ? (
+                      selectedHymn.verses.map((verse, index) => {
+                        // التناوب بين خلفية تقيلة وخفيفة
+                        const bgClass = index % 2 === 0 ? "bg-white/10" : "bg-white/5";
+                        // حساب عدد الأعمدة المفعلة ديناميكياً
+                        const activeCols = [showAr && verse.ar, showCopt && verse.copt, showArCopt && verse.ar_copt].filter(Boolean).length || 1;
+                        return (
+                          <div
+                            key={index}
+                            className={`p-0.5 rounded-lg border border-white/5 transition-all ${bgClass} ${layoutMode === "cols"
+                                ? "grid grid-cols-1 md:grid-cols-3 gap-0.25 items-center text-center"
+                                : "flex flex-col gap-0.25 text-center"
+                              }`}
+                            style={{
+                              gridTemplateColumns: layoutMode === "cols" ? `repeat(${activeCols}, minmax(0, 1fr))` : undefined
+                            }}
+                          >
+                            {showAr && verse.ar && (
+                              <div className={`text-base font-bold text-white whitespace-pre-wrap leading-relaxed ${layoutMode === "cols" ? "border-l border-white/10 last:border-l-0 px-0.25" : ""
+                                }`}>
+                                {verse.ar}
+                              </div>
+                            )}
+                            {showCopt && verse.copt && (
+                              <div className={`text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap ${layoutMode === "cols" ? "border-l border-white/10 last:border-l-0 px-0.25" : ""
+                                }`}>
+                                {verse.copt}
+                              </div>
+                            )}
+                            {showArCopt && verse.ar_copt && (
+                              <div className={`text-base font-serif text-white/70 whitespace-pre-wrap ${layoutMode === "cols" ? "border-l border-white/10 last:border-l-0 px-0.25" : ""
+                                }`}>
+                                {verse.ar_copt}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="flex flex-col gap-0.5">
+                        {showAr && selectedHymn.lyrics_ar && (
+                          <div className="text-lg font-bold text-white whitespace-pre-wrap leading-relaxed">
+                            {selectedHymn.lyrics_ar}
+                          </div>
+                        )}
+                        {showCopt && selectedHymn.lyrics_copt && (
+                          <div className="text-xl font-coptic tracking-wide text-white/90 whitespace-pre-wrap mt-0.5 border-t border-white/10 pt-0.5">
+                            {selectedHymn.lyrics_copt}
+                          </div>
+                        )}
+                        {showArCopt && selectedHymn.lyrics_ar_copt && (
+                          <div className="text-lg font-serif text-white/70 whitespace-pre-wrap mt-0.5 border-t border-white/10 pt-0.5" dir="ltr">
+                            {selectedHymn.lyrics_ar_copt}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -327,8 +548,8 @@ export default function UnifiedAl7anClient() {
                 )}
               </div>
 
-              {/* Thumbnails Section */}
-              {getImages(selectedHymn).length > 0 && (
+              {/* قسم الهزات والمخطوطات */}
+              {/* {getImages(selectedHymn).length > 0 && (
                 <div className="w-full mt-0.5 bg-white/5 p-0.5 rounded-xl shrink-0 overflow-y-auto custom-scrollbar">
                   <h3 className="text-sm font-semibold mb-0.5 text-white/50 sticky top-0 bg-[#1a1a1a] p-0.25 rounded z-10">مخطوطات / هزات</h3>
                   <div className="flex gap-0.5 overflow-x-auto pb-0.25">
@@ -352,26 +573,43 @@ export default function UnifiedAl7anClient() {
                     ))}
                   </div>
                 </div>
+              )} */}
+              {getImages(selectedHymn).length > 0 && (
+                <div className="mt-0.5 shrink-0 flex justify-center">
+                  <button
+                    onClick={() => {
+                      const imgs = getImages(selectedHymn);
+                      setFullScreenImage(imgs[0]);
+                      setCurrentImageIndex(0);
+                      setImageScale(1);
+                    }}
+                    className="flex items-center gap-0.25 px-0.5 py-0.25 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/30 rounded-xl text-xs font-semibold transition shadow-md"
+                  >
+                    📖 عرض المخطوطات والهزات ({getImages(selectedHymn).length})
+                  </button>
+                </div>
               )}
-
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Full Screen Image Modal */}
-      <AnimatePresence>
+      {/* نافذة عرض الصورة بكامل الشاشة مع دعم التكبير باللمس Pinch-to-Zoom */}
+      {/* <AnimatePresence>
         {fullScreenImage && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-100 bg-black/95 backdrop-blur-md flex flex-col items-center justify-center"
-          >
+            className="fixed inset-0 z-100 bg-black/95 backdrop-blur-md flex flex-col items-center justify-center touch-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          > */}
             {/* Top Bar with Close Button */}
-            <div className="absolute top-0 left-0 w-full p-0.5 flex justify-between items-center z-110 bg-linear-to-b from-black/80 to-transparent">
+            {/* <div className="absolute top-0 left-0 w-full p-0.5 flex justify-between items-center z-110 bg-linear-to-b from-black/80 to-transparent">
               <div className="text-white/50 text-sm bg-black/50 px-0.5 py-0.25 rounded-full">
-                يمكنك التكبير والتصغير
+                يمكنك التكبير والتصغير بأصبعيك أو الأزرار
               </div>
               <button
                 onClick={() => { setFullScreenImage(null); setImageScale(1); }}
@@ -379,10 +617,10 @@ export default function UnifiedAl7anClient() {
               >
                 ✕
               </button>
-            </div>
+            </div> */}
 
             {/* Zoom Controls */}
-            <div className="absolute bottom-1 right-1 z-110 flex gap-0.5">
+            {/* <div className="absolute bottom-1 right-1 z-110 flex gap-0.5">
               <button
                 onClick={(e) => { e.stopPropagation(); setImageScale(prev => Math.min(prev + 0.5, 4)); }}
                 className="w-3 h-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center text-white text-2xl shadow-lg backdrop-blur-md transition-all"
@@ -401,10 +639,10 @@ export default function UnifiedAl7anClient() {
               >
                 إعادة
               </button>
-            </div>
+            </div> */}
 
             {/* Image Container */}
-            <div
+            {/* <div
               className="w-full h-full overflow-auto flex items-center justify-center cursor-zoom-out"
               onClick={() => { setFullScreenImage(null); setImageScale(1); }}
             >
@@ -426,8 +664,87 @@ export default function UnifiedAl7anClient() {
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
+      {/* نافذة المعرض والـ Slideshow للمخطوطات */}
+      <AnimatePresence>
+        {fullScreenImage && selectedHymn && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-100 bg-black/95 backdrop-blur-md flex flex-col items-center justify-center touch-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* شريط أدوات النافذة */}
+            <div className="absolute top-0 left-0 w-full p-0.5 flex justify-between items-center z-110 bg-linear-to-b from-black/80 to-transparent">
+              <div className="text-white/70 text-xs bg-black/50 px-0.5 py-0.25 rounded-full border border-white/10">
+                مخطوطة {currentImageIndex + 1} من {getImages(selectedHymn).length}
+              </div>
+              <button
+                onClick={() => { setFullScreenImage(null); setImageScale(1); }}
+                className="w-3 h-3 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-lg backdrop-blur-md transition"
+              >
+                ✕
+              </button>
+            </div>
 
+            {/* أزرار التنقل (Slideshow) */}
+            {getImages(selectedHymn).length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const imgs = getImages(selectedHymn);
+                    const nextIdx = (currentImageIndex - 1 + imgs.length) % imgs.length;
+                    setCurrentImageIndex(nextIdx);
+                    setFullScreenImage(imgs[nextIdx]);
+                    setImageScale(1);
+                  }}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 z-110 p-0.5 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition"
+                >
+                  ❯
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const imgs = getImages(selectedHymn);
+                    const nextIdx = (currentImageIndex + 1) % imgs.length;
+                    setCurrentImageIndex(nextIdx);
+                    setFullScreenImage(imgs[nextIdx]);
+                    setImageScale(1);
+                  }}
+                  className="absolute left-1 top-1/2 -translate-y-1/2 z-110 p-0.5 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition"
+                >
+                  ❮
+                </button>
+              </>
+            )}
+
+            {/* عرض الصورة والزوم */}
+            <div
+              className="w-full h-full overflow-auto flex items-center justify-center cursor-zoom-out p-0.5"
+              onClick={() => { setFullScreenImage(null); setImageScale(1); }}
+            >
+              <motion.div
+                animate={{ scale: imageScale }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="relative w-full h-full max-w-4xl max-h-[85vh]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Image
+                  src={fullScreenImage}
+                  alt="Manuscript"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
