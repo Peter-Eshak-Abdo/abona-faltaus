@@ -12,6 +12,8 @@ export default function LogoHeader() {
           height={40}
           sizes="auto"
           className="rounded-full border-blue-300 justify-self-start flex-none"
+          priority
+          loading="eager"
         />
         <h1 className="font-bold text-2xl md:text-4xl flex-initial grow text-center">
           ابونا فلتاؤس
@@ -24,6 +26,8 @@ export default function LogoHeader() {
           sizes="auto"
           className="rounded-full border-blue-300 justify-self-end flex-none"
           style={{ transform: "scaleX(-1)" }}
+          priority
+          loading="eager"
         />
       </div>
     </div>

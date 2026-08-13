@@ -458,14 +458,14 @@ export default function UnifiedAl7anClient() {
                 </div>
               )}
 
-              <div className="flex-1 overflow-y-auto scrollbar-hide px-0.25">
+              <div className="flex-1 overflow-y-auto scrollbar-hide px-0.5">
                 {hasLyrics ? (
-                  <div className="flex flex-col gap-0.5 pb-0.5 pt-0.5 text-center bg-white/5 rounded-xl p-0.5">
+                  <div className="flex flex-col gap-0.25 pb-0.25 pt-0.25 text-center bg-white/5 rounded-xl p-0.25">
                     {/* 🟢 الزرارين هنا لاختيار طريقة العرض */}
                     <div className="flex justify-center gap-0.25 my-0.25">
                       <button
                         onClick={() => setLayoutMode("rows")}
-                        className={`px-0.5 py-0.25 rounded-lg text-xs font-semibold transition ${layoutMode === "rows"
+                        className={`px-0.25 py-0.25 rounded-lg text-sm font-semibold transition ${layoutMode === "rows"
                             ? "bg-orange-500 text-white shadow-md"
                             : "bg-white/10 hover:bg-white/20 text-white/70"
                           }`}
@@ -474,7 +474,7 @@ export default function UnifiedAl7anClient() {
                       </button>
                       <button
                         onClick={() => setLayoutMode("cols")}
-                        className={`px-0.5 py-0.25 rounded-lg text-xs font-semibold transition ${layoutMode === "cols"
+                        className={`px-0.25 py-0.25 rounded-lg text-sm font-semibold transition ${layoutMode === "cols"
                             ? "bg-orange-500 text-white shadow-md"
                             : "bg-white/10 hover:bg-white/20 text-white/70"
                           }`}
@@ -482,39 +482,50 @@ export default function UnifiedAl7anClient() {
                         أعمدة 📑
                       </button>
                     </div>
+
                     {selectedHymn.verses && selectedHymn.verses.length > 0 ? (
                       selectedHymn.verses.map((verse, index) => {
-                        // التناوب بين خلفية تقيلة وخفيفة
+                        // التناوب بين خلفية تقيلة وخفيفة زي الصورة
                         const bgClass = index % 2 === 0 ? "bg-white/10" : "bg-white/5";
-                        // حساب عدد الأعمدة المفعلة ديناميكياً
-                        const activeCols = [showAr && verse.ar, showCopt && verse.copt, showArCopt && verse.ar_copt].filter(Boolean).length || 1;
                         return (
                           <div
                             key={index}
-                            className={`p-0.5 rounded-lg border border-white/5 transition-all ${bgClass} ${layoutMode === "cols"
-                                ? "grid grid-cols-1 md:grid-cols-3 gap-0.25 items-center text-center"
+                            className={`p-0.25 rounded-lg border border-white/5 transition-all ${bgClass} ${layoutMode === "cols"
+? "flex flex-row divide-x divide-x-reverse divide-white/20 items-stretch w-full"                                // ? "flex flex-row w-full items-stretch justify-center" // Flex للتقسيم المتساوي
                                 : "flex flex-col gap-0.25 text-center"
                               }`}
-                            style={{
-                              gridTemplateColumns: layoutMode === "cols" ? `repeat(${activeCols}, minmax(0, 1fr))` : undefined
-                            }}
                           >
+                            {/* اللغة العربية (في اليمين) */}
                             {showAr && verse.ar && (
-                              <div className={`text-base font-bold text-white whitespace-pre-wrap leading-relaxed ${layoutMode === "cols" ? "border-l border-white/10 last:border-l-0 px-0.25" : ""
-                                }`}>
+                              <div
+                                className={`flex-1 flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed ${layoutMode === "cols" ? "border-l border-white/20 px-0.25" : ""
+                                  }`}
+                              >
                                 {verse.ar}
                               </div>
                             )}
-                            {showCopt && verse.copt && (
-                              <div className={`text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap ${layoutMode === "cols" ? "border-l border-white/10 last:border-l-0 px-0.25" : ""
-                                }`}>
-                                {verse.copt}
+
+                            {/* القبطي المعرب (في المنتصف) */}
+                            {showArCopt && verse.ar_copt && (
+                              <div
+                                className={`flex-1 flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap ${layoutMode === "cols"
+                                    ? showCopt // لو فيه قبطي بعده، اعمل خط فاصل
+                                      ? "border-l border-white/20 px-0.25"
+                                      : "px-0.25"
+                                    : ""
+                                  }`}
+                              >
+                                {verse.ar_copt}
                               </div>
                             )}
-                            {showArCopt && verse.ar_copt && (
-                              <div className={`text-base font-serif text-white/70 whitespace-pre-wrap ${layoutMode === "cols" ? "border-l border-white/10 last:border-l-0 px-0.25" : ""
-                                }`}>
-                                {verse.ar_copt}
+
+                            {/* القبطي (في اليسار) */}
+                            {showCopt && verse.copt && (
+                              <div
+                                className={`flex-1 flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap ${layoutMode === "cols" ? "px-0.25" : ""
+                                  }`}
+                              >
+                                {verse.copt}
                               </div>
                             )}
                           </div>
@@ -541,7 +552,7 @@ export default function UnifiedAl7anClient() {
                     )}
                   </div>
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center opacity-50 space-y-0.5">
+                  <div className="h-full flex flex-col items-center justify-center opacity-50 space-y-0.25">
                     <span className="text-4xl">📝</span>
                     <p>الكلمات غير متوفرة لهذا اللحن حالياً</p>
                   </div>

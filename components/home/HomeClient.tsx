@@ -27,7 +27,7 @@ const sections = [
   // { name: "الامتحانات", href: "/exam", icon: <FaPenFancy />, requiresAuth: true },
   { name: "حول", href: "/about", icon: <FaInfoCircle /> },
   { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
-  { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
+  // { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
   // { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
@@ -245,7 +245,7 @@ export default function HomeClient() {
               style={{ transform: "translate(-50%, -50%)" }}
             >
               <motion.div animate={eagleControls} className="w-[50vw] max-w-12.25 md:max-w-18.75 lg:max-w-25">
-                <Image src="/images/eagle.webp" alt="Eagle" width={400} height={266} className="w-full h-auto" priority />
+                <Image src="/images/eagle.webp" alt="Eagle" width={400} height={266} className="w-full" style={{height: "auto"}} priority loading="eager" />
               </motion.div>
             </motion.div>
           )}

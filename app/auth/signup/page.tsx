@@ -43,7 +43,13 @@ export default function SignUpPage() {
 
       if (signUpError) throw signUpError;
       if (data.user) {
-        alert("تم إنشاء الحساب بنجاح! افحص بريدك الإلكتروني إذا تطلب الأمر.");
+        // If email confirmation is off, the user might be signed in immediately
+        // The authListener useEffect will handle the redirect.
+        // If you keep email confirmation ON, they will see this alert.
+        if (data.session === null) {
+          alert("تم إنشاء الحساب بنجاح! افحص بريدك الإلكتروني لتفعيل الحساب.");
+        }
+        // alert("تم إنشاء الحساب بنجاح! افحص بريدك الإلكتروني إذا تطلب الأمر.");
       }
     } catch (err: any) {
       setError(err.message || "حدث خطأ ما");
