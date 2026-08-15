@@ -52,6 +52,7 @@ export default function UnifiedAl7anClient() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
@@ -148,6 +149,8 @@ export default function UnifiedAl7anClient() {
 
   const getArchiveSrc = (src: string) =>
     `https://archive.org/download/abona-faltaus-audio/${encodeURIComponent(src.trim() + ".mp3")}`;
+  const getR2Src = (src: string) =>
+    `https://pub-08244638454a477bbf9f9548b1fdb3b5.r2.dev/al7an/${encodeURIComponent(src.trim() + ".mp3")}`;
 
   const getImages = (hymn: Hymn) => Object.keys(hymn).filter(k => k.startsWith("hazatSrc") && hymn[k]).map(k => hymn[k] as string);
 
@@ -260,6 +263,7 @@ export default function UnifiedAl7anClient() {
                   setHasError(false);
                   setCurrentTime(0);
                   setDuration(0);
+                  setUseFallback(false);
                 }}
                 className="group cursor-pointer rounded-lg border bg-surface-container-lowest p-0.5 flex justify-between items-center hover:shadow-sm transition-all"
               >
@@ -349,22 +353,6 @@ export default function UnifiedAl7anClient() {
                   <span>{formatTime(duration)}</span>
                 </div>
 
-                {/* <div
-                  className="flex items-center gap-[2px] h-3 w-full cursor-pointer group"
-                  onClick={handleWaveClick}
-                  dir="ltr"
-                >
-                  {waveHeights.map((h, i) => {
-                    const isActive = (i / WAVEFORM_BARS) <= (currentTime / (duration || 1));
-                    return (
-                      <div
-                        key={i}
-                        className={`flex-1 rounded-full transition-colors duration-150 ${isActive ? 'bg-linear-to-t from-orange-600 to-orange-400' : 'bg-white/20 group-hover:bg-white/30'}`}
-                        style={{ height: `${h}%` }}
-                      />
-                    );
-                  })}
-                </div> */}
                 <div
                   className="flex items-center gap-[2px] h-2 w-full cursor-pointer group"
                   onClick={handleWaveClick}
@@ -406,7 +394,8 @@ export default function UnifiedAl7anClient() {
 
                 <audio
                   ref={audioRef}
-                  src={getArchiveSrc(selectedHymn.src)}
+                  src={useFallback ? getR2Src(selectedHymn.src) : getArchiveSrc(selectedHymn.src)}
+                  // src={getArchiveSrc(selectedHymn.src)}
                   onPlay={() => {
                     if (audioCtxRef.current?.state === 'suspended') {
                       audioCtxRef.current.resume();
@@ -423,6 +412,12 @@ export default function UnifiedAl7anClient() {
                   onPlaying={() => { setIsLoading(false); setIsPlaying(true); }}
                   onPause={() => setIsPlaying(false)}
                   onError={(e) => {
+                    if (!useFallback) {
+                      setUseFallback(true);
+                      setIsLoading(true);
+                      setHasError(false);
+                      return;
+                    }
                     setIsLoading(false);
                     setHasError(true);
                     setIsPlaying(false);
@@ -560,31 +555,6 @@ export default function UnifiedAl7anClient() {
               </div>
 
               {/* قسم الهزات والمخطوطات */}
-              {/* {getImages(selectedHymn).length > 0 && (
-                <div className="w-full mt-0.5 bg-white/5 p-0.5 rounded-xl shrink-0 overflow-y-auto custom-scrollbar">
-                  <h3 className="text-sm font-semibold mb-0.5 text-white/50 sticky top-0 bg-[#1a1a1a] p-0.25 rounded z-10">مخطوطات / هزات</h3>
-                  <div className="flex gap-0.5 overflow-x-auto pb-0.25">
-                    {getImages(selectedHymn).map((src, i) => (
-                      <div
-                        key={i}
-                        onClick={() => { setFullScreenImage(src); setImageScale(1); }}
-                        className="min-w-[150px] w-[150px] md:min-w-[200px] md:w-[200px] shrink-0 rounded-lg overflow-hidden border border-white/10 cursor-zoom-in relative group"
-                      >
-                        <Image
-                          src={src}
-                          alt={`هزات ${i + 1}`}
-                          width={200}
-                          height={280}
-                          className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                          <span className="opacity-0 group-hover:opacity-100 text-white drop-shadow-md text-2xl">🔍</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )} */}
               {getImages(selectedHymn).length > 0 && (
                 <div className="mt-0.5 shrink-0 flex justify-center">
                   <button
@@ -605,77 +575,6 @@ export default function UnifiedAl7anClient() {
         )}
       </AnimatePresence>
 
-      {/* نافذة عرض الصورة بكامل الشاشة مع دعم التكبير باللمس Pinch-to-Zoom */}
-      {/* <AnimatePresence>
-        {fullScreenImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-100 bg-black/95 backdrop-blur-md flex flex-col items-center justify-center touch-none"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          > */}
-            {/* Top Bar with Close Button */}
-            {/* <div className="absolute top-0 left-0 w-full p-0.5 flex justify-between items-center z-110 bg-linear-to-b from-black/80 to-transparent">
-              <div className="text-white/50 text-sm bg-black/50 px-0.5 py-0.25 rounded-full">
-                يمكنك التكبير والتصغير بأصبعيك أو الأزرار
-              </div>
-              <button
-                onClick={() => { setFullScreenImage(null); setImageScale(1); }}
-                className="w-3 h-3 bg-white/10 hover:bg-white/30 hover:rotate-90 rounded-full flex items-center justify-center text-white text-2xl backdrop-blur-md transition-all"
-              >
-                ✕
-              </button>
-            </div> */}
-
-            {/* Zoom Controls */}
-            {/* <div className="absolute bottom-1 right-1 z-110 flex gap-0.5">
-              <button
-                onClick={(e) => { e.stopPropagation(); setImageScale(prev => Math.min(prev + 0.5, 4)); }}
-                className="w-3 h-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center text-white text-2xl shadow-lg backdrop-blur-md transition-all"
-              >
-                +
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); setImageScale(prev => Math.max(prev - 0.5, 0.5)); }}
-                className="w-3 h-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center text-white text-3xl shadow-lg backdrop-blur-md transition-all pb-0.25"
-              >
-                -
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); setImageScale(1); }}
-                className="h-3 px-0.25 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center text-white text-sm shadow-lg backdrop-blur-md transition-all"
-              >
-                إعادة
-              </button>
-            </div> */}
-
-            {/* Image Container */}
-            {/* <div
-              className="w-full h-full overflow-auto flex items-center justify-center cursor-zoom-out"
-              onClick={() => { setFullScreenImage(null); setImageScale(1); }}
-            >
-              <motion.div
-                animate={{ scale: imageScale }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="relative w-full h-full min-h-[50vh]"
-                onClick={(e) => { e.stopPropagation(); setFullScreenImage(null); setImageScale(1); }}
-              >
-                <Image
-                  src={fullScreenImage}
-                  alt="Full screen view"
-                  fill
-                  className="object-contain"
-                  sizes="100vw"
-                  priority
-                />
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence> */}
       {/* نافذة المعرض والـ Slideshow للمخطوطات */}
       <AnimatePresence>
         {fullScreenImage && selectedHymn && (

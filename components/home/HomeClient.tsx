@@ -27,7 +27,7 @@ const sections = [
   // { name: "الامتحانات", href: "/exam", icon: <FaPenFancy />, requiresAuth: true },
   { name: "حول", href: "/about", icon: <FaInfoCircle /> },
   { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
-  // { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
+  { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
   // { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
@@ -165,7 +165,7 @@ export default function HomeClient() {
   };
 
   return (
-    <motion.div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center">
+    <motion.div className="min-h-screen relative overflow-x-hidden flex flex-col items-center justify-center">
       {/* <LogoHeader />
       <UserHeader /> */}
       <Background />

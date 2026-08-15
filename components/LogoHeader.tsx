@@ -10,8 +10,8 @@ export default function LogoHeader() {
           alt="Logo"
           width={60}
           height={40}
-          sizes="auto"
-          className="rounded-full border-blue-300 justify-self-start flex-none"
+          sizes="60px"
+          className="rounded-full border-blue-300 justify-self-start flex-none w-[60px] h-auto"
           priority
           loading="eager"
         />
@@ -23,8 +23,8 @@ export default function LogoHeader() {
           alt="Logo"
           width={60}
           height={40}
-          sizes="auto"
-          className="rounded-full border-blue-300 justify-self-end flex-none"
+          sizes="60px"
+          className="rounded-full border-blue-300 justify-self-end flex-none w-[60px] h-auto"
           style={{ transform: "scaleX(-1)" }}
           priority
           loading="eager"
