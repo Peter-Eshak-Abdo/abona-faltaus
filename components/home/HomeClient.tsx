@@ -241,11 +241,11 @@ export default function HomeClient() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.8 }}
-              className={`absolute ${isMobile ? 'top-[48%] left-[29%]' : 'top-[58%] left-[34%]'} z-10 flex items-center justify-center pointer-events-none`}
+              className={`absolute ${isMobile ? 'top-[48%] left-[29%]' : 'top-[43%] left-[37%]'} z-10 flex items-center justify-center pointer-events-none`}
               style={{ transform: "translate(-50%, -50%)" }}
             >
               <motion.div animate={eagleControls} className="w-[50vw] max-w-12.25 md:max-w-18.75 lg:max-w-25">
-                <Image src="/images/eagle.webp" alt="Eagle" width={400} height={266} className="w-full" style={{height: "auto"}} priority loading="eager" />
+                <Image src="/images/eagle.webp" alt="Eagle" width={400} height={266} className="w-full" style={{ height: "auto" }} priority loading="eager" />
               </motion.div>
             </motion.div>
           )}
@@ -296,13 +296,21 @@ export default function HomeClient() {
             })}
         </AnimatePresence>
         {!showMenu && !isMobile &&
-          <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-2 ltr:left-2 rtl:right-2 z-0 pointer-events-none">
+          <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-1 ltr:left-1 rtl:right-1 z-0 pointer-events-none w-full">
             <div className="flex flex-col gap-0.5">
               <p className="font-bold text-amber-600 dark:text-amber-400">التاريخ القبطي: {copticDate}</p>
               <p><strong>آخر تحديث:</strong> {lastUpdate || "..."}</p>
-              {lastMessage && <p className="italic opacity-70 border-r-2 border-primary pr-1">"{lastMessage}"</p>}
+              {lastMessage && <p className="italic opacity-70 border-r-2 border-primary pr-0.25">"{lastMessage}"</p>}
               <p className="text-[10px]">إجمالي التحديثات: <span className="font-bold text-blue-500">{commitCount}</span></p>
             </div>
+            <div className="flex justify-center gap-0.25 pointer-events-auto">
+              <Link href="/privacy" className="hover:underline">سياسة الخصوصية (Privacy Policy)</Link>
+              <span>•</span>
+              <Link href="/terms" className="hover:underline">الشروط والأحكام (Terms of Service)</Link>
+              <span>•</span>
+              <Link href="/about" className="hover:underline">عن التطبيق (About Us)</Link>
+            </div>
+            <p className="mt-0.5 flex justify-end pe-2">موقع أبونا فلتاؤوس © {new Date().getFullYear()}</p>
           </footer>
         }
       </div>
