@@ -30,7 +30,7 @@ export default function FullTestPage() {
 
       // 1. إنشاء المسابقة
       addLog("⏳ 1. جاري إنشاء مسابقة...");
-      const quizId = await createQuiz({
+      const res = await createQuiz({
         title: "مسابقة الأبطال (اختبار)",
         description: "مسابقة لتجربة النظام الكامل",
         questions: [{
@@ -45,6 +45,7 @@ export default function FullTestPage() {
         deleted_at: null,
         is_deleted: false
       });
+      const quizId = typeof res === "object" ? res.id : res;
       setTestQuizId(quizId);
       addLog(`✅ تم إنشاء المسابقة! ID: ${quizId}`);
 

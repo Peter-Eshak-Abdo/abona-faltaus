@@ -83,22 +83,23 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
   }
 
   const validateAndSubmit = async () => {
-    if (!user) return alert("يجب تسجيل الدخول أولاً")
     if (!title.trim()) return alert("يجب إدخال اسم المسابقة")
     if (questions.length === 0) return alert("يجب إضافة سؤال واحد على الأقل")
 
     setIsSubmitting(true)
     try {
-      const quizData = {
+      const generatedCode = initialData?.code || Math.floor(1000000000 + Math.random() * 9000000000).toString();
+      const quizData: any = {
         title: title.trim(),
         description: description.trim(),
         questions,
         shuffle_questions: shuffleQuestions,
         shuffle_choices: shuffleChoices,
-        created_by: user.id,
+        created_by: user?.id || "guest",
         created_at: new Date().toISOString(),
         is_deleted: false,
         deleted_at: null,
+        code: generatedCode,
       };
 
       if (isEditing && initialData) {
@@ -109,15 +110,37 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
           return;
         }
         await updateQuiz(initialData.id, quizData);
+        // حفظ في التاريخ المحلي
+        const savedHistory = localStorage.getItem("my_quizzes_history");
+        let history = savedHistory ? JSON.parse(savedHistory) : [];
+        const index = history.findIndex((h: any) => h.id === initialData.id || h.code === initialData.code);
+        if (index > -1) {
+          history[index] = { ...history[index], title: quizData.title, code: initialData.code || generatedCode };
+        } else {
+          history.unshift({ id: initialData.id, code: initialData.code || generatedCode, title: quizData.title });
+        }
+        localStorage.setItem("my_quizzes_history", JSON.stringify(history));
       } else if (!navigator.onLine) {
         // أوفلاين: حفظ محلياً للرفع لاحقاً
-        await savePendingQuiz(quizData, user.id);
+        await savePendingQuiz(quizData, user?.id || "guest");
         toast.success("💾 تم حفظ المسابقة محلياً!", {
           description: "ستُرفع تلقائياً عند عودة الاتصال بالإنترنت.",
           duration: 6000,
         });
       } else {
-        await createQuiz(quizData);
+        const res = await createQuiz(quizData);
+        const newId = typeof res === "object" ? res.id : res;
+        const newCode = (typeof res === "object" ? res.code : generatedCode) || generatedCode;
+        
+        // حفظ في التاريخ المحلي للوصول السريع
+        const savedHistory = localStorage.getItem("my_quizzes_history");
+        let history = savedHistory ? JSON.parse(savedHistory) : [];
+        history.unshift({ id: newId, code: newCode, title: quizData.title });
+        localStorage.setItem("my_quizzes_history", JSON.stringify(history));
+
+        toast.success(`🎉 تم إنشاء المسابقة! كود الدخول: ${newCode}`, {
+          duration: 8000,
+        });
       }
 
       onSuccess();

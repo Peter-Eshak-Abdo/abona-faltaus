@@ -2,44 +2,61 @@ import { supabase } from "@/lib/supabase"
 import type { Quiz, Group, GameState } from "@/types/quiz";
 
 // --- Quiz Operations ---
-export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt">) => {
+export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt"> & { code?: string }) => {
+  const generatedCode = quiz.code || Math.floor(1000000000 + Math.random() * 9000000000).toString();
+  
+  const insertPayload: any = {
+    title: quiz.title,
+    description: quiz.description,
+    questions: quiz.questions,
+    shuffle_questions: quiz.shuffle_questions || false,
+    shuffle_choices: quiz.shuffle_choices || false,
+    created_by: quiz.created_by || "guest",
+    created_at: new Date().toISOString(),
+    deleted_at: null,
+    is_deleted: false,
+    code: generatedCode,
+  };
+
   const { data, error } = await supabase
     .from("quizzes")
-    .insert([
-      {
-        title: quiz.title,
-        description: quiz.description,
-        questions: quiz.questions,
-        shuffle_questions: quiz.shuffle_questions || false,
-        shuffle_choices: quiz.shuffle_choices || false,
-        created_by: quiz.created_by,
-        created_at: new Date().toISOString(),
-        deleted_at: null,
-        is_deleted: false,
-      },
-    ])
+    .insert([insertPayload])
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    // إذا كان حقل code غير موجود بعد في جدول Supabase كـ column، نحاول الإدخال بدونه ونحفظ الكود داخل JSON أو البيانات
+    if (error.message?.includes("code") || error.code === "PGRST204") {
+      delete insertPayload.code;
+      const fallback = await supabase.from("quizzes").insert([insertPayload]).select().single();
+      if (fallback.error) throw fallback.error;
+      await supabase.from("game_state").insert([{ quiz_id: fallback.data.id }]);
+      return { id: fallback.data.id, code: generatedCode };
+    }
+    throw error;
+  }
 
   // إنشاء صفحة حالة اللعبة تلقائياً عند إنشاء المسابقة
   await supabase.from("game_state").insert([{ quiz_id: data.id }]);
 
-  return data.id;
+  return { id: data.id, code: data.code || generatedCode };
 };
 
-export const getQuiz = async (quizId: string): Promise<Quiz | null> => {
-  const { data, error } = await supabase
-    .from("quizzes")
-    .select("*")
-    .eq("id", quizId)
-    .single();
+export const getQuiz = async (quizIdOrCode: string): Promise<Quiz | null> => {
+  let query = supabase.from("quizzes").select("*");
+  if (quizIdOrCode.length === 10 && /^\d+$/.test(quizIdOrCode)) {
+    query = query.eq("code", quizIdOrCode);
+  } else {
+    query = query.eq("id", quizIdOrCode);
+  }
+
+  const { data, error } = await query.maybeSingle();
 
   if (error || !data) return null;
 
   return {
     id: data.id,
+    code: data.code,
     title: data.title,
     description: data.description,
     questions: data.questions,

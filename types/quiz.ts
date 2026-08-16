@@ -9,6 +9,7 @@ export interface Question {
 
 export interface Quiz {
   id: string;
+  code?: string;
   title: string;
   description: string;
   created_by: string;

@@ -23,7 +23,7 @@ import Background from "./Background";
 import Widgets from "./Widgets";
 
 const sections = [
-  { name: "الامتحانات", href: "/exam/quiz/dashboard", icon: <FaPenFancy />, requiresAuth: true },
+  { name: "الامتحانات", href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
   // { name: "الامتحانات", href: "/exam", icon: <FaPenFancy />, requiresAuth: true },
   { name: "حول", href: "/about", icon: <FaInfoCircle /> },
   { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },

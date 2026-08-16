@@ -71,6 +71,28 @@ export function QuizCard({ quiz, onEdit, onDelete }: any) {
         <h3 className="text-2xl font-black mb-1 text-zinc-800 truncate">{quiz.title}</h3>
         <p className="text-sm font-bold text-zinc-500 mb-1 line-clamp-2 h-4">{quiz.description || "لا يوجد وصف"}</p>
 
+        {/* كود المسابقة */}
+        {quiz.code && (
+          <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 p-0.5 rounded-xl mb-1">
+            <span className="text-xs font-bold text-blue-700 dark:text-blue-300">كود المسابقة:</span>
+            <div className="flex items-center gap-0.5">
+              <span className="font-mono font-bold text-sm tracking-widest text-blue-900 dark:text-blue-200" dir="ltr">
+                {quiz.code}
+              </span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(quiz.code);
+                  alert(`تم نسخ الكود: ${quiz.code}`);
+                }}
+                className="p-0.25 text-xs bg-white dark:bg-zinc-800 border border-blue-300 dark:border-blue-700 rounded text-blue-600 dark:text-blue-400 hover:bg-blue-100"
+                title="نسخ الكود"
+              >
+                نسخ
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-1 mb-1 text-xs font-bold text-zinc-600">
           <div className="bg-zinc-50 p-1 rounded-lg flex items-center gap-1"><Clock size={14} className="text-blue-500" /> {quiz.questions?.length || 0} سؤال</div>
           <div className="bg-zinc-50 p-1 rounded-lg flex items-center gap-1"><Clock size={14} className="text-orange-500" /> {mins} د : {secs} ث</div>

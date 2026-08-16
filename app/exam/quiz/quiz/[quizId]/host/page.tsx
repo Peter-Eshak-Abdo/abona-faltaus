@@ -22,26 +22,29 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
   const refreshAllData = async () => {
     try {
       setLoading(true);
-      // نطلب المسابقة فقط لأن الأسئلة جواها كـ JSON
-      const { data: qData, error: qError } = await supabase
-        .from("quizzes")
-        .select("*")
-        .eq("id", quizId)
-        .single();
+      // نطلب المسابقة سواء كانت بالـ id أو بالكود
+      let query = supabase.from("quizzes").select("*");
+      if (quizId.length === 10 && /^\d+$/.test(quizId)) {
+        query = query.eq("code", quizId);
+      } else {
+        query = query.eq("id", quizId);
+      }
+
+      const { data: qData, error: qError } = await query.maybeSingle();
 
       if (qError) throw qError;
 
       if (qData) {
-        // هنا qData.questions هو الـ Array اللي فيه الأسئلة
         setQuiz(qData);
+        const actualQuizId = qData.id;
+
+        // جلب حالة اللعبة والفرق
+        const { data: gs } = await supabase.from("game_state").select("*").eq("quiz_id", actualQuizId).single();
+        setGameState(gs);
+
+        const { data: grps } = await supabase.from("quiz_groups").select("*").eq("quiz_id", actualQuizId);
+        setGroups(grps || []);
       }
-
-      // جلب حالة اللعبة والفرق (نفس الكود القديم)
-      const { data: gs } = await supabase.from("game_state").select("*").eq("quiz_id", quizId).single();
-      setGameState(gs);
-
-      const { data: grps } = await supabase.from("quiz_groups").select("*").eq("quiz_id", quizId);
-      setGroups(grps || []);
 
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -50,23 +53,25 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
     }
   };
 
+  const actualQuizId = quiz?.id || quizId;
+
   // الاستدعاء عند فتح الصفحة
   useEffect(() => {
-    refreshAllData(); // <--- هنا بننادي الدالة الأساسية
+    refreshAllData();
 
-    // مراقبة الفرق (موجودة عندك)
-    const groupsChannel = supabase.channel(`groups-${quizId}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'quiz_groups', filter: `quiz_id=eq.${quizId}` },
+    // مراقبة الفرق
+    const groupsChannel = supabase.channel(`groups-${actualQuizId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'quiz_groups', filter: `quiz_id=eq.${actualQuizId}` },
         () => {
-          supabase.from("quiz_groups").select("*").eq("quiz_id", quizId).then(({ data }) => setGroups(data || []));
+          supabase.from("quiz_groups").select("*").eq("quiz_id", actualQuizId).then(({ data }) => setGroups(data || []));
         })
       .subscribe();
 
     // 2. جديد: مراقبة حالة اللعبة (Game State)
-    const gameStateChannel = supabase.channel(`state-${quizId}`)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${quizId}` },
+    const gameStateChannel = supabase.channel(`state-${actualQuizId}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${actualQuizId}` },
         (payload) => {
-          setGameState(payload.new); // تحديث الحالة فوراً عند حدوث تغيير من أي مكان
+          setGameState(payload.new);
         })
       .subscribe();
 
@@ -74,7 +79,7 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
       supabase.removeChannel(groupsChannel);
       supabase.removeChannel(gameStateChannel);
     };
-  }, [quizId]);
+  }, [actualQuizId]);
 
   // دالة حذف الفريق
   const handleDeleteGroup = async (id: string, name: string) => {
@@ -90,7 +95,7 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
     const newState = { is_active: true, phase: 'question', current_question_index: 0 };
 
     // تحديث قاعدة البيانات
-    const { error } = await supabase.from("game_state").update(newState).eq("quiz_id", quizId);
+    const { error } = await supabase.from("game_state").update(newState).eq("quiz_id", actualQuizId);
 
     if (!error) {
       // تحديث الحالة محلياً عشان QuizHostGame يستلم البيانات الجديدة فوراً
@@ -103,9 +108,9 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
   const handleReset = async () => {
     if (!confirm("تصفير المسابقة؟")) return;
     setLoading(true);
-    await supabase.from("answers").delete().eq("quiz_id", quizId);
-    await supabase.from("quiz_groups").delete().eq("quiz_id", quizId);
-    await supabase.from("game_state").update({ phase: 'lobby', is_active: false, current_question_index: 0 }).eq("quiz_id", quizId);
+    await supabase.from("answers").delete().eq("quiz_id", actualQuizId);
+    await supabase.from("quiz_groups").delete().eq("quiz_id", actualQuizId);
+    await supabase.from("game_state").update({ phase: 'lobby', is_active: false, current_question_index: 0 }).eq("quiz_id", actualQuizId);
     window.location.reload();
   };
 
@@ -114,8 +119,25 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
 
   return (
     <div className="min-h-screen bg-[#1a0b2e] text-white p-1 font-sans" dir="rtl">
-      <div className="flex justify-between items-center bg-white/5 rounded-xl p-1 mb-1 border border-white/10 shadow-lg">
-        <h1 className="text-7xl font-black px-1 text-purple-300">{quiz?.title}</h1>
+      <div className="flex justify-between items-center bg-white/5 rounded-xl p-1 mb-1 border border-white/10 shadow-lg flex-wrap gap-1">
+        <div className="flex items-center gap-1">
+          <h1 className="text-4xl md:text-6xl font-black px-1 text-purple-300">{quiz?.title}</h1>
+          {quiz?.code && (
+            <div className="flex items-center gap-0.5 bg-purple-900/60 border border-purple-400/40 px-1 py-0.5 rounded-xl">
+              <span className="text-xs text-purple-200 font-bold">كود المسابقة:</span>
+              <span className="text-xl font-black font-mono tracking-widest text-white" dir="ltr">{quiz.code}</span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(quiz.code);
+                  alert(`تم نسخ الكود: ${quiz.code}`);
+                }}
+                className="text-xs bg-purple-700 hover:bg-purple-600 px-1 py-0.25 rounded text-white"
+              >
+                نسخ
+              </button>
+            </div>
+          )}
+        </div>
         <div className="flex gap-1">
           <Button onClick={handleReset} variant="destructive" className="h-5 px-1 text-[9px] bg-red-600/20 text-red-400 border border-red-500/30 hover:text-red-300">
             <RefreshCcw className="w-3 h-3 ml-1" />
