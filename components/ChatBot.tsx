@@ -41,20 +41,49 @@ export default function ChatBot() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [convId, setConvId] = useState<string | null>(null);
   const [convs, setConvs] = useState<any[]>([]);
+  const [isOnline, setIsOnline] = useState(true);
 
   // إدارة الرسائل والـ Loading يدوياً لضمان الاستقرار
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // جلب المحادثات
+  // مراقبة حالة الشبكة
+  useEffect(() => {
+    const updateStatus = () => setIsOnline(navigator.onLine);
+    setIsOnline(navigator.onLine);
+    window.addEventListener("online", updateStatus);
+    window.addEventListener("offline", updateStatus);
+    return () => {
+      window.removeEventListener("online", updateStatus);
+      window.removeEventListener("offline", updateStatus);
+    };
+  }, []);
+
+  // جلب المحادثات مع كاش محلي للأوفلاين
   const fetchConversations = useCallback(async (userId: string) => {
-    const { data } = await supabase
-      .from("conversations")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false });
-    if (data) setConvs(data);
+    const CACHE_KEY = `chat_convs_${userId}`;
+    try {
+      if (!navigator.onLine) {
+        // أوفلاين: قراءة من localStorage
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) setConvs(JSON.parse(cached));
+        return;
+      }
+      const { data } = await supabase
+        .from("conversations")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+      if (data) {
+        setConvs(data);
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data)); // حفظ للأوفلاين
+      }
+    } catch {
+      // fallback للكاش
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) setConvs(JSON.parse(cached));
+    }
   }, []);
 
   useEffect(() => {
@@ -114,6 +143,15 @@ export default function ChatBot() {
     e.preventDefault();
     const text = input.trim();
     if (!text || isLoading || !user) return;
+
+    // فحص الاتصال بالإنترنت قبل الإرسال
+    if (!navigator.onLine) {
+      toast.error("🔌 لا يوجد اتصال بالإنترنت", {
+        description: "الشات يحتاج اتصال بالنت لإرسال الرسائل. تحقق من اتصالك وحاول مرة أخرى.",
+        duration: 5000,
+      });
+      return;
+    }
 
     setIsLoading(true);
     const userMsg = { id: Date.now().toString(), role: "user", content: text };
@@ -237,10 +275,17 @@ export default function ChatBot() {
           </div>
           <div className="flex flex-col">
             <h1 className="text-xl font-bold text-[#1b1b1c]" style={{ fontFamily: "'Libre Caslon Text', serif" }}>شات أبونا فلتاؤس</h1>
+              {isOnline ? (
             <span className="text-xs text-[#564243] flex items-center gap-1">
               <span className="w-0.5 h-0.5 rounded-full bg-[#ffe088] animate-pulse"></span>
-              متصل الآن
+               متصل الآن
             </span>
+          ) : (
+            <span className="text-xs text-red-500 dark:text-red-400 flex items-center gap-1">
+              <span className="w-0.5 h-0.5 rounded-full bg-red-500 animate-pulse"></span>
+              أوفلاين - لا يوجد اتصال
+            </span>
+          )}
           </div>
         </div>
         <button onClick={() => setSheetOpen(true)} className="w-3 h-3 flex items-center justify-center rounded-full text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="القائمة">

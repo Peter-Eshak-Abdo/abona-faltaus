@@ -8,7 +8,7 @@ const withPWA = withPWAInit({
 
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
+  reloadOnOnline: false, // لا نعيد تحميل الصفحة عند عودة الاتصال - يبقى الـ UX سلساً
 
   fallbacks: {
     document: "/~offline",
@@ -18,14 +18,27 @@ const withPWA = withPWAInit({
     disableDevLogs: true,
     maximumFileSizeToCacheInBytes: 150 * 1024 * 1024,
     runtimeCaching: [
+      // ===== الخطوط من Google Fonts =====
       {
         urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/,
         handler: "CacheFirst",
         options: {
           cacheName: "google-fonts",
-          expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          expiration: { maxEntries: 30, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
         },
       },
+      // ===== الخطوط المحلية (عربي، قبطي، تيتل) =====
+      {
+        urlPattern: /\/fonts\/.+\.(?:ttf|woff2?|otf|eot)$/,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "local-fonts",
+          expiration: { maxEntries: 30, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+      // ===== API calls: NetworkOnly (الشات والـ AI لا يعملون أوفلاين) =====
       {
         urlPattern: /\/api\/.*/,
         handler: "NetworkOnly",
@@ -33,32 +46,55 @@ const withPWA = withPWAInit({
           cacheName: "api-calls",
         },
       },
+      // ===== Supabase API: NetworkOnly =====
+      {
+        urlPattern: /^https:\/\/.*\.supabase\.co\/.*/,
+        handler: "NetworkOnly",
+        options: {
+          cacheName: "supabase-api",
+        },
+      },
+      // ===== صفحات التطبيق: NetworkFirst مع fallback من الكاش =====
       {
         urlPattern: ({ request }) => request.mode === "navigate",
         handler: "NetworkFirst",
         options: {
           cacheName: "pages-cache",
+          networkTimeoutSeconds: 3, // إذا لم يرد السيرفر في 3 ثواني، يستخدم الكاش
           expiration: { maxEntries: 100, maxAgeSeconds: 365 * 24 * 60 * 60 },
           cacheableResponse: { statuses: [0, 200] },
         },
       },
+      // ===== أصول ثابتة محلية (صور، صوتيات، JSON) =====
       {
         urlPattern:
           /\.(?:png|jpg|jpeg|svg|gif|ico|webp|avif|mp3|wav|ogg|m4a|json|pdf)$/,
         handler: "CacheFirst",
         options: {
           cacheName: "static-assets-cache",
-          expiration: { maxEntries: 200, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          expiration: { maxEntries: 300, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
         },
       },
+      // ===== Next.js Static Assets =====
       {
         urlPattern: /_next\/static\/.+/,
         handler: "CacheFirst",
         options: {
           cacheName: "next-static-cache",
-          expiration: { maxEntries: 100, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          expiration: { maxEntries: 200, maxAgeSeconds: 365 * 24 * 60 * 60 },
         },
       },
+      // ===== Next.js Image Optimization =====
+      {
+        urlPattern: /_next\/image\?.+/,
+        handler: "StaleWhileRevalidate",
+        options: {
+          cacheName: "next-image-cache",
+          expiration: { maxEntries: 100, maxAgeSeconds: 30 * 24 * 60 * 60 },
+        },
+      },
+      // ===== Remote Images (Firebase, Google) =====
       {
         urlPattern:
           /https:\/\/(?:firebasestorage\.googleapis\.com|lh3\.googleusercontent\.com)\/.*/,
@@ -66,8 +102,26 @@ const withPWA = withPWAInit({
         options: {
           cacheName: "remote-images",
           expiration: { maxEntries: 100, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
         },
       },
+      // ===== ملفات صوت الألحان من R2 =====
+      {
+        urlPattern: /^https:\/\/pub-08244638454a477bbf9f9548b1fdb3b5\.r2\.dev\/.*/,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "archive-audio-cache",
+          expiration: {
+            maxEntries: 500,
+            maxAgeSeconds: 60 * 60 * 24 * 365 * 5,
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+          rangeRequests: true,
+        },
+      },
+      // ===== ملفات صوت الألحان من Archive.org =====
       {
         urlPattern: /^https:\/\/archive\.org\/download\/.*/,
         handler: "CacheFirst",
@@ -86,6 +140,7 @@ const withPWA = withPWAInit({
     ],
   },
 });
+
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

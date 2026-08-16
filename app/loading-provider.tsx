@@ -1,21 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { useLoading } from './loading-context';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function LoadingProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 1000); // المدة اللي يظهر فيها اللودر
-
-    return () => clearTimeout(timeout);
-  }, [pathname]);
+  const { loading } = useLoading();
 
   return (
     <>
@@ -24,3 +13,4 @@ export default function LoadingProvider({ children }: { children: React.ReactNod
     </>
   );
 }
+

@@ -4,13 +4,15 @@ import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { supabase } from "@/lib/supabase"
 import { createQuiz, updateQuiz } from "@/lib/supabase-utils"
-import { Plus, Trash2, Check, Clock, X, Upload, Eye, EyeOff, LayoutDashboard, Settings2 } from "lucide-react"
+import { Plus, Trash2, Check, Clock, X, Upload, Eye, EyeOff, LayoutDashboard, Settings2, WifiOff } from "lucide-react"
 import type { Question, Quiz } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 import * as XLSX from "xlsx"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "../ui/button"
+import { savePendingQuiz } from "@/lib/offline-quiz-store"
+import { toast } from "sonner"
 
 interface CreateQuizDialogProps {
   open: boolean
@@ -99,13 +101,30 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
         deleted_at: null,
       };
 
-      if (isEditing && initialData) await updateQuiz(initialData.id, quizData)
-      else await createQuiz(quizData)
+      if (isEditing && initialData) {
+        if (!navigator.onLine) {
+          toast.error("🔌 لا يوجد إنترنت", {
+            description: "لا يمكن تعديل المسابقة في وضع الأوفلاين. يُرجى الاتصال بالإنترنت أولاً.",
+          });
+          return;
+        }
+        await updateQuiz(initialData.id, quizData);
+      } else if (!navigator.onLine) {
+        // أوفلاين: حفظ محلياً للرفع لاحقاً
+        await savePendingQuiz(quizData, user.id);
+        toast.success("💾 تم حفظ المسابقة محلياً!", {
+          description: "ستُرفع تلقائياً عند عودة الاتصال بالإنترنت.",
+          duration: 6000,
+        });
+      } else {
+        await createQuiz(quizData);
+      }
 
       onSuccess();
       onOpenChange(false);
     } catch (error) {
-      alert("حدث خطأ أثناء الحفظ");
+      console.error("Quiz save error:", error);
+      toast.error("حدث خطأ أثناء الحفظ");
     } finally { setIsSubmitting(false) }
   }
 

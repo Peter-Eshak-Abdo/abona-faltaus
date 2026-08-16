@@ -44,22 +44,29 @@ export default function BibleReaderPage() {
         let shouldRefresh = false;
 
         if (!data || data.length === 0) {
-          setLoadingStatus("جاري تحميل الكتاب المقدس (لأول مرة)...");
+          setLoadingStatus("جاري تحميل الكتاب المقدس (لأول مرة لتصفحه بدون إنترنت)...");
           data = (await loadBible((p) => setLoadProgress(p))) as BookObj[];
-          await localforage.setItem("offline_bible_data", data);
-          shouldRefresh = true;
+          if (data && data.length > 0) {
+            await localforage.setItem("offline_bible_data", data);
+          }
         } else {
           setLoadProgress(100);
         }
 
-        setBibleData(data || []);
+        if (data && data.length > 0) {
+          setBibleData(data);
 
-        const lastRead = localStorage.getItem("bible_last_read");
-        if (lastRead && data) {
-          const { bIdx, cIdx } = JSON.parse(lastRead);
-          if (data[bIdx]?.chapters[cIdx]) {
-            setCurrentBookIdx(bIdx);
-            setCurrentChapterIdx(cIdx);
+          const lastRead = localStorage.getItem("bible_last_read");
+          if (lastRead) {
+            try {
+              const { bIdx, cIdx } = JSON.parse(lastRead);
+              if (data[bIdx]?.chapters[cIdx]) {
+                setCurrentBookIdx(bIdx);
+                setCurrentChapterIdx(cIdx);
+              }
+            } catch (e) {
+              console.error("Failed to parse last read:", e);
+            }
           }
         }
 
@@ -74,11 +81,16 @@ export default function BibleReaderPage() {
 
         setIsLoading(false);
         isInitialized.current = true;
-
-        if (shouldRefresh) window.location.reload();
       } catch (error) {
         console.error("Error during initialization:", error);
-        setLoadingStatus("حدث خطأ، يرجى التأكد من الإنترنت وإعادة المحاولة.");
+        // حتى لو حصل خطأ أثناء التحميل، نحاول نقرأ من الكاش لو موجود
+        const fallbackData = await localforage.getItem<BookObj[]>("offline_bible_data");
+        if (fallbackData && fallbackData.length > 0) {
+          setBibleData(fallbackData);
+          setIsLoading(false);
+        } else {
+          setLoadingStatus("حدث خطأ، يرجى التأكد من الإنترنت وإعادة المحاولة.");
+        }
       }
     };
 

@@ -1,9 +1,8 @@
 'use client';
 
+import EagleLoader from './EagleLoader';
+
 export default function LoadingSpinner() {
-  return (
-    <div className="loading-overlay">
-      <div className="spinner" />
-    </div>
-  );
+  return <EagleLoader statusText="جاري تحميل الصفحة..." fullScreen={true} />;
 }
+

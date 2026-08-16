@@ -5,6 +5,7 @@ import Image from "next/image";
 import al7anData from "@/public/al7an-all.json";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
+import OfflineAudioButton from "@/components/OfflineAudioButton";
 
 type Verse = {
   ar?: string;
@@ -308,14 +309,21 @@ export default function UnifiedAl7anClient() {
 
             <div className="relative z-10 flex flex-col h-full w-full p-0.5 lg:p-1">
 
-              <div className="flex items-center gap-0.5 mb-0.5 mt-1 lg:mt-0">
-                <div className="w-3 h-3 rounded-xl bg-linear-to-br from-orange-500 to-red-600 flex items-center justify-center text-2xl shadow-lg shrink-0">
-                  🎵
+              <div className="flex items-center gap-0.5 mb-0.5 mt-1 lg:mt-0 justify-between">
+                <div className="flex items-center gap-0.5 overflow-hidden flex-1">
+                  <div className="w-3 h-3 rounded-xl bg-linear-to-br from-orange-500 to-red-600 flex items-center justify-center text-2xl shadow-lg shrink-0">
+                    🎵
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <h2 className="text-2xl font-bold truncate">{selectedHymn.name}</h2>
+                    <p className="text-sm text-white/50">  {monasbaName[activeMonasba as keyof typeof monasbaName] ?? activeMonasba}</p>
+                  </div>
                 </div>
-                <div className="flex-1 overflow-hidden">
-                  <h2 className="text-2xl font-bold truncate">{selectedHymn.name}</h2>
-                  <p className="text-sm text-white/50">  {monasbaName[activeMonasba as keyof typeof monasbaName] ?? activeMonasba}</p>
-                </div>
+                {selectedHymn.src && (
+                  <div className="shrink-0 pl-1">
+                    <OfflineAudioButton src={selectedHymn.src} title={selectedHymn.name} />
+                  </div>
+                )}
               </div>
 
               <div className="w-full mb-0.5 bg-[#1e1e1e] p-0.5 rounded-xl shadow-inner relative shrink-0">

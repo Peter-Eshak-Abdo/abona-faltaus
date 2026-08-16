@@ -103,35 +103,67 @@ export default function HomeClient() {
 
   useEffect(() => {
     const fetchLastCommit = async () => {
+      // فحص الكاش المؤقت لبيانات التحديث
+      const cachedCommit = localStorage.getItem("github_commit_cache");
+      if (cachedCommit) {
+        try {
+          const { update, message, count, timestamp } = JSON.parse(cachedCommit);
+          if (Date.now() - timestamp < 30 * 60 * 1000) { // 30 دقيقة
+            if (update) setLastUpdate(update);
+            if (message) setLastMessage(message);
+            if (count) setCommitCount(count);
+            return;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
       try {
         const baseApiUrl = "https://api.github.com/repos/Peter-Eshak-Abdo/abona-faltaus";
-        // const baseApiUrl = process.env.GITHUB_API_URL;
         const commitRes = await fetch(`${baseApiUrl}/commits?sha=main&per_page=5`);
         if (!commitRes.ok) throw new Error("Failed to fetch");
 
         const commits = await commitRes.json();
+        let formattedDate = "";
+        let messageText = "";
+        let totalCommits = 0;
 
         if (commits && commits.length > 0) {
           const myCommit = commits.find((c: any) => !c.commit.author.name.includes('dependabot')) || commits[0];
           const commitObj = myCommit.commit;
           const commitDate = new Date(commitObj.committer.date);
 
-          setLastUpdate(commitDate.toLocaleString('ar-EG', {
+          formattedDate = commitDate.toLocaleString('ar-EG', {
             year: 'numeric', month: 'long', day: 'numeric',
             hour: '2-digit', minute: '2-digit', hour12: true
-          }));
-          setLastMessage(commitObj.message);
+          });
+          messageText = commitObj.message;
+
+          setLastUpdate(formattedDate);
+          setLastMessage(messageText);
         }
 
         const countRes = await fetch(`${baseApiUrl}/commits?sha=main&per_page=1`);
         const linkHeader = countRes.headers.get('link');
         if (linkHeader) {
           const match = linkHeader.match(/page=(\d+)>; rel="last"/);
-          if (match) setCommitCount(parseInt(match[1], 10));
+          if (match) {
+            totalCommits = parseInt(match[1], 10);
+            setCommitCount(totalCommits);
+          }
         } else {
           const allCommits = await countRes.json();
-          setCommitCount(allCommits.length);
+          totalCommits = allCommits.length;
+          setCommitCount(totalCommits);
         }
+
+        localStorage.setItem("github_commit_cache", JSON.stringify({
+          update: formattedDate,
+          message: messageText,
+          count: totalCommits,
+          timestamp: Date.now()
+        }));
       } catch (error) {
         setLastUpdate("وضع الأوفلاين");
         setLastMessage("لا يوجد اتصال بالإنترنت لجلب التحديثات");

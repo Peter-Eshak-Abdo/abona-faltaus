@@ -13,6 +13,21 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
 
   useEffect(() => {
     const fetchRandomVerse = async () => {
+      // فحص الكاش المؤقت لآية اليوم
+      const cached = localStorage.getItem("daily_verse_cache");
+      if (cached) {
+        try {
+          const { item, timestamp } = JSON.parse(cached);
+          // تجديد كل ساعتين
+          if (Date.now() - timestamp < 2 * 60 * 60 * 1000 && item?.text) {
+            setVerse(item);
+            return;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
       try {
         const { count } = await supabase
           .from("bible_verses")
@@ -28,10 +43,12 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
 
           if (data) {
             const cleanBookName = data.book_name.replace(/^\d+-/, "");
-            setVerse({
+            const newVerse = {
               text: data.vocalized_text,
               ref: `(${cleanBookName} ${data.chapter_number} : ${data.verse_number})`,
-            });
+            };
+            setVerse(newVerse);
+            localStorage.setItem("daily_verse_cache", JSON.stringify({ item: newVerse, timestamp: Date.now() }));
           }
         }
       } catch (error) {
