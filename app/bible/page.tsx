@@ -138,9 +138,9 @@ export default function BibleReaderPage() {
   if (!bibleData.length) return null;
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
-      <main className="w-full pt-1">
-        <div className="flex flex-col w-full h-full relative" id="bible-app">
+    <div className="min-h-screen relative flex flex-col overflow-hidden bg-zinc-50/70 dark:bg-zinc-950/70 text-zinc-900 dark:text-zinc-100">
+      <main className="w-full pt-1 h-full">
+        <div className="flex flex-col w-full relative h-full" id="bible-app">
           <div className="flex flex-col w-full bg-surface-container-low">
             <ReadingControlsHeader
               bibleData={bibleData}
@@ -153,10 +153,10 @@ export default function BibleReaderPage() {
               setIsSearchOpen={setIsSearchOpen}
             />
 
-            <section className="grow flex flex-col relative max-w-8xl mx-auto w-full min-h-0">
+            <section className="grow flex flex-col relative max-w-8xl mx-auto w-full">
               {/* Reading canvas: fixed height + internal scroll so the whole chapter is reachable */}
               <article
-                className="p-0.5 flex flex-col gap-0.5 font-title-lg text-title-lg text-on-surface transition-all duration-300 overflow-y-auto h-[calc(100dvh-160px)]"
+                className="p-0.5 flex flex-col gap-0.5 font-title-lg text-title-lg text-on-surface transition-all duration-300 overflow-y-auto h-[calc(100dvh)]"
                 id="reading-canvas"
                 style={{ fontSize: `${fontSize}px`, lineHeight: lineHeight || 1.8 }}
               >

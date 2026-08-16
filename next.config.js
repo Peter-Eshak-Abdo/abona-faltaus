@@ -121,10 +121,10 @@ const nextConfig = {
       },
     ];
   },
-  allowedDevOrigins: ["192.168.100.13", "localhost"],
-  experimental: {
-    allowedDevOrigins: ["192.168.100.13", "localhost"],
-  },
+  // allowedDevOrigins: ["192.168.100.13", "localhost"],
+  // experimental: {
+  //   allowedDevOrigins: ["192.168.100.13", "localhost"],
+  // },
 };
 
 export default withPWA(nextConfig);

@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --webpack",
+    "start": "next start",
     "export": "next export",
     "lint": "next lint",
     "predeploy": "rd /s /q out",
     "type-check": "tsc --noEmit",
-    "start": "node server.js",
     "server": "nodemon server.js",
     "postbuild": "next-sitemap",
     "build:no-sitemap": "next build",

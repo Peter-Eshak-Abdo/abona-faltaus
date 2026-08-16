@@ -147,7 +147,7 @@ export default function RootLayout({
         <FixProcess />
         <div className="background-blur-overlay" />
         <GlobalLoadingProvider>
-          {/* <OfflineNotification /> */}
+          <OfflineNotification />
           <OneSignal />
           <LoadingProvider>
             <PwaManager />
@@ -156,9 +156,9 @@ export default function RootLayout({
             </Providers>
           </LoadingProvider>
         </GlobalLoadingProvider>
-        {/* <Analytics /> */}
-        {/* <SpeedInsights /> */}
-        {/* <Toaster /> */}
+        <Analytics />
+        <SpeedInsights />
+        <Toaster />
       </body>
     </html>
   );

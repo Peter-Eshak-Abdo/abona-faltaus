@@ -60,7 +60,8 @@ export async function GET() {
     // استخدمنا NextResponse لضبط الرؤوس (Headers) بشكل أفضل
     return NextResponse.json(books, {
       headers: {
-        "Cache-Control": "public, max-age=86400", // تخزين مؤقت على السيرفر لمدة يوم
+        "Cache-Control": "public, max-age=31536000, s-maxage=31536000, stale-while-revalidate=86400",
+        // "Cache-Control": "public, max-age=86400", // تخزين مؤقت على السيرفر لمدة يوم
       },
     });
   } catch (err) {

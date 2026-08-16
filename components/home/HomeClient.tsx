@@ -187,7 +187,7 @@ export default function HomeClient() {
             <Link href="/auth/signin">
               <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 shadow-lg px-1 py-0.5 rounded-full flex items-center gap-0.5 cursor-pointer hover:scale-105 transition-transform text-xs sm:text-sm">
                 <FaGoogle className="text-blue-500" />
-                <span className="font-bold text-gray-800 dark:text-gray-200">سجل دخولك بحساب جوجل لحفظ تقدمك</span>
+                <span className="font-bold text-gray-800 dark:text-gray-200">سجل دخولك بحساب جوجل</span>
               </div>
             </Link>
           </motion.div>
@@ -245,7 +245,7 @@ export default function HomeClient() {
               style={{ transform: "translate(-50%, -50%)" }}
             >
               <motion.div animate={eagleControls} className="w-[50vw] max-w-12.25 md:max-w-18.75 lg:max-w-25">
-                <Image src="/images/eagle.webp" alt="Eagle" width={400} height={266} className="w-full" style={{ height: "auto" }} priority loading="eager" />
+                <Image src="/images/eagle.webp" alt="Eagle" width={400} height={266} className="w-auto h-full" priority loading="eager" />
               </motion.div>
             </motion.div>
           )}
@@ -283,7 +283,7 @@ export default function HomeClient() {
                       <div className="leading-tight text-[9px] md:text-[11px] lg:text-xs font-bold z-10 px-1">{section.name}</div>
                     </button>
                   ) : (
-                    <Link href={section.href}>
+                      <Link href={section.href} prefetch={true}>
                       <div className="hover:bg-blue-500 bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-xl border border-gray-200 dark:border-gray-800 transition-all duration-300 cursor-pointer hover:scale-110 text-gray-800 dark:text-gray-200 hover:text-white group relative overflow-hidden">
                         <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div className="text-xl md:text-2xl lg:text-3xl z-10">{section.icon}</div>

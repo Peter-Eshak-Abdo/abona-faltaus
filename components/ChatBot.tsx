@@ -195,8 +195,7 @@ export default function ChatBot() {
   const handleAttachmentClick = () => { alert("ميزة إرفاق الملفات ستتوفر قريباً!"); };
 
   return (
-    // الحاوية الرئيسية (شاشة كاملة)
-    <div className="flex flex-col h-full w-full relative overflow-hidden bg-[#fcf9f8]" dir="rtl" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div className="flex flex-col h-full w-full relative overflow-hidden bg-[#fcf9f850]" dir="rtl" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
       {/* --- Sidebar المحادثات (Sheet) --- */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -222,7 +221,7 @@ export default function ChatBot() {
 
       {/* --- Header المحادثة --- */}
       <div className="flex-none border-b border-[#dcc0c1]/30 bg-[#f6f3f2]/80 backdrop-blur-md flex items-center justify-between z-10 shadow-2xl">
-        <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
+        <Link href="/" prefetch={true} className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
           <FaArrowRight size={18} />
         </Link>
         <div className="flex items-center gap-1">
