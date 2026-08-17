@@ -229,13 +229,28 @@
 
   body {
     overscroll-behavior: none;
+    /* iOS smooth momentum scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* iOS Safe Area للـ notch وشريط الـ home */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
-  main>:first-child {
+  /* PWA standalone mode على iOS */
+  @media (display-mode: standalone) {
+    body {
+      /* في الـ PWA mode نضيف padding إضافي للـ status bar */
+      padding-top: env(safe-area-inset-top, 20px);
+    }
+  }
+
+  main > :first-child {
     margin-top: 0 !important;
   }
 
-  main>:last-child {
+  main > :last-child {
     margin-bottom: 0 !important;
   }
 }

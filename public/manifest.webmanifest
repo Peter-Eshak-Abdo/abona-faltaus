@@ -1,73 +1,101 @@
 {
+  "id": "/",
   "name": "ابونا فلتاؤس السرياني",
   "short_name": "ابونا فلتاؤس",
   "description": "تطبيق ابونا فلتاؤس السرياني هو تطبيق فيه الحان وعظات وترانيم والكتاب المقدس.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#E8CFAE",
   "theme_color": "#5C4538",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "./images/icons/android-chrome-192x192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "./images/icons/android-chrome-512x512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    },
-    {
-      "src": "./images/icons/apple-touch-icon.png",
-      "type": "image/png",
-      "sizes": "180x180"
-    },
-    {
-      "src": "./images/icons/favicon-16x16.png",
+      "src": "/images/icons/favicon-16x16.png",
       "type": "image/png",
       "sizes": "16x16"
     },
     {
-      "src": "./images/icons/favicon-32x32.png",
+      "src": "/images/icons/favicon-32x32.png",
       "type": "image/png",
       "sizes": "32x32"
     },
     {
-      "src": "./images/icons/favicon.ico",
-      "type": "image/icon",
-      "sizes": "any"
+      "src": "/images/icons/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "/images/icons/android-chrome-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icons/android-chrome-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/icons/android-chrome-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icons/android-chrome-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
   "screenshots": [
     {
       "src": "/images/screenshots/homepage-wide.png",
       "type": "image/png",
-      "sizes": "1280x720"
+      "sizes": "1280x720",
+      "form_factor": "wide",
+      "label": "الصفحة الرئيسية - ابونا فلتاؤس"
     },
     {
       "src": "/images/screenshots/homepage-mobile.png",
       "type": "image/png",
-      "sizes": "360x640"
+      "sizes": "360x640",
+      "form_factor": "narrow",
+      "label": "الصفحة الرئيسية على الموبايل"
     }
   ],
   "categories": [
-    "productivity",
+    "lifestyle",
+    "education",
     "social"
   ],
   "shortcuts": [
     {
       "name": "الكتاب المقدس",
-      "url": "/bible"
+      "short_name": "الكتاب المقدس",
+      "url": "/bible",
+      "icons": [{ "src": "/images/icons/android-chrome-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "الألحان",
+      "short_name": "الألحان",
+      "url": "/al7an",
+      "icons": [{ "src": "/images/icons/android-chrome-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "كاهوت",
-      "url": "/exam/quiz/dashboard"
+      "short_name": "كاهوت",
+      "url": "/exam/quiz/dashboard",
+      "icons": [{ "src": "/images/icons/android-chrome-192x192.png", "sizes": "192x192" }]
     },
     {
-      "name": "الحان",
-      "url": "/al7an"
+      "name": "شات بوت",
+      "short_name": "شات بوت",
+      "url": "/chat",
+      "icons": [{ "src": "/images/icons/android-chrome-192x192.png", "sizes": "192x192" }]
     }
   ],
   "lang": "ar",

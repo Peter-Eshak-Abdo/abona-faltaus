@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useRef, TouchEvent } from "react";
+import { useState, useMemo, useRef, useEffect, TouchEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import al7anData from "@/public/al7an-all.json";
@@ -71,9 +71,63 @@ export default function UnifiedAl7anClient() {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [audioErrorDetails, setAudioErrorDetails] = useState<string>("");
+  const [audioSrc, setAudioSrc] = useState<string>("");
   const [audioData, setAudioData] = useState<number[]>([]);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
+
+  // حساب الروابط
+  const getArchiveSrc = (src: string) =>
+    `https://archive.org/download/abona-faltaus-audio/${encodeURIComponent(src.trim() + ".mp3")}`;
+  const getR2Src = (src: string) =>
+    `https://pub-08244638454a477bbf9f9548b1fdb3b5.r2.dev/al7an/${encodeURIComponent(src.trim() + ".mp3")}`;
+
+  // تحديد رابط الصوت (كاش أوفلاين أو السيرفر)
+  useEffect(() => {
+    let isMounted = true;
+    let objectUrlToRevoke: string | null = null;
+
+    const resolveAudioSrc = async () => {
+      if (!selectedHymn?.src) {
+        if (isMounted) setAudioSrc("");
+        return;
+      }
+
+      const r2 = getR2Src(selectedHymn.src);
+      const archive = getArchiveSrc(selectedHymn.src);
+
+      // أولاً: فحص الكاش المحلي للأوفلاين
+      if (typeof window !== "undefined" && "caches" in window) {
+        try {
+          const cache = await caches.open("archive-audio-cache");
+          const cachedResponse = (await cache.match(r2)) || (await cache.match(archive));
+          if (cachedResponse && isMounted) {
+            const blob = await cachedResponse.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            objectUrlToRevoke = blobUrl;
+            setAudioSrc(blobUrl);
+            return;
+          }
+        } catch (e) {
+          console.warn("Cache match warning:", e);
+        }
+      }
+
+      // إذا لم يكن مخزناً أو كان أونلاين
+      if (isMounted) {
+        setAudioSrc(useFallback ? archive : r2);
+      }
+    };
+
+    resolveAudioSrc();
+
+    return () => {
+      isMounted = false;
+      if (objectUrlToRevoke) {
+        URL.revokeObjectURL(objectUrlToRevoke);
+      }
+    };
+  }, [selectedHymn?.src, useFallback]);
 
   const displayedHymns = useMemo(() => {
     if (searchQuery.trim()) {
@@ -147,11 +201,6 @@ export default function UnifiedAl7anClient() {
     const sec = Math.floor(time % 60);
     return `${min}:${sec < 10 ? "0" : ""}${sec}`;
   };
-
-  const getArchiveSrc = (src: string) =>
-    `https://archive.org/download/abona-faltaus-audio/${encodeURIComponent(src.trim() + ".mp3")}`;
-  const getR2Src = (src: string) =>
-    `https://pub-08244638454a477bbf9f9548b1fdb3b5.r2.dev/al7an/${encodeURIComponent(src.trim() + ".mp3")}`;
 
   const getImages = (hymn: Hymn) => Object.keys(hymn).filter(k => k.startsWith("hazatSrc") && hymn[k]).map(k => hymn[k] as string);
 
@@ -402,8 +451,7 @@ export default function UnifiedAl7anClient() {
 
                 <audio
                   ref={audioRef}
-                  src={useFallback ? getR2Src(selectedHymn.src) : getArchiveSrc(selectedHymn.src)}
-                  // src={getArchiveSrc(selectedHymn.src)}
+                  src={audioSrc || undefined}
                   onPlay={() => {
                     if (audioCtxRef.current?.state === 'suspended') {
                       audioCtxRef.current.resume();
@@ -420,7 +468,7 @@ export default function UnifiedAl7anClient() {
                   onPlaying={() => { setIsLoading(false); setIsPlaying(true); }}
                   onPause={() => setIsPlaying(false)}
                   onError={(e) => {
-                    if (!useFallback) {
+                    if (!useFallback && !audioSrc.startsWith("blob:")) {
                       setUseFallback(true);
                       setIsLoading(true);
                       setHasError(false);

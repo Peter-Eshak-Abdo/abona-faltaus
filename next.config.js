@@ -165,12 +165,74 @@ const nextConfig = {
   },
   async headers() {
     return [
+      // ===== صور: كاش طويل =====
       {
         source: "/(.*).(jpg|jpeg|png|webp|avif|svg)$",
         headers: [
           {
             key: "Cache-Control",
             value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // ===== ملفات الصوت MP3: Accept-Ranges لـ Safari iOS =====
+      {
+        source: "/:path*.mp3",
+        headers: [
+          { key: "Accept-Ranges", value: "bytes" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
+      {
+        source: "/:path*.m4a",
+        headers: [
+          { key: "Accept-Ranges", value: "bytes" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
+      {
+        source: "/:path*.mp4",
+        headers: [
+          { key: "Accept-Ranges", value: "bytes" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
+      {
+        source: "/:path*.wav",
+        headers: [
+          { key: "Accept-Ranges", value: "bytes" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
+      // ===== Service Worker: لا كاش حتى يُحدَّث دائماً =====
+      {
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          {
+            key: "Service-Worker-Allowed",
+            value: "/",
+          },
+        ],
+      },
+      // ===== الـ manifest: كاش قصير =====
+      {
+        source: "/manifest.webmanifest",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, must-revalidate",
+          },
+          {
+            key: "Content-Type",
+            value: "application/manifest+json",
           },
         ],
       },
