@@ -63,14 +63,14 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
     const groupsChannel = supabase.channel(`groups-${actualQuizId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'quiz_groups', filter: `quiz_id=eq.${actualQuizId}` },
         () => {
-          supabase.from("quiz_groups").select("*").eq("quiz_id", actualQuizId).then(({ data }) => setGroups(data || []));
+          supabase.from("quiz_groups").select("*").eq("quiz_id", actualQuizId).then((res: any) => setGroups(res.data || []));
         })
       .subscribe();
 
     // 2. جديد: مراقبة حالة اللعبة (Game State)
     const gameStateChannel = supabase.channel(`state-${actualQuizId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${actualQuizId}` },
-        (payload) => {
+        (payload: any) => {
           setGameState(payload.new);
         })
       .subscribe();
