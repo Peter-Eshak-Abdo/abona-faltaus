@@ -175,9 +175,9 @@ const nextConfig = {
           },
         ],
       },
-      // ===== ملفات الصوت MP3: Accept-Ranges لـ Safari iOS =====
+      // ===== ملفات الصوت: Accept-Ranges لـ Safari iOS =====
       {
-        source: "/:path*.mp3",
+        source: "/tranim/:path*",
         headers: [
           { key: "Accept-Ranges", value: "bytes" },
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
@@ -185,7 +185,7 @@ const nextConfig = {
         ],
       },
       {
-        source: "/:path*.m4a",
+        source: "/sounds/:path*",
         headers: [
           { key: "Accept-Ranges", value: "bytes" },
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
@@ -193,15 +193,7 @@ const nextConfig = {
         ],
       },
       {
-        source: "/:path*.mp4",
-        headers: [
-          { key: "Accept-Ranges", value: "bytes" },
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
-        ],
-      },
-      {
-        source: "/:path*.wav",
+        source: "/3zat/:path*",
         headers: [
           { key: "Accept-Ranges", value: "bytes" },
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
