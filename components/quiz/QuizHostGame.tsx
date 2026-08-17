@@ -213,7 +213,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
     fetchInitialAnswers();
 
     const channel = supabase.channel(`ans-${gs.current_question_index}`)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'answers', filter: `quiz_id=eq.${quiz.id}` }, (payload) => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'answers', filter: `quiz_id=eq.${quiz.id}` }, (payload: any) => {
         if (String(payload.new.question_id) === String(gs.current_question_index)) {
           setAnswersCount(prev => prev + 1);
         }

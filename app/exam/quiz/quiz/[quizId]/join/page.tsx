@@ -28,8 +28,8 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
       setQuiz(data);
       const { data: groupsData } = await supabase.from("quiz_groups").select("group_name, members").eq("quiz_id", quizId);
       if (groupsData) {
-        setTakenSaints(groupsData.map(g => g.group_name));
-        setTakenMembers(groupsData.flatMap(g => g.members || []));
+        setTakenSaints((groupsData as any[]).map((g: any) => g.group_name));
+        setTakenMembers((groupsData as any[]).flatMap((g: any) => g.members || []));
       }
     };
     fetchQuiz();
@@ -41,7 +41,7 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
         schema: 'public',
         table: 'quiz_groups',
         filter: `quiz_id=eq.${quizId}`
-      }, (payload) => {
+      }, (payload: any) => {
         setTakenSaints(prev => [...prev, payload.new.group_name]);
         setTakenMembers(prev => [...prev, ...(payload.new.members || [])]);
       })
@@ -49,7 +49,7 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
 
     const gameChannel = supabase.channel(`game-state-${quizId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${quizId}` },
-        (payload) => {
+        (payload: any) => {
           const teamId = localStorage.getItem(`team_id_${quizId}`);
           if (payload.new.phase === "question" && teamId) {
             router.push(`/exam/quiz/quiz/${quizId}/play`);

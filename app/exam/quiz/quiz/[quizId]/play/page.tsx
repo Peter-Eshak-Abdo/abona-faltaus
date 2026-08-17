@@ -41,7 +41,7 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
 
     const channel = supabase.channel(`game-${quizId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_state', filter: `quiz_id=eq.${quizId}` },
-        async (payload) => {
+        async (payload: any) => {
           setGameState(payload.new);
           setHasAnswered(false);
           const { data: qData } = await supabase.from("quizzes").select("questions").eq("id", quizId).single();
@@ -52,7 +52,7 @@ export default function PlayPage({ params: paramsPromise }: { params: Promise<{ 
 
     // تحديث السكور الخاص بالفريق Live
     const channelTeam = supabase.channel(`t-${teamId}`).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'quiz_groups', filter: `id=eq.${teamId}` },
-      (p) => setTeam(p.new)).subscribe();
+      (p: any) => setTeam(p.new)).subscribe();
 
     return () => { supabase.removeChannel(channel); supabase.removeChannel(channelTeam); };
   }, [quizId]);

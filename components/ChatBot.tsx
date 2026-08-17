@@ -87,7 +87,7 @@ export default function ChatBot() {
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
       if (session?.user) {
         setUser({
           id: session.user.id,
@@ -104,7 +104,7 @@ export default function ChatBot() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       if (session?.user) {
         setUser({
           id: session.user.id,

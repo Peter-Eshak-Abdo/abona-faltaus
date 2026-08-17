@@ -38,7 +38,7 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.getUser().then(({ data }: any) => setUser(data?.user || null));
     if (open) {
       if (initialData) {
         setTitle(initialData.title);
