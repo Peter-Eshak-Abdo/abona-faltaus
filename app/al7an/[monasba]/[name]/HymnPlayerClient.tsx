@@ -152,15 +152,21 @@ export default function HymnPlayerClient({ finalSrc, pageTitle, lyrics = "" }: P
               initial={{ scale: 1 }}
               animate={playing ? { scale: 1.02, boxShadow: "0 8px 30px rgba(0,0,0,0.12)" } : { scale: 1 }}
               transition={{ duration: 0.35 }}
-              className="bg-slate-50 p-1 rounded-lg"
+              className="bg-slate-50 dark:bg-zinc-800 p-2 rounded-xl shadow"
             >
               <audio
                 ref={audioRef}
                 onEnded={handleEnded}
+                onError={(e) => {
+                  console.error("Audio playback error:", e);
+                  setPlaying(false);
+                  toast.error("تعذر تشغيل الملف الصوتي، يرجى المحاولة مرة أخرى.");
+                }}
                 className="w-full"
                 controls
+                playsInline
+                preload="metadata"
                 src={finalSrc || undefined}
-                crossOrigin="anonymous"
               />
               {finalSrc ? (
                 <div className="text-xs text-muted-foreground mt-1 text-center">

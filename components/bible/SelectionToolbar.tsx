@@ -130,7 +130,7 @@ export default function SelectionToolbar({
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-        className="fixed bottom-2 left-1/2 -translate-x-1/2 bg-inverse-surface/95 backdrop-blur-xl p-0.5 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-white/10"
+        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+12px)] left-1/2 -translate-x-1/2 bg-inverse-surface/95 backdrop-blur-xl p-0.5 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-white/10"
       >
         <button onClick={() => setIsDayModalOpen(true)} className="w-3 h-3 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors">
           <FaPlusSquare size={18} />

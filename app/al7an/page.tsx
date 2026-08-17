@@ -268,7 +268,7 @@ export default function UnifiedAl7anClient() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full h-[calc(100vh-20px)] overflow-hidden bg-surface" dir="rtl">
+    <div className="flex flex-col lg:flex-row w-full h-[calc(100dvh-10px)] max-h-[100dvh] overflow-hidden bg-surface" dir="rtl">
       <div className={`w-full ${selectedHymn ? 'hidden lg:flex' : 'flex'} lg:w-[35%] h-full flex-col bg-surface border-l border-outline-variant/30 z-10 overflow-hidden`}>
         <div className="p-0.5 shrink-0 flex flex-col gap-0.5">
           <div className="flex-none border-b border-[#dcc0c1]/20 bg-[#f6f3f2]/10 backdrop-blur-md flex items-center justify-between z-10 shadow-2xl rounded-b-4xl">
@@ -452,11 +452,17 @@ export default function UnifiedAl7anClient() {
                 <audio
                   ref={audioRef}
                   src={audioSrc || undefined}
+                  playsInline
+                  preload="metadata"
                   onPlay={() => {
                     if (audioCtxRef.current?.state === 'suspended') {
-                      audioCtxRef.current.resume();
+                      audioCtxRef.current.resume().catch(() => {});
                     }
-                    setupAudioAnalyser();
+                    try {
+                      setupAudioAnalyser();
+                    } catch (e) {
+                      console.warn("Audio analyser ignored on mobile:", e);
+                    }
                   }}
                   onLoadStart={() => { setIsLoading(true); setHasError(false); setAudioErrorDetails(""); }}
                   onLoadedMetadata={(e) => {
