@@ -62,7 +62,7 @@ export default function UnifiedAl7anClient() {
   const [showArCopt, setShowArCopt] = useState(true);
 
   // طريقة العرض: صفوف (rows) أو 3 أعمدة (cols)
-  const [layoutMode, setLayoutMode] = useState<"rows" | "cols">("rows");
+  const [layoutMode, setLayoutMode] = useState<"rows" | "cols">("cols");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
@@ -502,7 +502,7 @@ export default function UnifiedAl7anClient() {
                 />
               </div>
 
-              {(selectedHymn.lyrics_ar || selectedHymn.lyrics_copt || selectedHymn.lyrics_ar_copt) && (
+              {/* {(selectedHymn.lyrics_ar || selectedHymn.lyrics_copt || selectedHymn.lyrics_ar_copt) && ( */}
                 <div className="flex flex-wrap justify-center gap-0.5 mb-0.5 bg-white/5 py-0.25 px-0.5 rounded-lg shrink-0">
                   <label className="flex items-center gap-0.25 cursor-pointer text-sm">
                     <input
@@ -544,7 +544,7 @@ export default function UnifiedAl7anClient() {
                     معرب
                   </label>
                 </div>
-              )}
+              {/* )} */}
 
               <div className="flex-1 overflow-y-auto scrollbar-hide px-0.5">
                 {hasLyrics ? (
@@ -578,28 +578,28 @@ export default function UnifiedAl7anClient() {
                         return (
                           <div
                             key={index}
-                            className={`p-2 rounded-lg border border-white/5 transition-all ${bgClass} ${layoutMode === "cols"
-                              ? "grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x md:divide-x-reverse divide-white/20 items-stretch w-full gap-2"
-                              : "flex flex-col gap-2 text-center"
+                            className={`p-0.25 rounded-lg transition-all ${bgClass} ${layoutMode === "cols"
+                              ? "grid grid-cols-3 divide-white/20 items-stretch w-full gap-0.25"
+                              : "flex flex-col gap-0.25 text-center"
                               }`}
                           >
                             {/* اللغة العربية (في اليمين) */}
                             {showAr && verse.ar && (
-                              <div className="flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed px-2">
+                              <div className="flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed px-0.25">
                                 {verse.ar}
                               </div>
                             )}
 
                             {/* القبطي المعرب (في المنتصف) */}
                             {showArCopt && verse.ar_copt && (
-                              <div className="flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap px-2">
+                              <div className="flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap px-0.25">
                                 {verse.ar_copt}
                               </div>
                             )}
 
                             {/* القبطي (في اليسار) */}
                             {showCopt && verse.copt && (
-                              <div className="flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-2">
+                              <div className="flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-0.25">
                                 {verse.copt}
                               </div>
                             )}
@@ -607,19 +607,19 @@ export default function UnifiedAl7anClient() {
                         );
                       })
                     ) : (
-                      <div className={`p-2 rounded-lg bg-white/5 border border-white/5 ${layoutMode === "cols" ? "grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x md:divide-x-reverse divide-white/20 items-stretch w-full gap-2" : "flex flex-col gap-2"}`}>
+                      <div className={`p-0.25 rounded-lg bg-white/5 ${layoutMode === "cols" ? "grid grid-cols-3 divide-white/20 items-stretch w-full gap-0.25" : "flex flex-col gap-0.25"}`}>
                         {showAr && selectedHymn.lyrics_ar && (
-                          <div className="flex items-center justify-center text-lg font-bold text-white whitespace-pre-wrap leading-relaxed px-2">
+                          <div className="flex items-center justify-center text-lg font-bold border-l text-white whitespace-pre-wrap leading-relaxed px-0.25">
                             {selectedHymn.lyrics_ar}
                           </div>
                         )}
                         {showArCopt && selectedHymn.lyrics_ar_copt && (
-                          <div className="flex items-center justify-center text-lg font-serif text-white/80 whitespace-pre-wrap px-2" dir="ltr">
+                          <div className="flex items-center justify-center text-lg font-serif text-white/80 whitespace-pre-wrap px-0.25" dir="ltr">
                             {selectedHymn.lyrics_ar_copt}
                           </div>
                         )}
                         {showCopt && selectedHymn.lyrics_copt && (
-                          <div className="flex items-center justify-center text-xl font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-2">
+                          <div className="flex items-center justify-center text-xl border-r font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-0.25">
                             {selectedHymn.lyrics_copt}
                           </div>
                         )}

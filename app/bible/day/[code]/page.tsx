@@ -114,9 +114,9 @@ export default function PresentationPage() {
           key={wIdx}
           onClick={() => interactive ? setSelectedWord({ vId: verse.id, wIdx }) : undefined}
           className={`
-            inline-block mx-1 transition-all leading-normal
-            ${interactive ? "cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded px-1" : ""}
-            ${isSelected ? "bg-blue-200 dark:bg-blue-900 ring-2 ring-blue-500 rounded px-1" : ""}
+            inline-block mx-0.25 transition-all leading-normal
+            ${interactive ? "cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded px-0.25" : ""}
+            ${isSelected ? "bg-blue-200 dark:bg-blue-900 ring-2 ring-blue-500 rounded px-0.25" : ""}
           `}
           style={{
             color: conf.c || "inherit",
@@ -136,7 +136,7 @@ export default function PresentationPage() {
 
   if (isEditMode) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-1 font-arabic pb-32 text-zinc-900 dark:text-zinc-100">
+      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-1 font-arabic pb-8 text-zinc-900 dark:text-zinc-100">
         <div className="flex justify-between items-center mb-1">
           <div>
             <h1 className="text-2xl font-bold">{title}</h1>
@@ -153,7 +153,7 @@ export default function PresentationPage() {
         <div className="space-y-1">
           {verses.map((verse, index) => (
             <div key={verse.id} className="bg-white dark:bg-zinc-900 p-1 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 relative">
-              <div className="flex justify-between items-start mb-1 border-b border-zinc-100 dark:border-zinc-800 pb-0.5">
+              <div className="flex justify-between items-start border-b border-zinc-100 dark:border-zinc-800 pb-0.5">
                 <span className="text-lg font-bold text-blue-600">{verse.ref}</span>
                 <div className="flex gap-0.5">
                   <button onClick={() => moveVerse(index, -1)} disabled={index === 0} className="p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg disabled:opacity-30 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"><FaArrowUp /></button>
@@ -172,9 +172,8 @@ export default function PresentationPage() {
         </div>
 
         {selectedWord && (
-          <div className="fixed bottom-2 left-1/2 -translate-x-1/2 bg-white dark:bg-zinc-800 shadow-2xl p-1 rounded-2xl border border-zinc-300 dark:border-zinc-600 flex flex-col md:flex-row items-center gap-1 z-50 animate-fade-in">
-
-            <div className="flex items-center gap-1 border-b md:border-b-0 md:border-l border-zinc-200 dark:border-zinc-700 pb-0.5 md:pb-0 md:pl-1">
+          <div className="fixed bottom-1 left-1/2 -translate-x-1/2 bg-white dark:bg-zinc-800 shadow-2xl p-0.5 rounded-2xl border border-zinc-300 dark:border-zinc-600 flex flex-col md:flex-row items-center gap-0.5 z-50 animate-fade-in">
+            <div className="flex items-center gap-1 border-b md:border-b-0 md:border-l border-zinc-200 dark:border-zinc-700 pb-0.5 md:pb-0 md:pl-0.5">
               <span className="text-sm text-zinc-500 font-bold">الحجم:</span>
               <button onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "s", 0.2)} className="p-1 bg-zinc-100 dark:bg-zinc-700 rounded-xl hover:bg-zinc-200 transition">
                 <FaPlus size={14} />
@@ -182,26 +181,26 @@ export default function PresentationPage() {
               <button onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "s", -0.2)} className="p-1 bg-zinc-100 dark:bg-zinc-700 rounded-xl hover:bg-zinc-200 transition">
                 <FaMinus size={14} />
               </button>
-            </div>
+            {/* </div> */}
 
-            <div className="flex items-center gap-0.5 border-b md:border-b-0 md:border-l border-zinc-200 dark:border-zinc-700 pb-0.5 md:pb-0 md:pl-1">
+            {/* <div className="flex items-center gap-0.5 border-b md:border-b-0 md:border-l border-zinc-200 dark:border-zinc-700 pb-0.5 md:pb-0 md:pl-0.5"> */}
               <span className="text-sm text-zinc-500 font-bold">عريض:</span>
               <button onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "b")} className="p-1 bg-zinc-100 dark:bg-zinc-700 rounded-xl hover:bg-zinc-200 transition">
                 <FaBold size={14} />
               </button>
             </div>
 
-            <div className="flex items-center gap-1">
-              <span className="text-sm text-zinc-500 font-bold">اللون:</span>
+            <div className="flex items-center gap-0.25 overflow-x-auto max-w-[90vw] md:max-w-none scrollbar-hide py-0.5 px-0.5">
+              <span className="text-sm text-zinc-500 font-bold shrink-0">اللون:</span>
               {presetColors.map((c) => (
                 <button
                   key={c}
                   onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "c", c)}
-                  className="w-3 h-3 rounded-full border-2 border-zinc-300 shadow-sm transition hover:scale-110"
+                  className="w-3 h-3 rounded-full border-2 border-zinc-300 shadow-sm transition hover:scale-110 shrink-0"
                   style={{ backgroundColor: c }}
                 />
               ))}
-              <div className="relative w-3 h-3 rounded-full border-2 border-zinc-300 overflow-hidden shadow-sm hover:scale-110 transition cursor-pointer">
+              <div className="relative w-3 h-3 rounded-full border-2 border-zinc-300 overflow-hidden shadow-sm hover:scale-110 transition cursor-pointer shrink-0">
                 <input
                   type="color"
                   onChange={(e) => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "c", e.target.value)}
@@ -210,7 +209,7 @@ export default function PresentationPage() {
               </div>
               <button
                 onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "c", undefined)}
-                className="w-3 h-3 rounded-full border-2 border-zinc-300 shadow-sm bg-transparent flex items-center justify-center text-xs hover:bg-red-50 transition text-red-500"
+                className="w-3 h-3 rounded-full border-2 border-zinc-300 shadow-sm bg-transparent flex items-center justify-center text-xs hover:bg-red-50 transition text-red-500 shrink-0"
                 title="إزالة اللون"
               >
                 <FaTimes />

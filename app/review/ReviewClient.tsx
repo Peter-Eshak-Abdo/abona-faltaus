@@ -46,15 +46,15 @@ export default function ReviewClient() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-1">
       {/* نموذج إرسال تقييم جديد */}
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-zinc-900 p-5 rounded-3xl shadow-sm border border-zinc-200 dark:border-zinc-800 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-zinc-900 p-1 rounded-3xl shadow-sm border border-zinc-200 dark:border-zinc-800 space-y-4">
         <div>
-          <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
             رأيك أو اقتراحك
           </label>
           <textarea
-            className="w-full p-3 border border-zinc-200 dark:border-zinc-700 rounded-2xl focus:ring-2 focus:ring-blue-500 bg-zinc-50 dark:bg-zinc-800 text-sm outline-none text-zinc-900 dark:text-zinc-100 min-h-[90px]"
+            className="w-full p-1 border border-zinc-200 dark:border-zinc-700 rounded-2xl focus:ring-2 focus:ring-blue-500 bg-zinc-50 dark:bg-zinc-800 text-sm outline-none text-zinc-900 dark:text-zinc-100 min-h-[90px]"
             placeholder="اكتب ملاحظاتك، استفسارك أو اقتراحاتك هنا بكل صراحة..."
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
@@ -62,10 +62,10 @@ export default function ReviewClient() {
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
           <div>
             <span className="block text-xs font-bold text-zinc-600 dark:text-zinc-400 mb-1">التقييم العام (من 10):</span>
-            <div className="flex items-center gap-1 flex-wrap">
+            <div className="flex items-center gap-0.5 flex-wrap">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
                 <button
                   key={star}
@@ -77,11 +77,11 @@ export default function ReviewClient() {
                   ★
                 </button>
               ))}
-              {rating && <span className="text-xs font-bold text-amber-500 mr-1.5">{rating}/10</span>}
+              {rating && <span className="text-xs font-bold text-amber-500 mr-0.5">{rating}/10</span>}
             </div>
           </div>
 
-          <label className="flex items-center gap-2 cursor-pointer select-none">
+          <label className="flex items-center gap-0.5 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={isPublic}
@@ -94,24 +94,24 @@ export default function ReviewClient() {
 
         <button
           disabled={isSubmitting || !feedback.trim() || !rating}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-2xl font-bold text-sm shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-.05 rounded-2xl font-bold text-sm shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'جاري الإرسال...' : 'إرسال التقييم 🚀'}
         </button>
       </form>
 
       {/* عرض التقييمات السابقة */}
-      <div className="space-y-3">
+      <div className="space-y-1">
         <h2 className="text-sm font-bold text-zinc-500 px-1">الملاحظات والتقييمات الأخيرة:</h2>
-        <div className="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-3xl border border-zinc-200 dark:border-zinc-800 max-h-[450px] overflow-y-auto space-y-3">
+        <div className="bg-zinc-50 dark:bg-zinc-900/50 p-1 rounded-3xl border border-zinc-200 dark:border-zinc-800 max-h-[450px] overflow-y-auto space-y-3">
           {reviews.map((rev) => (
-            <div key={rev.id} className="space-y-2">
-              <div className={`p-4 rounded-2xl ${rev.is_public ? 'bg-white dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700' : 'bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/40'}`}>
-                <div className="flex justify-between items-center text-xs mb-1.5">
+            <div key={rev.id} className="space-y-0.5">
+              <div className={`p-1 rounded-2xl ${rev.is_public ? 'bg-white dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700' : 'bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/40'}`}>
+                <div className="flex justify-between items-center text-xs mb-1">
                   <span className={`font-bold ${rev.is_public ? 'text-zinc-600 dark:text-zinc-400' : 'text-blue-600 dark:text-blue-300'}`}>
                     {rev.is_public ? 'تقييم عام' : 'رسالة خاصة للمسؤول'}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-0.5">
                     <span className="text-amber-500 font-bold">{rev.rating}/10 ⭐</span>
                     <span className="text-zinc-400 text-[10px]">{new Date(rev.created_at).toLocaleDateString('ar-EG')}</span>
                   </div>
@@ -121,7 +121,7 @@ export default function ReviewClient() {
 
               {/* رد المسؤول */}
               {rev.admin_reply && (
-                <div className="mr-4 p-3 rounded-2xl bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800">
+                <div className="mr-1 p-1 rounded-2xl bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800">
                   <p className="text-[11px] font-bold text-green-700 dark:text-green-300 mb-0.5">رد الإدارة:</p>
                   <p className="text-xs text-green-900 dark:text-green-100">{rev.admin_reply}</p>
                 </div>
@@ -130,7 +130,7 @@ export default function ReviewClient() {
           ))}
 
           {reviews.length === 0 && (
-            <p className="text-center py-8 text-xs text-zinc-400">لا توجد تقييمات منشورة بعد، كن أول من يشارك!</p>
+            <p className="text-center py-2 text-xs text-zinc-400">لا توجد تقييمات منشورة بعد، كن أول من يشارك!</p>
           )}
         </div>
       </div>

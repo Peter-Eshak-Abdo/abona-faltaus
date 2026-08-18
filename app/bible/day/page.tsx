@@ -108,12 +108,7 @@ export default function DayPortalPage() {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-start p-0.5 text-zinc-900 dark:text-zinc-100 font-arabic pt-1">
       <div className="max-w-md w-full bg-white dark:bg-zinc-900 p-1 rounded-3xl shadow-xl border border-zinc-200 dark:border-zinc-800 mb-1">
 
-        {/* <div className="flex justify-around mb-1 text-blue-600 item-center">
-          <div>
-          </div>
-          </div>
-          */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <div className="relative">
             <div className="w-3 h-3 rounded-full overflow-hidden bg-white relative flex items-center justify-center">
               <Link href="/bible" className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition">
@@ -170,19 +165,19 @@ export default function DayPortalPage() {
             </button>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-0.5">
             {createdDayInfo && (
-              <div className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 p-3 rounded-2xl text-center space-y-2">
+              <div className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 p-0.5 rounded-2xl text-center space-y-0.5">
                 <p className="text-xs font-bold text-green-700 dark:text-green-300">
                   🎉 تم إنشاء الفقرة "{createdDayInfo.title}" بنجاح!
                 </p>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="font-mono font-black text-xl tracking-widest text-green-900 dark:text-green-200 bg-white dark:bg-zinc-800 px-3 py-1 rounded-xl border border-green-300 dark:border-green-700" dir="ltr">
+                <div className="flex items-center justify-center gap-0.5">
+                  <span className="font-mono font-black text-xl tracking-widest text-green-900 dark:text-green-200 bg-white dark:bg-zinc-800 px-1 py-1 rounded-xl border border-green-300 dark:border-green-700" dir="ltr">
                     {createdDayInfo.code}
                   </span>
                   <button
                     onClick={() => copyToClipboard(createdDayInfo.code)}
-                    className="p-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold"
+                    className="p-1 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold"
                     title="نسخ الكود"
                   >
                     نسخ
@@ -203,14 +198,14 @@ export default function DayPortalPage() {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-2.5 border rounded-xl font-bold bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full p-1 border rounded-xl font-bold bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 placeholder="مثال: اجتماع الشباب - المحبة"
               />
             </div>
             <button
               onClick={handleCreateDay}
               disabled={isCreating}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-1.5 text-sm"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-1 text-sm"
             >
               {isCreating ? "جاري الإنشاء..." : <><FaPlus /> إنشاء الكود</>}
             </button>

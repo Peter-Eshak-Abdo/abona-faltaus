@@ -1,10 +1,9 @@
 "use client";
-
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import DOMPurify from "dompurify";
-import { Send, Loader2, Sparkles, Plus, UserCircle, Trash2, PanelRight, BookOpen, HeartPulse, ScrollText, Mic, Paperclip } from "lucide-react";
+import { Send, Sparkles, Plus, UserCircle, PanelRight, ScrollText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
