@@ -1,7 +1,7 @@
 // components/AccountInfo.tsx
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { Copy, LogOut, X, Loader2, Camera, UserCircle, Calendar, Hash } from "lucide-react";
+import { Copy, LogOut, X, Loader2, Camera, UserCircle, Calendar, Hash, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -114,27 +114,38 @@ export default function AccountInfo() {
   };
 
   if (loading) return <div className="flex justify-center items-center h-48"><Loader2 className="w-8 h-8 text-amber-700 animate-spin" /></div>;
-  if (error && !user) return <div className="p-1 text-center text-red-600 bg-red-50 rounded-lg m-1">{error}</div>;
+  if (error && !user) return <div className="p-3 text-center text-red-600 bg-red-50 rounded-xl m-2 text-sm">{error}</div>;
   if (!user) return null;
 
   return (
-    <Card className="max-w-md mx-auto p-1 shadow-xl rounded-2xl border-amber-900/10 overflow-hidden mt-6" dir="rtl">
+    <Card className="w-full max-w-sm mx-auto shadow-lg rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden" dir="rtl">
+      <div className="flex items-center justify-between px-4 pt-3 pb-1 border-b border-stone-100 dark:border-zinc-800">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-1 text-xs font-semibold text-stone-600 hover:text-stone-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-zinc-800"
+        >
+          <ArrowRight className="w-4 h-4" />
+          <span>رجوع</span>
+        </button>
+        <span className="text-xs font-bold text-stone-400">الملف الشخصي</span>
+      </div>
+
       {successMsg && (
-        <div className="mb-1 bg-green-50 border border-green-200 text-green-700 p-1 rounded-lg flex justify-between items-center text-sm font-medium">
+        <div className="mx-4 mt-3 bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-lg flex justify-between items-center text-xs font-medium">
           <span>{successMsg}</span>
-          <X className="w-4 h-4 cursor-pointer hover:text-green-900" onClick={() => setSuccessMsg("")} />
+          <X className="w-3.5 h-3.5 cursor-pointer hover:text-green-900" onClick={() => setSuccessMsg("")} />
         </div>
       )}
 
-      <CardContent className="p-1 space-y-1">
+      <CardContent className="p-4 space-y-3">
         <div className="flex flex-col items-center relative">
           <div className="relative group">
-            <div className="w-24 h-24 rounded-full p-1 bg-linear-to-tr from-amber-700 to-amber-300 shadow-md">
+            <div className="w-20 h-20 rounded-full p-0.5 bg-linear-to-tr from-amber-700 to-amber-400 shadow-md">
               <div className="w-full h-full rounded-full overflow-hidden bg-white relative flex items-center justify-center">
                 {user.avatar_url ? (
-                  <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" sizes="auto" />
+                  <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" sizes="80px" />
                 ) : (
-                  <UserCircle className="w-12 h-12 text-stone-300" />
+                  <UserCircle className="w-10 h-10 text-stone-300" />
                 )}
               </div>
             </div>
@@ -142,46 +153,47 @@ export default function AccountInfo() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="absolute bottom-0 right-0 bg-stone-900 text-white p-1 rounded-full shadow-lg border-2 border-white hover:bg-stone-800 transition-colors disabled:opacity-50"
+              className="absolute bottom-0 right-0 bg-stone-900 text-white p-1 rounded-full shadow border-2 border-white hover:bg-stone-800 transition-colors disabled:opacity-50"
+              title="تغيير الصورة"
             >
-              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+              {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />}
             </button>
             <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
           </div>
 
-          <div className="text-center mt-1">
-            <h2 className="text-xl font-bold text-stone-900">{user.full_name || "مستخدم أرثوذكسي"}</h2>
-            <p className="text-stone-500 text-sm font-medium">{user.email}</p>
+          <div className="text-center mt-2">
+            <h2 className="text-lg font-bold text-stone-900 dark:text-zinc-100">{user.full_name || "مستخدم أرثوذكسي"}</h2>
+            <p className="text-stone-500 dark:text-zinc-400 text-xs font-medium">{user.email}</p>
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-600 text-center bg-red-50 p-1 rounded-md">{error}</p>}
+        {error && <p className="text-xs text-red-600 text-center bg-red-50 p-2 rounded-lg">{error}</p>}
 
-        <div className="bg-stone-50 p-1 rounded-xl space-y-1 mt-1 border border-stone-100">
-          <div className="flex items-center justify-between text-sm text-stone-700">
-            <div className="flex items-center gap-1"><Hash className="w-4 h-4 text-amber-700" /> <span className="font-semibold">رقم الحساب</span></div>
-            <span className="font-mono text-xs text-stone-500 bg-stone-200 p-1 rounded">{user.id.substring(0, 12)}...</span>
+        <div className="bg-stone-50 dark:bg-zinc-800/50 p-3 rounded-xl space-y-2 border border-stone-100 dark:border-zinc-800 text-xs">
+          <div className="flex items-center justify-between text-stone-700 dark:text-zinc-300">
+            <div className="flex items-center gap-1.5"><Hash className="w-3.5 h-3.5 text-amber-700" /> <span className="font-semibold">رقم الحساب</span></div>
+            <span className="font-mono text-[11px] text-stone-500 dark:text-zinc-400 bg-stone-200/70 dark:bg-zinc-700 px-2 py-0.5 rounded">{user.id.substring(0, 10)}...</span>
           </div>
-          <div className="flex items-center justify-between text-sm text-stone-700">
-            <div className="flex items-center gap-1"><Calendar className="w-4 h-4 text-amber-700" /> <span className="font-semibold">تاريخ الانضمام</span></div>
-            <span className="text-xs font-medium text-stone-600">{new Date(user.updated_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          <div className="flex items-center justify-between text-stone-700 dark:text-zinc-300">
+            <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-amber-700" /> <span className="font-semibold">تاريخ الانضمام</span></div>
+            <span className="text-[11px] font-medium text-stone-600 dark:text-zinc-400">{new Date(user.updated_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-1 mt-1">
+        <div className="grid grid-cols-2 gap-2 pt-1">
           <Button
             onClick={() => { navigator.clipboard.writeText(user.id); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
             variant="outline"
-            className="flex gap-1 items-center justify-center border-stone-200 text-stone-700 hover:bg-stone-100 rounded-lg text-sm font-bold"
+            className="flex gap-1.5 items-center justify-center border-stone-200 dark:border-zinc-700 text-stone-700 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-zinc-800 rounded-xl text-xs font-bold py-2 h-9"
           >
-            {copied ? <span className="text-green-600">تم النسخ</span> : <><Copy className="w-4 h-4" /> نسخ المعرف</>}
+            {copied ? <span className="text-green-600">تم النسخ</span> : <><Copy className="w-3.5 h-3.5" /> نسخ المعرف</>}
           </Button>
           <Button
             onClick={handleLogout}
             variant="destructive"
-            className="flex gap-1 items-center justify-center bg-red-700 hover:bg-red-800 text-white rounded-lg text-sm font-bold"
+            className="flex gap-1.5 items-center justify-center bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold py-2 h-9"
           >
-            <LogOut className="w-4 h-4" /> تسجيل الخروج
+            <LogOut className="w-3.5 h-3.5" /> تسجيل الخروج
           </Button>
         </div>
       </CardContent>

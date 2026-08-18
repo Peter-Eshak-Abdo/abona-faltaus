@@ -61,6 +61,8 @@ export default function DayPortalPage() {
     }
   };
 
+  const [createdDayInfo, setCreatedDayInfo] = useState<{ code: string; title: string } | null>(null);
+
   const handleCreateDay = async () => {
     if (!title.trim()) {
       setError("يرجى كتابة اسم اليوم/الفقرة");
@@ -77,11 +79,12 @@ export default function DayPortalPage() {
 
     if (dbError) {
       setError("حدث خطأ أثناء الإنشاء، حاول مرة أخرى.");
-      setIsCreating(false);
     } else {
       saveHistory(newCode, title);
-      router.push(`/bible/day/${newCode}`);
+      setCreatedDayInfo({ code: newCode, title });
+      setTitle("");
     }
+    setIsCreating(false);
   };
 
   const copyToClipboard = (text: string) => {
@@ -167,21 +170,47 @@ export default function DayPortalPage() {
             </button>
           </div>
         ) : (
-          <div className="space-y-0.5">
+          <div className="space-y-3">
+            {createdDayInfo && (
+              <div className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 p-3 rounded-2xl text-center space-y-2">
+                <p className="text-xs font-bold text-green-700 dark:text-green-300">
+                  🎉 تم إنشاء الفقرة "{createdDayInfo.title}" بنجاح!
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="font-mono font-black text-xl tracking-widest text-green-900 dark:text-green-200 bg-white dark:bg-zinc-800 px-3 py-1 rounded-xl border border-green-300 dark:border-green-700" dir="ltr">
+                    {createdDayInfo.code}
+                  </span>
+                  <button
+                    onClick={() => copyToClipboard(createdDayInfo.code)}
+                    className="p-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold"
+                    title="نسخ الكود"
+                  >
+                    نسخ
+                  </button>
+                </div>
+                <button
+                  onClick={() => router.push(`/bible/day/${createdDayInfo.code}`)}
+                  className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline block mx-auto"
+                >
+                  الانتقال لعرض الآيات ←
+                </button>
+              </div>
+            )}
+
             <div>
-              <label className="block text-sm font-bold mb-0.5">اسم اليوم أو عنوان الفقرة</label>
+              <label className="block text-sm font-bold mb-1">اسم اليوم أو عنوان الفقرة</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-0.5 border rounded-xl font-bold bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 border rounded-xl font-bold bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 placeholder="مثال: اجتماع الشباب - المحبة"
               />
             </div>
             <button
               onClick={handleCreateDay}
               disabled={isCreating}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-0.5"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-1.5 text-sm"
             >
               {isCreating ? "جاري الإنشاء..." : <><FaPlus /> إنشاء الكود</>}
             </button>

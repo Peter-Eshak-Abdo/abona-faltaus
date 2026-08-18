@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { FaPlay, FaStop, FaSearch, FaStar, FaPlusSquare, FaSpinner, FaArrowRight } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import localforage from "localforage";
 
 type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
 type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
@@ -29,6 +30,92 @@ export default function ReadingControlsHeader({
 }: ReadingControlsHeaderProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isAudioLoading, setIsAudioLoading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsPlaying(false);
+    setIsAudioLoading(false);
+  };
+
+  useEffect(() => {
+    stopAudio();
+  }, [currentBookIdx, currentChapterIdx]);
+
+  const toggleAudio = async () => {
+    if (isPlaying || isAudioLoading) {
+      stopAudio();
+      return;
+    }
+
+    setIsAudioLoading(true);
+
+    const activeBook = bibleData[currentBookIdx];
+    const activeChapter = activeBook?.chapters?.[currentChapterIdx] || [];
+    let textToRead = `${activeBook?.name || ""}، الإصحَاحُ ${currentChapterIdx + 1}. `;
+    textToRead += activeChapter.map(v => v.text_vocalized).join(". ");
+
+    const cacheKey = `audio_offline_${currentBookIdx}_${currentChapterIdx}`;
+
+    try {
+      let audioBlob = await localforage.getItem<Blob>(cacheKey);
+
+      if (!audioBlob) {
+        const response = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: textToRead }),
+        });
+
+        if (!response.ok) {
+          throw new Error('TTS server unavailable');
+        }
+
+        audioBlob = await response.blob();
+        await localforage.setItem(cacheKey, audioBlob);
+      }
+
+      const url = URL.createObjectURL(audioBlob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+
+      audio.onended = () => {
+        setIsPlaying(false);
+        URL.revokeObjectURL(url);
+      };
+
+      await audio.play();
+      setIsPlaying(true);
+    } catch (err) {
+      console.warn("Server TTS failed, falling back to Web Speech API...", err);
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(textToRead);
+        utterance.lang = "ar-EG";
+
+        const voices = window.speechSynthesis.getVoices();
+        const arabicVoice = voices.find(v => v.lang.startsWith("ar"));
+        if (arabicVoice) utterance.voice = arabicVoice;
+
+        utterance.onend = () => setIsPlaying(false);
+        utterance.onerror = () => stopAudio();
+
+        window.speechSynthesis.speak(utterance);
+        setIsPlaying(true);
+      } else {
+        alert("خاصية القراءة الصوتية غير مدعومة على متصفحك حالياً.");
+      }
+    } finally {
+      setIsAudioLoading(false);
+    }
+  };
 
   if (!bibleData.length) return null;
 
@@ -85,7 +172,7 @@ export default function ReadingControlsHeader({
         </button>
 
         <button
-          onClick={() => setIsPlaying(!isPlaying)}
+          onClick={toggleAudio}
           disabled={isAudioLoading}
           className={`flex-1 sm:flex-none flex items-center gap-0.5 p-0.5 rounded-full font-bold transition-all disabled:opacity-50 text-sm
           ${isPlaying ? 'bg-red-600 text-white' : 'bg-blue-600 text-white shadow-md hover:shadow-lg'}`}

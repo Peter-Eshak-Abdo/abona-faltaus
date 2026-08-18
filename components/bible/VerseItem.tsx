@@ -71,7 +71,7 @@ export default function VerseItem({
   const activeChapter = bibleData[currentBookIdx]?.chapters?.[currentChapterIdx] || [];
   return (
     <div
-      className="space-y-0 text-xl md:text-2xl leading-loose font-arabic px-0.5 max-w-8xl mx-auto"
+      className="w-full space-y-0 text-xl md:text-2xl leading-loose font-arabic px-0.5 max-w-8xl mx-auto"
       style={{ fontSize: `${fontSize}px` }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}

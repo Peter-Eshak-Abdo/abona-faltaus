@@ -4,26 +4,30 @@ import { NextResponse } from 'next/server';
 
 // جلب التقييمات (التاريخ)
 export async function GET() {
-  const supabase = await createClient({ cookies });
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) return NextResponse.json({ reviews: [] });
-
-  // جلب تقييمات المستخدم الحالية + التقييمات العامة للآخرين (اختياري)
-  const { data, error } = await supabase
+  let query = supabase
     .from('feedback')
     .select('*')
-    .or(`user_id.eq.${user.id},is_public.eq.true`)
     .order('created_at', { ascending: true });
 
+  if (user) {
+    query = query.or(`user_id.eq.${user.id},is_public.eq.true`);
+  } else {
+    query = query.eq('is_public', true);
+  }
+
+  const { data, error } = await query;
+
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
+  return NextResponse.json(data || []);
 }
 
 // إرسال تقييم جديد
 export async function POST(request: Request) {
   const { name, email, feedback, rating, is_public } = await request.json();
-  const supabase = await createClient({ cookies });
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   try {

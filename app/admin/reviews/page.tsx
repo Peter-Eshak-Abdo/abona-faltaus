@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import AdminReviewsClient from '@/components/AdminReviewsClient';
 
 export default async function AdminPage() {
-  const supabase = await createClient({ cookies });
+  const supabase = await createClient();
 
   // 1. جلب بيانات المستخدم المسجل حالياً
   const { data: { user }, error } = await supabase.auth.getUser();

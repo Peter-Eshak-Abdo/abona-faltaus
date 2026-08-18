@@ -31,8 +31,7 @@ const sections = [
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
   { name: "المقالات", href: "/articles", icon: <FaFileAlt /> },
-  // { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
-  // { name: "المقالات", href: "/mkalat", icon: <FaFileAlt /> },
+  { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
   // { name: "العظات", href: "/3zat", icon: <FaChurch /> },
   // { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
@@ -61,7 +60,17 @@ export default function HomeClient() {
   const [lastMessage, setLastMessage] = useState("");
   const [commitCount, setCommitCount] = useState(0);
   const [copticDate, setCopticDate] = useState("");
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("user_header_cache");
+        if (cached) return JSON.parse(cached).user;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return null;
+  });
   const [showExploreHint, setShowExploreHint] = useState(false);
   const [menuRadius, setMenuRadius] = useState(135);
   const [isMobile, setIsMobile] = useState(false);

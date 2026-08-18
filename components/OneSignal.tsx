@@ -8,15 +8,14 @@ export default function PushNotificationSetup() {
       await OneSignal.init({
         appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID as string,
         allowLocalhostAsSecureOrigin: true, // مهم وقت التطوير
-        debug: true,
+        debug: false,
         welcomeNotification: {
           disable: true,
-          title: "أهلاً بك في تطبيق أبونا فلتاؤس",
-          message: "شكراً لاشتراكك! ستصلك آيات وأقوال يومية بركة لحياتك.",
+          message: 'اهلا بك في موقع ابونا فلتاؤس',
         },
       });
 
-      // ده اللي بيطلع الـ Popup اللي بيطلب الإذن من المستخدم
+      // طلب إذن إشعارات الـ Web Push فقط بدون إيميل
       OneSignal.Slidedown.promptPush();
     };
 

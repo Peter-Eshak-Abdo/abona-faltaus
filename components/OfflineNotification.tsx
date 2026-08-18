@@ -18,13 +18,11 @@ export default function OfflineNotification() {
       wb.addEventListener("installing", () => {
         setShowStatus(true);
         setStatus("downloading");
-        console.log("جاري تحميل ملفات الأوفلاين...");
       });
 
       // 2. عند انتهاء التثبيت وجاهزية الموقع
       wb.addEventListener("controlling", () => {
         setStatus("ready");
-        console.log("الموقع جاهز أوفلاين!");
 
         // إخفاء الرسالة بعد 5 ثواني
         setTimeout(() => {

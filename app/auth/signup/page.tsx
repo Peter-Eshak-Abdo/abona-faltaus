@@ -6,7 +6,7 @@ import LogoHeader from "@/components/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { User, Mail, Lock } from "lucide-react";
+import { User, Mail, Lock, CheckCircle2, Circle, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,13 @@ export default function SignUpPage() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // قواعد التحقق من كلمة المرور
+  const isMinLength = password.length >= 6;
+  const hasLetter = /[a-zA-Z\u0621-\u064A]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const isPasswordValid = isMinLength && hasLetter && hasNumber;
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
@@ -29,30 +36,57 @@ export default function SignUpPage() {
     return () => authListener.subscription.unsubscribe();
   }, [router]);
 
+  const translateError = (errMessage: string): string => {
+    const msg = errMessage.toLowerCase();
+    if (msg.includes("password should be at least")) {
+      return "كلمة المرور يجب ألا تقل عن 6 أحرف أو أرقام.";
+    }
+    if (msg.includes("user already registered") || msg.includes("already registered")) {
+      return "هذا البريد الإلكتروني مسجل بالفعل. يمكنك تسجيل الدخول بدلاً من ذلك.";
+    }
+    if (msg.includes("invalid email") || msg.includes("email address is invalid")) {
+      return "صيغة البريد الإلكتروني غير صحيحة.";
+    }
+    if (msg.includes("signup rate limit")) {
+      return "تم إرسال طلبات كثيرة، يرجى المحاولة بعد قليل.";
+    }
+    return errMessage || "حدث خطأ أثناء إنشاء الحساب، يرجى المحاولة لاحقاً.";
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!isMinLength) {
+      setError("كلمة المرور قصيرة جداً (يجب أن تكون 6 خانات على الأقل)");
+      return;
+    }
+    if (!hasLetter) {
+      setError("كلمة المرور يجب أن تحتوي على حروف");
+      return;
+    }
+    if (!hasNumber) {
+      setError("كلمة المرور يجب أن تحتوي على أرقام");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
-        options: { data: { full_name: name } },
+        options: { data: { full_name: name.trim() } },
       });
 
       if (signUpError) throw signUpError;
       if (data.user) {
-        // If email confirmation is off, the user might be signed in immediately
-        // The authListener useEffect will handle the redirect.
-        // If you keep email confirmation ON, they will see this alert.
         if (data.session === null) {
           alert("تم إنشاء الحساب بنجاح! افحص بريدك الإلكتروني لتفعيل الحساب.");
         }
-        // alert("تم إنشاء الحساب بنجاح! افحص بريدك الإلكتروني إذا تطلب الأمر.");
       }
     } catch (err: any) {
-      setError(err.message || "حدث خطأ ما");
+      setError(translateError(err.message));
     } finally {
       setLoading(false);
     }
@@ -61,49 +95,126 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen text-stone-800 flex flex-col items-center" dir="rtl">
       <LogoHeader />
-      <div className="w-full max-w-md mx-auto my-1 px-1 mt-8">
-        <Card className="shadow-xl border-amber-900/10 rounded-2xl overflow-hidden">
-          <CardHeader className="border-b border-stone-200 pb-1">
-            <CardTitle className="text-center text-amber-900 font-bold text-lg">
+      <div className="w-full max-w-md mx-auto my-1 px-4 mt-8">
+        <Card className="shadow-xl border-amber-900/10 rounded-2xl overflow-hidden bg-white dark:bg-zinc-900">
+          <CardHeader className="border-b border-stone-100 dark:border-zinc-800 pb-3">
+            <CardTitle className="text-center text-amber-900 dark:text-amber-500 font-bold text-lg">
               إنشاء حساب جديد
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1 p-1 mt-1">
+          <CardContent className="space-y-4 p-5">
             {error && (
-              <div className="bg-red-50 text-red-700 p-1 rounded-lg text-sm border border-red-200 flex items-center gap-1">
-                <span>⚠️</span> {error}
+              <div className="bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 p-3 rounded-xl text-xs sm:text-sm border border-red-200 dark:border-red-900/50 flex items-start gap-2">
+                <span className="shrink-0 text-base">⚠️</span>
+                <span>{error}</span>
               </div>
             )}
 
-            <form onSubmit={handleSignUp} className="space-y-1">
-              <div className="space-y-1">
-                <Label className="text-stone-700 font-semibold text-sm">الاسم</Label>
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label className="text-stone-700 dark:text-zinc-300 font-semibold text-xs sm:text-sm">الاسم</Label>
                 <div className="relative">
-                  <User className="absolute right-0.5 top-1/2 transform -translate-y-1/2 text-stone-400 w-2 h-2" />
-                  <Input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="pr-3 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
+                  <User className="absolute right-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                  <Input
+                    type="text"
+                    placeholder="مثال: يوسف ماهر"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="pr-9 bg-stone-50 dark:bg-zinc-800 border-stone-200 dark:border-zinc-700 focus:border-amber-700 focus:ring-amber-700 rounded-xl text-sm"
+                  />
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-stone-700 font-semibold text-sm">البريد الإلكتروني</Label>
+
+              <div className="space-y-1.5">
+                <Label className="text-stone-700 dark:text-zinc-300 font-semibold text-xs sm:text-sm">البريد الإلكتروني</Label>
                 <div className="relative">
-                  <Mail className="absolute right-0.5 top-1/2 transform -translate-y-1/2 text-stone-400 w-2 h-2" />
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="pr-3 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
+                  <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                  <Input
+                    type="email"
+                    placeholder="name@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="pr-9 bg-stone-50 dark:bg-zinc-800 border-stone-200 dark:border-zinc-700 focus:border-amber-700 focus:ring-amber-700 rounded-xl text-sm"
+                  />
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-stone-700 font-semibold text-sm">كلمة المرور</Label>
+
+              <div className="space-y-1.5">
+                <Label className="text-stone-700 dark:text-zinc-300 font-semibold text-xs sm:text-sm">كلمة المرور</Label>
                 <div className="relative">
-                  <Lock className="absolute right-0.5 top-1/2 transform -translate-y-1/2 text-stone-400 w-2 h-2" />
-                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="pr-3 bg-stone-50 border-stone-200 focus:border-amber-700 focus:ring-amber-700 rounded-lg" />
+                  <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="pr-9 pl-9 bg-stone-50 dark:bg-zinc-800 border-stone-200 dark:border-zinc-700 focus:border-amber-700 focus:ring-amber-700 rounded-xl text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
+
+                {/* مؤشرات شروط كلمة المرور */}
+                {password.length > 0 && (
+                  <div className="bg-stone-50 dark:bg-zinc-800/60 p-2.5 rounded-xl border border-stone-200/60 dark:border-zinc-700/60 space-y-1 text-xs mt-2">
+                    <p className="font-semibold text-stone-600 dark:text-zinc-400 mb-1">متطلبات كلمة المرور:</p>
+                    <div className="flex items-center gap-1.5">
+                      {isMinLength ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-green-600 shrink-0" />
+                      ) : (
+                        <Circle className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                      )}
+                      <span className={isMinLength ? "text-green-700 dark:text-green-400 font-medium" : "text-stone-500 dark:text-zinc-400"}>
+                        6 خانات على الأقل
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      {hasLetter ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-green-600 shrink-0" />
+                      ) : (
+                        <Circle className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                      )}
+                      <span className={hasLetter ? "text-green-700 dark:text-green-400 font-medium" : "text-stone-500 dark:text-zinc-400"}>
+                        تحتوي على حروف
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      {hasNumber ? (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-green-600 shrink-0" />
+                      ) : (
+                        <Circle className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                      )}
+                      <span className={hasNumber ? "text-green-700 dark:text-green-400 font-medium" : "text-stone-500 dark:text-zinc-400"}>
+                        تحتوي على أرقام
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
-              <Button type="submit" disabled={loading} className="w-full bg-amber-700 hover:bg-amber-800 text-white rounded-lg font-bold">
+
+              <Button
+                type="submit"
+                disabled={loading || (password.length > 0 && !isPasswordValid)}
+                className="w-full bg-amber-700 hover:bg-amber-800 text-white rounded-xl font-bold py-2.5 h-11 text-sm shadow-md transition disabled:opacity-50"
+              >
                 {loading ? "جاري الإنشاء..." : "إنشاء حساب"}
               </Button>
             </form>
 
-            <p className="text-center text-sm text-stone-600 font-medium mt-1">
-              لديك حساب؟ <Link href="/auth/signin" className="text-amber-700 hover:text-amber-800 font-bold underline decoration-amber-300 underline-offset-4">سجل الدخول</Link>
+            <p className="text-center text-xs sm:text-sm text-stone-600 dark:text-zinc-400 font-medium pt-2 border-t border-stone-100 dark:border-zinc-800">
+              لديك حساب بالفعل؟{" "}
+              <Link href="/auth/signin" className="text-amber-700 dark:text-amber-500 hover:underline font-bold">
+                سجل الدخول
+              </Link>
             </p>
           </CardContent>
         </Card>

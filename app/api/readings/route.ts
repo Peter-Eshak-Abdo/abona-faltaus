@@ -95,19 +95,16 @@ function loadData() {
   if (readingsCache && bibleCache) return;
 
   try {
-    console.log("📂 [Debug] محاولة قراءة الملفات من:", DATA_DIR);
-
     // 1. تحميل القطمارس
     if (!fs.existsSync(KATAMEROS_PATH)) {
-      throw new Error(`❌ ملف القطمارس غير موجود في المسار: ${KATAMEROS_PATH}`);
+      throw new Error(`ملف القطمارس غير موجود في المسار: ${KATAMEROS_PATH}`);
     }
     const readingsFile = fs.readFileSync(KATAMEROS_PATH, "utf-8");
     readingsCache = JSON.parse(readingsFile);
-    console.log("✅ تم تحميل AnnualReadings.json");
 
     // 2. تحميل الكتاب المقدس
     if (!fs.existsSync(BIBLE_DIR)) {
-      throw new Error(`❌ ملف الكتاب المقدس غير موجود في المسار: ${BIBLE_DIR}`);
+      throw new Error(`ملف الكتاب المقدس غير موجود في المسار: ${BIBLE_DIR}`);
     }
     const bibleFile = fs.readFileSync(BIBLE_DIR, "utf-8");
     const rawBible = JSON.parse(bibleFile);
@@ -118,12 +115,9 @@ function loadData() {
         bibleCache[book.abbrev] = book;
       }
     });
-    console.log(
-      `✅ تم تحميل الكتاب المقدس (${Object.keys(bibleCache).length} سفر)`
-    );
   } catch (error) {
-    console.error("🔥 خطأ أثناء تحميل البيانات:", error);
-    throw error; // نرمي الخطأ ليعالجه الـ Handler
+    console.error("[readings] خطأ أثناء تحميل بيانات القطمارس:", error);
+    throw error;
   }
 }
 
@@ -214,7 +208,6 @@ export async function POST(request: Request) {
     );
 
     if (!dayRecord) {
-      console.log("❌ لم يتم العثور على سجل لهذا التاريخ");
       return NextResponse.json({ error: "No readings found" }, { status: 404 });
     }
 

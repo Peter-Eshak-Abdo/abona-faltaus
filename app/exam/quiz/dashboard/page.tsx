@@ -247,46 +247,46 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-1 max-w-8xl mx-auto font-sans" dir="rtl">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto font-sans" dir="rtl">
       {/* قسم الترويسة الرئيسي */}
-      <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
-        <div className="flex items-center gap-1">
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
+        <div className="flex items-center gap-3">
           <Link
             href="/exam"
-            className="p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"
+            className="p-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition shadow-sm"
             title="رجوع"
           >
             <ArrowRight size={20} />
           </Link>
           <div>
-            <h1 className="text-3xl md:text-4xl font-black text-gray-800 dark:text-gray-100 flex items-center gap-0.5">
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-gray-100 flex items-center gap-2">
               لوحة تحكم المسابقات
             </h1>
-            <p className="text-xs text-zinc-500 font-bold">
+            <p className="text-xs sm:text-sm text-zinc-500 font-medium mt-0.5">
               أنشئ مسابقتك وشارك الكود أو ادخل كأدمن من أي جهاز بكود الـ 10 أرقام
             </p>
           </div>
 
           {!isOnline && (
-            <span className="flex items-center gap-0.5 px-0.5 py-0.25 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700 rounded-full text-xs font-bold">
-              <WifiOff size={12} />
+            <span className="flex items-center gap-1 px-3 py-1 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700 rounded-full text-xs font-bold">
+              <WifiOff size={13} />
               أوفلاين
             </span>
           )}
           {pendingCount > 0 && (
-            <span className="flex items-center gap-0.5 px-0.5 py-0.25 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-700 rounded-full text-xs font-bold">
+            <span className="flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-700 rounded-full text-xs font-bold">
               {pendingCount} في انتظار الرفع
             </span>
           )}
         </div>
 
-        <div className="flex gap-0.5 items-center flex-wrap">
+        <div className="flex gap-2 items-center flex-wrap">
           {isOnline && pendingCount > 0 && (
             <Button
               onClick={syncAllPending}
               disabled={isSyncing}
               variant="outline"
-              className="gap-0.5 text-sm"
+              className="gap-1.5 text-xs sm:text-sm rounded-xl h-10 px-4"
             >
               {isSyncing ? (
                 <RefreshCw size={14} className="animate-spin" />
@@ -298,25 +298,25 @@ export default function Dashboard() {
           )}
           <Button
             onClick={handleCreateNew}
-            className="gap-1 bg-blue-600 hover:bg-blue-700 font-bold text-base md:text-lg rounded-xl shadow-lg shadow-blue-500/20"
+            className="gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base rounded-2xl h-11 px-5 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]"
           >
-            <Plus size={20} /> مسابقة جديدة
+            <Plus size={18} /> مسابقة جديدة
           </Button>
         </div>
       </div>
 
       {/* قسم الدخول المباشر بكود المسابقة (10 أرقام) */}
-      <div className="bg-linear-to-r from-blue-50 to-indigo-50 dark:from-zinc-900 dark:to-zinc-800 p-1 rounded-3xl border border-blue-100 dark:border-zinc-700 shadow-sm mb-1">
-        <div className="max-w-xl mx-auto text-center space-y-0.5">
-          <div className="flex items-center justify-center gap-0.5 text-blue-600 dark:text-blue-400 font-black text-lg">
-            <KeyRound size={22} />
+      <div className="bg-linear-to-r from-blue-50/80 to-indigo-50/80 dark:from-zinc-900 dark:to-zinc-800/80 p-5 sm:p-6 rounded-3xl border border-blue-100 dark:border-zinc-800 shadow-sm mb-6">
+        <div className="max-w-xl mx-auto text-center space-y-2">
+          <div className="flex items-center justify-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-lg">
+            <KeyRound size={20} />
             <h2>دخول مسابقة كأدمن بكود (10 أرقام)</h2>
           </div>
-          <p className="text-xs text-zinc-500 font-bold">
+          <p className="text-xs text-zinc-500 font-medium">
             اكتب كود أي مسابقة للدخول وإدارتها مباشرة من هذا الجهاز دون الحاجة لتسجيل دخول
           </p>
 
-          <form onSubmit={handleEnterByCode} className="flex gap-0.5 mt-1">
+          <form onSubmit={handleEnterByCode} className="flex flex-col sm:flex-row gap-2 mt-3">
             <input
               type="text"
               maxLength={10}
@@ -324,38 +324,38 @@ export default function Dashboard() {
               onChange={(e) => setCodeInput(e.target.value.replace(/[^0-9]/g, ""))}
               placeholder="مثال: 1234567890"
               dir="ltr"
-              className="flex-1 p-0.5 border-2 border-blue-200 dark:border-zinc-600 rounded-2xl text-center tracking-[0.2em] font-black text-xl bg-white dark:bg-zinc-800 outline-none focus:border-blue-500"
+              className="flex-1 px-4 py-2.5 border-2 border-blue-200 dark:border-zinc-700 rounded-2xl text-center tracking-[0.2em] font-black text-lg bg-white dark:bg-zinc-800 outline-none focus:border-blue-500 transition-colors"
             />
             <Button
               type="submit"
               disabled={isEnteringCode || codeInput.length !== 10}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-black px-1.5 rounded-2xl text-base shadow-md"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 h-11 rounded-2xl text-sm shadow-md transition disabled:opacity-50"
             >
               {isEnteringCode ? "جاري البحث..." : "دخول كأدمن"}
             </Button>
           </form>
 
           {codeError && (
-            <p className="text-red-500 text-xs font-bold text-center mt-0.5">{codeError}</p>
+            <p className="text-red-500 text-xs font-bold text-center mt-1">{codeError}</p>
           )}
         </div>
       </div>
 
       {!isOnline && (
-        <div className="mb-1 p-0.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl flex items-center gap-0.5 text-sm text-amber-700 dark:text-amber-300">
-          <WifiOff size={16} />
+        <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-center gap-2 text-xs sm:text-sm text-amber-700 dark:text-amber-300">
+          <WifiOff size={16} className="shrink-0" />
           <span>أنت أوفلاين. يمكنك إنشاء مسابقات وستُرفع تلقائياً عند عودة الاتصال.</span>
         </div>
       )}
 
       {/* قائمة المسابقات */}
       {loading ? (
-        <div className="text-center py-2 font-bold text-gray-500 text-xl animate-pulse">
+        <div className="text-center py-12 font-bold text-zinc-400 text-lg animate-pulse">
           جاري تحميل المسابقات...
         </div>
       ) : (
-        <div className="space-y-1.5">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {quizzes.map((quiz) => (
               <QuizCard
                 key={quiz.id}
@@ -367,17 +367,17 @@ export default function Dashboard() {
           </div>
 
           {quizzes.length === 0 && (
-            <div className="text-center py-4 text-gray-400 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-100 dark:border-zinc-800 p-2">
-              <Sparkles className="mx-auto text-blue-500 mb-1" size={36} />
-              <p className="text-xl font-bold text-zinc-700 dark:text-zinc-200 mb-0.5">
+            <div className="text-center py-12 text-zinc-400 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-100 dark:border-zinc-800 p-6">
+              <Sparkles className="mx-auto text-blue-500 mb-2" size={36} />
+              <p className="text-lg font-bold text-zinc-700 dark:text-zinc-200 mb-1">
                 لا توجد مسابقات بعد
               </p>
-              <p className="text-sm text-zinc-500 mb-1">
+              <p className="text-xs text-zinc-500 mb-4 max-w-sm mx-auto">
                 اضغط على "مسابقة جديدة" لإنشاء مسابقة بكود 10 أرقام، أو ادخل كود مسابقة موجودة بالأعلى
               </p>
               <Button
                 onClick={handleCreateNew}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl px-5 h-10 text-sm"
               >
                 إنشاء أول مسابقة
               </Button>

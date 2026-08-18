@@ -20,7 +20,7 @@ export async function GET(request: Request) {
       .maybeSingle();
 
     if (!quoteEntry || quoteError) {
-      console.log("الخزان فِضي! بنصفر البيانات دلوقتي...");
+      console.warn("[daily-quote] Pool empty, resetting...");
 
       // تصفير الجدول بالكامل
       await supabase

@@ -53,54 +53,92 @@ export function QuizCard({ quiz, onEdit, onDelete }: any) {
   const estimatedSeconds = quiz.questions?.reduce((acc: number, q: any) => acc + 4 + (q.timeLimit || 20) + 5 + 3, 0) + 20;
   const mins = Math.floor(estimatedSeconds / 60);
   const secs = estimatedSeconds % 60;
-  const createdDate = new Date(quiz.createdAt).toLocaleDateString('ar-EG');
+  const rawDate = quiz.created_at || quiz.createdAt;
+  const parsedDate = rawDate ? new Date(rawDate) : null;
+  const createdDate = parsedDate && !isNaN(parsedDate.getTime())
+    ? parsedDate.toLocaleDateString('ar-EG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    : "غير محدد";
 
   return (
     <>
-      <div className="group bg-white dark:bg-zinc-900 border-2 border-zinc-100 p-1 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 font-sans relative">
-        <div className="flex justify-between items-start mb-1">
-          <button onClick={() => setShowPreview(true)} className="bg-blue-50 p-1 rounded-xl text-blue-600 hover:bg-blue-600 hover:text-white transition-colors" title="مراجعة سريعة">
-            <Eye size={24} />
-          </button>
-          <div className="flex gap-1">
-            <button onClick={() => onEdit(quiz)} className="p-1 hover:bg-blue-50 text-blue-600 rounded-xl transition-colors"><Edit3 size={20} /></button>
-            <button onClick={() => onDelete(quiz.id)} className="p-1 hover:bg-red-50 text-red-500 rounded-xl transition-colors"><Trash2 size={20} /></button>
-          </div>
-        </div>
-
-        <h3 className="text-2xl font-black mb-1 text-zinc-800 truncate">{quiz.title}</h3>
-        <p className="text-sm font-bold text-zinc-500 mb-1 line-clamp-2 h-4">{quiz.description || "لا يوجد وصف"}</p>
-
-        {/* كود المسابقة */}
-        {quiz.code && (
-          <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 p-0.5 rounded-xl mb-1">
-            <span className="text-xs font-bold text-blue-700 dark:text-blue-300">كود المسابقة:</span>
-            <div className="flex items-center gap-0.5">
-              <span className="font-mono font-bold text-sm tracking-widest text-blue-900 dark:text-blue-200" dir="ltr">
-                {quiz.code}
-              </span>
+      <div className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 font-sans relative flex flex-col justify-between">
+        <div>
+          <div className="flex justify-between items-start mb-3">
+            <button
+              onClick={() => setShowPreview(true)}
+              className="bg-blue-50 dark:bg-blue-950/50 p-2 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-colors"
+              title="مراجعة سريعة"
+            >
+              <Eye size={18} />
+            </button>
+            <div className="flex gap-1">
               <button
-                onClick={() => {
-                  navigator.clipboard.writeText(quiz.code);
-                  alert(`تم نسخ الكود: ${quiz.code}`);
-                }}
-                className="p-0.25 text-xs bg-white dark:bg-zinc-800 border border-blue-300 dark:border-blue-700 rounded text-blue-600 dark:text-blue-400 hover:bg-blue-100"
-                title="نسخ الكود"
+                onClick={() => onEdit(quiz)}
+                className="p-2 hover:bg-blue-50 dark:hover:bg-zinc-800 text-blue-600 dark:text-blue-400 rounded-xl transition-colors"
+                title="تعديل"
               >
-                نسخ
+                <Edit3 size={18} />
+              </button>
+              <button
+                onClick={() => onDelete(quiz.id)}
+                className="p-2 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-500 rounded-xl transition-colors"
+                title="حذف"
+              >
+                <Trash2 size={18} />
               </button>
             </div>
           </div>
-        )}
 
-        <div className="grid grid-cols-2 gap-1 mb-1 text-xs font-bold text-zinc-600">
-          <div className="bg-zinc-50 p-1 rounded-lg flex items-center gap-1"><Clock size={14} className="text-blue-500" /> {quiz.questions?.length || 0} سؤال</div>
-          <div className="bg-zinc-50 p-1 rounded-lg flex items-center gap-1"><Clock size={14} className="text-orange-500" /> {mins} د : {secs} ث</div>
-          <div className="col-span-2 bg-zinc-50 p-1 rounded-lg flex items-center gap-1"><Calendar size={14} className="text-green-500" /> أُنشئت: {createdDate}</div>
+          <h3 className="text-xl font-bold mb-1.5 text-zinc-900 dark:text-zinc-100 truncate">{quiz.title}</h3>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 line-clamp-2 min-h-[32px]">{quiz.description || "لا يوجد وصف"}</p>
+
+          {/* كود المسابقة */}
+          {quiz.code && (
+            <div className="flex items-center justify-between bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 px-3 py-2 rounded-2xl mb-3">
+              <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">كود المسابقة:</span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-mono font-bold text-sm tracking-widest text-blue-900 dark:text-blue-200" dir="ltr">
+                  {quiz.code}
+                </span>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(quiz.code);
+                    alert(`تم نسخ الكود: ${quiz.code}`);
+                  }}
+                  className="px-2 py-0.5 text-xs bg-white dark:bg-zinc-800 border border-blue-300/80 dark:border-blue-700 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 font-medium"
+                  title="نسخ الكود"
+                >
+                  نسخ
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-2 mb-4 text-xs text-zinc-600 dark:text-zinc-300">
+            <div className="bg-zinc-50 dark:bg-zinc-800/60 p-2.5 rounded-xl flex items-center gap-1.5">
+              <Clock size={14} className="text-blue-500 shrink-0" />
+              <span className="font-medium">{quiz.questions?.length || 0} سؤال</span>
+            </div>
+            <div className="bg-zinc-50 dark:bg-zinc-800/60 p-2.5 rounded-xl flex items-center gap-1.5">
+              <Clock size={14} className="text-orange-500 shrink-0" />
+              <span className="font-medium">{mins} د : {secs} ث</span>
+            </div>
+            <div className="col-span-2 bg-zinc-50 dark:bg-zinc-800/60 p-2.5 rounded-xl flex items-center gap-1.5">
+              <Calendar size={14} className="text-green-500 shrink-0" />
+              <span className="font-medium">أُنشئت: {createdDate}</span>
+            </div>
+          </div>
         </div>
 
-        <Button onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl py-1 font-black text-lg shadow-[0_4px_0_#1d4ed8] active:translate-y-0.5 active:shadow-none transition-all">
-          <Play size={20} className="ml-1 fill-current" /> بدء المسابقة
+        <Button
+          onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl py-2.5 h-11 font-bold text-sm shadow-md transition-all active:scale-[0.98]"
+        >
+          <Play size={16} className="ml-1.5 fill-current" /> بدء المسابقة
         </Button>
       </div>
 

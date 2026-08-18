@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaCopy, FaShareAlt, FaStar, FaTimes, FaPlusSquare } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { FaCopy, FaShareAlt, FaStar, FaTimes, FaPlusSquare, FaComments } from "react-icons/fa";
 import localforage from "localforage";
 import { shortBookNames } from "@/lib/books";
 
@@ -30,6 +31,7 @@ export default function SelectionToolbar({
   isDayModalOpen,
   setIsDayModalOpen,
 }: SelectionToolbarProps) {
+  const router = useRouter();
 
   const formatCitation = () => {
     const activeBook = bibleData[currentBookIdx];
@@ -84,6 +86,12 @@ export default function SelectionToolbar({
     }
   };
 
+  const handleExplain = () => {
+    const text = getSelectedText();
+    const prompt = `تفسير الآية: ${text}`;
+    router.push(`/chat?prompt=${encodeURIComponent(prompt)}`);
+  };
+
   const toggleFavorite = async () => {
     let newFavs = [...favorites];
     let addedFavs: { book_idx: number; chapter_idx: number; verse_num: number; user_id?: string }[] = [];
@@ -130,27 +138,31 @@ export default function SelectionToolbar({
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+12px)] left-1/2 -translate-x-1/2 bg-inverse-surface/95 backdrop-blur-xl p-0.5 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-white/10"
+        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+12px)] left-1/2 -translate-x-1/2 bg-inverse-surface/95 backdrop-blur-xl p-1 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-white/10 gap-1"
       >
-        <button onClick={() => setIsDayModalOpen(true)} className="w-3 h-3 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors">
-          <FaPlusSquare size={18} />
-          <span className="text-[11px] font-bold mt-0.5">يوم</span>
+        <button onClick={handleExplain} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-cyan-400 hover:bg-white/10 transition-colors" title="طلب تفسير الآية">
+          <FaComments size={17} />
+          <span className="text-[11px] font-bold mt-0.5">تفسير</span>
         </button>
-        <button onClick={handleShare} className="w-3 h-3 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors">
-          <FaShareAlt size={18} />
+        <button onClick={() => setIsDayModalOpen(true)} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors" title="إضافة لاجتماع">
+          <FaPlusSquare size={17} />
+          <span className="text-[11px] font-bold mt-0.5">اجتماع</span>
+        </button>
+        <button onClick={handleShare} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors" title="مشاركة">
+          <FaShareAlt size={17} />
           <span className="text-[11px] font-bold mt-0.5">مشاركة</span>
         </button>
-        <button onClick={handleCopy} className="w-3 h-3 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors">
-          <FaCopy size={18} />
+        <button onClick={handleCopy} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors" title="نسخ">
+          <FaCopy size={17} />
           <span className="text-[11px] font-bold mt-0.5">نسخ</span>
         </button>
-        <button onClick={toggleFavorite} className="w-3 h-3 flex flex-col items-center justify-center rounded-xl text-yellow-400 hover:bg-white/10 transition-colors">
-          <FaStar size={18} />
+        <button onClick={toggleFavorite} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-yellow-400 hover:bg-white/10 transition-colors" title="إضافة للمفضلة">
+          <FaStar size={17} />
           <span className="text-[11px] font-bold mt-0.5">مفضلة</span>
         </button>
-        <div className="w-px h-3 bg-black/20"></div>
-        <button onClick={() => setSelectedVerses([])} className="w-3 h-3 flex flex-col items-center justify-center rounded-xl text-red-400 hover:bg-white/10 transition-colors">
-          <FaTimes size={18} />
+        <div className="w-px h-6 bg-white/20"></div>
+        <button onClick={() => setSelectedVerses([])} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-red-400 hover:bg-white/10 transition-colors" title="إلغاء التحديد">
+          <FaTimes size={17} />
           <span className="text-[11px] font-bold mt-0.5">إلغاء</span>
         </button>
       </motion.div>

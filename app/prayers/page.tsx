@@ -3,6 +3,13 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import PrayerViewer from '@/components/PrayerViewer';
 import { getDisplayName } from '@/lib/mappings';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'الصلوات القبطية - ابونا فلتاؤس تفاحة',
+  description: 'قطارات وصلوات الكنيسة القبطية الأرثوذكسية كاملة - قداسات ومزامير وتراتيل مسيحية',
+  keywords: ['صلوات قبطية', 'قداس', 'مزامير', 'قطارات', 'الكنيسة القبطية', 'تراتيل مسيحية'],
+};
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | undefined }>;

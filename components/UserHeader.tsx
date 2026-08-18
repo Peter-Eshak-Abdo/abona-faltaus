@@ -4,8 +4,28 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase"
 
 export default function UserHeader() {
-  const [user, setUser] = useState<any>(null);
-  const [customDisplayName, setCustomDisplayName] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("user_header_cache");
+        if (cached) return JSON.parse(cached).user;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return null;
+  });
+  const [customDisplayName, setCustomDisplayName] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("user_header_cache");
+        if (cached) return JSON.parse(cached).displayName;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return null;
+  });
 
   useEffect(() => {
     // جلب المستخدم الحالي
@@ -13,6 +33,7 @@ export default function UserHeader() {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
 
+      let nameToCache = null;
       if (user) {
         // جلب الاسم المخصص من جدول profiles
         const { data } = await supabase
@@ -22,8 +43,12 @@ export default function UserHeader() {
           .single();
 
         if (data?.full_name) {
+          nameToCache = data.full_name;
           setCustomDisplayName(data.full_name);
         }
+        localStorage.setItem("user_header_cache", JSON.stringify({ user, displayName: nameToCache }));
+      } else {
+        localStorage.removeItem("user_header_cache");
       }
     };
 
@@ -35,6 +60,7 @@ export default function UserHeader() {
       setUser(session?.user || null);
       if (!session?.user) {
         setCustomDisplayName(null);
+        localStorage.removeItem("user_header_cache");
       } else {
         fetchUserAndProfile(); // إعادة جلب البيانات لو دخل بحساب تاني
       }

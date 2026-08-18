@@ -118,46 +118,55 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
   if (isStarted && quiz && gameState) return <QuizHostGame quiz={quiz} groups={groups} gameState={gameState} />;
 
   return (
-    <div className="min-h-screen bg-[#1a0b2e] text-white p-1 font-sans" dir="rtl">
-      <div className="flex justify-between items-center bg-white/5 rounded-xl p-1 mb-1 border border-white/10 shadow-lg flex-wrap gap-1">
-        <div className="flex items-center gap-1">
-          <h1 className="text-4xl md:text-6xl font-black px-1 text-purple-300">{quiz?.title}</h1>
+    <div className="min-h-screen bg-[#130722] text-white p-4 sm:p-6 font-sans" dir="rtl">
+      <div className="flex justify-between items-center bg-white/5 backdrop-blur-md rounded-3xl p-4 sm:p-6 mb-6 border border-white/10 shadow-2xl flex-wrap gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
+          <h1 className="text-2xl sm:text-4xl font-black text-purple-200">{quiz?.title}</h1>
           {quiz?.code && (
-            <div className="flex items-center gap-0.5 bg-purple-900/60 border border-purple-400/40 px-1 py-0.5 rounded-xl">
-              <span className="text-xs text-purple-200 font-bold">كود المسابقة:</span>
-              <span className="text-xl font-black font-mono tracking-widest text-white" dir="ltr">{quiz.code}</span>
+            <div className="flex items-center gap-2 bg-purple-950/80 border border-purple-500/30 px-3.5 py-1.5 rounded-2xl shadow-inner">
+              <span className="text-xs text-purple-300 font-bold">كود المسابقة:</span>
+              <span className="text-lg sm:text-xl font-black font-mono tracking-widest text-white" dir="ltr">{quiz.code}</span>
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(quiz.code);
                   alert(`تم نسخ الكود: ${quiz.code}`);
                 }}
-                className="text-xs bg-purple-700 hover:bg-purple-600 px-1 py-0.25 rounded text-white"
+                className="text-xs bg-purple-700 hover:bg-purple-600 px-2.5 py-1 rounded-lg text-white font-bold transition-colors"
               >
                 نسخ
               </button>
             </div>
           )}
         </div>
-        <div className="flex gap-1">
-          <Button onClick={handleReset} variant="destructive" className="h-5 px-1 text-[9px] bg-red-600/20 text-red-400 border border-red-500/30 hover:text-red-300">
-            <RefreshCcw className="w-3 h-3 ml-1" />
-            <p className="text-xl">تنظيف</p>
+        <div className="flex gap-2 items-center">
+          <Button
+            onClick={handleReset}
+            variant="destructive"
+            className="h-11 px-4 text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 rounded-2xl transition-all"
+          >
+            <RefreshCcw className="w-4 h-4 ml-1.5" />
+            <span>تصفير</span>
           </Button>
-          <Button onClick={handleStart} className="h-7 px-1 text-[9px] bg-green-600 hover:bg-green-700 font-bold hover:shadow-lg hover:text-green-300">
-            <Play className="w-3 h-3 ml-1 fill-current" />
-            <p className="text-xl">ابدأ الآن</p>
+          <Button
+            onClick={handleStart}
+            className="h-11 px-6 text-sm bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl shadow-lg shadow-green-600/30 hover:scale-105 active:scale-95 transition-all"
+          >
+            <Play className="w-4 h-4 ml-1.5 fill-current" />
+            <span>ابدأ الآن</span>
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-1">
-        <div className="col-span-12 lg:col-span-3 flex flex-col gap-1">
+      <div className="grid grid-cols-12 gap-4 sm:gap-6">
+        <div className="col-span-12 lg:col-span-4 xl:col-span-3 flex flex-col gap-4">
           <QuizStats quiz={quiz} groups={groups} />
-          <QRCodeSection quizId={quizId} />
+          <QRCodeSection quizId={actualQuizId} />
         </div>
 
-        <div className="col-span-12 lg:col-span-9 bg-white/5 border border-white/10 rounded-xl p-1 min-h-50">
-          <h2 className="text-3xl font-bold p-1 border-b border-white/5">الفرق المتصلة ({groups.length})</h2>
+        <div className="col-span-12 lg:col-span-8 xl:col-span-9 bg-white/5 border border-white/10 rounded-3xl p-4 sm:p-6 min-h-[300px] shadow-xl">
+          <h2 className="text-xl sm:text-2xl font-bold pb-3 mb-3 border-b border-white/10 text-purple-200">
+            الفرق المتصلة ({groups.length})
+          </h2>
           <GroupsSection groups={groups} handleDeleteGroup={handleDeleteGroup} />
         </div>
       </div>

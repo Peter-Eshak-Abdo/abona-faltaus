@@ -160,14 +160,18 @@ export default function UnifiedAl7anClient() {
 
   const handleShare = async () => {
     if (!selectedHymn) return;
+    const monasbaLabel = (monasbaName as any)[activeMonasba] || activeMonasba;
     const shareData = {
-      title: selectedHymn.name,
-      text: `استمع إلى لحن ${selectedHymn.name}`,
+      title: `${selectedHymn.name} — ${monasbaLabel}`,
+      text: `🎵 ${selectedHymn.name}\n📅 مناسبة: ${monasbaLabel}\n\nاستمع من موقع أبونا فلتاؤس:`,
       url: window.location.href,
     };
     try {
       if (navigator.share) await navigator.share(shareData);
-      else await navigator.clipboard.writeText(window.location.href);
+      else {
+        await navigator.clipboard.writeText(`${shareData.text}\n${window.location.href}`);
+        alert("تم نسخ رابط وتفاصيل اللحن إلى الحافظة!");
+      }
     } catch (err) {
       console.error(err);
     }
@@ -501,15 +505,42 @@ export default function UnifiedAl7anClient() {
               {(selectedHymn.lyrics_ar || selectedHymn.lyrics_copt || selectedHymn.lyrics_ar_copt) && (
                 <div className="flex flex-wrap justify-center gap-0.5 mb-0.5 bg-white/5 py-0.25 px-0.5 rounded-lg shrink-0">
                   <label className="flex items-center gap-0.25 cursor-pointer text-sm">
-                    <input type="checkbox" checked={showAr} onChange={e => setShowAr(e.target.checked)} className="accent-orange-500 w-2 h-2" />
+                    <input
+                      type="checkbox"
+                      checked={showAr}
+                      onChange={e => {
+                        const activeCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
+                        if (!e.target.checked && activeCount <= 1) return;
+                        setShowAr(e.target.checked);
+                      }}
+                      className="accent-orange-500 w-2 h-2"
+                    />
                     عربي
                   </label>
                   <label className="flex items-center gap-0.25 cursor-pointer text-sm font-coptic">
-                    <input type="checkbox" checked={showCopt} onChange={e => setShowCopt(e.target.checked)} className="accent-orange-500 w-2 h-2" />
+                    <input
+                      type="checkbox"
+                      checked={showCopt}
+                      onChange={e => {
+                        const activeCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
+                        if (!e.target.checked && activeCount <= 1) return;
+                        setShowCopt(e.target.checked);
+                      }}
+                      className="accent-orange-500 w-2 h-2"
+                    />
                     قبطي
                   </label>
                   <label className="flex items-center gap-0.25 cursor-pointer text-sm" dir="ltr">
-                    <input type="checkbox" checked={showArCopt} onChange={e => setShowArCopt(e.target.checked)} className="accent-orange-500 w-2 h-2" />
+                    <input
+                      type="checkbox"
+                      checked={showArCopt}
+                      onChange={e => {
+                        const activeCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
+                        if (!e.target.checked && activeCount <= 1) return;
+                        setShowArCopt(e.target.checked);
+                      }}
+                      className="accent-orange-500 w-2 h-2"
+                    />
                     معرب
                   </label>
                 </div>
@@ -547,41 +578,28 @@ export default function UnifiedAl7anClient() {
                         return (
                           <div
                             key={index}
-                            className={`p-0.25 rounded-lg border border-white/5 transition-all ${bgClass} ${layoutMode === "cols"
-? "flex flex-row divide-x divide-x-reverse divide-white/20 items-stretch w-full"                                // ? "flex flex-row w-full items-stretch justify-center" // Flex للتقسيم المتساوي
-                                : "flex flex-col gap-0.25 text-center"
+                            className={`p-2 rounded-lg border border-white/5 transition-all ${bgClass} ${layoutMode === "cols"
+                              ? "grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x md:divide-x-reverse divide-white/20 items-stretch w-full gap-2"
+                              : "flex flex-col gap-2 text-center"
                               }`}
                           >
                             {/* اللغة العربية (في اليمين) */}
                             {showAr && verse.ar && (
-                              <div
-                                className={`flex-1 flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed ${layoutMode === "cols" ? "border-l border-white/20 px-0.25" : ""
-                                  }`}
-                              >
+                              <div className="flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed px-2">
                                 {verse.ar}
                               </div>
                             )}
 
                             {/* القبطي المعرب (في المنتصف) */}
                             {showArCopt && verse.ar_copt && (
-                              <div
-                                className={`flex-1 flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap ${layoutMode === "cols"
-                                    ? showCopt // لو فيه قبطي بعده، اعمل خط فاصل
-                                      ? "border-l border-white/20 px-0.25"
-                                      : "px-0.25"
-                                    : ""
-                                  }`}
-                              >
+                              <div className="flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap px-2">
                                 {verse.ar_copt}
                               </div>
                             )}
 
                             {/* القبطي (في اليسار) */}
                             {showCopt && verse.copt && (
-                              <div
-                                className={`flex-1 flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap ${layoutMode === "cols" ? "px-0.25" : ""
-                                  }`}
-                              >
+                              <div className="flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-2">
                                 {verse.copt}
                               </div>
                             )}
@@ -589,20 +607,20 @@ export default function UnifiedAl7anClient() {
                         );
                       })
                     ) : (
-                      <div className="flex flex-col gap-0.5">
+                      <div className={`p-2 rounded-lg bg-white/5 border border-white/5 ${layoutMode === "cols" ? "grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x md:divide-x-reverse divide-white/20 items-stretch w-full gap-2" : "flex flex-col gap-2"}`}>
                         {showAr && selectedHymn.lyrics_ar && (
-                          <div className="text-lg font-bold text-white whitespace-pre-wrap leading-relaxed">
+                          <div className="flex items-center justify-center text-lg font-bold text-white whitespace-pre-wrap leading-relaxed px-2">
                             {selectedHymn.lyrics_ar}
                           </div>
                         )}
-                        {showCopt && selectedHymn.lyrics_copt && (
-                          <div className="text-xl font-coptic tracking-wide text-white/90 whitespace-pre-wrap mt-0.5 border-t border-white/10 pt-0.5">
-                            {selectedHymn.lyrics_copt}
+                        {showArCopt && selectedHymn.lyrics_ar_copt && (
+                          <div className="flex items-center justify-center text-lg font-serif text-white/80 whitespace-pre-wrap px-2" dir="ltr">
+                            {selectedHymn.lyrics_ar_copt}
                           </div>
                         )}
-                        {showArCopt && selectedHymn.lyrics_ar_copt && (
-                          <div className="text-lg font-serif text-white/70 whitespace-pre-wrap mt-0.5 border-t border-white/10 pt-0.5" dir="ltr">
-                            {selectedHymn.lyrics_ar_copt}
+                        {showCopt && selectedHymn.lyrics_copt && (
+                          <div className="flex items-center justify-center text-xl font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-2">
+                            {selectedHymn.lyrics_copt}
                           </div>
                         )}
                       </div>
@@ -648,15 +666,47 @@ export default function UnifiedAl7anClient() {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onWheel={(e) => {
+              if (e.deltaY < 0) setImageScale(prev => Math.min(prev + 0.15, 4));
+              else setImageScale(prev => Math.max(prev - 0.15, 0.5));
+            }}
           >
             {/* شريط أدوات النافذة */}
-            <div className="absolute top-0 left-0 w-full p-0.5 flex justify-between items-center z-110 bg-linear-to-b from-black/80 to-transparent">
-              <div className="text-white/70 text-xs bg-black/50 px-0.5 py-0.25 rounded-full border border-white/10">
-                مخطوطة {currentImageIndex + 1} من {getImages(selectedHymn).length}
+            <div className="absolute top-0 left-0 w-full p-3 flex justify-between items-center z-110 bg-linear-to-b from-black/80 to-transparent">
+              <div className="flex items-center gap-2">
+                <span className="text-white/80 text-xs bg-black/60 px-3 py-1 rounded-full border border-white/10">
+                  مخطوطة {currentImageIndex + 1} من {getImages(selectedHymn).length}
+                </span>
+                <div className="flex items-center gap-1 bg-black/60 px-2 py-1 rounded-full border border-white/10 text-white text-xs">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setImageScale(prev => Math.min(prev + 0.25, 4)); }}
+                    className="px-2 py-0.5 hover:bg-white/20 rounded font-bold"
+                    title="تكبير (+)"
+                  >
+                    +
+                  </button>
+                  <span className="font-mono text-[11px] px-1">{Math.round(imageScale * 100)}%</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setImageScale(prev => Math.max(prev - 0.25, 0.5)); }}
+                    className="px-2 py-0.5 hover:bg-white/20 rounded font-bold"
+                    title="تصغير (-)"
+                  >
+                    -
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setImageScale(1); }}
+                    className="px-2 py-0.5 hover:bg-white/20 rounded text-[10px]"
+                    title="إعادة ضبط"
+                  >
+                    إعادة
+                  </button>
+                </div>
               </div>
+
               <button
                 onClick={() => { setFullScreenImage(null); setImageScale(1); }}
-                className="w-3 h-3 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-lg backdrop-blur-md transition"
+                className="w-8 h-8 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-sm backdrop-blur-md transition"
+                title="إغلاق (Esc)"
               >
                 ✕
               </button>
@@ -674,7 +724,8 @@ export default function UnifiedAl7anClient() {
                     setFullScreenImage(imgs[nextIdx]);
                     setImageScale(1);
                   }}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 z-110 p-0.5 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-110 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-md transition text-lg"
+                  title="السابق (سهم يمين)"
                 >
                   ❯
                 </button>
@@ -687,7 +738,8 @@ export default function UnifiedAl7anClient() {
                     setFullScreenImage(imgs[nextIdx]);
                     setImageScale(1);
                   }}
-                  className="absolute left-1 top-1/2 -translate-y-1/2 z-110 p-0.5 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-110 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-md transition text-lg"
+                  title="التالي (سهم شمال)"
                 >
                   ❮
                 </button>
@@ -696,7 +748,7 @@ export default function UnifiedAl7anClient() {
 
             {/* عرض الصورة والزوم */}
             <div
-              className="w-full h-full overflow-auto flex items-center justify-center cursor-zoom-out p-0.5"
+              className="w-full h-full overflow-auto flex items-center justify-center cursor-zoom-out p-2"
               onClick={() => { setFullScreenImage(null); setImageScale(1); }}
             >
               <motion.div
@@ -709,7 +761,7 @@ export default function UnifiedAl7anClient() {
                   src={fullScreenImage}
                   alt="Manuscript"
                   fill
-                  className="object-contain"
+                  className="object-contain select-none pointer-events-none"
                   priority
                 />
               </motion.div>
