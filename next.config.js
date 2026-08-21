@@ -230,10 +230,30 @@ const nextConfig = {
       },
     ];
   },
-  // allowedDevOrigins: ["192.168.100.13", "localhost"],
-  // experimental: {
-  //   allowedDevOrigins: ["192.168.100.13", "localhost"],
-  // },
+  webpack: (config, { isServer, webpack }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        https: false,
+        http: false,
+        stream: false,
+        path: false,
+        crypto: false,
+        os: false,
+      };
+
+      config.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(
+          /^node:(fs|https|http|stream|path|crypto|os)$/,
+          (resource) => {
+            resource.request = resource.request.replace(/^node:/, "");
+          }
+        )
+      );
+    }
+    return config;
+  },
 };
 
 export default withPWA(nextConfig);

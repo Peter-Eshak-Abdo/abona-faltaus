@@ -169,7 +169,8 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="192x192" href="/images/icons/android-chrome-192x192.png" />
         <link rel="apple-touch-icon" sizes="512x512" href="/images/icons/android-chrome-512x512.png" />
         <link rel="apple-touch-icon-precomposed" href="/images/icons/apple-touch-icon.png" />
-        <script
+        <Script
+          id="structured-data"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { supabase } from "@/lib/supabase"
 import { createQuiz, updateQuiz } from "@/lib/supabase-utils"
-import { Plus, Trash2, Check, Clock, X, Upload, Eye, EyeOff, LayoutDashboard, Settings2, WifiOff } from "lucide-react"
+import { Plus, Trash2, Check, Clock, X, Upload, Eye, EyeOff, LayoutDashboard, Settings2, WifiOff, Sparkles, Loader2, FileSpreadsheet } from "lucide-react"
 import type { Question, Quiz } from "@/types/quiz"
 import { motion, AnimatePresence } from "framer-motion"
 import * as XLSX from "xlsx"
@@ -36,6 +36,15 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
   const [shuffleChoices, setShuffleChoices] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+
+  // AI Generator Modal State
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false)
+  const [aiTopic, setAiTopic] = useState("")
+  const [aiCount, setAiCount] = useState(5)
+  const [aiAudience, setAiAudience] = useState("إعدادي وثانوي")
+  const [aiType, setAiType] = useState<"choice" | "tf" | "mixed">("mixed")
+  const [aiDifficulty, setAiDifficulty] = useState("متوسط")
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }: any) => setUser(data?.user || null));
@@ -217,14 +226,171 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
     reader.readAsArrayBuffer(file);
   };
 
+  // 4. توليد بالذكاء الاصطناعي
+  const handleGenerateWithAi = async () => {
+    if (!aiTopic.trim()) {
+      toast.error("يرجى إدخال موضوع المسابقة");
+      return;
+    }
+    setIsGeneratingAi(true);
+    try {
+      const res = await fetch("/api/quizzes/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topic: aiTopic.trim(),
+          count: aiCount,
+          audience: aiAudience,
+          type: aiType,
+          difficulty: aiDifficulty,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "فشل التوليد");
+
+      const genQuiz = data.quiz;
+      if (genQuiz) {
+        if (genQuiz.title && !title) setTitle(genQuiz.title);
+        if (genQuiz.description && !description) setDescription(genQuiz.description);
+
+        const mappedQuestions: Question[] = (genQuiz.questions || []).map((q: any) => ({
+          id: crypto.randomUUID(),
+          text: q.title || q.text || "",
+          type: q.type || (q.options?.length === 2 ? "true-false" : "multiple-choice"),
+          choices: q.options || (q.type === "true-false" ? ["خطأ", "صح"] : ["", "", "", ""]),
+          correctAnswer: typeof q.correctAnswer === "number" ? Math.max(0, q.correctAnswer - 1) : 0,
+          timeLimit: q.timeLimit || 20,
+        }));
+
+        setQuestions(prev => [...prev, ...mappedQuestions]);
+        toast.success(`🎉 تم توليد ${mappedQuestions.length} سؤال بنجاح!`);
+        setIsAiModalOpen(false);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "حدث خطأ أثناء التوليد");
+    } finally {
+      setIsGeneratingAi(false);
+    }
+  };
+
   if (typeof window === 'undefined' || !open) return null
 
   return createPortal(
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-1 z-50 font-sans" dir="rtl">
       <motion.div
         initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-        className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl shadow-2xl max-w-5xl w-full max-h-[95vh] flex flex-col overflow-hidden border border-white/20"
+        className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl shadow-2xl max-w-5xl w-full max-h-[95vh] flex flex-col overflow-hidden border border-white/20 relative"
       >
+        {/* Modal التوليد بالذكاء الاصطناعي */}
+        {isAiModalOpen && (
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-3">
+            <div className="bg-white dark:bg-zinc-900 border border-amber-500/30 rounded-3xl p-5 max-w-lg w-full shadow-2xl space-y-4">
+              <div className="flex justify-between items-center border-b pb-2">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-amber-500/10 text-amber-500 rounded-xl">
+                    <Sparkles size={22} />
+                  </div>
+                  <h3 className="text-xl font-black text-zinc-800 dark:text-white">توليد مسابقة بالذكاء الاصطناعي</h3>
+                </div>
+                <button onClick={() => setIsAiModalOpen(false)} className="text-zinc-400 hover:text-red-500 p-1">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">الموضوع أو النص الكتابي / الطقسي</label>
+                  <input
+                    type="text"
+                    value={aiTopic}
+                    onChange={(e) => setAiTopic(e.target.value)}
+                    placeholder="مثال: سفر يونان، شخصية مارمرقس، صوم الرسل..."
+                    className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2.5 text-sm font-bold outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">عدد الأسئلة</label>
+                    <select
+                      value={aiCount}
+                      onChange={(e) => setAiCount(Number(e.target.value))}
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
+                    >
+                      <option value={3}>3 أسئلة (سريع)</option>
+                      <option value={5}>5 أسئلة (نموذجي)</option>
+                      <option value={10}>10 أسئلة (كامل)</option>
+                      <option value={15}>15 سؤال</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">المرحلة المستهدفة</label>
+                    <select
+                      value={aiAudience}
+                      onChange={(e) => setAiAudience(e.target.value)}
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
+                    >
+                      <option value="أطفال ومدارس أحد">أطفال (مدارس أحد)</option>
+                      <option value="إعدادي وثانوي">إعدادي وثانوي</option>
+                      <option value="شباب وخريجين">شباب وخريجين</option>
+                      <option value="خدام وعام">خدام ومتقدم</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">نوع الأسئلة</label>
+                    <select
+                      value={aiType}
+                      onChange={(e) => setAiType(e.target.value as any)}
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
+                    >
+                      <option value="mixed">ميكس (اختر + صح وخطأ)</option>
+                      <option value="choice">اختيار من متعدد فقط</option>
+                      <option value="tf">صح أو خطأ فقط</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">مستوى الصعوبة</label>
+                    <select
+                      value={aiDifficulty}
+                      onChange={(e) => setAiDifficulty(e.target.value)}
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
+                    >
+                      <option value="سهل">سهل ومباشر</option>
+                      <option value="متوسط">متوسط</option>
+                      <option value="تحدي وصعب">تحدي وأسئلة ذكاء</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-2 justify-end pt-2">
+                <Button variant="ghost" onClick={() => setIsAiModalOpen(false)}>إلغاء</Button>
+                <Button
+                  onClick={handleGenerateWithAi}
+                  disabled={isGeneratingAi || !aiTopic.trim()}
+                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-1.5"
+                >
+                  {isGeneratingAi ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      جاري التوليد...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      توليد الأسئلة 🪄
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header Custom */}
         <div className="p-0.5 border-b bg-white dark:bg-zinc-800 flex justify-between items-center">
           <div className="flex items-center gap-1">
@@ -275,6 +441,14 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                   </label>
                 </div>
                 <div className="flex flex-wrap gap-0.5 p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
+                  <Button
+                    variant="default"
+                    size="normal"
+                    onClick={() => setIsAiModalOpen(true)}
+                    className="h-4 text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold"
+                  >
+                    <Sparkles size={14} className="ml-1 text-yellow-200" /> توليد بالـ AI 🪄
+                  </Button>
                   <Button variant="outline" size="normal" onClick={downloadTemplate} className="h-4 text-xs">
                     <Clock size={6} /> تحميل Template
                   </Button>
@@ -293,9 +467,17 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
             <div className="space-y-0.5">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-black text-zinc-700 dark:text-zinc-300">الأسئلة ({questions.length})</h3>
-                <button onClick={addQuestion} className="bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-2xl font-black shadow-lg shadow-blue-200 flex items-center gap-1 transition-transform active:scale-95">
-                  <Plus size={20} /> إضافة سؤال
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setIsAiModalOpen(true)}
+                    className="bg-amber-600 hover:bg-amber-700 text-white p-1 rounded-2xl font-bold flex items-center gap-1 text-sm shadow-md transition-all active:scale-95"
+                  >
+                    <Sparkles size={16} /> توليد بالـ AI
+                  </button>
+                  <button onClick={addQuestion} className="bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-2xl font-black shadow-lg shadow-blue-200 flex items-center gap-1 transition-transform active:scale-95">
+                    <Plus size={20} /> إضافة سؤال
+                  </button>
+                </div>
               </div>
 
               <Accordion type="multiple" className="space-y-0.5">

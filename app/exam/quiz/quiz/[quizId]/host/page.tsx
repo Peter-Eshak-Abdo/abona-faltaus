@@ -5,8 +5,9 @@ import { GroupsSection } from "@/components/quiz/GroupsSection"
 import QRCodeSection from "@/components/quiz/QRCodeSection"
 import { QuizStats } from "@/components/quiz/QuizStats"
 import { Button } from "@/components/ui/button"
-import { Play, Loader2, RefreshCcw } from "lucide-react"
+import { Play, Loader2, RefreshCcw, Lock, KeyRound, ShieldAlert } from "lucide-react"
 import QuizHostGame from "@/components/quiz/QuizHostGame"
+import { toast } from "sonner"
 
 export default function HostPage({ params: paramsPromise }: { params: Promise<{ quizId: string }> }) {
   const params = use(paramsPromise);
@@ -17,6 +18,34 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
   const [gameState, setGameState] = useState<any>(null);
   const [isStarted, setIsStarted] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // حالة التحقق من كود المسؤول (Admin Host Code)
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [enteredCode, setEnteredCode] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verifyError, setVerifyError] = useState("");
+
+  // دالة التحقق من كود الاستضافة
+  const verifyHostCode = async (codeToVerify: string, targetQuizId: string) => {
+    if (!codeToVerify.trim()) return;
+    setIsVerifying(true);
+    setVerifyError("");
+    try {
+      const res = await fetch(`/api/quizzes/verify-admin-code?quizId=${targetQuizId}&code=${encodeURIComponent(codeToVerify.trim())}`);
+      const data = await res.json();
+      if (data.valid) {
+        setIsAuthorized(true);
+        sessionStorage.setItem(`quiz_admin_auth_${targetQuizId}`, "true");
+        toast.success("تم التحقق من كود المسؤول بنجاح!");
+      } else {
+        setVerifyError("كود المسؤول غير صحيح. يرجى المحاولة مرة أخرى.");
+      }
+    } catch {
+      setVerifyError("حدث خطأ أثناء التحقق من الكود");
+    } finally {
+      setIsVerifying(false);
+    }
+  };
 
   // دالة جلب البيانات (دمجنا فيها كل حاجة)
   const refreshAllData = async () => {
@@ -37,6 +66,13 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
       if (qData) {
         setQuiz(qData);
         const actualQuizId = qData.id;
+
+        // التحقق لو المستخدم هو المنشئ أو تم التحقق منه مسبقاً
+        const { data: userData } = await supabase.auth.getUser();
+        const storedAuth = sessionStorage.getItem(`quiz_admin_auth_${actualQuizId}`);
+        if (storedAuth === "true" || (userData?.user?.id && userData.user.id === qData.created_by) || !qData.admin_code) {
+          setIsAuthorized(true);
+        }
 
         // جلب حالة اللعبة والفرق
         const { data: gs } = await supabase.from("game_state").select("*").eq("quiz_id", actualQuizId).single();
@@ -115,6 +151,60 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
   };
 
   if (loading) return <div className="h-screen flex items-center justify-center bg-[#1a0b2e]"><Loader2 className="animate-spin text-purple-500" /></div>;
+
+  // شاشة طلب كود المسؤول إذا لم يكن مسجل دخول أو مصرحاً له
+  if (!isAuthorized && quiz?.admin_code) {
+    return (
+      <div className="min-h-screen bg-[#130722] text-white flex items-center justify-center p-4" dir="rtl">
+        <div className="bg-white/5 border border-purple-500/30 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl backdrop-blur-xl text-center space-y-6">
+          <div className="w-16 h-16 bg-purple-600/20 text-purple-400 rounded-2xl flex items-center justify-center mx-auto border border-purple-500/30 shadow-inner">
+            <KeyRound className="w-8 h-8" />
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-2xl font-black text-purple-100">دخول مسؤول المسابقة</h2>
+            <p className="text-sm text-purple-300">
+              يرجى إدخال كود المشرف الخاص بمسابقة <span className="font-bold text-white font-mono">"{quiz?.title}"</span> للتحكم بالمسابقة وتشغيلها كمسؤول.
+            </p>
+          </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              verifyHostCode(enteredCode, actualQuizId);
+            }}
+            className="space-y-4"
+          >
+            <div>
+              <input
+                type="text"
+                value={enteredCode}
+                onChange={(e) => setEnteredCode(e.target.value)}
+                placeholder="أدخل كود المسؤول..."
+                className="w-full text-center text-xl font-mono uppercase tracking-widest bg-purple-950/60 border border-purple-500/40 rounded-2xl py-3 px-4 text-white placeholder-purple-400/50 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
+                autoFocus
+              />
+              {verifyError && (
+                <p className="text-xs text-red-400 font-bold mt-2 flex items-center justify-center gap-1">
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                  {verifyError}
+                </p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isVerifying || !enteredCode.trim()}
+              className="w-full h-12 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/30 transition-all text-base"
+            >
+              {isVerifying ? <Loader2 className="w-5 h-5 animate-spin" /> : "دخول كمسؤول 🚀"}
+            </Button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   if (isStarted && quiz && gameState) return <QuizHostGame quiz={quiz} groups={groups} gameState={gameState} />;
 
   return (

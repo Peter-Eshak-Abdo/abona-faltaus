@@ -1,5 +1,6 @@
 "use client";
 import React, { useRef, useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import DOMPurify from "dompurify";
@@ -35,6 +36,7 @@ interface UserProfile {
 }
 
 export default function ChatBot() {
+  const searchParams = useSearchParams();
   const [user, setUser] = useState<UserProfile | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -46,6 +48,14 @@ export default function ChatBot() {
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // مراقبة الـ query param لو جاي من صفحة ثانية زي الكتاب المقدس
+  useEffect(() => {
+    const promptParam = searchParams.get("prompt");
+    if (promptParam) {
+      setInput(promptParam);
+    }
+  }, [searchParams]);
 
   // مراقبة حالة الشبكة
   useEffect(() => {

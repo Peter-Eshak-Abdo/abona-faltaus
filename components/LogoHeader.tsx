@@ -11,7 +11,7 @@ export default function LogoHeader() {
           width={60}
           height={40}
           // sizes="60px"
-          className="rounded-full border-blue-300 justify-self-start flex-none w-auto h-full"
+          className="rounded-full border-blue-300 justify-self-start flex-none w-auto h-auto"
           priority
           loading="eager"
         />
@@ -24,7 +24,7 @@ export default function LogoHeader() {
           width={60}
           height={40}
           // sizes="60px"
-          className="rounded-full border-blue-300 justify-self-end flex-none w-auto h-full"
+          className="rounded-full border-blue-300 justify-self-end flex-none w-auto h-auto"
           style={{ transform: "scaleX(-1)" }}
           priority
           loading="eager"

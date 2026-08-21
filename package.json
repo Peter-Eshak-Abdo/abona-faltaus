@@ -1,6 +1,6 @@
 {
   "name": "abona-faltaus-tofa7a",
-  "version": "3.9.3",
+  "version": "3.9.12",
   "private": true,
   "type": "module",
   "scripts": {
@@ -54,6 +54,7 @@
     "cors": "^2.8.6",
     "data-fns": "^1.1.0",
     "date-fns": "^4.1.0",
+    "docx": "^9.7.1",
     "dompurify": "^3.4.12",
     "dotenv": "^17.3.1",
     "edge-tts-node": "^1.5.7",
@@ -66,6 +67,7 @@
     "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.3.8",
     "input-otp": "^1.4.2",
+    "jspdf": "^4.2.1",
     "localforage": "^1.10.0",
     "lucide-react": "^1.7.0",
     "msedge-tts": "^2.0.5",
@@ -74,6 +76,7 @@
     "nodemon": "^3.1.14",
     "open": "^11.0.0",
     "openai": "^6.32.0",
+    "pptxgenjs": "^4.0.1",
     "qrcode.react": "^4.2.0",
     "react": "19.2.4",
     "react-audio-player": "^0.17.0",

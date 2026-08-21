@@ -24,20 +24,16 @@ import Widgets from "./Widgets";
 
 const sections = [
   { name: "الامتحانات", href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
-  // { name: "الامتحانات", href: "/exam", icon: <FaPenFancy />, requiresAuth: true },
+  { name: "نوتة التحضير الذكية", href: "/preparation", icon: <FaFileAlt /> },
+  { name: "الشات بوت", href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
+  { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
+  { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
+  { name: "المقالات", href: "/articles", icon: <FaFileAlt /> },
   { name: "حول", href: "/about", icon: <FaInfoCircle /> },
   { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
   { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
-  { name: "الشات بوت", href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
-  { name: "المقالات", href: "/articles", icon: <FaFileAlt /> },
   { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
-  // { name: "العظات", href: "/3zat", icon: <FaChurch /> },
-  // { name: "الترانيم", href: "/tranim", icon: <FaPlayCircle /> },
-  { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
-  { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
-  // { name: "القطمارس", href: "/readings", icon: <FaBook /> },
-  // { name: "الخولاجي", href: "/prayers", icon: <FaBook /> },
 ];
 
 const getCopticDate = () => {
@@ -60,22 +56,14 @@ export default function HomeClient() {
   const [lastMessage, setLastMessage] = useState("");
   const [commitCount, setCommitCount] = useState(0);
   const [copticDate, setCopticDate] = useState("");
-  const [user, setUser] = useState<any>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const cached = localStorage.getItem("user_header_cache");
-        if (cached) return JSON.parse(cached).user;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return null;
-  });
+  const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [showExploreHint, setShowExploreHint] = useState(false);
   const [menuRadius, setMenuRadius] = useState(135);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     setCopticDate(getCopticDate());
 
     // فحص تسجيل الدخول
@@ -217,10 +205,10 @@ export default function HomeClient() {
       <div className="absolute inset-0 z-20 w-full h-full pointer-events-none">
         <div className="pointer-events-auto">
           <LogoHeader />
-          {user && < UserHeader />}
+          {mounted && user && <UserHeader user={user} />}
         </div>
         {/* تنبيه تسجيل الدخول بجوجل */}
-        {!user && (
+        {mounted && !user && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -287,7 +275,7 @@ export default function HomeClient() {
               style={{ transform: "translate(-50%, -50%)" }}
             >
               <motion.div animate={eagleControls} className="w-[50vw] max-w-12.25 md:max-w-18.75 lg:max-w-25">
-                <Image src="/images/eagle.webp" alt="Eagle" width={400} height={266} className="w-auto h-full" priority loading="eager" />
+                <Image src="/images/eagle.webp" alt="Eagle" width={400} height={266} className="w-full h-auto" priority loading="eager" />
               </motion.div>
             </motion.div>
           )}

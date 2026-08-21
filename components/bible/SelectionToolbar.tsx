@@ -1,9 +1,10 @@
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { FaCopy, FaShareAlt, FaStar, FaTimes, FaPlusSquare, FaComments } from "react-icons/fa";
+import { FaCopy, FaShareAlt, FaStar, FaTimes, FaPlusSquare, FaComments, FaBookOpen } from "react-icons/fa";
 import localforage from "localforage";
 import { shortBookNames } from "@/lib/books";
+import { toast } from "sonner";
 
 type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
 type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
@@ -48,8 +49,8 @@ export default function SelectionToolbar({
         temp.push(sorted[i]);
       } else {
         blocks.push(temp);
-        temp = [sorted[i]];
       }
+      temp = [sorted[i]];
     }
     if (temp.length > 0) blocks.push(temp);
 
@@ -75,6 +76,7 @@ export default function SelectionToolbar({
   const handleCopy = () => {
     navigator.clipboard.writeText(getSelectedText());
     setSelectedVerses([]);
+    toast.success("تم نسخ الآيات للحافظة");
   };
 
   const handleShare = () => {
@@ -82,14 +84,26 @@ export default function SelectionToolbar({
       navigator.share({ title: "آيات من موقع ابونا فلتاؤس تفاحة", text: getSelectedText() });
     } else {
       handleCopy();
-      alert("تم النسخ للحافظة!");
     }
   };
 
   const handleExplain = () => {
     const text = getSelectedText();
-    const prompt = `تفسير الآية: ${text}`;
+    const prompt = `من فضلك فسر لي هذه الآية تفسيراً كنسياً وتأملياً مع ذكر الشواهد المرتبطة:\n${text}`;
     router.push(`/chat?prompt=${encodeURIComponent(prompt)}`);
+  };
+
+  const handleAddToPrep = () => {
+    const text = getSelectedText();
+    try {
+      const currentDraft = localStorage.getItem("prep_draft_content") || "";
+      const updated = currentDraft ? `${currentDraft}\n\n📌 **شاهد كتابي:**\n${text}` : `📌 **شاهد كتابي:**\n${text}`;
+      localStorage.setItem("prep_draft_content", updated);
+      toast.success("تمت إضافة الآية لنوتة التحضير بنجاح!");
+      setSelectedVerses([]);
+    } catch {
+      toast.error("تعذر الحفظ في نوتة التحضير");
+    }
   };
 
   const toggleFavorite = async () => {
@@ -138,32 +152,36 @@ export default function SelectionToolbar({
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+12px)] left-1/2 -translate-x-1/2 bg-inverse-surface/95 backdrop-blur-xl p-1 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-white/10 gap-1"
+        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+16px)] left-1/2 -translate-x-1/2 bg-[#2d1b18]/95 backdrop-blur-xl px-2 py-1.5 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-amber-500/20 gap-1 max-w-[95vw] overflow-x-auto"
       >
-        <button onClick={handleExplain} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-cyan-400 hover:bg-white/10 transition-colors" title="طلب تفسير الآية">
-          <FaComments size={17} />
-          <span className="text-[11px] font-bold mt-0.5">تفسير</span>
+        <button onClick={handleExplain} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-cyan-300 hover:bg-white/10 transition-colors" title="طلب تفسير الآية">
+          <FaComments size={16} />
+          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">تفسير</span>
         </button>
-        <button onClick={() => setIsDayModalOpen(true)} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors" title="إضافة لاجتماع">
-          <FaPlusSquare size={17} />
-          <span className="text-[11px] font-bold mt-0.5">اجتماع</span>
+        <button onClick={handleAddToPrep} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-amber-300 hover:bg-white/10 transition-colors" title="إضافة لنوتة التحضير">
+          <FaBookOpen size={16} />
+          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">نوتة التحضير</span>
         </button>
-        <button onClick={handleShare} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors" title="مشاركة">
-          <FaShareAlt size={17} />
-          <span className="text-[11px] font-bold mt-0.5">مشاركة</span>
+        <button onClick={() => setIsDayModalOpen(true)} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title="إضافة لاجتماع">
+          <FaPlusSquare size={16} />
+          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">اجتماع</span>
         </button>
-        <button onClick={handleCopy} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-inverse-on-surface hover:bg-white/10 transition-colors" title="نسخ">
-          <FaCopy size={17} />
-          <span className="text-[11px] font-bold mt-0.5">نسخ</span>
+        <button onClick={handleShare} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title="مشاركة">
+          <FaShareAlt size={16} />
+          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">مشاركة</span>
         </button>
-        <button onClick={toggleFavorite} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-yellow-400 hover:bg-white/10 transition-colors" title="إضافة للمفضلة">
-          <FaStar size={17} />
-          <span className="text-[11px] font-bold mt-0.5">مفضلة</span>
+        <button onClick={handleCopy} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title="نسخ">
+          <FaCopy size={16} />
+          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">نسخ</span>
         </button>
-        <div className="w-px h-6 bg-white/20"></div>
-        <button onClick={() => setSelectedVerses([])} className="px-3 py-2 flex flex-col items-center justify-center rounded-xl text-red-400 hover:bg-white/10 transition-colors" title="إلغاء التحديد">
-          <FaTimes size={17} />
-          <span className="text-[11px] font-bold mt-0.5">إلغاء</span>
+        <button onClick={toggleFavorite} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-yellow-400 hover:bg-white/10 transition-colors" title="إضافة للمفضلة">
+          <FaStar size={16} />
+          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">مفضلة</span>
+        </button>
+        <div className="w-px h-6 bg-white/20 mx-0.5"></div>
+        <button onClick={() => setSelectedVerses([])} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-red-400 hover:bg-white/10 transition-colors" title="إلغاء التحديد">
+          <FaTimes size={16} />
+          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">إلغاء</span>
         </button>
       </motion.div>
     </AnimatePresence>

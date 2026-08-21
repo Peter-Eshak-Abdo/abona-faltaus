@@ -3,77 +3,36 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase"
 
-export default function UserHeader() {
-  const [user, setUser] = useState<any>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const cached = localStorage.getItem("user_header_cache");
-        if (cached) return JSON.parse(cached).user;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return null;
-  });
-  const [customDisplayName, setCustomDisplayName] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const cached = localStorage.getItem("user_header_cache");
-        if (cached) return JSON.parse(cached).displayName;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return null;
-  });
+interface UserHeaderProps {
+  user?: any;
+}
+
+export default function UserHeader({ user }: UserHeaderProps) {
+  const [customDisplayName, setCustomDisplayName] = useState<string | null>(null);
 
   useEffect(() => {
-    // جلب المستخدم الحالي
-    const fetchUserAndProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-
-      let nameToCache = null;
-      if (user) {
-        // جلب الاسم المخصص من جدول profiles
+    let isMounted = true;
+    const fetchProfile = async () => {
+      if (user?.id) {
         const { data } = await supabase
           .from("profiles")
           .select("full_name")
           .eq("id", user.id)
           .single();
 
-        if (data?.full_name) {
-          nameToCache = data.full_name;
+        if (isMounted && data?.full_name) {
           setCustomDisplayName(data.full_name);
         }
-        localStorage.setItem("user_header_cache", JSON.stringify({ user, displayName: nameToCache }));
-      } else {
-        localStorage.removeItem("user_header_cache");
       }
     };
 
-    fetchUserAndProfile();
-    const timeout = setTimeout(fetchUserAndProfile, 500);
-
-    // الاستماع لتغييرات تسجيل الدخول/الخروج
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      setUser(session?.user || null);
-      if (!session?.user) {
-        setCustomDisplayName(null);
-        localStorage.removeItem("user_header_cache");
-      } else {
-        fetchUserAndProfile(); // إعادة جلب البيانات لو دخل بحساب تاني
-      }
-    });
-
+    fetchProfile();
     return () => {
-      authListener.subscription.unsubscribe();
-      clearTimeout(timeout);
+      isMounted = false;
     };
-  }, []);
+  }, [user?.id]);
 
   const href = user ? "/auth/profile" : "/auth/signin";
-  // جلب الاسم سواء المخصص، أو من حساب جوجل (user_metadata)، أو كلمة ترحيبية
   const displayName = customDisplayName || user?.user_metadata?.full_name || "اهلا بك";
   const subText = user
     ? `اهلا ، ${displayName}`
