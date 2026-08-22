@@ -571,60 +571,64 @@ export default function UnifiedAl7anClient() {
                       </button>
                     </div>
 
-                    {selectedHymn.verses && selectedHymn.verses.length > 0 ? (
-                      selectedHymn.verses.map((verse, index) => {
-                        // التناوب بين خلفية تقيلة وخفيفة زي الصورة
-                        const bgClass = index % 2 === 0 ? "bg-white/10" : "bg-white/5";
-                        return (
-                          <div
-                            key={index}
-                            className={`p-0.25 rounded-lg transition-all ${bgClass} ${layoutMode === "cols"
-                              ? "grid grid-cols-3 divide-white/20 items-stretch w-full gap-0.25"
-                              : "flex flex-col gap-0.25 text-center"
-                              }`}
-                          >
-                            {/* اللغة العربية (في اليمين) */}
-                            {showAr && verse.ar && (
-                              <div className="flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed px-0.25">
-                                {verse.ar}
-                              </div>
-                            )}
+                    {(() => {
+                      const activeLangsCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
+                      const colsClass = activeLangsCount === 3 ? "grid-cols-3" : activeLangsCount === 2 ? "grid-cols-2" : "grid-cols-1";
 
-                            {/* القبطي المعرب (في المنتصف) */}
-                            {showArCopt && verse.ar_copt && (
-                              <div className="flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap px-0.25">
-                                {verse.ar_copt}
-                              </div>
-                            )}
+                      return selectedHymn.verses && selectedHymn.verses.length > 0 ? (
+                        selectedHymn.verses.map((verse, index) => {
+                          const bgClass = index % 2 === 0 ? "bg-white/10" : "bg-white/5";
+                          return (
+                            <div
+                              key={index}
+                              className={`p-0.25 rounded-lg transition-all ${bgClass} ${layoutMode === "cols"
+                                ? `grid ${colsClass} divide-x divide-x-reverse divide-white/20 items-stretch w-full gap-0.25`
+                                : "flex flex-col gap-0.25 text-center"
+                                }`}
+                            >
+                              {/* اللغة العربية */}
+                              {showAr && verse.ar && (
+                                <div className="flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed px-0.25">
+                                  {verse.ar}
+                                </div>
+                              )}
 
-                            {/* القبطي (في اليسار) */}
-                            {showCopt && verse.copt && (
-                              <div className="flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-0.25">
-                                {verse.copt}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })
-                    ) : (
-                      <div className={`p-0.25 rounded-lg bg-white/5 ${layoutMode === "cols" ? "grid grid-cols-3 divide-white/20 items-stretch w-full gap-0.25" : "flex flex-col gap-0.25"}`}>
-                        {showAr && selectedHymn.lyrics_ar && (
-                          <div className="flex items-center justify-center text-lg font-bold border-l text-white whitespace-pre-wrap leading-relaxed px-0.25">
-                            {selectedHymn.lyrics_ar}
-                          </div>
-                        )}
-                        {showArCopt && selectedHymn.lyrics_ar_copt && (
-                          <div className="flex items-center justify-center text-lg font-serif text-white/80 whitespace-pre-wrap px-0.25" dir="ltr">
-                            {selectedHymn.lyrics_ar_copt}
-                          </div>
-                        )}
-                        {showCopt && selectedHymn.lyrics_copt && (
-                          <div className="flex items-center justify-center text-xl border-r font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-0.25">
-                            {selectedHymn.lyrics_copt}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                              {/* القبطي المعرب */}
+                              {showArCopt && verse.ar_copt && (
+                                <div className="flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap px-0.25">
+                                  {verse.ar_copt}
+                                </div>
+                              )}
+
+                              {/* القبطي */}
+                              {showCopt && verse.copt && (
+                                <div className="flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-0.25">
+                                  {verse.copt}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className={`p-0.25 rounded-lg bg-white/5 ${layoutMode === "cols" ? `grid ${colsClass} divide-x divide-x-reverse divide-white/20 items-stretch w-full gap-0.25` : "flex flex-col gap-0.25"}`}>
+                          {showAr && selectedHymn.lyrics_ar && (
+                            <div className="flex items-center justify-center text-lg font-bold text-white whitespace-pre-wrap leading-relaxed px-0.25">
+                              {selectedHymn.lyrics_ar}
+                            </div>
+                          )}
+                          {showArCopt && selectedHymn.lyrics_ar_copt && (
+                            <div className="flex items-center justify-center text-lg font-serif text-white/80 whitespace-pre-wrap px-0.25" dir="ltr">
+                              {selectedHymn.lyrics_ar_copt}
+                            </div>
+                          )}
+                          {showCopt && selectedHymn.lyrics_copt && (
+                            <div className="flex items-center justify-center text-xl font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-0.25">
+                              {selectedHymn.lyrics_copt}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center opacity-50 space-y-0.25">

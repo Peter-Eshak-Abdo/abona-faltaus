@@ -28,12 +28,12 @@ const sections = [
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
   { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
-  { name: "المقالات", href: "/articles", icon: <FaFileAlt /> },
-  { name: "حول", href: "/about", icon: <FaInfoCircle /> },
-  { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
+  // { name: "المقالات", href: "/articles", icon: <FaFileAlt /> },
+  // { name: "حول", href: "/about", icon: <FaInfoCircle /> },
+  // { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
   { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
-  { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
-  { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
+  // { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
+  // { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
 ];
 
 const getCopticDate = () => {

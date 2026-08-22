@@ -9,11 +9,11 @@ import { useRouter } from "next/navigation";
 function QuickPreviewModal({ quiz, onClose }: { quiz: Quiz, onClose: () => void }) {
   const [showAns, setShowAns] = useState(false);
   return (
-    <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-1" dir="rtl">
+    <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-0.5" dir="rtl">
       <div className="bg-white dark:bg-zinc-900 w-full max-w-4xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden font-sans">
-        <div className="flex justify-between items-center p-0.5 bg-blue-600 text-white">
+        <div className="flex justify-between items-center p-0.25 bg-blue-600 text-white">
           <h2 className="text-xl font-black">مراجعة: {quiz.title}</h2>
-          <div className="flex gap-1">
+          <div className="flex gap-0.5">
             <Button onClick={() => setShowAns(!showAns)} variant="secondary" className="h-4 text-xs font-bold text-blue-700">
               {showAns ? "إخفاء الإجابات" : "إظهار الإجابات"}
             </Button>
@@ -45,7 +45,7 @@ function QuickPreviewModal({ quiz, onClose }: { quiz: Quiz, onClose: () => void 
 }
 
 // الكارت الأساسي
-export function QuizCard({ quiz, onEdit, onDelete }: any) {
+export function QuizCard({ quiz, onEdit, onDelete, index}: any) {
   const router = useRouter();
   const [showPreview, setShowPreview] = useState(false);
 
@@ -65,27 +65,28 @@ export function QuizCard({ quiz, onEdit, onDelete }: any) {
 
   return (
     <>
-      <div className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 font-sans relative flex flex-col justify-between">
+      <div className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-0.5 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 font-sans relative flex flex-col justify-between">
         <div>
-          <div className="flex justify-between items-start mb-3">
+          <div className="flex justify-between items-start mb-0.5">
             <button
               onClick={() => setShowPreview(true)}
-              className="bg-blue-50 dark:bg-blue-950/50 p-2 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-colors"
+              className="bg-blue-50 dark:bg-blue-950/50 p-0.25 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-colors"
               title="مراجعة سريعة"
             >
               <Eye size={18} />
             </button>
-            <div className="flex gap-1">
+            <p>{index+1}</p>
+            <div className="flex gap-0.25">
               <button
                 onClick={() => onEdit(quiz)}
-                className="p-2 hover:bg-blue-50 dark:hover:bg-zinc-800 text-blue-600 dark:text-blue-400 rounded-xl transition-colors"
+                className="p-0.25 hover:bg-blue-50 dark:hover:bg-zinc-800 text-blue-600 dark:text-blue-400 rounded-xl transition-colors"
                 title="تعديل"
               >
                 <Edit3 size={18} />
               </button>
               <button
                 onClick={() => onDelete(quiz.id)}
-                className="p-2 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-500 rounded-xl transition-colors"
+                className="p-0.25 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-500 rounded-xl transition-colors"
                 title="حذف"
               >
                 <Trash2 size={18} />
@@ -93,14 +94,14 @@ export function QuizCard({ quiz, onEdit, onDelete }: any) {
             </div>
           </div>
 
-          <h3 className="text-xl font-bold mb-1.5 text-zinc-900 dark:text-zinc-100 truncate">{quiz.title}</h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 line-clamp-2 min-h-[32px]">{quiz.description || "لا يوجد وصف"}</p>
+          <h3 className="text-xl font-bold mb-0.25 text-zinc-900 dark:text-zinc-100 truncate">{quiz.title}</h3>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-0.5 line-clamp-2 min-h-[32px]">{quiz.description || "لا يوجد وصف"}</p>
 
           {/* كود المسابقة */}
           {quiz.code && (
-            <div className="flex items-center justify-between bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 px-3 py-2 rounded-2xl mb-3">
+            <div className="flex items-center justify-between bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 px-0.5 py-0.25 rounded-2xl mb-0.5">
               <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">كود المسابقة:</span>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-0.25">
                 <span className="font-mono font-bold text-sm tracking-widest text-blue-900 dark:text-blue-200" dir="ltr">
                   {quiz.code}
                 </span>
@@ -109,7 +110,7 @@ export function QuizCard({ quiz, onEdit, onDelete }: any) {
                     navigator.clipboard.writeText(quiz.code);
                     alert(`تم نسخ الكود: ${quiz.code}`);
                   }}
-                  className="px-2 py-0.5 text-xs bg-white dark:bg-zinc-800 border border-blue-300/80 dark:border-blue-700 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 font-medium"
+                  className="px-0.5 py-0.25 text-xs bg-white dark:bg-zinc-800 border border-blue-300/80 dark:border-blue-700 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 font-medium"
                   title="نسخ الكود"
                 >
                   نسخ
@@ -118,16 +119,16 @@ export function QuizCard({ quiz, onEdit, onDelete }: any) {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-2 mb-4 text-xs text-zinc-600 dark:text-zinc-300">
-            <div className="bg-zinc-50 dark:bg-zinc-800/60 p-2.5 rounded-xl flex items-center gap-1.5">
+          <div className="grid grid-cols-2 gap-0.25 mb-0.5 text-xs text-zinc-600 dark:text-zinc-300">
+            <div className="bg-zinc-50 dark:bg-zinc-800/60 p-0.25 rounded-xl flex items-center gap-0.25">
               <Clock size={14} className="text-blue-500 shrink-0" />
               <span className="font-medium">{quiz.questions?.length || 0} سؤال</span>
             </div>
-            <div className="bg-zinc-50 dark:bg-zinc-800/60 p-2.5 rounded-xl flex items-center gap-1.5">
+            <div className="bg-zinc-50 dark:bg-zinc-800/60 p-0.25 rounded-xl flex items-center gap-0.25">
               <Clock size={14} className="text-orange-500 shrink-0" />
               <span className="font-medium">{mins} د : {secs} ث</span>
             </div>
-            <div className="col-span-2 bg-zinc-50 dark:bg-zinc-800/60 p-2.5 rounded-xl flex items-center gap-1.5">
+            <div className="col-span-2 bg-zinc-50 dark:bg-zinc-800/60 p-0.25 rounded-xl flex items-center gap-0.25">
               <Calendar size={14} className="text-green-500 shrink-0" />
               <span className="font-medium">أُنشئت: {createdDate}</span>
             </div>
@@ -136,9 +137,9 @@ export function QuizCard({ quiz, onEdit, onDelete }: any) {
 
         <Button
           onClick={() => router.push(`/exam/quiz/quiz/${quiz.id}/host`)}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl py-2.5 h-11 font-bold text-sm shadow-md transition-all active:scale-[0.98]"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl py-0.25 h-3 font-bold text-sm shadow-md transition-all active:scale-[0.98]"
         >
-          <Play size={16} className="ml-1.5 fill-current" /> بدء المسابقة
+          <Play size={16} className="ml-0.25 fill-current" /> بدء المسابقة
         </Button>
       </div>
 

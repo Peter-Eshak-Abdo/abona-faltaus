@@ -3,10 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Church, Users, BookOpen, Music, GraduationCap, Heart, Mail, ExternalLink } from "lucide-react";
+import { Church, Users, BookOpen, Music, GraduationCap, Heart, Mail, ExternalLink, Link } from "lucide-react";
 // import { Church, Users, BookOpen, Music, GraduationCap, Heart, Mail, Github, ExternalLink } from "lucide-react";
 import { APP_VERSION } from "@/lib/version";
 import router from "next/router";
+import { FaArrowRight } from "react-icons/fa";
 
 const gmail = process.env.NEXT_PUBLIC_GMAIL;
 const github = process.env.NEXT_PUBLIC_GITHUB;
@@ -20,6 +21,9 @@ export default function AboutPage() {
       <div className="w-full max-w-8xl space-y-1 backdrop-blur-md bg-white/10 dark:bg-black/10 rounded-2xl shadow-2xl">
         {/* Header */}
         <div className="text-center">
+          <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline">
+            <FaArrowRight size={18} />
+          </Link>
           <div className="flex justify-center">
             <div className="w-12 h-12 bg-white/30 rounded-full flex items-center justify-center">
               <Church className="w-8 h-8 text-black" />

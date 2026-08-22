@@ -1,3 +1,6 @@
+import { Link } from "lucide-react";
+import { FaArrowRight } from "react-icons/fa";
+
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_GMAIL;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 const REPO = process.env.NEXT_PUBLIC_GITHUB_REPO;
@@ -8,6 +11,9 @@ export default function PrivacyPolicyPage() {
       <main className="w-full max-w-8xl p-0.5 rounded-2xl backdrop-blur-md bg-white/6 border border-white/10 shadow-2xl">
 
         <header className="flex items-center md:flex-row flex-col gap-0.5 mb-0.5">
+          <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline">
+            <FaArrowRight size={18} />
+          </Link>
           <div className="shrink-0 w-16 h-16 rounded-xl flex items-center justify-center bg-white/8 border border-white/8">
             <img src="/images/logo.webp" alt="لوغو ابونا فلتاؤس" className="w-12 h-12 object-contain" />
           </div>

@@ -1,3 +1,6 @@
+import { Link } from "lucide-react";
+import { FaArrowRight } from "react-icons/fa";
+
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_GMAIL;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
@@ -7,8 +10,11 @@ export default function TermsOfServicePage() {
       <main className="w-full max-w-8xl p-1 rounded-2xl backdrop-blur-md bg-white/6 border border-white/10 shadow-2xl">
         {/* Header */}
         <header className="flex items-center md:flex-row flex-col gap-1 mb-1">
+          <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline">
+            <FaArrowRight size={18} />
+          </Link>
           <div className="shrink-0 w-16 h-16 rounded-xl flex items-center justify-center bg-white/8 border border-white/8">
-            <img src="/images/logo.webp" alt="لوغو ابونا فلتاؤس" className="w-12 h-12 object-contain" />
+            <img src="/images/logo.webp" alt="لوجو ابونا فلتاؤس" className="w-12 h-12 object-contain" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">شروط الخدمة — موقع ابونا فلتاؤس</h1>

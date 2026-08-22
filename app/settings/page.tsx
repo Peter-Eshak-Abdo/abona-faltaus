@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import OneSignal from 'react-onesignal';
 import Link from "next/link";
+import { FaArrowRight } from "react-icons/fa";
 
 const NOTIFICATION_CATEGORIES = [
   { id: 'verse_enabled', name: 'آية اليوم', desc: 'استلام آية يومية وأقوال آباء' },
@@ -150,6 +151,9 @@ export default function SettingsView() {
       <div className="w-full max-w-7xl space-y-0.25">
 
         <div className="text-center">
+          <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline">
+            <FaArrowRight size={18} />
+          </Link>
           <h1 className="text-4xl font-bold text-black dark:text-white">الإعدادات</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-0.25">تحكم في حسابك وتفضيلاتك</p>
         </div>
@@ -254,6 +258,14 @@ export default function SettingsView() {
             </div>
             <Link onClick={saveProfile} href="/" className="w-full flex h-3 rounded-b-full justify-center content-center align-middle bg-blue-600 hover:bg-blue-700 text-white">
               {saving ? "جاري الحفظ..." : "حفظ التعديلات"}</Link>
+
+            <div className="flex justify-center gap-0.25 pointer-events-auto">
+              <Link href="/privacy" className="hover:underline">سياسة الخصوصية (Privacy Policy)</Link>
+              <span>•</span>
+              <Link href="/terms" className="hover:underline">الشروط والأحكام (Terms of Service)</Link>
+              <span>•</span>
+              <Link href="/about" className="hover:underline">عن التطبيق (About Us)</Link>
+            </div>
             {/* <Button onClick={saveProfile} disabled={saving} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
               {saving ? "جاري الحفظ..." : "حفظ التعديلات"}
             </Button> */}

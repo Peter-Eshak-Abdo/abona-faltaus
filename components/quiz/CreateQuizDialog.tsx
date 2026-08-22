@@ -140,7 +140,7 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
         const res = await createQuiz(quizData);
         const newId = typeof res === "object" ? res.id : res;
         const newCode = (typeof res === "object" ? res.code : generatedCode) || generatedCode;
-        
+
         // حفظ في التاريخ المحلي للوصول السريع
         const savedHistory = localStorage.getItem("my_quizzes_history");
         let history = savedHistory ? JSON.parse(savedHistory) : [];
@@ -284,11 +284,11 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
       >
         {/* Modal التوليد بالذكاء الاصطناعي */}
         {isAiModalOpen && (
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-3">
-            <div className="bg-white dark:bg-zinc-900 border border-amber-500/30 rounded-3xl p-5 max-w-lg w-full shadow-2xl space-y-4">
-              <div className="flex justify-between items-center border-b pb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-amber-500/10 text-amber-500 rounded-xl">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-1">
+            <div className="bg-white dark:bg-zinc-900 border border-amber-500/30 rounded-3xl p-0.5 max-w-lg w-full shadow-2xl space-y-0.5">
+              <div className="flex justify-between items-center border-b pb-0.5">
+                <div className="flex items-center gap-0.25">
+                  <div className="p-0.25 bg-amber-500/10 text-amber-500 rounded-xl">
                     <Sparkles size={22} />
                   </div>
                   <h3 className="text-xl font-black text-zinc-800 dark:text-white">توليد مسابقة بالذكاء الاصطناعي</h3>
@@ -298,7 +298,7 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                 </button>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-0.5">
                 <div>
                   <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">الموضوع أو النص الكتابي / الطقسي</label>
                   <input
@@ -306,22 +306,26 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                     value={aiTopic}
                     onChange={(e) => setAiTopic(e.target.value)}
                     placeholder="مثال: سفر يونان، شخصية مارمرقس، صوم الرسل..."
-                    className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2.5 text-sm font-bold outline-none focus:border-amber-500"
+                    className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.5 text-sm font-bold outline-none focus:border-amber-500"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-0.5">
                   <div>
                     <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">عدد الأسئلة</label>
                     <select
                       value={aiCount}
                       onChange={(e) => setAiCount(Number(e.target.value))}
-                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
                     >
-                      <option value={3}>3 أسئلة (سريع)</option>
-                      <option value={5}>5 أسئلة (نموذجي)</option>
-                      <option value={10}>10 أسئلة (كامل)</option>
+                      <option value={5}>5 أسئلة</option>
+                      <option value={10}>10 أسئلة</option>
                       <option value={15}>15 سؤال</option>
+                      <option value={20}>20 سؤال</option>
+                      <option value={25}>25 سؤال</option>
+                      <option value={30}>30 سؤال</option>
+                      <option value={40}>40 سؤال</option>
+                      <option value={50}>50 سؤال</option>
                     </select>
                   </div>
                   <div>
@@ -329,23 +333,24 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                     <select
                       value={aiAudience}
                       onChange={(e) => setAiAudience(e.target.value)}
-                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
                     >
-                      <option value="أطفال ومدارس أحد">أطفال (مدارس أحد)</option>
-                      <option value="إعدادي وثانوي">إعدادي وثانوي</option>
+                      <option value="مدارس أحد">مدارس أحد</option>
+                      <option value="إعدادي">إعدادي</option>
+                      <option value="ثانوي">ثانوي</option>
                       <option value="شباب وخريجين">شباب وخريجين</option>
-                      <option value="خدام وعام">خدام ومتقدم</option>
+                      <option value="خدام وشعب">خدام وشعب</option>
                     </select>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-0.25">
                   <div>
                     <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">نوع الأسئلة</label>
                     <select
                       value={aiType}
                       onChange={(e) => setAiType(e.target.value as any)}
-                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
                     >
                       <option value="mixed">ميكس (اختر + صح وخطأ)</option>
                       <option value="choice">اختيار من متعدد فقط</option>
@@ -357,7 +362,7 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                     <select
                       value={aiDifficulty}
                       onChange={(e) => setAiDifficulty(e.target.value)}
-                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
                     >
                       <option value="سهل">سهل ومباشر</option>
                       <option value="متوسط">متوسط</option>
@@ -367,21 +372,21 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                 </div>
               </div>
 
-              <div className="flex gap-2 justify-end pt-2">
+              <div className="flex gap-0.25 justify-end pt-0.25">
                 <Button variant="ghost" onClick={() => setIsAiModalOpen(false)}>إلغاء</Button>
                 <Button
                   onClick={handleGenerateWithAi}
                   disabled={isGeneratingAi || !aiTopic.trim()}
-                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-1.5"
+                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-0.25"
                 >
                   {isGeneratingAi ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-3 h-3 animate-spin" />
                       جاري التوليد...
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4" />
+                      <Sparkles className="w-3 h-3" />
                       توليد الأسئلة 🪄
                     </>
                   )}

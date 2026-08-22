@@ -247,7 +247,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-0.5 max-w-7xl mx-auto font-sans" dir="rtl">
+    <div className="p-0.5 max-w-8xl mx-auto font-sans" dir="rtl">
       {/* قسم الترويسة الرئيسي */}
       <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
         <div className="flex items-center gap-0.5">
@@ -356,9 +356,10 @@ export default function Dashboard() {
       ) : (
         <div className="space-y-0.5">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-0.5">
-            {quizzes.map((quiz) => (
+            {quizzes.map((quiz,i) => (
               <QuizCard
                 key={quiz.id}
+                index={i}
                 quiz={quiz}
                 onEdit={handleEdit}
                 onDelete={handleDelete}

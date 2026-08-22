@@ -1,103 +1,57 @@
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
-import jsPDF from "jspdf";
 
 /**
- * دالة تصدير العرض التقديمي PowerPoint (PPTX)
+ * دالة تصدير العرض التقديمي PowerPoint (PPTX) عبر الـ API
  */
 export async function exportToPowerPoint(title: string, markdownContent: string) {
-  const pptxgenModule = await import("pptxgenjs");
-  const pptxgen = pptxgenModule.default || pptxgenModule;
-  const pres = new pptxgen();
-  pres.layout = "LAYOUT_16x9";
+  try {
+    // استخراج الشرائح من الـ Markdown أو استخدام الـ API
+    const sections = markdownContent.split(/^##\s+/gm).filter(Boolean);
+    const slides: Array<{ title: string; points: string[]; verse?: string }> = [];
 
-  // Slide 1: غلاف العرض التقديمي
-  const titleSlide = pres.addSlide();
-  titleSlide.background = { color: "2D1B18" };
-  titleSlide.addText(title || "تحضير الدرس", {
-    x: "10%",
-    y: "35%",
-    w: "80%",
-    h: 1.5,
-    fontSize: 36,
-    bold: true,
-    color: "E8CFAE",
-    align: "center",
-    fontFace: "Arial",
-  });
-  titleSlide.addText("منصة أبونا فلتاؤس — إعداد الخدمة", {
-    x: "10%",
-    y: "55%",
-    w: "80%",
-    h: 0.8,
-    fontSize: 18,
-    color: "FFFFFF",
-    align: "center",
-    fontFace: "Arial",
-  });
-
-  // تقسيم المحتوى إلى أقسام بناءً على العناوين ##
-  const sections = markdownContent.split(/^##\s+/gm).filter(Boolean);
-
-  if (sections.length === 0) {
-    const slide = pres.addSlide();
-    slide.addText(markdownContent.slice(0, 800), {
-      x: 0.8,
-      y: 0.8,
-      w: 8.4,
-      h: 5.5,
-      fontSize: 14,
-      color: "333333",
-      align: "right",
-      fontFace: "Arial",
-    });
-  } else {
-    for (const sec of sections) {
-      const lines = sec.trim().split("\n");
-      const secTitle = lines[0]?.replace(/[#*]/g, "").trim() || "عنصر الدرس";
-      const secBody = lines.slice(1).join("\n").replace(/[*#_`]/g, "").trim();
-
-      if (!secBody && !secTitle) continue;
-
-      const slide = pres.addSlide();
-      slide.background = { color: "FDFBF7" };
-
-      // شريط العنوان
-      slide.addShape(pres.ShapeType.rect, {
-        x: 0,
-        y: 0,
-        w: "100%",
-        h: 1.1,
-        fill: { color: "5C4538" },
+    if (sections.length === 0) {
+      slides.push({
+        title: title || "فكرة الدرس",
+        points: markdownContent.split("\n").filter((l) => l.trim().length > 0).slice(0, 5),
       });
+    } else {
+      for (const sec of sections) {
+        const lines = sec.trim().split("\n");
+        const secTitle = lines[0]?.replace(/[#*]/g, "").trim() || "عنصر الدرس";
+        const bodyLines = lines.slice(1).map((l) => l.replace(/[*#_`]/g, "").trim()).filter(Boolean);
+        
+        const verseLine = bodyLines.find((l) => l.includes("(") && l.includes(")") || l.includes("«") || l.includes("»"));
+        const points = bodyLines.filter((l) => l !== verseLine).slice(0, 5);
 
-      slide.addText(secTitle, {
-        x: 0.5,
-        y: 0.2,
-        w: 9.0,
-        h: 0.8,
-        fontSize: 22,
-        bold: true,
-        color: "E8CFAE",
-        align: "right",
-        fontFace: "Arial",
-      });
-
-      // نص الشريحة
-      slide.addText(secBody.slice(0, 900), {
-        x: 0.8,
-        y: 1.4,
-        w: 8.4,
-        h: 5.2,
-        fontSize: 15,
-        color: "2D1B18",
-        align: "right",
-        fontFace: "Arial",
-        lineSpacing: 24,
-      });
+        slides.push({
+          title: secTitle,
+          points: points.length > 0 ? points : ["نقطة توضيحية ومناقشة تفاعلية"],
+          verse: verseLine,
+        });
+      }
     }
-  }
 
-  await pres.writeFile({ fileName: `${title || "lesson-prep"}.pptx` });
+    const res = await fetch("/api/notes/generate-pptx", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, slides }),
+    });
+
+    if (!res.ok) throw new Error("فشل توليد ملف البوربوينت من السيرفر");
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title || "lesson-prep"}.pptx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (err: any) {
+    console.error("PPTX export error:", err);
+    throw err;
+  }
 }
 
 /**
@@ -183,36 +137,76 @@ export async function exportToWord(title: string, markdownContent: string) {
   const a = document.createElement("a");
   a.href = url;
   a.download = `${title || "lesson-prep"}.docx`;
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 
 /**
- * دالة تصدير PDF نظيف ومباشر
+ * دالة تصدير PDF نظيف ومضبوط مع اللغة العربية باستخدام html2pdf.js
  */
 export async function exportToPDF(title: string, markdownContent: string) {
-  const doc = new jsPDF({
-    orientation: "portrait",
-    unit: "mm",
-    format: "a4",
-  });
+  try {
+    // تحويل الـ Markdown إلى HTML منسق
+    const formattedHtml = markdownContent
+      .split("\n")
+      .map((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return "<br/>";
+        if (trimmed.startsWith("### ")) {
+          return `<h3>${trimmed.replace("### ", "")}</h3>`;
+        }
+        if (trimmed.startsWith("## ")) {
+          return `<h2>${trimmed.replace("## ", "")}</h2>`;
+        }
+        if (trimmed.startsWith("# ")) {
+          return `<h1>${trimmed.replace("# ", "")}</h1>`;
+        }
+        if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+          return `<li>${trimmed.substring(2)}</li>`;
+        }
+        if (trimmed.includes("«") || (trimmed.includes("(") && trimmed.includes(")") && trimmed.length < 150)) {
+          return `<div class="verse">${trimmed}</div>`;
+        }
+        return `<p>${trimmed}</p>`;
+      })
+      .join("");
 
-  const cleanText = markdownContent.replace(/[*#_`]/g, "");
-  const lines = doc.splitTextToSize(cleanText, 170);
+    const res = await fetch("/api/notes/generate-pdf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ htmlContent: formattedHtml, title }),
+    });
 
-  doc.setFontSize(18);
-  doc.text(title || "تحضير الدرس", 190, 20, { align: "right" });
+    if (!res.ok) throw new Error("تعذر تجهيز قالب الـ PDF من السيرفر");
 
-  doc.setFontSize(11);
-  let y = 30;
-  for (let i = 0; i < lines.length; i++) {
-    if (y > 275) {
-      doc.addPage();
-      y = 20;
-    }
-    doc.text(lines[i], 190, y, { align: "right" });
-    y += 7;
+    const { html } = await res.json();
+
+    const container = document.createElement("div");
+    container.style.position = "fixed";
+    container.style.top = "-9999px";
+    container.style.left = "-9999px";
+    container.style.width = "210mm";
+    container.innerHTML = html;
+    document.body.appendChild(container);
+
+    const html2pdfModule = await import("html2pdf.js");
+    const html2pdf = html2pdfModule.default || html2pdfModule;
+
+    await html2pdf()
+      .from(container)
+      .set({
+        margin: [12, 12, 12, 12],
+        filename: `${title || "lesson-prep"}.pdf`,
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      })
+      .save();
+
+    document.body.removeChild(container);
+  } catch (err: any) {
+    console.error("PDF Export error:", err);
+    throw err;
   }
-
-  doc.save(`${title || "lesson-prep"}.pdf`);
 }

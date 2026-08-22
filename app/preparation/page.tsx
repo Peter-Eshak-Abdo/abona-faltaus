@@ -1,36 +1,34 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect } from "react";
 import {
-  Mic,
-  MicOff,
   Sparkles,
   FileText,
   Presentation,
   Download,
   Copy,
   Trash2,
-  Save,
   BookOpen,
-  HelpCircle,
   Loader2,
   ArrowRight,
-  Share2,
-  Check,
-  FileDown
+  FileDown,
+  Plus,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { exportToPowerPoint, exportToWord, exportToPDF } from "@/lib/prep-export";
+import VoiceRecorderButton from "@/components/notes/VoiceRecorderButton";
+import LessonsSidebar, { SavedLesson } from "@/components/notes/LessonsSidebar";
+import { supabase } from "@/lib/supabase";
 
 export default function PreparationPage() {
   const [title, setTitle] = useState("تحضير درس جديد");
   const [content, setContent] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
-  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isExporting, setIsExporting] = useState<string | null>(null);
 
   // Form State for AI Prep Modal
   const [topic, setTopic] = useState("");
@@ -39,8 +37,16 @@ export default function PreparationPage() {
   const [style, setStyle] = useState("تفاعلي وقصصي");
   const [mainGoal, setMainGoal] = useState("");
 
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  // New features state
+  const [extraDetails, setExtraDetails] = useState("");
+  const [extraSources, setExtraSources] = useState<string[]>([""]);
+  const [options, setOptions] = useState({
+    includeVerses: true,
+    includeFatherQuotes: true,
+    includePrayer: false,
+    includeActivity: false,
+    includeSummary: true,
+  });
 
   // تحميل المسودة المحفوظة تلقائياً
   useEffect(() => {
@@ -61,72 +67,48 @@ export default function PreparationPage() {
     localStorage.setItem("prep_draft_title", val);
   };
 
-  // معالجة التسجيل الصوتي
-  const startRecording = async () => {
+  // حفظ الدرس في Supabase
+  const saveLessonToDatabase = async (generatedResult: string, lessonTitle: string) => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          audioChunksRef.current.push(e.data);
+      const lessonData = {
+        title: lessonTitle || topic || "تحضير درس",
+        note_content: content,
+        requirements: { topic, audience, duration, style, mainGoal },
+        options,
+        generated_content: generatedResult,
+        extra_sources: extraSources.filter((s) => s.trim()),
+      };
+
+      if (session?.user) {
+        const { data, error } = await supabase
+          .from("lesson_notes")
+          .insert({
+            user_id: session.user.id,
+            ...lessonData,
+          })
+          .select("id")
+          .single();
+
+        if (!error && data) {
+          setCurrentLessonId(data.id);
         }
-      };
+      }
 
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-        stream.getTracks().forEach((t) => t.stop());
-        await handleAudioUpload(audioBlob);
+      // حفظ نسخة في LocalStorage كـ Fallback
+      const localSaved = localStorage.getItem("local_saved_lessons");
+      const existing: SavedLesson[] = localSaved ? JSON.parse(localSaved) : [];
+      const newLessonItem: SavedLesson = {
+        id: `local_${Date.now()}`,
+        created_at: new Date().toISOString(),
+        ...lessonData,
       };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-      toast.info("جاري الاستماع والتسجيل... تحدث الآن");
+      localStorage.setItem("local_saved_lessons", JSON.stringify([newLessonItem, ...existing]));
     } catch (err) {
-      console.error("Microphone access error:", err);
-      toast.error("يرجى إعطاء الإذن لاستخدام الميكروفون");
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
-  };
-
-  const handleAudioUpload = async (blob: Blob) => {
-    setIsTranscribing(true);
-    try {
-      const formData = new FormData();
-      formData.append("audio", blob);
-
-      const res = await fetch("/api/speech-to-text", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        if (data.requiresConfig) {
-          toast.error("ميزة التفريغ الصوتي تتطلب ضبط ELEVENLABS_API_KEY أو OPENAI_API_KEY");
-        } else {
-          throw new Error(data.error || "فشل تفريغ الصوت");
-        }
-        return;
-      }
-
-      if (data.text) {
-        const updated = content ? `${content}\n\n${data.text}` : data.text;
-        handleContentChange(updated);
-        toast.success("تم تفريغ الصوت وإضافته للنوتة بنجاح!");
-      }
-    } catch (err: any) {
-      toast.error(err.message || "حدث خطأ أثناء تفريغ الصوت");
-    } finally {
-      setIsTranscribing(false);
+      console.warn("Failed to auto-save lesson to DB:", err);
     }
   };
 
@@ -134,16 +116,22 @@ export default function PreparationPage() {
   const handleGeneratePrep = async () => {
     setIsGenerating(true);
     try {
-      const res = await fetch("/api/preparation/generate", {
+      const res = await fetch("/api/notes/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          draftContent: content,
-          topic: topic || title,
-          audience,
-          duration,
-          style,
-          mainGoal,
+          noteText: content,
+          requirements: {
+            topic: topic || title,
+            audience,
+            duration,
+            style,
+            mainGoal,
+          },
+          options,
+          extraDetails,
+          extraSources,
+          format: "full",
         }),
       });
 
@@ -152,9 +140,11 @@ export default function PreparationPage() {
 
       if (data.result) {
         handleContentChange(data.result);
+        const resolvedTitle = topic || title;
         if (topic) handleTitleChange(topic);
         setIsAiModalOpen(false);
-        toast.success("تم توليد تحضير الدرس بالكامل بنجاح! 🪄");
+        toast.success("تم تحضير الدرس كاملاً بنجاح! 🪄");
+        await saveLessonToDatabase(data.result, resolvedTitle);
       }
     } catch (err: any) {
       toast.error(err.message || "حدث خطأ أثناء التوليد");
@@ -163,12 +153,41 @@ export default function PreparationPage() {
     }
   };
 
+  const handleSelectLesson = (lesson: SavedLesson) => {
+    setCurrentLessonId(lesson.id);
+    setTitle(lesson.title);
+    setContent(lesson.generated_content || lesson.note_content || "");
+    if (lesson.requirements) {
+      if (lesson.requirements.topic) setTopic(lesson.requirements.topic);
+      if (lesson.requirements.audience) setAudience(lesson.requirements.audience);
+      if (lesson.requirements.duration) setDuration(lesson.requirements.duration);
+      if (lesson.requirements.style) setStyle(lesson.requirements.style);
+      if (lesson.requirements.mainGoal) setMainGoal(lesson.requirements.mainGoal);
+    }
+    if (lesson.options) setOptions(lesson.options);
+    if (lesson.extra_sources) setExtraSources(lesson.extra_sources);
+    toast.success(`تم استرجاع: ${lesson.title}`);
+  };
+
+  const handleNewLesson = () => {
+    setCurrentLessonId(null);
+    setTitle("تحضير درس جديد");
+    setContent("");
+    setTopic("");
+    setMainGoal("");
+    setExtraDetails("");
+    setExtraSources([""]);
+    localStorage.removeItem("prep_draft_content");
+    localStorage.removeItem("prep_draft_title");
+    toast.info("تم فتح مسودة درس جديدة");
+  };
+
   return (
-    <div className="min-h-screen bg-[#fdfbf7] text-[#2d1b18] flex flex-col font-sans pb-[calc(env(safe-area-inset-bottom,0px)+20px)]" dir="rtl">
+    <div className="min-h-screen bg-[#fdfbf7] text-[#2d1b18] flex flex-col font-sans pb-[calc(env(safe-area-inset-bottom,0px)+5px)]" dir="rtl">
       {/* Header */}
-      <header className="bg-[#5c4538] text-[#e8cfae] px-4 py-3 sm:px-6 flex items-center justify-between shadow-md sticky top-0 z-30 pt-[calc(env(safe-area-inset-top,0px)+12px)]">
-        <div className="flex items-center gap-3">
-          <Link href="/" className="p-2 hover:bg-white/10 rounded-xl transition-colors text-white">
+      <header className="bg-[#5c4538] text-[#e8cfae] px-1 py-0.5 sm:px-1 flex items-center justify-between shadow-md sticky top-0 z-30 pt-[calc(env(safe-area-inset-top,0px)+3px)]">
+        <div className="flex items-center gap-0.5">
+          <Link href="/" className="p-0.5 hover:bg-white/10 rounded-xl transition-colors text-white">
             <ArrowRight size={20} />
           </Link>
           <div>
@@ -177,10 +196,17 @@ export default function PreparationPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-0.5">
+          {/* Lessons Sidebar */}
+          <LessonsSidebar
+            onSelectLesson={handleSelectLesson}
+            onNewLesson={handleNewLesson}
+            currentLessonId={currentLessonId}
+          />
+
           <button
             onClick={() => setIsAiModalOpen(true)}
-            className="flex items-center gap-1.5 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 font-black px-3.5 py-2 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95"
+            className="flex items-center gap-0.25 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 font-black px-1 py-0.5 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95"
           >
             <Sparkles size={16} />
             <span>توليد بالـ AI 🪄</span>
@@ -189,47 +215,25 @@ export default function PreparationPage() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-4">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-1 sm:p-1 flex flex-col gap-0.5">
         {/* Title & Toolbar */}
-        <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-stone-200/80 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+        <div className="bg-white rounded-3xl p-1 sm:p-1 shadow-sm border border-stone-200/80 flex flex-col sm:flex-row gap-0.5 sm:items-center justify-between">
           <input
             type="text"
             value={title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="text-xl sm:text-2xl font-black bg-transparent border-b-2 border-stone-200 focus:border-amber-600 outline-none pb-1 flex-1 text-[#2d1b18]"
+            className="text-xl sm:text-2xl font-black bg-transparent border-b-2 border-stone-200 focus:border-amber-600 outline-none pb-0.5 flex-1 text-[#2d1b18]"
             placeholder="عنوان الدرس أو العظة..."
           />
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-0.5 flex-wrap">
             {/* Mic Record Button */}
-            <button
-              onClick={isRecording ? stopRecording : startRecording}
-              disabled={isTranscribing}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-sm ${
-                isRecording
-                  ? "bg-red-600 text-white animate-pulse"
-                  : isTranscribing
-                  ? "bg-stone-200 text-stone-500 cursor-not-allowed"
-                  : "bg-amber-100 text-amber-900 hover:bg-amber-200"
-              }`}
-            >
-              {isTranscribing ? (
-                <>
-                  <Loader2 size={15} className="animate-spin" />
-                  <span>تفريغ الصوت...</span>
-                </>
-              ) : isRecording ? (
-                <>
-                  <MicOff size={15} />
-                  <span>إيقاف التسجيل</span>
-                </>
-              ) : (
-                <>
-                  <Mic size={15} />
-                  <span>تسجيل صوتي 🎙️</span>
-                </>
-              )}
-            </button>
+            <VoiceRecorderButton
+              onTranscript={(text) => {
+                const updated = content ? `${content}\n\n${text}` : text;
+                handleContentChange(updated);
+              }}
+            />
 
             {/* Quick Actions */}
             <button
@@ -237,7 +241,7 @@ export default function PreparationPage() {
                 navigator.clipboard.writeText(content);
                 toast.success("تم نسخ المحتوى!");
               }}
-              className="p-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl transition-colors"
+              className="p-0.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl transition-colors"
               title="نسخ"
             >
               <Copy size={16} />
@@ -246,12 +250,10 @@ export default function PreparationPage() {
             <button
               onClick={() => {
                 if (confirm("هل تريد مسح المسودة والبدء من جديد؟")) {
-                  handleContentChange("");
-                  handleTitleChange("تحضير درس جديد");
-                  toast.info("تم مسح النوتة");
+                  handleNewLesson();
                 }
               }}
-              className="p-2 bg-stone-100 hover:bg-red-100 text-red-600 rounded-xl transition-colors"
+              className="p-0.5 bg-stone-100 hover:bg-red-100 text-red-600 rounded-xl transition-colors"
               title="مسح"
             >
               <Trash2 size={16} />
@@ -260,7 +262,7 @@ export default function PreparationPage() {
         </div>
 
         {/* Text Area Content */}
-        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-stone-200/80 flex-1 flex flex-col min-h-[380px]">
+        <div className="bg-white rounded-3xl p-1 sm:p-1 shadow-sm border border-stone-200/80 flex-1 flex flex-col min-h-[380px]">
           <textarea
             value={content}
             onChange={(e) => handleContentChange(e.target.value)}
@@ -270,37 +272,67 @@ export default function PreparationPage() {
         </div>
 
         {/* Exports Bar */}
-        <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-stone-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-stone-600 text-sm font-bold">
+        <div className="bg-white rounded-3xl p-1 sm:p-1 shadow-sm border border-stone-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-0.25 text-stone-600 text-sm font-bold">
             <Download size={18} className="text-amber-700" />
             <span>تصدير ملف التحضير:</span>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-0.25 flex-wrap w-full sm:w-auto justify-end">
             <button
-              onClick={() => exportToPowerPoint(title, content)}
-              disabled={!content.trim()}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
+              onClick={async () => {
+                setIsExporting("pptx");
+                try {
+                  await exportToPowerPoint(title, content);
+                  toast.success("تم تصدير PowerPoint بنجاح!");
+                } catch {
+                  toast.error("فشل تصدير PowerPoint");
+                } finally {
+                  setIsExporting(null);
+                }
+              }}
+              disabled={!content.trim() || isExporting !== null}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-0.25 px-1 py-0.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
             >
-              <Presentation size={16} />
+              {isExporting === "pptx" ? <Loader2 size={16} className="animate-spin" /> : <Presentation size={16} />}
               <span>PowerPoint (.pptx)</span>
             </button>
 
             <button
-              onClick={() => exportToWord(title, content)}
-              disabled={!content.trim()}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
+              onClick={async () => {
+                setIsExporting("docx");
+                try {
+                  await exportToWord(title, content);
+                  toast.success("تم تصدير Word بنجاح!");
+                } catch {
+                  toast.error("فشل تصدير Word");
+                } finally {
+                  setIsExporting(null);
+                }
+              }}
+              disabled={!content.trim() || isExporting !== null}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-0.25 px-1 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
             >
-              <FileText size={16} />
+              {isExporting === "docx" ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
               <span>Word (.docx)</span>
             </button>
 
             <button
-              onClick={() => exportToPDF(title, content)}
-              disabled={!content.trim()}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 bg-stone-800 hover:bg-stone-900 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
+              onClick={async () => {
+                setIsExporting("pdf");
+                try {
+                  await exportToPDF(title, content);
+                  toast.success("تم تصدير PDF بنجاح!");
+                } catch {
+                  toast.error("فشل تصدير PDF");
+                } finally {
+                  setIsExporting(null);
+                }
+              }}
+              disabled={!content.trim() || isExporting !== null}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-0.25 px-1 py-0.5 bg-stone-800 hover:bg-stone-900 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
             >
-              <FileDown size={16} />
+              {isExporting === "pdf" ? <Loader2 size={16} className="animate-spin" /> : <FileDown size={16} />}
               <span>PDF (.pdf)</span>
             </button>
           </div>
@@ -309,54 +341,55 @@ export default function PreparationPage() {
 
       {/* AI Requirements Modal */}
       {isAiModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3">
-          <div className="bg-white rounded-3xl p-5 sm:p-6 max-w-lg w-full shadow-2xl border border-amber-200/50 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-stone-100 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-1">
+          <div className="bg-white rounded-3xl p-1 sm:p-1 max-w-lg w-full shadow-2xl border border-amber-200/50 space-y-0.5 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-stone-100 pb-0.5">
+              <div className="flex items-center gap-0.25">
+                <div className="p-0.5 bg-amber-500/10 text-amber-600 rounded-xl">
                   <Sparkles size={20} />
                 </div>
                 <h3 className="text-lg font-black text-stone-900">توليد تحضير الدرس بالذكاء الاصطناعي</h3>
               </div>
-              <button onClick={() => setIsAiModalOpen(false)} className="text-stone-400 hover:text-stone-700 p-1">
+              <button onClick={() => setIsAiModalOpen(false)} className="text-stone-400 hover:text-stone-700 p-0.5">
                 ✕
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-0.5">
               <div>
-                <label className="text-xs font-bold text-stone-600 block mb-1">موضوع أو عنوان الدرس</label>
+                <label className="text-xs font-bold text-stone-600 block mb-0.5">موضوع أو عنوان الدرس</label>
                 <input
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="مثال: فضيلة المحبة، داود النبي وجليات، الأمانة..."
-                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 text-sm font-bold outline-none focus:border-amber-600"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none focus:border-amber-600"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-0.5">
                 <div>
-                  <label className="text-xs font-bold text-stone-600 block mb-1">المرحلة والسن المستهدف</label>
+                  <label className="text-xs font-bold text-stone-600 block mb-0.5">المرحلة والسن المستهدف</label>
                   <select
                     value={audience}
                     onChange={(e) => setAudience(e.target.value)}
-                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none"
                   >
-                    <option value="حضانة وأولى وثانية ابتدائي">حضانة وابتدائي صغار</option>
+                    <option value="حضانة وأولى وثانية ابتدائي">حضانة وابتدائى صغار</option>
                     <option value="رابعة وخامسة وسادسة ابتدائي">ابتدائي كبار</option>
-                    <option value="إعدادي وثانوي">إعدادي وثانوي</option>
+                    <option value="إعدادي">إعدادي</option>
+                    <option value="ثانوي">ثانوي</option>
                     <option value="شباب وخريجين">شباب وخريجين</option>
-                    <option value="اجتماع عام وأسرة">اجتماع عام / أسرة</option>
+                    <option value="الشعب">الشعب</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-stone-600 block mb-1">مدة الشرح التقريبية</label>
+                  <label className="text-xs font-bold text-stone-600 block mb-0.5">مدة الشرح التقريبية</label>
                   <select
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none"
                   >
                     <option value="15 دقيقة (موجز)">15 دقيقة (موجز)</option>
                     <option value="30 دقيقة (قياسي)">30 دقيقة (قياسي)</option>
@@ -366,13 +399,13 @@ export default function PreparationPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-0.5">
                 <div>
-                  <label className="text-xs font-bold text-stone-600 block mb-1">أسلوب وطريقة الشرح</label>
+                  <label className="text-xs font-bold text-stone-600 block mb-0.5">أسلوب وطريقة الشرح</label>
                   <select
                     value={style}
                     onChange={(e) => setStyle(e.target.value)}
-                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none"
                   >
                     <option value="قصصي وتفاعلي">قصصي وتفاعلي</option>
                     <option value="روحي وتأملي عميق">روحي وتأملي عميق</option>
@@ -382,29 +415,108 @@ export default function PreparationPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-stone-600 block mb-1">الهدف المركزي (اختياري)</label>
+                  <label className="text-xs font-bold text-stone-600 block mb-0.5">الهدف المركزي (اختياري)</label>
                   <input
                     type="text"
                     value={mainGoal}
                     onChange={(e) => setMainGoal(e.target.value)}
                     placeholder="مثال: تطبيق عملي للأمانة في المذاكرة"
-                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none"
                   />
                 </div>
               </div>
+
+              {/* عناصر ومحتويات الدرس (Checkboxes) */}
+              <div className="bg-stone-50 rounded-2xl p-1 border border-stone-200/80 space-y-0.5">
+                <h4 className="font-bold text-xs text-stone-700">عناصر الدرس المطلوب تضمينها:</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-0.25 text-xs font-semibold text-stone-700">
+                  {[
+                    { key: "includeVerses", label: "آيات كتابية", icon: "📖" },
+                    { key: "includeFatherQuotes", label: "أقوال آباء", icon: "✝️" },
+                    { key: "includePrayer", label: "صلاة", icon: "🙏" },
+                    { key: "includeActivity", label: "نشاط وتطبيق", icon: "🎯" },
+                    { key: "includeSummary", label: "خلاصة الدرس", icon: "📝" },
+                  ].map(({ key, label, icon }) => (
+                    <label key={key} className="flex items-center gap-0.25 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={options[key as keyof typeof options]}
+                        onChange={(e) =>
+                          setOptions((prev) => ({ ...prev, [key]: e.target.checked }))
+                        }
+                        className="accent-amber-600 rounded w-3 h-3"
+                      />
+                      <span>{icon} {label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* تفاصيل إضافية من الخادم */}
+              <div className="bg-stone-50 rounded-2xl p-1 border border-stone-200/80 space-y-0.25">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold text-stone-700">✨ ملاحظات وتفاصيل إضافية للخادم:</label>
+                  <VoiceRecorderButton
+                    onTranscript={(text) => setExtraDetails((prev) => (prev ? `${prev} ${text}` : text))}
+                  />
+                </div>
+                <textarea
+                  value={extraDetails}
+                  onChange={(e) => setExtraDetails(e.target.value)}
+                  placeholder="مثال: عندي شباب بيعانوا من ضغط الامتحانات، أو التركيز على موقف معين..."
+                  rows={2}
+                  className="w-full bg-white border border-stone-200 rounded-xl p-0.5 text-xs font-medium outline-none focus:border-amber-600 resize-none"
+                />
+              </div>
+
+              {/* مصادر إضافية مخصصة */}
+              <div className="bg-stone-50 rounded-2xl p-1 border border-stone-200/80 space-y-0.5">
+                <label className="text-xs font-bold text-stone-700 block">📚 مصادر ومراجع إضافية (روابط أو نصوص):</label>
+                {extraSources.map((src, i) => (
+                  <div key={i} className="flex gap-0.25">
+                    <input
+                      type="text"
+                      value={src}
+                      onChange={(e) => {
+                        const updated = [...extraSources];
+                        updated[i] = e.target.value;
+                        setExtraSources(updated);
+                      }}
+                      placeholder="رابط تفسير أو نص مرجع..."
+                      className="flex-1 bg-white border border-stone-200 rounded-xl px-1 py-0.5 text-xs font-medium outline-none focus:border-amber-600"
+                    />
+                    {extraSources.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setExtraSources((prev) => prev.filter((_, idx) => idx !== i))}
+                        className="p-0.5 text-stone-400 hover:text-red-600 transition"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setExtraSources((prev) => [...prev, ""])}
+                  className="text-xs text-amber-700 hover:text-amber-800 font-bold flex items-center gap-0.25"
+                >
+                  <Plus size={13} /> إضافة مرجع آخر
+                </button>
+              </div>
             </div>
 
-            <div className="flex gap-2 justify-end pt-3 border-t border-stone-100">
+            <div className="flex gap-0.25 justify-end pt-0.5 border-t border-stone-100">
               <button
                 onClick={() => setIsAiModalOpen(false)}
-                className="px-4 py-2 text-stone-600 font-bold hover:bg-stone-100 rounded-xl text-sm"
+                className="px-1 py-0.5 text-stone-600 font-bold hover:bg-stone-100 rounded-xl text-sm"
               >
                 إلغاء
               </button>
               <button
                 onClick={handleGeneratePrep}
                 disabled={isGenerating}
-                className="flex items-center gap-1.5 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-bold shadow-md transition-all"
+                className="flex items-center gap-0.25 px-1 py-0.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-bold shadow-md transition-all"
               >
                 {isGenerating ? (
                   <>

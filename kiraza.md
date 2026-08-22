@@ -1,6 +1,6 @@
 # 📋 خطة تطوير موقع أبونا فلتاؤس — plan.md
 
-> **الحالة:** تحليل شامل بناءً على كود المشروع + متطلبات الكرازة  
+> **الحالة:** تحليل شامل بناءً على كود المشروع + متطلبات الكرازة
 > **الهدف:** موقع سريع، يعمل 100% أوفلاين، بدون أخطاء Runtime، مع Backend متكامل
 
 ---
@@ -8,9 +8,9 @@
 ## 🔴 الأخطاء الحرجة (يجب إصلاحها أولاً)
 
 ### 1. خطأ Multiple GoTrueClient Instances
-**الملف:** `lib/supabase.ts`  
-**المشكلة:** رسالة `Multiple GoTrueClient instances detected` تظهر في الكونسول  
-**السبب:** استيراد `supabase` من أماكن متعددة ينشئ instances متعددة  
+**الملف:** `lib/supabase.ts`
+**المشكلة:** رسالة `Multiple GoTrueClient instances detected` تظهر في الكونسول
+**السبب:** استيراد `supabase` من أماكن متعددة ينشئ instances متعددة
 **الحل:**
 ```ts
 // lib/supabase.ts — الحل النهائي
@@ -38,8 +38,8 @@ export const supabase = (() => {
 ---
 
 ### 2. خطأ Image Width/Height (eagle.webp)
-**الملف:** `components/LogoHeader.tsx`  
-**المشكلة:** `Image with src "/images/eagle.webp" has either width or height modified, but not the other`  
+**الملف:** `components/LogoHeader.tsx`
+**المشكلة:** `Image with src "/images/eagle.webp" has either width or height modified, but not the other`
 **الحل:**
 ```tsx
 // بدل:
@@ -53,8 +53,8 @@ style={{ width: "auto", height: "40px" }}
 ---
 
 ### 3. PWA Offline — صفحات بترفع `no-response`
-**المشكلة:** صفحات `/al7an/snawi`, `/al7an`, `/bible`, `/chat` بتديّ `no-response` في وضع الأوفلاين  
-**السبب:** في `next.config.js` الـ `runtimeCaching` مش بيغطي navigate requests بشكل كافي  
+**المشكلة:** صفحات `/al7an/snawi`, `/al7an`, `/bible`, `/chat` بتديّ `no-response` في وضع الأوفلاين
+**السبب:** في `next.config.js` الـ `runtimeCaching` مش بيغطي navigate requests بشكل كافي
 **الحل في `next.config.js`:**
 ```js
 // في workboxOptions.runtimeCaching — استبدل قاعدة navigate بالآتي:
@@ -81,7 +81,7 @@ style={{ width: "auto", height: "40px" }}
 ---
 
 ### 4. خطأ Logic في صفحة الألحان `Al7anClient.tsx`
-**الملف:** `app/al7an/Al7anClient.tsx`  
+**الملف:** `app/al7an/Al7anClient.tsx`
 **المشكلة:**
 ```ts
 const monasba = monasbat[mons as keyof typeof monasbat] as string;
@@ -167,7 +167,7 @@ if (!data || data.length === 0) {
 ```ts
 // في app/api/chat/route.ts — رتّب النماذج من الأسرع للأبطأ
 const geminiModels = [
-  "gemini-2.0-flash",        // الأسرع
+  "gemini-3.6-flash",        // الأسرع
   "gemini-1.5-flash",        // سريع
   "gemini-1.5-flash-8b",     // خفيف
   "gemini-2.5-flash",        // احتياطي

@@ -1,6 +1,6 @@
 {
   "name": "abona-faltaus-tofa7a",
-  "version": "3.9.12",
+  "version": "3.9.17",
   "private": true,
   "type": "module",
   "scripts": {
@@ -65,6 +65,7 @@
     "google-auth-library": "^10.6.1",
     "googleapis": "^171.4.0",
     "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.14.0",
     "html5-qrcode": "^2.3.8",
     "input-otp": "^1.4.2",
     "jspdf": "^4.2.1",
