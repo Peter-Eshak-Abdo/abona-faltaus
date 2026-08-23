@@ -97,7 +97,8 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
 
     setIsSubmitting(true)
     try {
-      const generatedCode = initialData?.code || Math.floor(1000000000 + Math.random() * 9000000000).toString();
+      const { generateUniqueQuizCode } = await import("@/lib/supabase-utils");
+      const generatedCode = initialData?.code || (await generateUniqueQuizCode());
       const quizData: any = {
         title: title.trim(),
         description: description.trim(),

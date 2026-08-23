@@ -228,12 +228,12 @@ export default function PreparationPage() {
 
           <div className="flex items-center gap-0.5 flex-wrap">
             {/* Mic Record Button */}
-            <VoiceRecorderButton
+            {/* <VoiceRecorderButton
               onTranscript={(text) => {
                 const updated = content ? `${content}\n\n${text}` : text;
                 handleContentChange(updated);
               }}
-            />
+            /> */}
 
             {/* Quick Actions */}
             <button
@@ -375,8 +375,8 @@ export default function PreparationPage() {
                     onChange={(e) => setAudience(e.target.value)}
                     className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none"
                   >
-                    <option value="حضانة وأولى وثانية ابتدائي">حضانة وابتدائى صغار</option>
-                    <option value="رابعة وخامسة وسادسة ابتدائي">ابتدائي كبار</option>
+                    <option value="حضانة وأولى وثانية ابتدائي">حضانة+ 1و2 ابتدائي</option>
+                    <option value="تالتة ورابعة وخامسة وسادسة ابتدائي">3و4و5و6 ابتدائي</option>
                     <option value="إعدادي">إعدادي</option>
                     <option value="ثانوي">ثانوي</option>
                     <option value="شباب وخريجين">شباب وخريجين</option>
@@ -444,7 +444,7 @@ export default function PreparationPage() {
                         onChange={(e) =>
                           setOptions((prev) => ({ ...prev, [key]: e.target.checked }))
                         }
-                        className="accent-amber-600 rounded w-3 h-3"
+                        className="accent-amber-600 rounded w-2 h-2"
                       />
                       <span>{icon} {label}</span>
                     </label>

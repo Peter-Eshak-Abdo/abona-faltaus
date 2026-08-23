@@ -16,25 +16,27 @@ export async function POST(req: Request) {
     const coverSlide = pptx.addSlide();
     coverSlide.background = { color: "1a1a2e" };
     coverSlide.addText(title || "تحضير الدرس", {
-      x: 0.5,
-      y: 2.2,
-      w: "90%",
-      h: 1.5,
-      fontSize: 34,
+      x: 0.8,
+      y: 1.8,
+      w: "88%",
+      h: 2.2,
+      fontSize: 40,
       bold: true,
       color: "FFD700",
       align: "center",
       fontFace: "Arial",
+      rtlMode: true,
     });
     coverSlide.addText("منصة أبونا فلتاؤس — إعداد الخدمة الأرثوذكسية", {
-      x: 0.5,
-      y: 4.0,
-      w: "90%",
-      h: 0.8,
-      fontSize: 18,
+      x: 0.8,
+      y: 4.3,
+      w: "88%",
+      h: 1.0,
+      fontSize: 22,
       color: "E2E8F0",
       align: "center",
       fontFace: "Arial",
+      rtlMode: true,
     });
 
     if (Array.isArray(slides) && slides.length > 0) {
@@ -44,45 +46,57 @@ export async function POST(req: Request) {
 
         // عنوان الشريحة
         s.addText(slide.title || "عنصر الدرس", {
-          x: 0.5,
+          x: 0.6,
           y: 0.5,
-          w: "90%",
-          h: 0.9,
-          fontSize: 26,
+          w: "88%",
+          h: 1.0,
+          fontSize: 32,
           bold: true,
           color: "FFD700",
           align: "right",
           fontFace: "Arial",
+          rtlMode: true,
         });
 
-        // النقاط
-        if (Array.isArray(slide.points)) {
+        // النقاط والمحتوى بحجم خط كبير ومحاذاة لليمين RTL
+        if (Array.isArray(slide.points) && slide.points.length > 0) {
+          const pointCount = slide.points.length;
+          // ضبط حجم الخط: 28 إلى 34 بناءً على عدد الأسطر
+          const bodyFontSize = pointCount === 1 ? 34 : pointCount === 2 ? 30 : 26;
+
           slide.points.forEach((point: string, i: number) => {
-            s.addText(`• ${point}`, {
+            const cleanPoint = point.replace(/^[-*_•\s]+/, "").trim();
+            if (!cleanPoint) return;
+
+            s.addText(cleanPoint, {
               x: 0.8,
-              y: 1.6 + i * 0.7,
+              y: 1.8 + i * 1.8,
               w: "85%",
-              h: 0.6,
-              fontSize: 18,
+              h: 1.5,
+              fontSize: bodyFontSize,
               color: "FFFFFF",
               align: "right",
               fontFace: "Arial",
+              rtlMode: true,
+              bullet: { type: "bullet", code: "2022" },
             });
           });
         }
 
         // الآية إن وجدت
         if (slide.verse) {
-          s.addText(`"${slide.verse}"`, {
-            x: 0.5,
-            y: 5.4,
-            w: "90%",
-            h: 0.8,
-            fontSize: 15,
+          const cleanVerse = slide.verse.replace(/^[-*_•\s]+/, "").trim();
+          s.addText(`« ${cleanVerse} »`, {
+            x: 0.8,
+            y: 5.5,
+            w: "85%",
+            h: 1.0,
+            fontSize: 22,
             italic: true,
             color: "FFD700",
-            align: "center",
+            align: "right",
             fontFace: "Arial",
+            rtlMode: true,
           });
         }
       });

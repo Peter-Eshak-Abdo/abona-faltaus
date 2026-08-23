@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   <title>${title || "تحضير الدرس"}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap');
-    
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Amiri', 'Traditional Arabic', serif;

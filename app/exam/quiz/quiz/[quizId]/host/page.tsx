@@ -51,9 +51,9 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
   const refreshAllData = async () => {
     try {
       setLoading(true);
-      // نطلب المسابقة سواء كانت بالـ id أو بالكود
+      // نطلب المسابقة سواء كانت بالـ id أو بالكود (8 إلى 10 أرقام)
       let query = supabase.from("quizzes").select("*");
-      if (quizId.length === 10 && /^\d+$/.test(quizId)) {
+      if (/^\d{8,10}$/.test(quizId)) {
         query = query.eq("code", quizId);
       } else {
         query = query.eq("id", quizId);

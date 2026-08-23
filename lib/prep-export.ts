@@ -5,29 +5,90 @@ import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } fro
  */
 export async function exportToPowerPoint(title: string, markdownContent: string) {
   try {
-    // استخراج الشرائح من الـ Markdown أو استخدام الـ API
-    const sections = markdownContent.split(/^##\s+/gm).filter(Boolean);
-    const slides: Array<{ title: string; points: string[]; verse?: string }> = [];
+    // 1. تنظيف النص من علامات الفواصل الطويلة --- والرموز الزائدة
+    const cleanedText = markdownContent
+      .replace(/^(\s*[-*_]){3,}\s*$/gm, "")
+      .replace(/\r\n/g, "\n");
 
-    if (sections.length === 0) {
-      slides.push({
-        title: title || "فكرة الدرس",
-        points: markdownContent.split("\n").filter((l) => l.trim().length > 0).slice(0, 5),
-      });
-    } else {
-      for (const sec of sections) {
-        const lines = sec.trim().split("\n");
-        const secTitle = lines[0]?.replace(/[#*]/g, "").trim() || "عنصر الدرس";
-        const bodyLines = lines.slice(1).map((l) => l.replace(/[*#_`]/g, "").trim()).filter(Boolean);
-        
-        const verseLine = bodyLines.find((l) => l.includes("(") && l.includes(")") || l.includes("«") || l.includes("»"));
-        const points = bodyLines.filter((l) => l !== verseLine).slice(0, 5);
+    // 2. تقسيم النص إلى أقسام وعناصر بناءً على العناوين (# أو ## أو ### أو خط عريض مستقل)
+    const rawSections = cleanedText.split(/(?=(?:^|\n)#{1,3}\s+|(?:\n\*\*[^\n]+\*\*))/g).filter((s) => s.trim().length > 0);
 
+    const slides: Array<{ title: string; points: string[]; verse?: string; isSummary?: boolean }> = [];
+
+    if (rawSections.length === 0) {
+      // إذا كان النص كتلة واحدة بدون عناوين
+      const allLines = cleanedText
+        .split("\n")
+        .map((l) => l.replace(/^[*-•]\s*/, "").replace(/[*#_`]/g, "").trim())
+        .filter(Boolean);
+
+      for (let i = 0; i < allLines.length; i += 2) {
         slides.push({
-          title: secTitle,
-          points: points.length > 0 ? points : ["نقطة توضيحية ومناقشة تفاعلية"],
-          verse: verseLine,
+          title: title || "فكرة وعنصر الدرس",
+          points: allLines.slice(i, i + 2),
         });
+      }
+    } else {
+      for (const sec of rawSections) {
+        const lines = sec
+          .trim()
+          .split("\n")
+          .map((l) => l.trim())
+          .filter(Boolean);
+
+        if (lines.length === 0) continue;
+
+        // استخراج عنوان القسم
+        const rawFirstLine = lines[0];
+        const secTitle = rawFirstLine.replace(/^[#*-•\s]+/, "").replace(/[*_`]/g, "").trim() || "عنصر الدرس";
+
+        // استخراج أسطر المحتوى
+        const bodyLines = lines
+          .slice(1)
+          .map((l) => l.replace(/^[*-•]\s*/, "").replace(/[*_`]/g, "").trim())
+          .filter((l) => l.length > 0 && !/^[-*_]{3,}$/.test(l));
+
+        if (bodyLines.length === 0) {
+          // إذا كان السطر الأول فقط موجوداً ومعه نص
+          slides.push({
+            title: secTitle,
+            points: ["شرح ومناقشة تفاعلية حول هذا المحور."],
+          });
+          continue;
+        }
+
+        // استخراج الآيات إن وجدت
+        const verseLines = bodyLines.filter(
+          (l) => (l.includes("«") && l.includes("»")) || (l.includes("(") && l.includes(")") && l.length < 160)
+        );
+        const nonVerseLines = bodyLines.filter((l) => !verseLines.includes(l));
+
+        // تقسيم المحتوى إلى شرائح صغيرة (1 إلى 2 نقطة في كل شريحة لكي يتسع لخط 36pt كبير وواضح)
+        const isSummary = secTitle.includes("خلاصة") || secTitle.includes("تطبيق") || secTitle.includes("ختام");
+        const chunkSize = 2; // نقطتان كحد أقصى لكل سلايد ليكون الفونت كبيراً ومريحاً
+
+        if (nonVerseLines.length <= chunkSize) {
+          slides.push({
+            title: secTitle,
+            points: nonVerseLines.length > 0 ? nonVerseLines : ["نقطة ومحور تأملي"],
+            verse: verseLines[0],
+            isSummary,
+          });
+        } else {
+          // تقسيم العنصر على 2 أو 3 سلايدات
+          for (let i = 0; i < nonVerseLines.length; i += chunkSize) {
+            const partIndex = Math.floor(i / chunkSize) + 1;
+            const totalParts = Math.ceil(nonVerseLines.length / chunkSize);
+            const partTitle = totalParts > 1 ? `${secTitle} (${partIndex})` : secTitle;
+
+            slides.push({
+              title: partTitle,
+              points: nonVerseLines.slice(i, i + chunkSize),
+              verse: i === 0 ? verseLines[0] : undefined,
+              isSummary,
+            });
+          }
+        }
       }
     }
 
@@ -60,27 +121,61 @@ export async function exportToPowerPoint(title: string, markdownContent: string)
 export async function exportToWord(title: string, markdownContent: string) {
   const paragraphs: Paragraph[] = [
     new Paragraph({
-      text: title || "تحضير الدرس",
-      heading: HeadingLevel.TITLE,
+      children: [
+        new TextRun({
+          text: title || "تحضير الدرس",
+          bold: true,
+          size: 36, // 18pt
+          font: "Traditional Arabic",
+          rightToLeft: true,
+        }),
+      ],
       alignment: AlignmentType.RIGHT,
       bidirectional: true,
-      spacing: { after: 300 },
+      spacing: { after: 240 },
     }),
   ];
 
-  const lines = markdownContent.split("\n");
+  // إزالة الفواصل الطويلة --- أو استبدالها بسطر فاصل موحد دون تكرار سطور فارغة
+  const lines = markdownContent
+    .replace(/^(\s*[-*_]){3,}\s*$/gm, "\n") // تحويل الفواصل الأفقية --- إلى سطر عادي
+    .split("\n");
+
+  let lastWasEmpty = false;
+
   for (const line of lines) {
     const trimmed = line.trim();
+    
+    // منع تكرار أكثر من سطر فارغ واحد
     if (!trimmed) {
-      paragraphs.push(new Paragraph({ text: "", spacing: { after: 150 } }));
+      if (!lastWasEmpty) {
+        paragraphs.push(
+          new Paragraph({
+            text: "",
+            spacing: { after: 120 },
+            bidirectional: true,
+            alignment: AlignmentType.RIGHT,
+          })
+        );
+        lastWasEmpty = true;
+      }
       continue;
     }
+
+    lastWasEmpty = false;
 
     if (trimmed.startsWith("### ")) {
       paragraphs.push(
         new Paragraph({
-          text: trimmed.replace("### ", ""),
-          heading: HeadingLevel.HEADING_3,
+          children: [
+            new TextRun({
+              text: trimmed.replace("### ", "").replace(/[*_`]/g, ""),
+              bold: true,
+              size: 36, // 18pt
+              font: "Traditional Arabic",
+              rightToLeft: true,
+            }),
+          ],
           alignment: AlignmentType.RIGHT,
           bidirectional: true,
           spacing: { before: 200, after: 100 },
@@ -89,21 +184,35 @@ export async function exportToWord(title: string, markdownContent: string) {
     } else if (trimmed.startsWith("## ")) {
       paragraphs.push(
         new Paragraph({
-          text: trimmed.replace("## ", ""),
-          heading: HeadingLevel.HEADING_2,
+          children: [
+            new TextRun({
+              text: trimmed.replace("## ", "").replace(/[*_`]/g, ""),
+              bold: true,
+              size: 36, // 18pt
+              font: "Traditional Arabic",
+              rightToLeft: true,
+            }),
+          ],
           alignment: AlignmentType.RIGHT,
           bidirectional: true,
-          spacing: { before: 300, after: 150 },
+          spacing: { before: 260, after: 120 },
         })
       );
     } else if (trimmed.startsWith("# ")) {
       paragraphs.push(
         new Paragraph({
-          text: trimmed.replace("# ", ""),
-          heading: HeadingLevel.HEADING_1,
+          children: [
+            new TextRun({
+              text: trimmed.replace("# ", "").replace(/[*_`]/g, ""),
+              bold: true,
+              size: 36, // 18pt
+              font: "Traditional Arabic",
+              rightToLeft: true,
+            }),
+          ],
           alignment: AlignmentType.RIGHT,
           bidirectional: true,
-          spacing: { before: 400, after: 200 },
+          spacing: { before: 320, after: 160 },
         })
       );
     } else {
@@ -112,12 +221,14 @@ export async function exportToWord(title: string, markdownContent: string) {
           children: [
             new TextRun({
               text: trimmed.replace(/[*_`]/g, ""),
-              size: 24,
+              size: 32, // 16pt
+              font: "Traditional Arabic",
+              rightToLeft: true,
             }),
           ],
           alignment: AlignmentType.RIGHT,
           bidirectional: true,
-          spacing: { after: 120 },
+          spacing: { after: 120, line: 360 }, // تباعد سطور مريح
         })
       );
     }
@@ -183,19 +294,33 @@ export async function exportToPDF(title: string, markdownContent: string) {
 
     const { html } = await res.json();
 
-    const container = document.createElement("div");
-    container.style.position = "fixed";
-    container.style.top = "-9999px";
-    container.style.left = "-9999px";
-    container.style.width = "210mm";
-    container.innerHTML = html;
-    document.body.appendChild(container);
+    // استخدام iframe معزول تماماً لتجنب وراثة متغيرات Tailwind v4 oklch من الصفحة الحالية
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "fixed";
+    iframe.style.top = "-9999px";
+    iframe.style.left = "-9999px";
+    iframe.style.width = "210mm";
+    iframe.style.height = "100%";
+    iframe.style.border = "none";
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!iframeDoc) throw new Error("تعذر إنشاء بيئة تصدير الـ PDF");
+
+    iframeDoc.open();
+    iframeDoc.write(html);
+    iframeDoc.close();
+
+    // ننتظر تحميل الخطوط والمحتوى داخل الـ iframe
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const elementToPrint = iframeDoc.body;
 
     const html2pdfModule = await import("html2pdf.js");
     const html2pdf = html2pdfModule.default || html2pdfModule;
 
     await html2pdf()
-      .from(container)
+      .from(elementToPrint)
       .set({
         margin: [12, 12, 12, 12],
         filename: `${title || "lesson-prep"}.pdf`,
@@ -204,7 +329,7 @@ export async function exportToPDF(title: string, markdownContent: string) {
       })
       .save();
 
-    document.body.removeChild(container);
+    document.body.removeChild(iframe);
   } catch (err: any) {
     console.error("PDF Export error:", err);
     throw err;

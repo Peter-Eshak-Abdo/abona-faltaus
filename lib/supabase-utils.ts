@@ -1,9 +1,21 @@
 import { supabase } from "@/lib/supabase"
 import type { Quiz, Group, GameState } from "@/types/quiz";
 
+// دالة لتوليد كود رقمي عشوائي فريد من 8 إلى 10 أرقام
+export const generateUniqueQuizCode = async (): Promise<string> => {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    // توليد كود من 8 أرقام عشوائية تبدأ برقم غير صفري
+    const code = Math.floor(10000000 + Math.random() * 90000000).toString();
+    const { data } = await supabase.from("quizzes").select("id").eq("code", code).maybeSingle();
+    if (!data) return code;
+  }
+  // في حال وجود تصادم نادر جداً، توليد كود من 10 أرقام
+  return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+};
+
 // --- Quiz Operations ---
 export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt"> & { code?: string }) => {
-  const generatedCode = quiz.code || Math.floor(1000000000 + Math.random() * 9000000000).toString();
+  const generatedCode = quiz.code || (await generateUniqueQuizCode());
   
   const insertPayload: any = {
     title: quiz.title,
@@ -44,7 +56,8 @@ export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt"> & { code?:
 
 export const getQuiz = async (quizIdOrCode: string): Promise<Quiz | null> => {
   let query = supabase.from("quizzes").select("*");
-  if (quizIdOrCode.length === 10 && /^\d+$/.test(quizIdOrCode)) {
+  // دعم البحث بكود من 8 إلى 10 أرقام أو بمعرف الـ UUID
+  if (/^\d{8,10}$/.test(quizIdOrCode)) {
     query = query.eq("code", quizIdOrCode);
   } else {
     query = query.eq("id", quizIdOrCode);

@@ -192,12 +192,12 @@ export default function Dashboard() {
     refreshQuizzes();
   }, []);
 
-  // دالة الدخول بالكود (10 أرقام)
+  // دالة الدخول بالكود (من 8 إلى 10 أرقام)
   const handleEnterByCode = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const cleanCode = codeInput.trim();
-    if (cleanCode.length !== 10) {
-      setCodeError("الكود يجب أن يكون 10 أرقام");
+    if (cleanCode.length < 8 || cleanCode.length > 10) {
+      setCodeError("الكود يجب أن يكون بين 8 إلى 10 أرقام");
       return;
     }
 
@@ -305,12 +305,12 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* قسم الدخول المباشر بكود المسابقة (10 أرقام) */}
+      {/* قسم الدخول المباشر بكود المسابقة (8 - 10 أرقام) */}
       <div className="bg-linear-to-r from-blue-50/80 to-indigo-50/80 dark:from-zinc-900 dark:to-zinc-800/80 p-1 rounded-3xl border border-blue-100 dark:border-zinc-800 shadow-sm mb-1">
         <div className="max-w-xl mx-auto text-center space-y-0.5">
           <div className="flex items-center justify-center gap-0.5 text-blue-600 dark:text-blue-400 font-bold text-lg">
             <KeyRound size={20} />
-            <h2>دخول مسابقة كأدمن بكود (10 أرقام)</h2>
+            <h2>دخول مسابقة كأدمن بكود (8 - 10 أرقام)</h2>
           </div>
           <p className="text-xs text-zinc-500 font-medium">
             اكتب كود أي مسابقة للدخول وإدارتها مباشرة من هذا الجهاز دون الحاجة لتسجيل دخول
@@ -322,13 +322,13 @@ export default function Dashboard() {
               maxLength={10}
               value={codeInput}
               onChange={(e) => setCodeInput(e.target.value.replace(/[^0-9]/g, ""))}
-              placeholder="مثال: 1234567890"
+              placeholder="مثال: 84920153"
               dir="ltr"
               className="flex-1 px-1 py-0.5 border-2 border-blue-200 dark:border-zinc-700 rounded-2xl text-center tracking-[0.2em] font-black text-lg bg-white dark:bg-zinc-800 outline-none focus:border-blue-500 transition-colors"
             />
             <Button
               type="submit"
-              disabled={isEnteringCode || codeInput.length !== 10}
+              disabled={isEnteringCode || codeInput.length < 8 || codeInput.length > 10}
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-1 h-3 rounded-2xl text-sm shadow-md transition disabled:opacity-50"
             >
               {isEnteringCode ? "جاري البحث..." : "دخول كأدمن"}
