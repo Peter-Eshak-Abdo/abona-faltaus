@@ -2,10 +2,10 @@
 import { useState, useMemo, useRef, useEffect, TouchEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import al7anData from "@/public/al7an-all.json";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
-import OfflineAudioButton from "@/components/OfflineAudioButton";
+import al7anData from "@/public/al7an-all.json";
+import OfflineAudioButton from "@/components/al7an/OfflineAudioButton";
 
 type Verse = {
   ar?: string;
@@ -34,8 +34,6 @@ const monasbaName = {
   "keahk": "كيهك",
 }
 const merged = (al7anData as any[]).reduce((acc, c) => ({ ...acc, ...c }), {}) as HymnMap;
-// const monasbatKeys = Object.keys(merged);
-// const monasbatList = monasbatKeys.map((key) => monasbaName[key as keyof typeof monasbaName] ?? key);
 const monasbatList = Object.keys(merged);
 const allHymnsFlat = Object.values(merged).flat();
 
@@ -61,7 +59,6 @@ export default function UnifiedAl7anClient() {
   const [showCopt, setShowCopt] = useState(true);
   const [showArCopt, setShowArCopt] = useState(true);
 
-  // طريقة العرض: صفوف (rows) أو 3 أعمدة (cols)
   const [layoutMode, setLayoutMode] = useState<"rows" | "cols">("cols");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 

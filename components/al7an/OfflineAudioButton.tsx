@@ -117,15 +117,15 @@ export default function OfflineAudioButton({ src, title }: OfflineAudioButtonPro
 
   if (isOfflineReady) {
     return (
-      <div className="flex items-center gap-1">
-        <span className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+      <div className="flex items-center gap-0.25">
+        <span className="flex items-center gap-0.25 px-0.5 py-0.25 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
           <Check size={14} className="text-emerald-400" />
           متاح أوفلاين
         </span>
         <button
           onClick={handleRemove}
           title="حذف من الأوفلاين لتوفير المساحة"
-          className="p-1 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+          className="p-0.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
         >
           <Trash2 size={13} />
         </button>
@@ -137,7 +137,7 @@ export default function OfflineAudioButton({ src, title }: OfflineAudioButtonPro
     <button
       onClick={handleDownload}
       disabled={isDownloading}
-      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all shadow-sm ${
+      className={`flex items-center gap-0.5 px-0.5 py-0.5 rounded-lg text-xs font-semibold transition-all shadow-sm ${
         isDownloading
           ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-wait"
           : "bg-orange-500/20 hover:bg-orange-500/30 text-orange-200 border border-orange-500/30 hover:border-orange-500/60 active:scale-95"

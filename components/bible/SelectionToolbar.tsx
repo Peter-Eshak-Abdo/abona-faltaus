@@ -152,34 +152,34 @@ export default function SelectionToolbar({
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+16px)] left-1/2 -translate-x-1/2 bg-[#2d1b18]/95 backdrop-blur-xl px-2 py-1.5 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-amber-500/20 gap-1 max-w-[95vw] overflow-x-auto"
+        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+16px)] left-1/2 -translate-x-1/2 bg-[#2d1b18]/95 backdrop-blur-xl px-0.5 py-0.5 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-amber-500/20 gap-1 max-w-[95vw] overflow-x-auto"
       >
-        <button onClick={handleExplain} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-cyan-300 hover:bg-white/10 transition-colors" title="طلب تفسير الآية">
+        <button onClick={handleExplain} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-cyan-300 hover:bg-white/10 transition-colors" title="طلب تفسير الآية">
           <FaComments size={16} />
           <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">تفسير</span>
         </button>
-        <button onClick={handleAddToPrep} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-amber-300 hover:bg-white/10 transition-colors" title="إضافة لنوتة التحضير">
+        <button onClick={handleAddToPrep} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-amber-300 hover:bg-white/10 transition-colors" title="إضافة لنوتة التحضير">
           <FaBookOpen size={16} />
           <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">نوتة التحضير</span>
         </button>
-        <button onClick={() => setIsDayModalOpen(true)} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title="إضافة لاجتماع">
+        <button onClick={() => setIsDayModalOpen(true)} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title="إضافة لاجتماع">
           <FaPlusSquare size={16} />
           <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">اجتماع</span>
         </button>
-        <button onClick={handleShare} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title="مشاركة">
+        <button onClick={handleShare} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title="مشاركة">
           <FaShareAlt size={16} />
           <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">مشاركة</span>
         </button>
-        <button onClick={handleCopy} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title="نسخ">
+        <button onClick={handleCopy} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title="نسخ">
           <FaCopy size={16} />
           <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">نسخ</span>
         </button>
-        <button onClick={toggleFavorite} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-yellow-400 hover:bg-white/10 transition-colors" title="إضافة للمفضلة">
+        <button onClick={toggleFavorite} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-yellow-400 hover:bg-white/10 transition-colors" title="إضافة للمفضلة">
           <FaStar size={16} />
           <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">مفضلة</span>
         </button>
         <div className="w-px h-6 bg-white/20 mx-0.5"></div>
-        <button onClick={() => setSelectedVerses([])} className="px-2.5 py-1.5 flex flex-col items-center justify-center rounded-xl text-red-400 hover:bg-white/10 transition-colors" title="إلغاء التحديد">
+        <button onClick={() => setSelectedVerses([])} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-red-400 hover:bg-white/10 transition-colors" title="إلغاء التحديد">
           <FaTimes size={16} />
           <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">إلغاء</span>
         </button>

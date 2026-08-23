@@ -1,7 +1,7 @@
 // app/auth/signin/page.tsx
 "use client";
 import { useEffect, useState } from "react";
-import LogoHeader from "@/components/LogoHeader";
+import LogoHeader from "@/components/home/LogoHeader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";

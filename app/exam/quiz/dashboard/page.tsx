@@ -252,7 +252,7 @@ export default function Dashboard() {
       <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
         <div className="flex items-center gap-0.5">
           <Link
-            href="/exam"
+            href="/"
             className="p-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition shadow-sm"
             title="رجوع"
           >

@@ -15,8 +15,8 @@ import {
   FaInfoCircle,
   FaGoogle,
 } from "react-icons/fa";
-import LogoHeader from "../LogoHeader";
-import UserHeader from "../UserHeader";
+import LogoHeader from "./LogoHeader";
+import UserHeader from "./UserHeader";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import Background from "./Background";
@@ -25,13 +25,13 @@ import Widgets from "./Widgets";
 const sections = [
   { name: "الامتحانات", href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
   { name: "نوتة التحضير الذكية", href: "/preparation", icon: <FaFileAlt /> },
+  { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   { name: "الشات بوت", href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
-  { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
   { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
+  { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
   // { name: "المقالات", href: "/articles", icon: <FaFileAlt /> },
   // { name: "حول", href: "/about", icon: <FaInfoCircle /> },
   // { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
-  { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
   // { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
   // { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
 ];
@@ -271,7 +271,7 @@ export default function HomeClient() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.8 }}
-              className={`absolute ${isMobile ? 'top-[48%] left-[29%]' : 'top-[43%] left-[37%]'} z-10 flex items-center justify-center pointer-events-none`}
+              className={`absolute ${isMobile ? 'top-[48%] left-[29%]' : 'top-[55%] left-[37%]'} z-10 flex items-center justify-center pointer-events-none`}
               style={{ transform: "translate(-50%, -50%)" }}
             >
               <motion.div animate={eagleControls} className="w-[50vw] max-w-12.25 md:max-w-18.75 lg:max-w-25">
@@ -313,7 +313,7 @@ export default function HomeClient() {
                       <div className="leading-tight text-[9px] md:text-[11px] lg:text-xs font-bold z-10 px-1">{section.name}</div>
                     </button>
                   ) : (
-                      <Link href={section.href} prefetch={true}>
+                    <Link href={section.href} prefetch={true}>
                       <div className="hover:bg-blue-500 bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-xl border border-gray-200 dark:border-gray-800 transition-all duration-300 cursor-pointer hover:scale-110 text-gray-800 dark:text-gray-200 hover:text-white group relative overflow-hidden">
                         <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div className="text-xl md:text-2xl lg:text-3xl z-10">{section.icon}</div>
