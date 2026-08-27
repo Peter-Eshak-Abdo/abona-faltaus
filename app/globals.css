@@ -8,7 +8,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --spacing: 0.25rem;
+  --spacing: 1rem;
+  /* --spacing: 0.25rem; */
   /* 1. Colors & Variables (Cleaned) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -241,7 +242,7 @@
     overflow-x: hidden;
     overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
-    
+
     /* iOS Safe Area Support */
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
