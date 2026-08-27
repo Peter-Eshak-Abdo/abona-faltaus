@@ -287,7 +287,6 @@ export default function ChatBot() {
           <Link href="/" prefetch={true} className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition" title="الرجوع للصفحة الرئيسية">
             <FaArrowRight size={16} />
           </Link>
-
           <PersonaSelector
             selectedBotId={selectedBotId}
             onSelectBot={handleSelectPersona}

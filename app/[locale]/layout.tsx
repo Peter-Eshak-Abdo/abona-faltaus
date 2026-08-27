@@ -288,7 +288,7 @@ export default async function LocaleLayout({ children, params }: Props) {
               <PwaManager />
               <Providers>
                 <LocaleSync />
-                <UnifiedGlobalHeader />
+                {/* <UnifiedGlobalHeader /> */}
                 <ClientLayoutAnimation>{children}</ClientLayoutAnimation>
               </Providers>
             </LoadingProvider>

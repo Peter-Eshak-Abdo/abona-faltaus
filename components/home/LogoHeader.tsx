@@ -22,7 +22,7 @@ export default function LogoHeader() {
           {t("appName")}
         </h1>
         <div className="flex items-center gap-0.5 shrink-0">
-          <LanguageSwitcher compact className="hidden sm:inline-flex" />
+          {/* <LanguageSwitcher compact className="hidden sm:inline-flex" /> */}
           <Image
             src="/images/eagle.webp"
             alt="Logo"
@@ -35,9 +35,9 @@ export default function LogoHeader() {
           />
         </div>
       </div>
-      <div className="sm:hidden mt-0.25">
+      {/* <div className="sm:hidden mt-0.25">
         <LanguageSwitcher compact />
-      </div>
+      </div> */}
     </div>
   );
 }

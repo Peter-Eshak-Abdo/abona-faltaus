@@ -206,7 +206,7 @@ export default function AgpeyaPage() {
     <div
       dir="rtl"
       className={cn(
-        "min-h-screen transition-colors duration-300 font-sans pb-6",
+        "min-h-screen transition-colors duration-300 font-sans pb-1",
         prayerMode
           ? "bg-stone-950 text-stone-100"
           : "bg-linear-to-b from-amber-50/50 via-stone-50 to-amber-50/20 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-stone-900 dark:text-zinc-100"
@@ -221,7 +221,7 @@ export default function AgpeyaPage() {
             : "bg-white/80 dark:bg-zinc-900/80 border-stone-200 dark:border-zinc-800 shadow-xs"
         )}
       >
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-0.5">
+        <div className="max-w-8xl mx-auto flex items-center mx-1 justify-between gap-0.5">
           <div className="flex items-center gap-0.5">
             <Link
               href="/"
@@ -248,7 +248,7 @@ export default function AgpeyaPage() {
             {/* Prayer Mode Toggle */}
             <Button
               variant={prayerMode ? "default" : "outline"}
-              size="sm"
+              // size="sm"
               onClick={() => {
                 setPrayerMode(!prayerMode);
                 toast(prayerMode ? "تم إيقاف وضع الصلاة" : "تم تفعيل وضع الخشوع والصلاة");
@@ -305,7 +305,7 @@ export default function AgpeyaPage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-5xl mx-auto px-1 pt-1 space-y-1">
+      <main className="max-w-8xl mx-auto px-1 pt-1 space-y-1">
         {/* Hours Selector Horizontal Bar */}
         {!prayerMode && (
           <section className="space-y-0.5">
@@ -446,7 +446,7 @@ export default function AgpeyaPage() {
           <div className="flex items-center gap-0.5">
             <Button
               variant="outline"
-              size="sm"
+              // size="sm"
               onClick={() => setAutoScroll(!autoScroll)}
               className={cn(
                 "rounded-xl gap-0.5 h-2 text-xs font-bold",
@@ -476,7 +476,7 @@ export default function AgpeyaPage() {
           <div className="flex items-center gap-0.5">
             <Button
               variant="ghost"
-              size="sm"
+              // size="sm"
               onClick={() => {
                 const fullPrayerText = [
                   ...currentHour.introduction.flatMap((i) => i.text),
@@ -497,7 +497,7 @@ export default function AgpeyaPage() {
 
             <Button
               variant="ghost"
-              size="sm"
+              // size="sm"
               onClick={() => {
                 const allKeys: Record<string, boolean> = {};
                 allKeys[`${currentHour.id}_intro`] = true;
@@ -724,7 +724,7 @@ export default function AgpeyaPage() {
                   : "bg-linear-to-b from-amber-50/40 to-white dark:from-zinc-900 dark:to-zinc-900 border-amber-200 dark:border-amber-900/40"
               )}
             >
-              <div className="absolute top-0 right-0 bottom-0 w-1.5 bg-amber-600" />
+              <div className="absolute top-0 right-0 bottom-0 w-0.5 bg-amber-600" />
               <CardHeader className="py-0.5 px-1 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
                 <div>
                   <Badge className="bg-amber-700 text-white text-[11px] mb-1">

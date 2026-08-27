@@ -2,15 +2,13 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import {
   FaChurch,
   FaSearch,
-  FaBookmark,
   FaListUl,
-  FaSlidersH,
-  FaCross,
-  FaMusic,
-  FaAngleDown,
+  FaThLarge,
+  FaArrowRight,
 } from 'react-icons/fa';
 import {
   LiturgyDocument,
@@ -25,14 +23,7 @@ import LiturgyVerseCard from './LiturgyVerseCard';
 import LiturgyHymnModal from './LiturgyHymnModal';
 import LiturgyPresentationMode from './LiturgyPresentationMode';
 
-import TasbehaClient from '@/components/tasbeha/TasbehaClient';
-import UnifiedAl7anClient from '@/app/[locale]/al7an/page';
-import BibleReaderPage from '@/app/[locale]/bible/page';
-import AgpeyaPage from '@/app/[locale]/agpeya/page';
-import SynaxariumPage from '@/app/[locale]/synaxarium/page';
-
 export default function LiturgiesClient() {
-  const [liturgicalTab, setLiturgicalTab] = useState<'liturgy' | 'tasbeha' | 'alhan' | 'bible' | 'agpeya' | 'synaxarium'>('liturgy');
   const [activeLiturgy, setActiveLiturgy] = useState<LiturgyDocument>(ALL_LITURGIES[0]);
   const [activeRole, setActiveRole] = useState<ParticipantRole>('all');
   const [enabledLanguages, setEnabledLanguages] = useState<Record<LiturgyLanguage, boolean>>({
@@ -49,6 +40,7 @@ export default function LiturgiesClient() {
   const [activeHymnModal, setActiveHymnModal] = useState<LiturgyHymnRef | null>(null);
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
   const [showIndexDrawer, setShowIndexDrawer] = useState(false);
+  const [showServicesDrawer, setShowServicesDrawer] = useState(false);
 
   // Persistence in localStorage
   useEffect(() => {
@@ -97,148 +89,72 @@ export default function LiturgiesClient() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col selection:bg-amber-500/30 selection:text-amber-200" dir="rtl">
-      {/* Master Hub Switcher Tabs */}
-      <div className="bg-neutral-900 border-b border-neutral-800 px-0.5 py-0.5 sticky top-0 z-30 shadow-md">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-0.5 overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-0.5">
-            <button
-              onClick={() => setLiturgicalTab('liturgy')}
-              className={`px-0.5 py-0.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-0.5 whitespace-nowrap ${
-                liturgicalTab === 'liturgy'
-                  ? 'bg-amber-500 text-neutral-950 shadow-md shadow-amber-500/20'
-                  : 'bg-neutral-800/80 text-neutral-300 hover:bg-neutral-700 hover:text-white'
-              }`}
-            >
-              <FaChurch />
-              <span>القداس</span>
-            </button>
-
-            <button
-              onClick={() => setLiturgicalTab('tasbeha')}
-              className={`px-0.5 py-0.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-0.5 whitespace-nowrap ${
-                liturgicalTab === 'tasbeha'
-                  ? 'bg-blue-500 text-neutral-950 shadow-md shadow-blue-500/20'
-                  : 'bg-neutral-800/80 text-neutral-300 hover:bg-neutral-700 hover:text-white'
-              }`}
-            >
-              <FaMusic />
-              <span>التسبحة والإبصالمودية</span>
-            </button>
-
-            <button
-              onClick={() => setLiturgicalTab('alhan')}
-              className={`px-0.5 py-0.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-0.5 whitespace-nowrap ${
-                liturgicalTab === 'alhan'
-                  ? 'bg-indigo-500 text-neutral-950 shadow-md shadow-indigo-500/20'
-                  : 'bg-neutral-800/80 text-neutral-300 hover:bg-neutral-700 hover:text-white'
-              }`}
-            >
-              <FaMusic />
-              <span>الألحان الكنسية</span>
-            </button>
-
-            <button
-              onClick={() => setLiturgicalTab('bible')}
-              className={`px-0.5 py-0.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-0.5 whitespace-nowrap ${
-                liturgicalTab === 'bible'
-                  ? 'bg-amber-400 text-neutral-950 shadow-md shadow-amber-400/20'
-                  : 'bg-neutral-800/80 text-neutral-300 hover:bg-neutral-700 hover:text-white'
-              }`}
-            >
-              <FaSlidersH />
-              <span>الكتاب المقدس</span>
-            </button>
-
-            <button
-              onClick={() => setLiturgicalTab('agpeya')}
-              className={`px-0.5 py-0.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-0.5 whitespace-nowrap ${
-                liturgicalTab === 'agpeya'
-                  ? 'bg-yellow-500 text-neutral-950 shadow-md shadow-yellow-500/20'
-                  : 'bg-neutral-800/80 text-neutral-300 hover:bg-neutral-700 hover:text-white'
-              }`}
-            >
-              <FaCross />
-              <span>الأجبية المقدسة</span>
-            </button>
-
-            <button
-              onClick={() => setLiturgicalTab('synaxarium')}
-              className={`px-0.5 py-0.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-0.5 whitespace-nowrap ${
-                liturgicalTab === 'synaxarium'
-                  ? 'bg-rose-500 text-neutral-950 shadow-md shadow-rose-500/20'
-                  : 'bg-neutral-800/80 text-neutral-300 hover:bg-neutral-700 hover:text-white'
-              }`}
-            >
-              <FaChurch />
-              <span>السنكسار</span>
-            </button>
-          </div>
-        </div>
+      {/* Top Standalone Navigation Bar */}
+      <div className="hidden md:block">
+        <LiturgyNavbar
+          activeLiturgy={activeLiturgy}
+          onSelectLiturgy={(l) => {
+            setActiveLiturgy(l);
+            setActiveGroupId(undefined);
+          }}
+          activeRole={activeRole}
+          onSelectRole={setActiveRole}
+          enabledLanguages={enabledLanguages}
+          onToggleLanguage={toggleLanguage}
+          layoutMode={layoutMode}
+          onToggleLayout={setLayoutMode}
+          fontSize={fontSize}
+          onChangeFontSize={handleFontSizeChange}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onOpenPresentation={() => setIsPresentationOpen(true)}
+        />
       </div>
 
-      {liturgicalTab === 'tasbeha' ? (
-        <div className="flex-1">
-          <TasbehaClient />
-        </div>
-      ) : liturgicalTab === 'alhan' ? (
-        <div className="flex-1">
-          <UnifiedAl7anClient />
-        </div>
-      ) : liturgicalTab === 'bible' ? (
-        <div className="flex-1">
-          <BibleReaderPage />
-        </div>
-      ) : liturgicalTab === 'agpeya' ? (
-        <div className="flex-1">
-          <AgpeyaPage />
-        </div>
-      ) : liturgicalTab === 'synaxarium' ? (
-        <div className="flex-1">
-          <SynaxariumPage />
-        </div>
-      ) : (
-        <>
-          {/* Top Navbar - Hidden on Mobile */}
-          <div className="hidden md:block">
-            <LiturgyNavbar
-              activeLiturgy={activeLiturgy}
-              onSelectLiturgy={(l) => {
-                setActiveLiturgy(l);
-                setActiveGroupId(undefined);
-              }}
-              activeRole={activeRole}
-              onSelectRole={setActiveRole}
-              enabledLanguages={enabledLanguages}
-              onToggleLanguage={toggleLanguage}
-              layoutMode={layoutMode}
-              onToggleLayout={setLayoutMode}
-              fontSize={fontSize}
-              onChangeFontSize={handleFontSizeChange}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onOpenPresentation={() => setIsPresentationOpen(true)}
-            />
-          </div>
-
-          {/* Hero Banner for Selected Liturgy */}
-          <div className="relative overflow-hidden border-b border-neutral-800 bg-neutral-900/60 py-0.5 px-0.5 md:px-0.5">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-0.5">
+      {/* Hero Banner for Selected Liturgy */}
+      <div className="relative overflow-hidden border-b border-neutral-800 bg-neutral-900/60 py-1 px-1">
+        <div className="max-w-8xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-1">
           <div className="space-y-0.5">
             <div className="flex items-center gap-0.5">
-              <span className="p-0.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 text-lg">
+              <Link
+                href="/"
+                className="p-1 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition"
+                title="الرجوع للرئيسية"
+              >
+                <FaArrowRight size={14} />
+              </Link>
+              <span className="p-1 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 text-base">
                 <FaChurch />
               </span>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+              <h1 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">
                 {activeLiturgy.title.arabic}
               </h1>
             </div>
-            <p className="text-xs md:text-sm text-neutral-400 max-w-2xl leading-relaxed">
+            <p className="text-xs text-neutral-400 max-w-2xl leading-relaxed">
               {activeLiturgy.description}
             </p>
           </div>
 
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setShowServicesDrawer(!showServicesDrawer)}
+              className="px-2 py-1 rounded-xl text-xs font-bold bg-neutral-800 text-amber-400 border border-neutral-700 hover:bg-neutral-700 transition flex items-center gap-1"
+            >
+              <FaThLarge />
+              <span>باقي الصلوات (تسبحة، سنكسار...)</span>
+            </button>
+            <button
+              onClick={() => setShowIndexDrawer(!showIndexDrawer)}
+              className="px-2 py-1 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition flex items-center gap-1"
+            >
+              <FaListUl />
+              <span>فهرس أجزاء القداس</span>
+            </button>
+          </div>
+        </div>
+
         {/* Quick Liturgy Switcher Buttons */}
-        <div className="max-w-8xl mx-auto mt-0.5 pt-0.5 border-t border-neutral-800/80 flex items-center gap-0.5 overflow-x-auto pb-1 no-scrollbar">
+        <div className="max-w-8xl mx-auto mt-1 pt-1 border-t border-neutral-800/80 flex items-center gap-1 overflow-x-auto pb-0.5 no-scrollbar">
           {ALL_LITURGIES.map((lit) => (
             <button
               key={lit.id}
@@ -246,10 +162,10 @@ export default function LiturgiesClient() {
                 setActiveLiturgy(lit);
                 setActiveGroupId(undefined);
               }}
-              className={`px-0.5 py-0.5 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap border transition flex items-center gap-0.5 ${
+              className={`px-2 py-1 rounded-xl text-xs font-bold whitespace-nowrap border transition flex items-center gap-1 ${
                 activeLiturgy.id === lit.id
                   ? 'bg-amber-500 text-neutral-950 border-amber-400 shadow-md shadow-amber-500/20'
-                  : 'bg-neutral-900/90 text-neutral-300 border-neutral-800 hover:bg-neutral-800 hover:text-white'
+                  : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:bg-neutral-800 hover:text-white'
               }`}
             >
               <span>{lit.title.arabic}</span>
@@ -299,7 +215,6 @@ export default function LiturgiesClient() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
 
       {/* Main Content: Liturgy Groups & Sections */}
       <main className="flex-1 max-w-8xl mx-auto w-full p-0.5 md:p-0.5 space-y-0.5">
@@ -380,8 +295,6 @@ export default function LiturgiesClient() {
           liturgy={activeLiturgy}
           onClose={() => setIsPresentationOpen(false)}
         />
-      )}
-        </>
       )}
     </div>
   );

@@ -251,12 +251,12 @@ export default function SynaxariumPage() {
   const currentMonthMeta = COPTIC_MONTHS.find((m) => m.id === selectedMonth) || COPTIC_MONTHS[0];
 
   return (
-    <div className="min-h-screen pb-4 bg-stone-50/60 dark:bg-zinc-950 text-stone-900 dark:text-zinc-100" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="min-h-screen pb-1 bg-stone-50/60 dark:bg-zinc-950 text-stone-900 dark:text-zinc-100" dir={isRtl ? "rtl" : "ltr"}>
       <audio ref={audioRef} className="hidden" />
 
       {/* Sticky Hero Bar */}
       <div className="border-b border-amber-900/10 dark:border-amber-500/10 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-30 shadow-xs">
-        <div className="container mx-auto px-1 py-0.5 max-w-6xl flex flex-col md:flex-row items-center justify-between gap-0.5">
+        <div className="mx-auto px-2 py-0.5 max-w-8xl flex flex-col md:flex-row items-center justify-between gap-0.5">
           {/* Header title */}
           <div className="flex items-center gap-0.5">
             <div className="w-3 h-3 rounded-xl bg-red-700/10 dark:bg-red-500/10 text-red-700 dark:text-red-400 flex items-center justify-center font-bold">
@@ -284,7 +284,7 @@ export default function SynaxariumPage() {
                 className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
                 title="تصغير الخط"
               >
-                <ZoomOut className="w-2.5 h-2.5" />
+                <ZoomOut className="w-2 h-2" />
               </button>
               <span className="px-0.5 text-xs font-bold text-stone-700 dark:text-zinc-300 font-mono">{fontSize}</span>
               <button
@@ -292,7 +292,7 @@ export default function SynaxariumPage() {
                 className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
                 title="تكبير الخط"
               >
-                <ZoomIn className="w-2.5 h-2.5" />
+                <ZoomIn className="w-2 h-2" />
               </button>
             </div>
 
@@ -308,27 +308,27 @@ export default function SynaxariumPage() {
               href="/readings"
               className="h-2 text-xs font-semibold px-0.5 rounded-lg flex items-center gap-0.5 border border-stone-200 dark:border-zinc-700 text-stone-700 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-zinc-800"
             >
-              <BookOpen className="w-2.5 h-2.5 text-amber-700" />
+              <BookOpen className="w-2 h-2 text-amber-700" />
               <span>القطمارس اليومي</span>
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-0.5 py-1 max-w-6xl space-y-1">
+      <div className="container mx-auto px-0.5 py-1 max-w-8xl space-y-1">
         {/* Search & Month Selector Card */}
         <Card className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs overflow-hidden">
           <CardContent className="p-1 space-y-0.5">
             {/* Search Bar */}
             <form onSubmit={handleSearchSubmit} className="flex gap-0.5">
               <div className="relative flex-1">
-                <Search className="absolute right-0.5 top-1/2 -translate-y-1/2 text-stone-400 w-2.5 h-2.5" />
+                <Search className="absolute right-0.5 top-1/3 -translate-y-1/2 text-stone-400 w-1.5 h-1.5" />
                 <Input
                   type="text"
                   placeholder="ابحث باسم القديس، الشهيد، الدير، أو الحدث..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="ps-3 pe-2 bg-stone-50 dark:bg-zinc-800/80 border-stone-200 dark:border-zinc-700 rounded-xl text-xs sm:text-sm h-2.5"
+                  className="ps-3 pe-2 bg-stone-50 dark:bg-zinc-800/80 border-stone-200 dark:border-zinc-700 rounded-xl text-xs sm:text-sm h-3.5"
                 />
                 {searchQuery && (
                   <button
@@ -336,13 +336,13 @@ export default function SynaxariumPage() {
                     onClick={clearSearch}
                     className="absolute left-0.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
                   >
-                    <X className="w-2.5 h-2.5" />
+                    <X className="w-2 h-2" />
                   </button>
                 )}
               </div>
               <Button
                 type="submit"
-                className="bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold px-1 h-2.5"
+                className="bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold px-1 h-2"
               >
                 بحث
               </Button>
@@ -552,7 +552,7 @@ export default function SynaxariumPage() {
             <div className="p-1 border-t border-stone-100 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-800/40 flex items-center justify-between">
               <Button
                 variant="outline"
-                size="sm"
+                // size="sm"
                 onClick={() => playStoryNarration(activeModalStory.id, activeModalStory.textAr || activeModalStory.textEn)}
                 className="text-xs font-semibold flex items-center gap-0.25"
               >
@@ -628,56 +628,56 @@ function StoryCard({
           </Badge>
         </div>
 
-        <div className="flex items-center gap-0.25 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0">
           {/* Audio */}
           <Button
-            size="sm"
+            // size="sm"
             variant="ghost"
             onClick={onPlay}
             disabled={isLoadingAudio}
             className={cn(
-              "h-2 w-2 p-0 rounded-lg",
+              "h-2 w-2 px-1rounded-lg",
               isPlaying ? "text-amber-700 bg-amber-100 dark:bg-amber-950/60" : "text-stone-500"
             )}
             title={isPlaying ? "إيقاف القراءة" : "استماع للسيرة"}
           >
             {isLoadingAudio ? (
-              <Loader2 className="w-2.5 h-2.5 animate-spin" />
+              <Loader2 className="w-1.5 h-1.5 animate-spin" />
             ) : isPlaying ? (
-              <VolumeX className="w-2.5 h-2.5" />
+              <VolumeX className="w-1.5 h-1.5" />
             ) : (
-              <Volume2 className="w-2.5 h-2.5" />
+              <Volume2 className="w-1.5 h-1.5" />
             )}
           </Button>
 
           {/* Copy */}
           <Button
-            size="sm"
+            // size="sm"
             variant="ghost"
             onClick={handleCopy}
-            className="h-2 w-2 p-0 rounded-lg text-stone-500"
+            className="h-2 w-2 px-1 rounded-lg text-stone-500"
             title="نسخ السيرة"
           >
-            {copied ? <Check className="w-2.5 h-2.5 text-green-600" /> : <Copy className="w-2.5 h-2.5" />}
+            {copied ? <Check className="w-1.5 h-1.5 text-green-600" /> : <Copy className="w-1.5 h-1.5" />}
           </Button>
 
           {/* Bookmark */}
           <Button
-            size="sm"
+            // size="sm"
             variant="ghost"
             onClick={onBookmark}
             className={cn(
-              "h-2 w-2 p-0 rounded-lg",
+              "h-2 w-2 px-1 rounded-lg",
               isBookmarked ? "text-amber-700" : "text-stone-400"
             )}
             title={isBookmarked ? "محفوظ في المفضلة" : "حفظ في المفضلة"}
           >
-            {isBookmarked ? <BookmarkCheck className="w-2.5 h-2.5" /> : <Bookmark className="w-2.5 h-2.5" />}
+            {isBookmarked ? <BookmarkCheck className="w-1.5 h-1.5" /> : <Bookmark className="w-1.5 h-1.5" />}
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="p-1 space-y-0.5">
+      <CardContent className="p-0.5 space-y-0.5">
         <div
           className={cn(
             "text-stone-800 dark:text-zinc-200 leading-relaxed font-serif text-justify transition-all",
@@ -697,9 +697,9 @@ function StoryCard({
 
           <Button
             variant="ghost"
-            size="sm"
+            // size="sm"
             onClick={onExpand}
-            className="text-xs text-stone-600 dark:text-zinc-400 hover:text-amber-800"
+            className="text-xs text-stone-600 dark:text-zinc-400 hover:text-amber-800 pe-3 left-1"
           >
             فتح في نافذة كاملة ↗
           </Button>

@@ -14,6 +14,8 @@ import {
   FaCog,
   FaGoogle,
   FaSun,
+  FaPray,
+  FaBookOpen,
 } from "react-icons/fa";
 import LogoHeader from "./LogoHeader";
 import UserHeader from "./UserHeader";
@@ -38,9 +40,13 @@ export default function HomeClient() {
   const t = useTranslations("Home");
   const sections = useMemo(
     () => [
-      { name: "الليتورجيا والصلوات", href: "/liturgies", icon: <FaChurch /> },
+      { name: "القداسات", href: "/liturgies", icon: <FaChurch /> },
+      { name: "التسبحة", href: "/tasbeha", icon: <FaMusic /> },
+      { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
+      { name: "الكتاب المقدس", href: "/bible", icon: <FaBookOpen /> },
+      { name: "الأجبية", href: "/agpeya", icon: <FaPray /> },
+      { name: "السنكسار", href: "/synaxarium", icon: <FaSun /> },
       { name: t("sections.preparation"), href: "/preparation", icon: <FaFileAlt /> },
-      { name: t("sections.synaxarium"), href: "/synaxarium", icon: <FaChurch /> },
       { name: t("sections.exams"), href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
       { name: t("sections.chat"), href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
       { name: t("sections.settings"), href: "/settings", icon: <FaCog /> },

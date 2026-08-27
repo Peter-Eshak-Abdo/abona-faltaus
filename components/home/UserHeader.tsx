@@ -50,7 +50,7 @@ export default function UserHeader({ user }: UserHeaderProps) {
           </p>
         </div>
       </Link>
-      <LanguageSwitcher compact />
+      {/* <LanguageSwitcher compact /> */}
     </div>
   );
 }

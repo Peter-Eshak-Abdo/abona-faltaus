@@ -70,7 +70,7 @@ export default function TasbehaNavbar({
     <div className="sticky top-0 z-30 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800 shadow-xl" dir="rtl">
       {/* 1. Top Bar: Tasbeha Types Tabs Selector */}
       <div className="px-1 py-0.5 flex items-center justify-between gap-0.5 overflow-x-auto no-scrollbar border-b border-white/5">
-        <div className="flex items-center gap-0.5 shrink-0">
+        {/* <div className="flex items-center gap-0.5 shrink-0">
           {ALL_TASBEHA.map((tas) => {
             const isActive = activeTasbeha.id === tas.id;
             return (
@@ -88,23 +88,15 @@ export default function TasbehaNavbar({
               </button>
             );
           })}
-        </div>
+        </div> */}
 
         {/* Presentation Fullscreen Button */}
-        <button
-          onClick={onOpenPresentation}
-          className="shrink-0 px-0.5 py-0.5 rounded-xl text-xs md:text-sm font-bold bg-neutral-900 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-2 transition"
-          title="شاشة الخورس والتسبيح ملء الشاشة"
-        >
-          <FaTv className="text-blue-400" />
-          <span className="hidden sm:inline">شاشة التسبيح</span>
-        </button>
       </div>
 
       {/* 2. Controls & Filter Bar */}
-      <div className="px-1 py-0.5 flex flex-wrap items-center justify-between gap-0.5">
+      {/* <div className="px-1 py-0.5 flex flex-wrap items-center justify-between gap-0.5"> */}
         {/* Participant Role Switcher */}
-        <div className="flex items-center bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0">
+        {/* <div className="flex items-center bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0">
           {ROLES.map((r) => {
             const isSelected = activeRole === r.id;
             const Icon = r.icon;
@@ -123,10 +115,10 @@ export default function TasbehaNavbar({
               </button>
             );
           })}
-        </div>
+        </div> */}
 
         {/* Tone Selector: Adam / Watos / Both */}
-        <div className="flex items-center bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0 text-xs">
+        {/* <div className="flex items-center bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0 text-xs">
           <button
             onClick={() => onSelectTone('both')}
             className={`px-0.5 py-0.5 rounded-lg font-bold transition ${
@@ -153,7 +145,7 @@ export default function TasbehaNavbar({
             <FaMoon className="text-[10px]" />
             <span>واطس</span>
           </button>
-        </div>
+        </div> */}
 
         {/* Language Toggles */}
         <div className="flex items-center gap-0.25 bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0 text-xs">
@@ -201,6 +193,14 @@ export default function TasbehaNavbar({
 
         {/* Layout & Font Size Controllers */}
         <div className="flex items-center gap-0.5">
+        <button
+          onClick={onOpenPresentation}
+          className="shrink-0 px-0.5 py-0.5 rounded-xl text-xs md:text-sm font-bold bg-neutral-900 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-2 transition"
+          title="شاشة الخورس والتسبيح ملء الشاشة"
+        >
+          <FaTv className="text-blue-400" />
+          <span className="hidden sm:inline">شاشة التسبيح</span>
+        </button>
           {/* Columns / Stacked View */}
           <div className="hidden sm:flex items-center bg-neutral-900 p-0.5 rounded-xl border border-neutral-800">
             <button
@@ -274,6 +274,6 @@ export default function TasbehaNavbar({
           </div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 }
