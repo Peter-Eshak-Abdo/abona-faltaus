@@ -1,19 +1,19 @@
 "use client";
 export const dynamic = "force-dynamic";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   FaMusic,
   FaBook,
   FaChurch,
   FaFileAlt,
   FaPenFancy,
-  FaPlayCircle,
   FaCog,
-  FaInfoCircle,
   FaGoogle,
+  FaSun,
 } from "react-icons/fa";
 import LogoHeader from "./LogoHeader";
 import UserHeader from "./UserHeader";
@@ -21,20 +21,6 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import Background from "./Background";
 import Widgets from "./Widgets";
-
-const sections = [
-  { name: "الامتحانات", href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
-  { name: "نوتة التحضير الذكية", href: "/preparation", icon: <FaFileAlt /> },
-  { name: "الإعدادات", href: "/settings", icon: <FaCog /> },
-  { name: "الشات بوت", href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
-  { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
-  { name: "الكتاب المقدس", href: "/bible", icon: <FaBook /> },
-  // { name: "المقالات", href: "/articles", icon: <FaFileAlt /> },
-  // { name: "حول", href: "/about", icon: <FaInfoCircle /> },
-  // { name: "الشروط والاحكام", href: "/terms", icon: <FaInfoCircle /> },
-  // { name: "السياسة والخصوصية", href: "/privacy", icon: <FaFileAlt /> },
-  // { name: "التقييم", href: "/review", icon: <FaFileAlt /> },
-];
 
 const getCopticDate = () => {
   const date = new Date();
@@ -49,6 +35,18 @@ const getCopticDate = () => {
 };
 
 export default function HomeClient() {
+  const t = useTranslations("Home");
+  const sections = useMemo(
+    () => [
+      { name: "الليتورجيا والصلوات", href: "/liturgies", icon: <FaChurch /> },
+      { name: t("sections.preparation"), href: "/preparation", icon: <FaFileAlt /> },
+      { name: t("sections.synaxarium"), href: "/synaxarium", icon: <FaChurch /> },
+      { name: t("sections.exams"), href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
+      { name: t("sections.chat"), href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
+      { name: t("sections.settings"), href: "/settings", icon: <FaCog /> },
+    ],
+    [t],
+  );
   const [showMenu, setShowMenu] = useState(false);
   const [logoPos, setLogoPos] = useState("center");
   const eagleControls = useAnimation();
@@ -217,7 +215,7 @@ export default function HomeClient() {
             <Link href="/auth/signin">
               <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 shadow-lg px-1 py-0.5 rounded-full flex items-center gap-0.5 cursor-pointer hover:scale-105 transition-transform text-xs sm:text-sm">
                 <FaGoogle className="text-blue-500" />
-                <span className="font-bold text-gray-800 dark:text-gray-200">سجل دخولك بحساب جوجل</span>
+                <span className="font-bold text-gray-800 dark:text-gray-200">{t("signInGoogle")}</span>
               </div>
             </Link>
           </motion.div>
@@ -260,7 +258,7 @@ export default function HomeClient() {
             transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
             className="absolute top-[65%] md:top-[70%] lg:top-[75%] left-1/2 -translate-x-1/2 z-10 bg-blue-600/90 text-white px-1 py-1.5 rounded-full text-sm md:text-base font-bold shadow-lg backdrop-blur-sm pointer-events-none whitespace-nowrap"
           >
-            انقر للاستكشاف
+            {t("exploreHint")}
           </motion.div>
         )}
 
@@ -304,9 +302,9 @@ export default function HomeClient() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        toast.error("برجاء تسجيل الدخول أولاً");
+                        toast.error(t("loginRequired"));
                       }}
-                      title="برجاء تسجيل الدخول أولاً"
+                      title={t("loginRequired")}
                       className="bg-gray-400/90 dark:bg-gray-700/90 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-md border border-gray-400 dark:border-gray-600 transition-all duration-300 cursor-not-allowed text-gray-200 dark:text-gray-400 group relative overflow-hidden opacity-75 grayscale"
                     >
                       <div className="text-xl md:text-2xl lg:text-3xl z-10">{section.icon}</div>
@@ -328,19 +326,19 @@ export default function HomeClient() {
         {!showMenu && !isMobile &&
           <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-1 ltr:left-1 rtl:right-1 z-0 pointer-events-none w-full">
             <div className="flex flex-col gap-0.5">
-              <p className="font-bold text-amber-600 dark:text-amber-400">التاريخ القبطي: {copticDate}</p>
-              <p><strong>آخر تحديث:</strong> {lastUpdate || "..."}</p>
+              <p className="font-bold text-amber-600 dark:text-amber-400">{t("copticDate", { date: copticDate })}</p>
+              <p><strong>{t("lastUpdate")}</strong> {lastUpdate || "..."}</p>
               {lastMessage && <p className="italic opacity-70 border-r-2 border-primary pr-0.25">"{lastMessage}"</p>}
-              <p className="text-[10px]">إجمالي التحديثات: <span className="font-bold text-blue-500">{commitCount}</span></p>
+              <p className="text-[10px]">{t("totalUpdates")} <span className="font-bold text-blue-500">{commitCount}</span></p>
             </div>
             <div className="flex justify-center gap-0.25 pointer-events-auto">
-              <Link href="/privacy" className="hover:underline">سياسة الخصوصية (Privacy Policy)</Link>
+              <Link href="/privacy" className="hover:underline">{t("privacy")}</Link>
               <span>•</span>
-              <Link href="/terms" className="hover:underline">الشروط والأحكام (Terms of Service)</Link>
+              <Link href="/terms" className="hover:underline">{t("terms")}</Link>
               <span>•</span>
-              <Link href="/about" className="hover:underline">عن التطبيق (About Us)</Link>
+              <Link href="/about" className="hover:underline">{t("about")}</Link>
             </div>
-            <p className="mt-0.5 flex justify-end pe-2">موقع أبونا فلتاؤوس © {new Date().getFullYear()}</p>
+            <p className="mt-0.5 flex justify-end pe-2">{t("copyright", { year: new Date().getFullYear() })}</p>
           </footer>
         }
       </div>

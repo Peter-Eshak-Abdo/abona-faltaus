@@ -250,7 +250,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   if (gs.phase === 'final') {
     const winners = [...groups].sort((a, b) => b.score - a.score).slice(0, 3);
     return (
-      <div className="h-screen w-screen bg-[#0a0412] text-white p-1 flex flex-col items-center justify-end font-sans pb-1 overflow-hidden relative">
+      <div className="h-screen w-screen bg-[#0a0412] text-white p-0.5 flex flex-col items-center justify-end font-sans pb-1 overflow-hidden relative">
         <AnimatePresence>
           {podiumStep === 0 && (
             <motion.div exit={{ opacity: 0 }} className="absolute inset-0 flex items-center justify-center bg-black z-50">
@@ -267,7 +267,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           {/* المركز الثالث */}
           {winners[2] && (
             <motion.div initial={{ y: "100%" }} animate={{ y: podiumStep >= 1 ? 0 : "100%" }} transition={{ type: "spring", bounce: 0.3 }}
-              className="bg-orange-800 w-1/3 p-1 flex flex-col items-center rounded-t-2xl shadow-lg border-t-4 border-orange-500" style={{ height: '50%' }}>
+              className="bg-orange-800 w-1/3 p-0.5 flex flex-col items-center rounded-t-2xl shadow-lg border-t-4 border-orange-500" style={{ height: '50%' }}>
               <img src={winners[2].saint_image || '/placeholder.png'} className="w-[6vw] h-[7vw] rounded-full object-cover mb-1 shadow-2xl border-2 border-white" />
               <span className="text-[2vw] font-black text-center truncate w-full">{winners[2].group_name}</span>
               <div className="flex flex-wrap justify-center gap-1 opacity-80 text-[1.5vw]">{winners[2].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
@@ -380,7 +380,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
                       `}
                   >
                     {/* علامة الصح للاختيار الصحيح */}
-                    {isCorrect && <div className="absolute -top-3 -right-3 bg-white rounded-full p-1 text-green-500 shadow-xl text-4xl">✅</div>}
+                    {isCorrect && <div className="absolute -top-1 -right-1 bg-white rounded-full p-1 text-green-500 shadow-xl text-4xl">✅</div>}
 
                     <span className="text-[3.5vw] font-black drop-shadow-lg mb-1">{opt}</span>
 
@@ -437,7 +437,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           </motion.div>
         )}
 
-        <div className="fixed bottom-2 left-2 z-50">
+        <div className="fixed bottom-1 left-1 z-50">
           <button
             onClick={() => setIsMuted(!isMuted)}
             className="p-1 bg-white/20 backdrop-blur-lg border-2 border-white/30 rounded-full hover:scale-110 transition-all shadow-2xl"

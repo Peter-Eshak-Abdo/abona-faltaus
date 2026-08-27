@@ -55,21 +55,56 @@ export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt"> & { code?:
 };
 
 export const getQuiz = async (quizIdOrCode: string): Promise<Quiz | null> => {
-  let query = supabase.from("quizzes").select("*");
-  // دعم البحث بكود من 8 إلى 10 أرقام أو بمعرف الـ UUID
-  if (/^\d{8,10}$/.test(quizIdOrCode)) {
-    query = query.eq("code", quizIdOrCode);
-  } else {
-    query = query.eq("id", quizIdOrCode);
+  const clean = quizIdOrCode.trim();
+  const isNumericCode = /^\d{8,10}$/.test(clean);
+
+  let data: any = null;
+
+  if (isNumericCode) {
+    // 1. نبحث أولاً في حقل code إن كان موجوداً
+    try {
+      const res = await supabase.from("quizzes").select("*").eq("code", clean).maybeSingle();
+      if (res.data) data = res.data;
+    } catch {
+      // ignore
+    }
+
+    // 2. إذا لم نجد، نبحث في admin_code
+    if (!data) {
+      try {
+        const res = await supabase.from("quizzes").select("*").eq("admin_code", clean).maybeSingle();
+        if (res.data) data = res.data;
+      } catch {
+        // ignore
+      }
+    }
   }
 
-  const { data, error } = await query.maybeSingle();
+  // 3. إذا لم يكن كود رقمي أو لم نجد بالكود، نبحث بالـ id أو كود نصي
+  if (!data) {
+    try {
+      const res = await supabase.from("quizzes").select("*").eq("id", clean).maybeSingle();
+      if (res.data) data = res.data;
+    } catch {
+      // ignore
+    }
+  }
 
-  if (error || !data) return null;
+  if (!data && !isNumericCode) {
+    try {
+      const res = await supabase.from("quizzes").select("*").eq("admin_code", clean.toUpperCase()).maybeSingle();
+      if (res.data) data = res.data;
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!data) return null;
 
   return {
     id: data.id,
-    code: data.code,
+    code: data.code || data.admin_code || "",
+    admin_code: data.admin_code,
     title: data.title,
     description: data.description,
     questions: data.questions,

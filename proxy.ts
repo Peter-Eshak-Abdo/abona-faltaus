@@ -1,8 +1,17 @@
 import { createServerClient } from "@supabase/ssr";
+import createIntlMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
+import { routing } from "./i18n/routing";
+
+const handleI18nRouting = createIntlMiddleware(routing);
 
 export async function proxy(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  const response = handleI18nRouting(request);
+
+  // Skip session refresh on redirects
+  if (response.status >= 300 && response.status < 400) {
+    return response;
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,33 +23,24 @@ export async function proxy(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            // إجبار الكوكيز إنها تشتغل على لوكال هوست
             const cookieOptions = {
               ...options,
-              secure: process.env.NODE_ENV === "production", // true فقط في برودكشن
+              secure: process.env.NODE_ENV === "production",
               sameSite: "lax" as const,
             };
             request.cookies.set(name, value);
-            supabaseResponse = NextResponse.next({ request });
-            supabaseResponse.cookies.set(name, value, cookieOptions);
+            response.cookies.set(name, value, cookieOptions);
           });
-          supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
-          );
         },
       },
     },
   );
 
-  // سطر حيوي: بيخلي السيرفر يقرأ المستخدم في كل طلب
   await supabase.auth.getUser();
 
-  return supabaseResponse;
+  return response;
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
 };

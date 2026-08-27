@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { CopticSystemPrompt } from "@/lib/prompt";
 import quotesCacheData from "@/public/quotes.json";
 import topicsCacheData from "@/public/verses_topics.json";
+import { searchOrthodoxCorpus, buildOrthodoxRAGPrompt } from "@/lib/orthodox-rag";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -58,12 +59,16 @@ async function searchBible(searchTerm: string) {
   }
 }
 
+import { getSubBotById } from "@/lib/orthodox-subbots";
+
 export async function POST(request: Request) {
   // 1. التحقق من صحة الطلب (Request Validation)
   let messages: any[];
+  let botId: string | undefined;
   try {
     const body = await request.json();
     messages = body?.messages;
+    botId = body?.botId;
     if (!Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
         { error: "Invalid messages format. An array of messages is required." },
@@ -94,9 +99,11 @@ export async function POST(request: Request) {
     );
   }
 
-  // 3. بناء السياق من الآيات وأقوال الآباء
+  const currentBot = getSubBotById(botId);
+
+  // 3. بناء السياق من الآيات وأقوال الآباء والـ RAG الأرثوذكسي
   const searchTerm = normalize(userText);
-  const [bibleVerses, topicVerses, quotes] = await Promise.allSettled([
+  const [bibleVerses, topicVerses, quotes, ragDocs] = await Promise.allSettled([
     searchBible(searchTerm),
     Promise.resolve(
       (topicsCacheData as any[])
@@ -113,6 +120,11 @@ export async function POST(request: Request) {
         )
         .slice(0, 3)
     ),
+    searchOrthodoxCorpus(userText, {
+      limit: 4,
+      threshold: 0.4,
+      category: currentBot.ragCategory
+    }),
   ]);
 
   const finalVerses = [
@@ -121,12 +133,19 @@ export async function POST(request: Request) {
   ].slice(0, 7);
 
   const finalQuotes = quotes.status === "fulfilled" ? quotes.value : [];
+  const finalRagDocs = ragDocs.status === "fulfilled" ? ragDocs.value : [];
+  const ragContext = buildOrthodoxRAGPrompt(userText, finalRagDocs);
 
   const systemPrompt = `${CopticSystemPrompt}
+
+=== هوية وتخصص البوت الحالي (${currentBot.name} - ${currentBot.title}) ===
+${currentBot.systemPrompt}
 
 المراجع المتاحة لسؤال المستخدم:
 الآيات: ${finalVerses.map((v) => `${v.text} (${v.ref})`).join(" | ") || "لا يوجد"}
 الأقوال: ${finalQuotes.map((q: any) => `"${q.quote}" - ${q.author}`).join(" | ") || "لا يوجد"}
+
+${ragContext}
 `;
 
   const coreMessages = messages.map((m: any) => ({

@@ -8,8 +8,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --spacing: 1rem;
-  /* --spacing: 0.25rem; */
+  --spacing: 0.25rem;
   /* 1. Colors & Variables (Cleaned) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -128,7 +127,23 @@
 } */
 
 .font-coptic {
-  font-family: 'CopticStTakla';
+  font-family: 'CopticStTakla', 'Noto Sans Coptic', 'Segoe UI Historic', sans-serif;
+}
+
+.font-sans-ar {
+  font-family: var(--font-vazirmatn), 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+}
+
+.font-sans-en {
+  font-family: var(--font-plus-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.font-coptic-ui {
+  font-family: 'Noto Sans Coptic', 'CopticStTakla', var(--font-vazirmatn), sans-serif;
+}
+
+.font-display-en {
+  font-family: var(--font-libre-caslon), 'Libre Caslon Text', Georgia, serif;
 }
 
 :root {

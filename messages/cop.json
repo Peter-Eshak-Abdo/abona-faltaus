@@ -1,0 +1,92 @@
+{
+  "Common": {
+    "appName": "Ⲁⲃⲟⲩⲛⲁ Ⲫⲁⲗⲧⲁⲱⲥ",
+    "loading": "ϫⲓⲛⲓ...",
+    "save": "ⲥⲱϯ",
+    "saving": "ϫⲓⲛⲓ...",
+    "back": "ⲉⲡⲁϩⲟⲩ",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "Language": {
+    "label": "Ⲁⲥⲡⲓ",
+    "title": "Ⲁⲥⲡⲓ ⲛ̀ϯⲁⲡⲡ",
+    "hint": "Choose UI language / Ⲥⲱⲧⲡ ⲛ̀ⲟⲩⲁⲥⲡⲓ",
+    "ar": "العربية",
+    "en": "English",
+    "cop": "ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ"
+  },
+  "Home": {
+    "signInGoogle": "Ⲥⲓⲛ ⲓⲛ · Google",
+    "exploreHint": "Ⲕⲱϣ ⲉⲑⲣⲉⲕϫⲓⲙⲓ",
+    "loginRequired": "Please sign in first",
+    "welcome": "Ⲭⲉⲣⲉ",
+    "helloUser": "Ⲭⲉⲣⲉ، {name}",
+    "signInPrompt": "Please sign in",
+    "copticDate": "Coptic date: {date}",
+    "lastUpdate": "Last update:",
+    "totalUpdates": "Updates:",
+    "copyright": "Abona Faltaus © {year}",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "about": "About",
+    "sections": {
+      "exams": "Quizzes",
+      "icons": "Icons",
+      "preparation": "Notes",
+      "settings": "Settings",
+      "chat": "Chat",
+      "hymns": "Ⲁⲗϩⲁⲛ",
+      "bible": "Bible",
+      "agpeya": "Ϯⲁ̀ϫⲡⲓⲁ (Agpeya)",
+      "liturgies": "Ϯⲁ̀ⲛⲁⲫⲟⲣⲁ̀ (Liturgies)",
+      "tasbeha": "Ⲡⲓⲧⲱϣ (Tasbeha)",
+      "synaxarium": "Ⲡⲓⲥⲩⲛⲁⲝⲁⲣⲓⲟⲛ",
+      "slides": "Slides AI",
+      "articles": "Articles"
+    }
+  },
+  "Settings": {
+    "title": "Settings",
+    "subtitle": "Account & preferences",
+    "storage": "Storage & connection",
+    "connectionStatus": "Connection",
+    "clearCache": "Clear cache",
+    "appearance": "Appearance",
+    "chooseTheme": "Theme",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeGold": "Coptic Gold",
+    "notifications": "Notifications",
+    "notificationsMain": "Receive notifications",
+    "notificationsMainHint": "Master switch",
+    "notificationsCustomize": "Message types:",
+    "profile": "Profile",
+    "displayName": "Display name",
+    "emailReadOnly": "Email (Read Only)",
+    "saved": "Saved",
+    "saveError": "Error",
+    "cacheCleared": "Cache cleared",
+    "notifOff": "Notifications off",
+    "notifOn": "Notifications on",
+    "notifFail": "Not enabled",
+    "notifError": "Error",
+    "notifEnableFirst": "Enable notifications first",
+    "notifTagFail": "Update failed",
+    "categories": {
+      "verse": {
+        "name": "Daily verse",
+        "desc": "Daily verse and patristic sayings"
+      },
+      "mass": {
+        "name": "Liturgy reminders",
+        "desc": "Alerts for liturgy times"
+      },
+      "confession": {
+        "name": "Confession",
+        "desc": "Confession reminders"
+      }
+    }
+  }
+}

@@ -14,6 +14,8 @@ import TextareaAutosize from "react-textarea-autosize";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
 import { toast } from "sonner";
+import { ORTHODOX_SUB_BOTS, SubBotPersona, getSubBotById } from "@/lib/orthodox-subbots";
+import PersonaSelector from "@/components/chat/PersonaSelector";
 
 const TypingIndicator = () => (
   <motion.div
@@ -44,16 +46,24 @@ export default function ChatBot() {
   const [convs, setConvs] = useState<any[]>([]);
   const [isOnline, setIsOnline] = useState(true);
 
+  // إدارة البوت المتخصص المختار
+  const [selectedBotId, setSelectedBotId] = useState<string>("general-abona");
+  const currentPersona = getSubBotById(selectedBotId);
+
   // إدارة الرسائل والـ Loading يدوياً لضمان الاستقرار
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // مراقبة الـ query param لو جاي من صفحة ثانية زي الكتاب المقدس
+  // مراقبة الـ query param لو جاي من صفحة ثانية زي الكتاب المقدس أو الرابط لبوت معين
   useEffect(() => {
     const promptParam = searchParams.get("prompt");
+    const botParam = searchParams.get("bot");
     if (promptParam) {
       setInput(promptParam);
+    }
+    if (botParam && ORTHODOX_SUB_BOTS.some((b) => b.id === botParam)) {
+      setSelectedBotId(botParam);
     }
   }, [searchParams]);
 
@@ -186,10 +196,13 @@ export default function ChatBot() {
       // 2. حفظ رسالة المستخدم
       await supabase.from("messages").insert([{ conversation_id: currentCid, role: "user", content: text }]);
 
-      // 3. نداء الـ API يدوياً (Streaming)
+      // 3. نداء الـ API يدوياً (Streaming) مع إرسال معرف البوت المتخصص
       const response = await fetch("/api/chat", {
         method: "POST",
-        body: JSON.stringify({ messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })) }),
+        body: JSON.stringify({
+          botId: selectedBotId,
+          messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content }))
+        }),
       });
 
       if (!response.ok) throw new Error("API Error");
@@ -238,6 +251,11 @@ export default function ChatBot() {
     setInput(suggestion);
   };
 
+  const handleSelectPersona = (bot: SubBotPersona) => {
+    setSelectedBotId(bot.id);
+    toast.success(`تم التبديل إلى: ${bot.name}`);
+  };
+
   const handleMicClick = () => { alert("ميزة التسجيل الصوتي ستتوفر قريباً!"); };
   const handleAttachmentClick = () => { alert("ميزة إرفاق الملفات ستتوفر قريباً!"); };
 
@@ -260,51 +278,40 @@ export default function ChatBot() {
               </div>
             ))}
           </ScrollArea>
-          {/* <SheetDescription className="sr-only">
-            المحادثات كلها
-          </SheetDescription> */}
         </SheetContent>
       </Sheet>
 
       {/* --- Header المحادثة --- */}
-      <div className="flex-none border-b border-[#dcc0c1]/30 bg-[#f6f3f2]/80 backdrop-blur-md flex items-center justify-between z-10 shadow-2xl">
-        <Link href="/" prefetch={true} className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
-          <FaArrowRight size={18} />
-        </Link>
-        <div className="flex items-center gap-1">
-          <div className="relative">
-            <div className="w-3 h-3 rounded-full overflow-hidden bg-white relative flex items-center justify-center">
-              {user?.avatar_url ? (
-                <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" sizes="auto" />
-              ) : (
-                <UserCircle className="w-5 h-5 text-stone-300" />
-              )}
-            </div>
-            <div className="absolute bottom-0 right-0 w-1 h-1 bg-[#ffe088] rounded-full border-2 border-[#fcf9f8]"></div>
-          </div>
-          <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-[#1b1b1c]" style={{ fontFamily: "'Libre Caslon Text', serif" }}>شات أبونا فلتاؤس</h1>
-              {isOnline ? (
-            <span className="text-xs text-[#564243] flex items-center gap-1">
-              <span className="w-0.5 h-0.5 rounded-full bg-[#ffe088] animate-pulse"></span>
-               متصل الآن
-            </span>
-          ) : (
-            <span className="text-xs text-red-500 dark:text-red-400 flex items-center gap-1">
-              <span className="w-0.5 h-0.5 rounded-full bg-red-500 animate-pulse"></span>
-              أوفلاين - لا يوجد اتصال
-            </span>
-          )}
-          </div>
+      <div className="flex-none border-b border-[#dcc0c1]/30 bg-[#f6f3f2]/90 backdrop-blur-md px-0.5 py-0.5 flex items-center justify-between z-10 shadow-sm gap-0.5">
+        <div className="flex items-center gap-0.5">
+          <Link href="/" prefetch={true} className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition" title="الرجوع للصفحة الرئيسية">
+            <FaArrowRight size={16} />
+          </Link>
+
+          <PersonaSelector
+            selectedBotId={selectedBotId}
+            onSelectBot={handleSelectPersona}
+          />
         </div>
-        <button onClick={() => setSheetOpen(true)} className="w-3 h-3 flex items-center justify-center rounded-full text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="القائمة">
-          <PanelRight size={18} />
-        </button>
+
+        <div className="flex items-center gap-0.5">
+          <Link
+            href="/icon-generator"
+            className="flex items-center gap-0.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 dark:text-amber-200 border border-amber-500/30 px-0.5 py-0.5 rounded-full text-xs font-bold transition-all shadow-xs"
+            title="توليد أيقونات وصور بالذكاء الاصطناعي"
+          >
+            <Sparkles size={13} className="text-amber-600 dark:text-amber-400" />
+            <span className="hidden sm:inline">مولد الأيقونات</span>
+          </Link>
+          <button onClick={() => setSheetOpen(true)} className="p-1 flex items-center justify-center rounded-full text-[#564243] hover:bg-[#e5e2e1] transition-colors" title="سجل المحادثات">
+            <PanelRight size={18} />
+          </button>
+        </div>
       </div>
 
       {/* --- منطقة الرسائل --- */}
-      <main className="flex-1 overflow-y-auto px-1 md:px-2 py-0.5 flex flex-col gap-1 relative z-10" id="chat-messages">
-        {/* خلفية مزخرفة شفافة (اختياري) */}
+      <main className="flex-1 overflow-y-auto px-1 md:px-2 py-0.25 flex flex-col gap-0.5 relative z-10" id="chat-messages">
+        {/* خلفية مزخرفة شفافة */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-[-1] opacity-30 mix-blend-multiply">
           <div className="absolute -top-10 -right-10 w-24 h-24 bg-[#ffe088]/20 rounded-full blur-3xl"></div>
           <div className="absolute top-1/3 -left-5 w-18 h-18 bg-[#4a0012]/10 rounded-full blur-3xl"></div>
@@ -312,22 +319,29 @@ export default function ChatBot() {
 
         <AnimatePresence>
           {!user && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="my-1 mx-auto p-1 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-2xl text-center max-w-md shadow-sm z-20">
-              <p className="text-amber-900 dark:text-amber-200 font-bold text-base mb-1">برجاء تسجيل الدخول أولاً لاستخدام شات أبونا فلتاؤس</p>
-              <Link href="/auth/signin" className="inline-block bg-amber-700 hover:bg-amber-800 text-white font-bold px-1 py-1 rounded-full text-sm transition-all shadow-md hover:scale-105">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="my-0.5 mx-auto p-1 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-2xl text-center max-w-md shadow-sm z-20">
+              <p className="text-amber-900 dark:text-amber-200 font-bold text-base mb-0.5">برجاء تسجيل الدخول أولاً لاستخدام شات أبونا فلتاؤس والمساعدين المتخصصين</p>
+              <Link href="/auth/signin" className="inline-block bg-amber-700 hover:bg-amber-800 text-white font-bold px-1 py-0.5 rounded-full text-sm transition-all shadow-md hover:scale-105">
                 تسجيل الدخول
               </Link>
             </motion.div>
           )}
 
           {messages.length === 0 && user && (
-            // رسالة ترحيب أولية إذا كانت المحادثة فارغة
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-end gap-0.5 w-full md:w-4/5 max-w-3xl self-start">
-              <div className="bg-[#f0eded] rounded-t-3xl rounded-br-3xl rounded-bl-lg p-0.5 shadow-sm border border-[#ffdadb]/30 relative">
-                <p className="text-[16px] text-[#1b1b1c] leading-relaxed">
-                  سلام ونعمة يا ابني. كيف يمكنني مساعدتك اليوم؟ أنا هنا للإجابة على أسئلتك الروحية، ومشاركتك أقوال القديسين، أو الصلاة معك.
-                </p>
+            // رسالة ترحيب أولية مخصصة للشخصية المختارة
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center p-1 max-w-xl mx-auto text-center mt-1">
+              <div className={cn("p-0.5 rounded-2xl mb-0.5 shadow-md", currentPersona.badgeBg)}>
+                <Sparkles size={28} className="text-amber-800" />
               </div>
+              <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 mb-0.5">
+                {currentPersona.name}
+              </h2>
+              <p className="text-xs font-semibold text-amber-800 dark:text-amber-300 mb-0.5">
+                {currentPersona.title}
+              </p>
+              <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed max-w-md mb-0.5">
+                {currentPersona.description}
+              </p>
             </motion.div>
           )}
 
@@ -369,25 +383,20 @@ export default function ChatBot() {
 
       {/* --- Quick Suggestions (Chips) --- */}
       <div className="flex-none p-0.5 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-[#dcc0c1]/10 bg-linear-to-t from-[#fcf9f8] to-transparent z-10">
-        <div className="flex gap-0.5">
-          {[
-            // { label: "أقوال القديسين", icon: BookOpen },
-            // { label: "صلوات للمرضى", icon: HeartPulse },
-            { label: "تفسير آية", icon: Sparkles },
-            { label: "تفسير مثل", icon: ScrollText }
-          ].map((item, idx) => (
+        <div className="flex gap-0.5 max-w-4xl mx-auto">
+          {currentPersona.defaultSuggestions.map((item, idx) => (
             <button
               key={idx}
-              onClick={() => handleSuggestionClick(item.label)}
+              onClick={() => handleSuggestionClick(item)}
               className={cn(
-                "inline-flex items-center gap-0.5 px-1 py-0.5 transition-all duration-300 rounded-full border text-xs font-semibold shadow-sm",
+                "inline-flex items-center gap-0.5 px-1 py-0.5 transition-all duration-300 rounded-full border text-xs font-semibold shadow-xs shrink-0",
                 !user
                   ? "bg-gray-300 dark:bg-gray-800 text-gray-500 border-gray-400 cursor-not-allowed grayscale opacity-75"
-                  : "bg-[#eae7e7] hover:bg-[#ffe088]/20 text-[#564243] hover:text-[#4a0012] border-[#dcc0c1]/30 hover:shadow-md"
+                  : "bg-[#eae7e7]/80 hover:bg-amber-100/70 text-[#564243] hover:text-[#4a0012] border-[#dcc0c1]/40 hover:shadow-xs"
               )}
             >
-              <item.icon size={18} />
-              {item.label}
+              <Sparkles size={13} className="text-amber-700 dark:text-amber-400" />
+              <span>{item}</span>
             </button>
           ))}
         </div>

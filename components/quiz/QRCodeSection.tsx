@@ -48,12 +48,6 @@ export default function QRCodeSection({ quizId }: { quizId: string }) {
             >
               <QRCodeSVG value={quizUrl} size={800} />
             </motion.div>
-            {/* <motion.p
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-              className="text-white text-3xl font-black mt-1 text-center"
-            >
-              امسح الكود للدخول في المسابقة 🚀
-            </motion.p> */}
             <button className="mt-1 text-white/50 flex items-center gap-1">
               <Minimize2 /> اضغط في أي مكان للإغلاق
             </button>

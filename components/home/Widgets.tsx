@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaSun, FaBookOpen } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
 export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
   const [verse, setVerse] = useState({
@@ -158,21 +159,28 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
               className="w-17 pointer-events-auto hover:scale-[1.02] transition-transform duration-700"
             >
               <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-1.5 shadow-lg flex flex-col gap-1 relative overflow-hidden">
-                <div className="flex items-center gap-1 mb-0.5">
-                  <div className="w-3 h-3 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
-                    <FaSun size={16} />
+                <Link href="/agpeya" className="flex items-center justify-between gap-0.5 mb-0.5 hover:opacity-80 transition">
+                  <div className="flex items-center gap-0.5">
+                    <div className="w-3 h-3 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+                      <FaSun size={16} />
+                    </div>
+                    <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">مواعيد الصلاة (الأجبية)</span>
                   </div>
-                  <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">مواعيد الصلاة</span>
-                </div>
+                  <span className="text-[10px] text-blue-600 font-bold">فتح الصلاة ↗</span>
+                </Link>
 
                 {prayers.map((prayer) => {
                   const isActive = activePrayer === prayer.id;
                   return (
-                    <div key={prayer.id} className={`flex items-center justify-between py-0.5 border-b border-gray-200/50 dark:border-gray-700/50 relative ${isActive ? 'bg-blue-50/50 dark:bg-blue-900/10 rounded-lg px-0.5' : 'px-0.5'}`}>
+                    <Link
+                      href="/agpeya"
+                      key={prayer.id}
+                      className={`flex items-center justify-between py-0.5 border-b border-gray-200/50 dark:border-gray-700/50 relative hover:bg-amber-500/10 rounded-lg transition ${isActive ? 'bg-blue-50/50 dark:bg-blue-900/10 rounded-lg px-0.5' : 'px-0.5'}`}
+                    >
                       {isActive && <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-1.5 bg-blue-600 rounded-l-full"></div>}
                       <span className={`text-sm ${isActive ? 'text-blue-600 font-bold' : 'text-gray-800 dark:text-gray-200'}`}>{prayer.label}</span>
                       <span className={`text-xs ${isActive ? 'text-blue-600 font-bold' : 'text-gray-600 dark:text-gray-400'}`}>{prayer.time}</span>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>
@@ -192,17 +200,21 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
             className="lg:hidden absolute top-9 left-1.5 right-1.5 z-10 pointer-events-auto"
           >
             <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-0.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
-              <div className="flex items-center gap-0.5 mb-0.5">
-                <div className="w-3 h-3 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
-                  <FaSun size={12} />
+              <Link href="/agpeya" className="flex items-center justify-between gap-0.5 mb-0.5 hover:opacity-80">
+                <div className="flex items-center gap-0.5">
+                  <div className="w-3 h-3 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+                    <FaSun size={12} />
+                  </div>
+                  <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">مواعيد الصلاة (الأجبية)</span>
                 </div>
-                <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">مواعيد الصلاة</span>
-              </div>
+                <span className="text-[10px] text-blue-600 font-bold">فتح الصلاة ↗</span>
+              </Link>
               <div className="flex overflow-x-auto gap-0.5 pb-0.5 scrollbar-none">
                 {prayers.map((prayer) => {
                   const isActive = activePrayer === prayer.id;
                   return (
-                    <div
+                    <Link
+                      href="/agpeya"
                       key={prayer.id}
                       className={`flex-none p-0.5 rounded-xl border text-center transition-all ${isActive
                         ? "bg-blue-600 text-white border-blue-600 shadow-sm scale-105"
@@ -211,7 +223,7 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
                     >
                       <div className={`text-xs font-bold ${isActive ? "text-white" : ""}`}>{prayer.label}</div>
                       <div className={`text-[10px] ${isActive ? "text-blue-100" : "text-gray-500 dark:text-gray-400"}`}>{prayer.time}</div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>

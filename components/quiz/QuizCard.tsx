@@ -98,17 +98,18 @@ export function QuizCard({ quiz, onEdit, onDelete, index}: any) {
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-0.5 line-clamp-2 min-h-[32px]">{quiz.description || "لا يوجد وصف"}</p>
 
           {/* كود المسابقة */}
-          {quiz.code && (
+          {(quiz.code || quiz.admin_code) && (
             <div className="flex items-center justify-between bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 px-0.5 py-0.25 rounded-2xl mb-0.5">
               <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">كود المسابقة:</span>
               <div className="flex items-center gap-0.25">
                 <span className="font-mono font-bold text-sm tracking-widest text-blue-900 dark:text-blue-200" dir="ltr">
-                  {quiz.code}
+                  {quiz.code || quiz.admin_code}
                 </span>
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(quiz.code);
-                    alert(`تم نسخ الكود: ${quiz.code}`);
+                    const c = quiz.code || quiz.admin_code;
+                    navigator.clipboard.writeText(c);
+                    alert(`تم نسخ الكود: ${c}`);
                   }}
                   className="px-0.5 py-0.25 text-xs bg-white dark:bg-zinc-800 border border-blue-300/80 dark:border-blue-700 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 font-medium"
                   title="نسخ الكود"

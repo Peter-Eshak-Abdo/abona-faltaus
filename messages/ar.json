@@ -1,0 +1,92 @@
+{
+  "Common": {
+    "appName": "ابونا فلتاؤس",
+    "loading": "جاري التحميل...",
+    "save": "حفظ التعديلات",
+    "saving": "جاري الحفظ...",
+    "back": "رجوع",
+    "online": "أونلاين",
+    "offline": "أوفلاين"
+  },
+  "Language": {
+    "label": "اللغة",
+    "title": "لغة التطبيق",
+    "hint": "اختر لغة واجهة التطبيق",
+    "ar": "العربية",
+    "en": "English",
+    "cop": "ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ"
+  },
+  "Home": {
+    "signInGoogle": "سجل دخولك بحساب جوجل",
+    "exploreHint": "انقر للاستكشاف",
+    "loginRequired": "برجاء تسجيل الدخول أولاً",
+    "welcome": "اهلا بك",
+    "helloUser": "اهلا ، {name}",
+    "signInPrompt": "بعد إذنك تسجل دخول",
+    "copticDate": "التاريخ القبطي: {date}",
+    "lastUpdate": "آخر تحديث:",
+    "totalUpdates": "إجمالي التحديثات:",
+    "copyright": "موقع أبونا فلتاؤوس © {year}",
+    "privacy": "سياسة الخصوصية",
+    "terms": "الشروط والأحكام",
+    "about": "عن التطبيق",
+    "sections": {
+      "exams": "الامتحانات",
+      "icons": "مولد الأيقونات الذكي",
+      "preparation": "نوتة التحضير الذكية",
+      "settings": "الإعدادات",
+      "chat": "الشات بوت",
+      "hymns": "الألحان",
+      "bible": "الكتاب المقدس",
+      "agpeya": "الأجبية المقدسة",
+      "liturgies": "القداسات الإلهية",
+      "tasbeha": "التسبحة والإبصالمودية",
+      "synaxarium": "السنكسار",
+      "slides": "صانع العروض التقديمية",
+      "articles": "المقالات"
+    }
+  },
+  "Settings": {
+    "title": "الإعدادات",
+    "subtitle": "تحكم في حسابك وتفضيلاتك",
+    "storage": "التخزين والاتصال",
+    "connectionStatus": "حالة الاتصال",
+    "clearCache": "مسح الذاكرة المؤقتة (Cache)",
+    "appearance": "مظهر التطبيق",
+    "chooseTheme": "اختر النمط المفضل",
+    "themeSystem": "تلقائي (النظام)",
+    "themeLight": "مضيء",
+    "themeDark": "داكن",
+    "themeGold": "ذهبي قبطي",
+    "notifications": "تفضيلات الإشعارات",
+    "notificationsMain": "استقبال الإشعارات",
+    "notificationsMainHint": "المفتاح الرئيسي للخدمة",
+    "notificationsCustomize": "تخصيص أنواع الرسائل:",
+    "profile": "البيانات الأساسية",
+    "displayName": "الاسم المعروض",
+    "emailReadOnly": "Email (Read Only)",
+    "saved": "تم حفظ البيانات",
+    "saveError": "خطأ في الحفظ",
+    "cacheCleared": "تم مسح الكاش بنجاح",
+    "notifOff": "تم إيقاف جميع الإشعارات",
+    "notifOn": "تم تفعيل الإشعارات بنجاح",
+    "notifFail": "لم يتم تفعيل الإشعارات",
+    "notifError": "حدث خطأ أثناء تفعيل الإشعارات",
+    "notifEnableFirst": "برجاء تفعيل الإشعارات الرئيسية أولاً",
+    "notifTagFail": "فشل تحديث إعداد الإشعارات",
+    "categories": {
+      "verse": {
+        "name": "آية اليوم",
+        "desc": "استلام آية يومية وأقوال آباء"
+      },
+      "mass": {
+        "name": "تذكير القداسات",
+        "desc": "تنبيهات بمواعيد القداسات والخدمات"
+      },
+      "confession": {
+        "name": "مواعيد الاعتراف",
+        "desc": "تذكير بمواعيد الاعتراف الخاصة بك"
+      }
+    }
+  }
+}

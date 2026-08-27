@@ -1,0 +1,92 @@
+{
+  "Common": {
+    "appName": "Abona Faltaus",
+    "loading": "Loading...",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "back": "Back",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "Language": {
+    "label": "Language",
+    "title": "App language",
+    "hint": "Choose the interface language",
+    "ar": "العربية",
+    "en": "English",
+    "cop": "ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ"
+  },
+  "Home": {
+    "signInGoogle": "Sign in with Google",
+    "exploreHint": "Tap to explore",
+    "loginRequired": "Please sign in first",
+    "welcome": "Welcome",
+    "helloUser": "Hello, {name}",
+    "signInPrompt": "Please sign in",
+    "copticDate": "Coptic date: {date}",
+    "lastUpdate": "Last update:",
+    "totalUpdates": "Total updates:",
+    "copyright": "Abona Faltaus © {year}",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "about": "About",
+    "sections": {
+      "exams": "Quizzes",
+      "icons": "AI Icon Generator",
+      "preparation": "Smart Lesson Notes",
+      "settings": "Settings",
+      "chat": "Chatbot",
+      "hymns": "Hymns",
+      "bible": "Bible",
+      "agpeya": "Agpeya Prayers",
+      "liturgies": "Divine Liturgies",
+      "tasbeha": "Midnight & Daily Praises",
+      "synaxarium": "Synaxarium",
+      "slides": "Slide & Presentation AI",
+      "articles": "Articles"
+    }
+  },
+  "Settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and preferences",
+    "storage": "Storage & connection",
+    "connectionStatus": "Connection status",
+    "clearCache": "Clear cache",
+    "appearance": "Appearance",
+    "chooseTheme": "Preferred theme",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeGold": "Coptic Gold",
+    "notifications": "Notification preferences",
+    "notificationsMain": "Receive notifications",
+    "notificationsMainHint": "Master switch for push alerts",
+    "notificationsCustomize": "Customize message types:",
+    "profile": "Profile",
+    "displayName": "Display name",
+    "emailReadOnly": "Email (Read Only)",
+    "saved": "Saved successfully",
+    "saveError": "Could not save",
+    "cacheCleared": "Cache cleared",
+    "notifOff": "All notifications disabled",
+    "notifOn": "Notifications enabled",
+    "notifFail": "Notifications were not enabled",
+    "notifError": "Error enabling notifications",
+    "notifEnableFirst": "Enable main notifications first",
+    "notifTagFail": "Failed to update notification setting",
+    "categories": {
+      "verse": {
+        "name": "Daily verse",
+        "desc": "Daily verse and patristic sayings"
+      },
+      "mass": {
+        "name": "Liturgy reminders",
+        "desc": "Alerts for liturgy and service times"
+      },
+      "confession": {
+        "name": "Confession appointments",
+        "desc": "Reminders for your confession schedule"
+      }
+    }
+  }
+}

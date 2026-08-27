@@ -45,6 +45,9 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
   const [aiType, setAiType] = useState<"choice" | "tf" | "mixed">("mixed")
   const [aiDifficulty, setAiDifficulty] = useState("متوسط")
   const [isGeneratingAi, setIsGeneratingAi] = useState(false)
+  const [aiProgress, setAiProgress] = useState(0)
+  const [aiTimeLeft, setAiTimeLeft] = useState(0)
+  const [aiStatusMessage, setAiStatusMessage] = useState("")
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }: any) => setUser(data?.user || null));
@@ -234,6 +237,34 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
       return;
     }
     setIsGeneratingAi(true);
+    setAiProgress(0);
+
+    // تقدير الوقت بناء على عدد الأسئلة (مثلاً 5 أسئلة تأخذ تقريباً 10 إلى 15 ثانية)
+    const estimatedTotalSeconds = Math.max(10, Math.round(aiCount * 1.8));
+    setAiTimeLeft(estimatedTotalSeconds);
+    setAiStatusMessage("جاري تحليل الموضوع وصياغة الأسئلة...");
+
+    let progressVal = 0;
+    let secondsRemaining = estimatedTotalSeconds;
+
+    const interval = setInterval(() => {
+      secondsRemaining = Math.max(1, secondsRemaining - 1);
+      setAiTimeLeft(secondsRemaining);
+
+      progressVal = Math.min(95, progressVal + (95 / (estimatedTotalSeconds * 2)));
+      setAiProgress(Math.round(progressVal));
+
+      if (progressVal < 30) {
+        setAiStatusMessage("جاري استحضار المراجع والشواهد الكتابية...");
+      } else if (progressVal < 65) {
+        setAiStatusMessage("جاري كتابة الأسئلة والخيارات الذكية وتحديد الإجابات...");
+      } else if (progressVal < 90) {
+        setAiStatusMessage("جاري ضبط مستويات الصعوبة والمراجعة الأرثوذكسية...");
+      } else {
+        setAiStatusMessage("جاري وضع اللمسات الأخيرة وإعداد المسابقة...");
+      }
+    }, 500);
+
     try {
       const res = await fetch("/api/quizzes/generate", {
         method: "POST",
@@ -252,6 +283,10 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
 
       const genQuiz = data.quiz;
       if (genQuiz) {
+        setAiProgress(100);
+        setAiTimeLeft(0);
+        setAiStatusMessage("اكتمل التوليد بنجاح!");
+
         if (genQuiz.title && !title) setTitle(genQuiz.title);
         if (genQuiz.description && !description) setDescription(genQuiz.description);
 
@@ -266,11 +301,14 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
 
         setQuestions(prev => [...prev, ...mappedQuestions]);
         toast.success(`🎉 تم توليد ${mappedQuestions.length} سؤال بنجاح!`);
-        setIsAiModalOpen(false);
+        setTimeout(() => {
+          setIsAiModalOpen(false);
+        }, 500);
       }
     } catch (err: any) {
       toast.error(err.message || "حدث خطأ أثناء التوليد");
     } finally {
+      clearInterval(interval);
       setIsGeneratingAi(false);
     }
   };
@@ -285,7 +323,7 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
       >
         {/* Modal التوليد بالذكاء الاصطناعي */}
         {isAiModalOpen && (
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-1">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-0.5">
             <div className="bg-white dark:bg-zinc-900 border border-amber-500/30 rounded-3xl p-0.5 max-w-lg w-full shadow-2xl space-y-0.5">
               <div className="flex justify-between items-center border-b pb-0.5">
                 <div className="flex items-center gap-0.25">
@@ -294,105 +332,143 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                   </div>
                   <h3 className="text-xl font-black text-zinc-800 dark:text-white">توليد مسابقة بالذكاء الاصطناعي</h3>
                 </div>
-                <button onClick={() => setIsAiModalOpen(false)} className="text-zinc-400 hover:text-red-500 p-1">
+                <button
+                  disabled={isGeneratingAi}
+                  onClick={() => setIsAiModalOpen(false)}
+                  className="text-zinc-400 hover:text-red-500 p-0.5 disabled:opacity-30"
+                >
                   <X size={20} />
                 </button>
               </div>
 
-              <div className="space-y-0.5">
-                <div>
-                  <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">الموضوع أو النص الكتابي / الطقسي</label>
-                  <input
-                    type="text"
-                    value={aiTopic}
-                    onChange={(e) => setAiTopic(e.target.value)}
-                    placeholder="مثال: سفر يونان، شخصية مارمرقس، صوم الرسل..."
-                    className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.5 text-sm font-bold outline-none focus:border-amber-500"
-                  />
-                </div>
+              {/* شاشة الـ Loading المتقدمة للـ AI */}
+              {isGeneratingAi ? (
+                <div className="py-1 px-0.5 space-y-0.5 text-center">
+                  <div className="relative w-4 h-4 mx-auto flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full border-4 border-amber-500/20 border-t-amber-500 animate-spin" />
+                    <Sparkles className="text-amber-500 animate-pulse" size={16} />
+                  </div>
 
-                <div className="grid grid-cols-2 gap-0.5">
-                  <div>
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">عدد الأسئلة</label>
-                    <select
-                      value={aiCount}
-                      onChange={(e) => setAiCount(Number(e.target.value))}
-                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
-                    >
-                      <option value={5}>5 أسئلة</option>
-                      <option value={10}>10 أسئلة</option>
-                      <option value={15}>15 سؤال</option>
-                      <option value={20}>20 سؤال</option>
-                      <option value={25}>25 سؤال</option>
-                      <option value={30}>30 سؤال</option>
-                      <option value={40}>40 سؤال</option>
-                      <option value={50}>50 سؤال</option>
-                    </select>
+                  <div className="space-y-0.5">
+                    <h4 className="text-lg font-black text-zinc-800 dark:text-zinc-100">
+                      الذكاء الاصطناعي يُنشئ مسابقتك الآن
+                    </h4>
+                    <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 animate-pulse">
+                      {aiStatusMessage}
+                    </p>
                   </div>
-                  <div>
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">المرحلة المستهدفة</label>
-                    <select
-                      value={aiAudience}
-                      onChange={(e) => setAiAudience(e.target.value)}
-                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
-                    >
-                      <option value="مدارس أحد">مدارس أحد</option>
-                      <option value="إعدادي">إعدادي</option>
-                      <option value="ثانوي">ثانوي</option>
-                      <option value="شباب وخريجين">شباب وخريجين</option>
-                      <option value="خدام وشعب">خدام وشعب</option>
-                    </select>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-0.25">
-                  <div>
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">نوع الأسئلة</label>
-                    <select
-                      value={aiType}
-                      onChange={(e) => setAiType(e.target.value as any)}
-                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
-                    >
-                      <option value="mixed">ميكس (اختر + صح وخطأ)</option>
-                      <option value="choice">اختيار من متعدد فقط</option>
-                      <option value="tf">صح أو خطأ فقط</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">مستوى الصعوبة</label>
-                    <select
-                      value={aiDifficulty}
-                      onChange={(e) => setAiDifficulty(e.target.value)}
-                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
-                    >
-                      <option value="سهل">سهل ومباشر</option>
-                      <option value="متوسط">متوسط</option>
-                      <option value="تحدي وصعب">تحدي وأسئلة ذكاء</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+                  {/* شريط التقدم النسبة المئوية */}
+                  <div className="space-y-0.5">
+                    <div className="flex justify-between items-center text-xs font-black text-zinc-500 dark:text-zinc-400">
+                      <span>التقدم: {aiProgress}%</span>
+                      <span className="flex items-center gap-0.25 text-amber-600 dark:text-amber-400">
+                        <Clock size={13} />
+                        الوقت المتبقي التقديري: {aiTimeLeft > 0 ? `${aiTimeLeft} ثانية` : "لحظات..."}
+                      </span>
+                    </div>
 
-              <div className="flex gap-0.25 justify-end pt-0.25">
-                <Button variant="ghost" onClick={() => setIsAiModalOpen(false)}>إلغاء</Button>
-                <Button
-                  onClick={handleGenerateWithAi}
-                  disabled={isGeneratingAi || !aiTopic.trim()}
-                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-0.25"
-                >
-                  {isGeneratingAi ? (
-                    <>
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                      جاري التوليد...
-                    </>
-                  ) : (
-                    <>
+                    <div className="w-full h-3 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700 p-0.5">
+                      <div
+                        className="h-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-600 rounded-full transition-all duration-500 ease-out shadow-sm"
+                        style={{ width: `${aiProgress}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-zinc-400">
+                    جاري توليد {aiCount} أسئلة دقيقة بمستوى {aiDifficulty} لفئة {aiAudience}...
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-0.5">
+                    <div>
+                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">الموضوع أو النص الكتابي / الطقسي</label>
+                      <input
+                        type="text"
+                        value={aiTopic}
+                        onChange={(e) => setAiTopic(e.target.value)}
+                        placeholder="مثال: سفر يونان، شخصية مارمرقس، صوم الرسل..."
+                        className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.5 text-sm font-bold outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-0.5">
+                      <div>
+                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">عدد الأسئلة</label>
+                        <select
+                          value={aiCount}
+                          onChange={(e) => setAiCount(Number(e.target.value))}
+                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
+                        >
+                          <option value={5}>5 أسئلة (~10 ث)</option>
+                          <option value={10}>10 أسئلة (~18 ث)</option>
+                          <option value={15}>15 سؤال (~25 ث)</option>
+                          <option value={20}>20 سؤال (~35 ث)</option>
+                          <option value={25}>25 سؤال (~45 ث)</option>
+                          <option value={30}>30 سؤال (~55 ث)</option>
+                          <option value={40}>40 سؤال (~70 ث)</option>
+                          <option value={50}>50 سؤال (~90 ث)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">المرحلة المستهدفة</label>
+                        <select
+                          value={aiAudience}
+                          onChange={(e) => setAiAudience(e.target.value)}
+                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
+                        >
+                          <option value="مدارس أحد">مدارس أحد</option>
+                          <option value="إعدادي">إعدادي</option>
+                          <option value="ثانوي">ثانوي</option>
+                          <option value="شباب وخريجين">شباب وخريجين</option>
+                          <option value="خدام وشعب">خدام وشعب</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-0.25">
+                      <div>
+                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">نوع الأسئلة</label>
+                        <select
+                          value={aiType}
+                          onChange={(e) => setAiType(e.target.value as any)}
+                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
+                        >
+                          <option value="mixed">ميكس (اختر + صح وخطأ)</option>
+                          <option value="choice">اختيار من متعدد فقط</option>
+                          <option value="tf">صح أو خطأ فقط</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">مستوى الصعوبة</label>
+                        <select
+                          value={aiDifficulty}
+                          onChange={(e) => setAiDifficulty(e.target.value)}
+                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
+                        >
+                          <option value="سهل">سهل ومباشر</option>
+                          <option value="متوسط">متوسط</option>
+                          <option value="تحدي وصعب">تحدي وأسئلة ذكاء</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-0.25 justify-end pt-0.25">
+                    <Button variant="ghost" onClick={() => setIsAiModalOpen(false)}>إلغاء</Button>
+                    <Button
+                      onClick={handleGenerateWithAi}
+                      disabled={isGeneratingAi || !aiTopic.trim()}
+                      className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-0.25"
+                    >
                       <Sparkles className="w-3 h-3" />
                       توليد الأسئلة 🪄
-                    </>
-                  )}
-                </Button>
-              </div>
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
