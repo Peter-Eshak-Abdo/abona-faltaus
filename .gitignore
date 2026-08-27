@@ -48,3 +48,13 @@ public/google3068e8e999fad02d.html
 
 *.sql
 /zcodes
+
+# Large models & dataset archives
+trained_model.tar
+dataset.zip
+*.tar
+*.zip
+*.pt
+*.safetensors
+outputs/
+coptic_liturgy_lora_model/
