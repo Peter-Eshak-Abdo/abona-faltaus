@@ -59,7 +59,7 @@
     "data-fns": "^1.1.0",
     "date-fns": "^4.1.0",
     "docx": "^9.7.1",
-    "dompurify": "^3.4.12",
+    "dompurify": "^3.4.14",
     "dotenv": "^17.3.1",
     "edge-tts-node": "^1.5.7",
     "embla-carousel-react": "^8.6.0",
