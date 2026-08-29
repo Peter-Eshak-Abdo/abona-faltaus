@@ -220,6 +220,39 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
+/* 👑 الثيم الذهبي القبطي (Coptic Gold Mode) 👑 */
+.gold {
+  --background: #1c150c;
+  --foreground: #fef6e4;
+  --card: #271e11;
+  --card-foreground: #fff8eb;
+  --popover: #271e11;
+  --popover-foreground: #fff8eb;
+  --primary: #d4af37;
+  --primary-foreground: #1c150c;
+  --secondary: #3b2c17;
+  --secondary-foreground: #fde68a;
+  --muted: #332615;
+  --muted-foreground: #d4b483;
+  --accent: #4a381c;
+  --accent-foreground: #fef08a;
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+  --border: #4a371c;
+  --input: #4a371c;
+  --ring: #d4af37;
+
+  /* Sidebar Gold */
+  --sidebar: #221a0f;
+  --sidebar-foreground: #fef6e4;
+  --sidebar-primary: #d4af37;
+  --sidebar-primary-foreground: #1c150c;
+  --sidebar-accent: #382a16;
+  --sidebar-accent-foreground: #fef08a;
+  --sidebar-border: #4a371c;
+  --sidebar-ring: #d4af37;
+}
+
 /* 4. Base Styles */
 @layer base {
   * {
@@ -229,6 +262,7 @@
 
   html {
     height: 100%;
+    text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
   }
@@ -295,14 +329,16 @@
     background-position: center;
     background-blend-mode: lighten;
     filter: blur(2px);
+  }
 
-    /* top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-repeat: no-repeat;
-    animation: glowPulse 8s ease-in-out infinite;
-    z-index: -1; */
+  .dark .background-blur-overlay {
+    background-image: linear-gradient(rgba(18, 18, 18, 0.88), rgba(18, 18, 18, 0.88)), url('/images/bg.webp');
+    background-blend-mode: multiply;
+  }
+
+  .gold .background-blur-overlay {
+    background-image: linear-gradient(rgba(28, 21, 12, 0.85), rgba(28, 21, 12, 0.85)), url('/images/bg.webp');
+    background-blend-mode: multiply;
   }
 
   .animation-delay-2000 {

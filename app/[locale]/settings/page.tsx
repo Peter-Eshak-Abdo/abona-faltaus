@@ -95,7 +95,7 @@ export default function SettingsView() {
       } else {
         // Guest mode
         setSettings({
-          displayName: "زائر",
+          displayName: t("guest"),
           email: "",
           primaryColor: localStorage.getItem('theme-primary') || "#4a0012",
           secondaryColor: localStorage.getItem('theme-secondary') || "#735c00"
@@ -319,7 +319,7 @@ export default function SettingsView() {
                 href="/auth/profile"
                 className="w-full flex h-3 rounded-xl justify-center items-center gap-0.5 border border-amber-700/30 text-amber-900 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 text-sm font-semibold transition"
               >
-                تغيير كلمة المرور / إدارة الحساب
+                {t("accountManagement")}
               </Link>
             </div>
 

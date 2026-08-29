@@ -34,7 +34,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { getCopticDate, COPTIC_MONTHS, CopticDate } from "@/lib/coptic-date";
 import { toast } from "sonner";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { isRtlLocale } from "@/i18n/routing";
 
 interface SynaxariumStory {
@@ -49,18 +49,22 @@ interface SynaxariumStory {
   category: "martyrs" | "monastics" | "patriarchs" | "biblical" | "feasts" | "general";
 }
 
-const CATEGORIES = [
-  { id: "all", label: "الكل", icon: Sparkles },
-  { id: "martyrs", label: "الشهداء والمعترفون", icon: Flame },
-  { id: "monastics", label: "الرهبان والنساك", icon: Cross },
-  { id: "patriarchs", label: "البطاركة والأساقفة", icon: Users },
-  { id: "biblical", label: "الأنبياء والرسل", icon: BookOpen },
-  { id: "feasts", label: "الأعياد والتذكارات", icon: CalendarIcon },
-];
-
 export default function SynaxariumPage() {
+  const t = useTranslations("Synaxarium");
   const locale = useLocale();
   const isRtl = isRtlLocale(locale);
+
+  const CATEGORIES = useMemo(
+    () => [
+      { id: "all", label: t("categories.all"), icon: Sparkles },
+      { id: "martyrs", label: t("categories.martyrs"), icon: Flame },
+      { id: "monastics", label: t("categories.monastics"), icon: Cross },
+      { id: "patriarchs", label: t("categories.patriarchs"), icon: Users },
+      { id: "biblical", label: t("categories.biblical"), icon: BookOpen },
+      { id: "feasts", label: t("categories.feasts"), icon: CalendarIcon },
+    ],
+    [t],
+  );
 
   // Current today coptic info
   const todayCoptic = useMemo(() => getCopticDate(new Date()), []);
@@ -264,13 +268,13 @@ export default function SynaxariumPage() {
             </div>
             <div>
               <div className="flex items-center gap-0.5">
-                <h1 className="text-lg font-bold text-amber-950 dark:text-amber-400">السنكسار القبطي الكامل</h1>
+                <h1 className="text-lg font-bold text-amber-950 dark:text-amber-400">{t("title")}</h1>
                 <Badge variant="outline" className="text-amber-800 border-amber-700/30 dark:text-amber-300 text-xs font-semibold px-0.5">
-                  {todayCoptic.formattedAr}
+                  {locale === "en" ? todayCoptic.formattedEn : todayCoptic.formattedAr}
                 </Badge>
               </div>
               <p className="text-xs text-stone-500 dark:text-zinc-400 font-medium">
-                سير الآباء القديسين والشهداء وتذكارات الأعياد لكل يوم من السنة القبطية
+                {t("subtitle")}
               </p>
             </div>
           </div>
@@ -282,7 +286,7 @@ export default function SynaxariumPage() {
               <button
                 onClick={() => updateFontSize(-1)}
                 className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
-                title="تصغير الخط"
+                title="Zoom Out"
               >
                 <ZoomOut className="w-2 h-2" />
               </button>
@@ -290,7 +294,7 @@ export default function SynaxariumPage() {
               <button
                 onClick={() => updateFontSize(1)}
                 className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
-                title="تكبير الخط"
+                title="Zoom In"
               >
                 <ZoomIn className="w-2 h-2" />
               </button>
@@ -301,7 +305,7 @@ export default function SynaxariumPage() {
               variant="outline"
               className="h-2 text-xs font-bold border-amber-700/30 text-amber-900 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 rounded-lg"
             >
-              سنكسار اليوم
+              {t("todaySynaxarium")}
             </Button>
 
             <Link
@@ -309,7 +313,7 @@ export default function SynaxariumPage() {
               className="h-2 text-xs font-semibold px-0.5 rounded-lg flex items-center gap-0.5 border border-stone-200 dark:border-zinc-700 text-stone-700 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-zinc-800"
             >
               <BookOpen className="w-2 h-2 text-amber-700" />
-              <span>القطمارس اليومي</span>
+              <span>{t("dailyKatamaros")}</span>
             </Link>
           </div>
         </div>
@@ -325,7 +329,7 @@ export default function SynaxariumPage() {
                 <Search className="absolute right-0.5 top-1/3 -translate-y-1/2 text-stone-400 w-1.5 h-1.5" />
                 <Input
                   type="text"
-                  placeholder="ابحث باسم القديس، الشهيد، الدير، أو الحدث..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="ps-3 pe-2 bg-stone-50 dark:bg-zinc-800/80 border-stone-200 dark:border-zinc-700 rounded-xl text-xs sm:text-sm h-3.5"
@@ -351,9 +355,9 @@ export default function SynaxariumPage() {
             {/* Month Carousel / Buttons */}
             <div className="space-y-0.5 pt-0.5 border-t border-stone-100 dark:border-zinc-800">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-stone-600 dark:text-zinc-400">شهور السنة القبطية (13 شهراً):</span>
+                <span className="text-[11px] font-bold text-stone-600 dark:text-zinc-400">{t("copticMonths")}</span>
                 <span className="text-[11px] font-semibold text-amber-800 dark:text-amber-400">
-                  {currentMonthMeta.nameAr} ({currentMonthMeta.nameEn})
+                  {locale === "en" ? currentMonthMeta.nameEn : locale === "cop" ? currentMonthMeta.nameCop : currentMonthMeta.nameAr}
                 </span>
               </div>
 
@@ -373,7 +377,7 @@ export default function SynaxariumPage() {
                         : "bg-stone-50 dark:bg-zinc-800/60 text-stone-700 dark:text-zinc-300 border-stone-200 dark:border-zinc-700 hover:bg-stone-100"
                     )}
                   >
-                    {m.nameAr}
+                    {locale === "en" ? m.nameEn : locale === "cop" ? m.nameCop : m.nameAr}
                   </button>
                 ))}
               </div>
@@ -383,19 +387,21 @@ export default function SynaxariumPage() {
             <div className="space-y-0.5 pt-0.5 border-t border-stone-100 dark:border-zinc-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-0.5">
-                  <span className="text-[11px] font-bold text-stone-600 dark:text-zinc-400">أيام شهر {currentMonthMeta.nameAr}:</span>
+                  <span className="text-[11px] font-bold text-stone-600 dark:text-zinc-400">
+                    {t("copticDays", { month: locale === "en" ? currentMonthMeta.nameEn : currentMonthMeta.nameAr })}
+                  </span>
                   <div className="flex items-center gap-0.25">
                     <button
                       onClick={handlePrevDay}
                       className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-800 rounded text-stone-600 dark:text-zinc-300"
-                      title="اليوم السابق"
+                      title="Previous Day"
                     >
                       <ChevronRight className="w-2.5 h-2.5" />
                     </button>
                     <button
                       onClick={handleNextDay}
                       className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-800 rounded text-stone-600 dark:text-zinc-300"
-                      title="اليوم التالي"
+                      title="Next Day"
                     >
                       <ChevronLeft className="w-2.5 h-2.5" />
                     </button>
@@ -411,7 +417,7 @@ export default function SynaxariumPage() {
                         : "text-stone-500 hover:text-stone-800"
                     )}
                   >
-                    {viewMode === "month" ? "عرض باليوم" : "عرض كل تذكارات الشهر"}
+                    {viewMode === "month" ? t("viewDay") : t("viewMonth")}
                   </button>
                 </div>
               </div>
@@ -470,25 +476,25 @@ export default function SynaxariumPage() {
             <h2 className="text-base font-bold text-amber-950 dark:text-amber-300 flex items-center gap-0.5">
               <Flame className="w-2.5 h-2.5 text-red-500" />
               {searchQuery ? (
-                <span>نتائج البحث عن: &quot;{searchQuery}&quot;</span>
+                <span>{t("searchResults", { query: searchQuery })}</span>
               ) : viewMode === "month" ? (
-                <span>تذكارات شهر {currentMonthMeta.nameAr} بالكامل</span>
+                <span>{t("monthCommemorations", { month: locale === "en" ? currentMonthMeta.nameEn : currentMonthMeta.nameAr })}</span>
               ) : (
-                <span>سنكسار يوم {selectedDay} {currentMonthMeta.nameAr}</span>
+                <span>{t("dayCommemorations", { day: selectedDay, month: locale === "en" ? currentMonthMeta.nameEn : currentMonthMeta.nameAr })}</span>
               )}
             </h2>
-            <p className="text-xs text-stone-500">تم العثور على {totalCount} تذكار وسيرة عطرة</p>
+            <p className="text-xs text-stone-500">{t("foundCount", { count: totalCount })}</p>
           </div>
         </div>
 
         {/* Stories List */}
         {loading ? (
-          <div className="flex flex-col justify-center items-center h-64 space-y-0.5">
-            <Loader2 className="h-3 w-3 animate-spin text-amber-700" />
-            <span className="text-xs font-semibold text-stone-600 dark:text-zinc-400">جاري تحميل السنكسار...</span>
+          <div className="flex flex-col items-center justify-center py-2 gap-1">
+            <Loader2 className="w-5 h-5 animate-spin text-amber-600" />
+            <p className="text-sm font-bold text-stone-500">{t("loadingStories")}</p>
           </div>
         ) : stories.length > 0 ? (
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {stories.map((story) => (
               <StoryCard
                 key={story.id}
@@ -504,12 +510,34 @@ export default function SynaxariumPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-0.5 bg-white dark:bg-zinc-900 rounded-2xl border border-stone-200 dark:border-zinc-800 space-y-0.5">
-            <BookOpen className="w-3 h-3 text-stone-300 dark:text-zinc-700 mx-auto" />
-            <h3 className="text-sm font-bold text-stone-700 dark:text-zinc-300">لم يتم العثور على تذكارات مطابقة</h3>
-            <p className="text-xs text-stone-500 max-w-sm mx-auto">
-              جرب تغيير معايير البحث أو اختيار يوم قبطي آخر.
-            </p>
+          <div className="text-center py-2 px-1 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md rounded-3xl border border-stone-200/60 dark:border-zinc-800 space-y-0.5">
+            <Flame className="w-3 h-3 text-amber-500/40 mx-auto" />
+            <div className="space-y-0.5">
+              <h3 className="text-lg font-bold text-stone-700 dark:text-zinc-200">
+                {t("noStoriesFound")}
+              </h3>
+              <p className="text-xs text-stone-500 max-w-md mx-auto leading-relaxed">
+                {t("noStoriesHint")}
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-0.5 pt-0.5">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleTodayClick}
+                className="rounded-xl text-xs font-bold"
+              >
+                {t("todaySynaxarium")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchStories}
+                className="rounded-xl text-xs font-bold"
+              >
+                {t("refresh") || "إعادة المحاولة"}
+              </Button>
+            </div>
           </div>
         )}
       </div>
@@ -552,19 +580,18 @@ export default function SynaxariumPage() {
             <div className="p-1 border-t border-stone-100 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-800/40 flex items-center justify-between">
               <Button
                 variant="outline"
-                // size="sm"
                 onClick={() => playStoryNarration(activeModalStory.id, activeModalStory.textAr || activeModalStory.textEn)}
                 className="text-xs font-semibold flex items-center gap-0.25"
               >
                 {playingId === activeModalStory.id ? (
                   <>
                     <VolumeX className="w-2.5 h-2.5 text-red-600" />
-                    <span>إيقاف الصوت</span>
+                    <span>{t("stopAudio")}</span>
                   </>
                 ) : (
                   <>
                     <Volume2 className="w-2.5 h-2.5 text-amber-700" />
-                    <span>استماع للسيرة</span>
+                    <span>{t("listen")}</span>
                   </>
                 )}
               </Button>
@@ -573,7 +600,7 @@ export default function SynaxariumPage() {
                 onClick={() => setActiveModalStory(null)}
                 className="bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold"
               >
-                إغلاق
+                {t("categories.all") === "All" ? "Close" : "إغلاق"}
               </Button>
             </div>
           </div>
@@ -602,6 +629,7 @@ function StoryCard({
   onBookmark: () => void;
   onExpand: () => void;
 }) {
+  const t = useTranslations("Synaxarium");
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -609,13 +637,13 @@ function StoryCard({
     const clean = (story.textAr || story.textEn).replace(/<[^>]*>?/gm, "");
     navigator.clipboard.writeText(`${story.titleAr || story.titleEn}\n\n${clean}`);
     setCopied(true);
-    toast.success("تم نسخ السيرة للحافظة");
+    toast.success(t("copySuccess"));
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <Card className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs overflow-hidden">
-      <CardHeader className="py-0.5 px-1 bg-gradient-to-r from-amber-50/60 to-transparent dark:from-amber-950/20 border-b border-stone-100 dark:border-zinc-800 flex flex-row items-center justify-between">
+      <CardHeader className="py-0.5 px-1 bg-linear-to-r from-amber-50/60 to-transparent dark:from-amber-950/20 border-b border-stone-100 dark:border-zinc-800 flex flex-row items-center justify-between">
         <div className="flex items-center gap-0.5 flex-1 min-w-0">
           <div className="w-2.5 h-2.5 rounded-lg bg-amber-700/10 text-amber-800 dark:text-amber-300 flex items-center justify-center shrink-0 font-bold text-[10px]">
             {story.day}
@@ -631,15 +659,14 @@ function StoryCard({
         <div className="flex items-center gap-1.5 shrink-0">
           {/* Audio */}
           <Button
-            // size="sm"
             variant="ghost"
             onClick={onPlay}
             disabled={isLoadingAudio}
             className={cn(
-              "h-2 w-2 px-1rounded-lg",
+              "h-2 w-2 px-1 rounded-lg",
               isPlaying ? "text-amber-700 bg-amber-100 dark:bg-amber-950/60" : "text-stone-500"
             )}
-            title={isPlaying ? "إيقاف القراءة" : "استماع للسيرة"}
+            title={isPlaying ? t("stopAudio") : t("listen")}
           >
             {isLoadingAudio ? (
               <Loader2 className="w-1.5 h-1.5 animate-spin" />
@@ -652,25 +679,23 @@ function StoryCard({
 
           {/* Copy */}
           <Button
-            // size="sm"
             variant="ghost"
             onClick={handleCopy}
             className="h-2 w-2 px-1 rounded-lg text-stone-500"
-            title="نسخ السيرة"
+            title={t("copySuccess")}
           >
             {copied ? <Check className="w-1.5 h-1.5 text-green-600" /> : <Copy className="w-1.5 h-1.5" />}
           </Button>
 
           {/* Bookmark */}
           <Button
-            // size="sm"
             variant="ghost"
             onClick={onBookmark}
             className={cn(
               "h-2 w-2 px-1 rounded-lg",
               isBookmarked ? "text-amber-700" : "text-stone-400"
             )}
-            title={isBookmarked ? "محفوظ في المفضلة" : "حفظ في المفضلة"}
+            title={isBookmarked ? t("bookmarkSaved", { title: story.titleAr || story.titleEn }) : "Bookmark"}
           >
             {isBookmarked ? <BookmarkCheck className="w-1.5 h-1.5" /> : <Bookmark className="w-1.5 h-1.5" />}
           </Button>
@@ -692,16 +717,15 @@ function StoryCard({
             onClick={() => setExpanded(!expanded)}
             className="text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline"
           >
-            {expanded ? "عرض أقل ▲" : "توسيع في المكان ▼"}
+            {expanded ? t("collapseInline") : t("expandInline")}
           </button>
 
           <Button
             variant="ghost"
-            // size="sm"
             onClick={onExpand}
             className="text-xs text-stone-600 dark:text-zinc-400 hover:text-amber-800 pe-3 left-1"
           >
-            فتح في نافذة كاملة ↗
+            {t("showMore")}
           </Button>
         </div>
       </CardContent>

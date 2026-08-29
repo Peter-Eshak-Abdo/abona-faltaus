@@ -40,12 +40,12 @@ export default function HomeClient() {
   const t = useTranslations("Home");
   const sections = useMemo(
     () => [
-      { name: "القداسات", href: "/liturgies", icon: <FaChurch /> },
-      { name: "التسبحة", href: "/tasbeha", icon: <FaMusic /> },
-      { name: "الألحان", href: "/al7an", icon: <FaMusic /> },
-      { name: "الكتاب المقدس", href: "/bible", icon: <FaBookOpen /> },
-      { name: "الأجبية", href: "/agpeya", icon: <FaPray /> },
-      { name: "السنكسار", href: "/synaxarium", icon: <FaSun /> },
+      { name: t("sections.liturgies"), href: "/liturgies", icon: <FaChurch /> },
+      { name: t("sections.tasbeha"), href: "/tasbeha", icon: <FaMusic /> },
+      { name: t("sections.hymns"), href: "/al7an", icon: <FaMusic /> },
+      { name: t("sections.bible"), href: "/bible", icon: <FaBookOpen /> },
+      { name: t("sections.agpeya"), href: "/agpeya", icon: <FaPray /> },
+      { name: t("sections.synaxarium"), href: "/synaxarium", icon: <FaSun /> },
       { name: t("sections.preparation"), href: "/preparation", icon: <FaFileAlt /> },
       { name: t("sections.exams"), href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
       { name: t("sections.chat"), href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
@@ -167,13 +167,13 @@ export default function HomeClient() {
           timestamp: Date.now()
         }));
       } catch (error) {
-        setLastUpdate("وضع الأوفلاين");
-        setLastMessage("لا يوجد اتصال بالإنترنت لجلب التحديثات");
+        setLastUpdate(t("offlineStatus"));
+        setLastMessage(t("offlineMessage"));
       }
     };
 
     fetchLastCommit();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (showMenu) {

@@ -6,7 +6,13 @@
     "saving": "Saving...",
     "back": "Back",
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "close": "Close",
+    "search": "Search",
+    "copy": "Copy",
+    "copied": "Copied successfully",
+    "error": "An error occurred",
+    "success": "Success"
   },
   "Language": {
     "label": "Language",
@@ -30,14 +36,19 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "about": "About",
+    "offlineStatus": "Offline Mode",
+    "offlineMessage": "No internet connection to fetch updates",
+    "dailyVerse": "Random Verse",
+    "prayerTimes": "Agpeya Prayer Hours",
+    "openPrayer": "Open Prayer ↗",
     "sections": {
-      "exams": "Quizzes",
+      "exams": "Quizzes & Contests",
       "icons": "AI Icon Generator",
       "preparation": "Smart Lesson Notes",
-      "settings": "Settings",
-      "chat": "Chatbot",
-      "hymns": "Hymns",
-      "bible": "Bible",
+      "settings": "Settings & Appearance",
+      "chat": "Orthodox AI Assistant",
+      "hymns": "Coptic Hymns",
+      "bible": "Holy Bible",
       "agpeya": "Agpeya Prayers",
       "liturgies": "Divine Liturgies",
       "tasbeha": "Midnight & Daily Praises",
@@ -45,6 +56,20 @@
       "slides": "Slide & Presentation AI",
       "articles": "Articles"
     }
+  },
+  "Navigation": {
+    "home": "Home",
+    "search": "Quick Search (Ctrl + K)",
+    "searchPlaceholder": "Search...",
+    "settings": "Settings (Language & Appearance)",
+    "back": "Back",
+    "menu": "Main Menu",
+    "liturgiesMenu": "Liturgies & Prayers (Mass, Praises, Hymns, Gospel, Agpeya)",
+    "prepMenu": "Lesson Preparation & Presentation Slides",
+    "aiMenu": "AI Assistant & Icon Generator",
+    "synaxariumMenu": "Synaxarium & Coptic Calendar",
+    "examMenu": "Quizzes & Contests",
+    "settingsMenu": "Settings & Language"
   },
   "Settings": {
     "title": "Settings",
@@ -65,6 +90,7 @@
     "profile": "Profile",
     "displayName": "Display name",
     "emailReadOnly": "Email (Read Only)",
+    "accountManagement": "Change Password / Manage Account",
     "saved": "Saved successfully",
     "saveError": "Could not save",
     "cacheCleared": "Cache cleared",
@@ -74,6 +100,7 @@
     "notifError": "Error enabling notifications",
     "notifEnableFirst": "Enable main notifications first",
     "notifTagFail": "Failed to update notification setting",
+    "guest": "Guest",
     "categories": {
       "verse": {
         "name": "Daily verse",
@@ -87,6 +114,66 @@
         "name": "Confession appointments",
         "desc": "Reminders for your confession schedule"
       }
+    }
+  },
+  "Synaxarium": {
+    "title": "Complete Coptic Synaxarium",
+    "subtitle": "Lives of the Saints, Martyrs, and Feasts for each day of the Coptic year",
+    "todaySynaxarium": "Today's Synaxarium",
+    "dailyKatamaros": "Daily Katamaros",
+    "searchPlaceholder": "Search by saint, martyr, monastery, or event...",
+    "copticMonths": "Coptic Calendar Months (13 Months):",
+    "copticDays": "Days of {month}:",
+    "viewMonth": "View full month commemorations",
+    "viewDay": "View by day",
+    "searchResults": "Search results for: \"{query}\"",
+    "monthCommemorations": "Commemorations for the entire month of {month}",
+    "dayCommemorations": "Synaxarium of day {day} of {month}",
+    "foundCount": "Found {count} commemorations",
+    "loading": "Loading Synaxarium...",
+    "notFound": "No matching commemorations found",
+    "notFoundHint": "Try changing search criteria or choosing another Coptic day.",
+    "listen": "Listen to narration",
+    "stopAudio": "Stop audio",
+    "copySuccess": "Story copied to clipboard",
+    "bookmarkSaved": "Saved \"{title}\" to bookmarks",
+    "bookmarkRemoved": "Removed from bookmarks",
+    "showMore": "Open in full window ↗",
+    "expandInline": "Expand inline ▼",
+    "collapseInline": "Show less ▲",
+    "categories": {
+      "all": "All",
+      "martyrs": "Martyrs & Confessors",
+      "monastics": "Monks & Hermits",
+      "patriarchs": "Patriarchs & Bishops",
+      "biblical": "Prophets & Apostles",
+      "feasts": "Feasts & Commemorations"
+    }
+  },
+  "Tasbeha": {
+    "title": "Midnight & Daily Praises",
+    "presentationMode": "Presentation Screen",
+    "presentationTitle": "Full Screen Presentation Mode",
+    "searchPlaceholder": "Search praises...",
+    "searchTooltip": "Search praise texts",
+    "layoutColumns": "Side-by-side Columns",
+    "layoutStacked": "Stacked Cards",
+    "roles": {
+      "all": "All",
+      "people": "Congregation & Choir",
+      "cantor": "Cantor & Teacher",
+      "priest": "Priest"
+    },
+    "tones": {
+      "both": "All",
+      "adam": "Adam",
+      "watos": "Watos"
+    },
+    "languages": {
+      "arabic": "Arabic",
+      "copticArabic": "Coptic-Arabic",
+      "coptic": "ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ",
+      "english": "English"
     }
   }
 }

@@ -39,9 +39,20 @@ export default function UnifiedGlobalHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const tNav = useTranslations('Navigation');
+  const tHome = useTranslations('Home');
   const [mounted, setMounted] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const MENU_ITEMS = [
+    { href: '/liturgies', label: tNav('liturgiesMenu'), icon: FaChurch, color: 'text-amber-400' },
+    { href: '/preparation', label: tNav('prepMenu'), icon: FaFileAlt, color: 'text-teal-400' },
+    { href: '/chat', label: tNav('aiMenu'), icon: FaChurch, color: 'text-amber-400' },
+    { href: '/synaxarium', label: tNav('synaxariumMenu'), icon: FaChurch, color: 'text-rose-400' },
+    { href: '/exam/quiz/dashboard', label: tNav('examMenu'), icon: FaPenFancy, color: 'text-purple-400' },
+    { href: '/settings', label: tNav('settingsMenu'), icon: FaCog, color: 'text-neutral-400' },
+  ];
 
   useEffect(() => {
     setMounted(true);
@@ -94,10 +105,10 @@ export default function UnifiedGlobalHeader() {
               <button
                 onClick={handleBack}
                 className="p-0.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition flex items-center gap-0.5 text-xs font-bold"
-                title="الرجوع للصفحة السابقة"
+                title={tNav('back')}
               >
                 <FaArrowRight className="text-xs" />
-                <span className="hidden md:inline">رجوع</span>
+                <span className="hidden md:inline">{tNav('back')}</span>
               </button>
             )}
 
@@ -127,10 +138,10 @@ export default function UnifiedGlobalHeader() {
             <button
               onClick={() => setIsSearchOpen(true)}
               className="p-0.5 sm:px-0.5 sm:py-0.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 flex items-center gap-0.5 text-xs transition"
-              title="بحث سريع (Ctrl + K)"
+              title={tNav('search')}
             >
               <FaSearch className="text-xs text-amber-400" />
-              <span className="hidden sm:inline font-medium text-neutral-400">بحث...</span>
+              <span className="hidden sm:inline font-medium text-neutral-400">{tNav('searchPlaceholder')}</span>
               <kbd className="hidden sm:inline-block text-[10px] font-mono px-0.5 py-0.25 bg-neutral-800 border border-neutral-700 rounded text-neutral-500">
                 ⌘K
               </kbd>
@@ -140,7 +151,7 @@ export default function UnifiedGlobalHeader() {
             <Link
               href="/settings"
               className="p-0.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition text-xs flex items-center gap-0.5"
-              title="الإعدادات (اللغة والمظهر)"
+              title={tNav('settings')}
             >
               <FaCog className="text-sm" />
             </Link>
@@ -149,7 +160,7 @@ export default function UnifiedGlobalHeader() {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-0.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition text-xs lg:hidden"
-              title="القائمة الشاملة"
+              title={tNav('menu')}
             >
               {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
             </button>

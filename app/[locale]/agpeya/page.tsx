@@ -928,7 +928,7 @@ export default function AgpeyaPage() {
         )}
 
         {/* Bottom Navigation Buttons to next/prev canonical hours */}
-        <section className="flex items-center justify-between pt-1 border-t border-stone-200 dark:border-zinc-800">
+        <section className="flex items-center pt-1 border-t justify-evenly gap-5 border-stone-200 dark:border-zinc-800">
           {(() => {
             const currentIndex = AGPEYA_HOURS.findIndex((h) => h.id === currentHour.id);
             const prevHour = currentIndex > 0 ? AGPEYA_HOURS[currentIndex - 1] : null;
@@ -947,7 +947,7 @@ export default function AgpeyaPage() {
                     className="rounded-2xl gap-0.5 text-xs font-bold"
                   >
                     <ChevronRight size={16} />
-                    <span>الساعة السابقة: {prevHour.nameAr}</span>
+                    <span>{prevHour.nameAr}</span>
                   </Button>
                 ) : (
                   <div />
@@ -962,7 +962,7 @@ export default function AgpeyaPage() {
                     }}
                     className="rounded-2xl gap-0.5 text-xs font-bold"
                   >
-                    <span>الساعة التالية: {nextHour.nameAr}</span>
+                    <span>{nextHour.nameAr}</span>
                     <ChevronLeft size={16} />
                   </Button>
                 )}

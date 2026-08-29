@@ -14,6 +14,7 @@ import {
   FaTv,
   FaTimes,
 } from 'react-icons/fa';
+import { useTranslations } from 'next-intl';
 import {
   TasbehaDocument,
   TasbehaLanguage,
@@ -64,89 +65,16 @@ export default function TasbehaNavbar({
   onSearchChange,
   onOpenPresentation,
 }: Props) {
+  const t = useTranslations('Tasbeha');
   const [showSearch, setShowSearch] = useState(false);
 
   return (
     <div className="sticky top-0 z-30 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800 shadow-xl" dir="rtl">
       {/* 1. Top Bar: Tasbeha Types Tabs Selector */}
       <div className="px-1 py-0.5 flex items-center justify-between gap-0.5 overflow-x-auto no-scrollbar border-b border-white/5">
-        {/* <div className="flex items-center gap-0.5 shrink-0">
-          {ALL_TASBEHA.map((tas) => {
-            const isActive = activeTasbeha.id === tas.id;
-            return (
-              <button
-                key={tas.id}
-                onClick={() => onSelectTasbeha(tas)}
-                className={`px-1 py-0.5 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-0.5 ${
-                  isActive
-                    ? 'bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 scale-102'
-                    : 'bg-neutral-900 text-neutral-300 hover:bg-neutral-800 hover:text-white border border-neutral-800'
-                }`}
-              >
-                <FaMusic className={isActive ? 'text-white' : 'text-blue-400'} />
-                <span>{tas.title.arabic}</span>
-              </button>
-            );
-          })}
-        </div> */}
-
-        {/* Presentation Fullscreen Button */}
       </div>
 
       {/* 2. Controls & Filter Bar */}
-      {/* <div className="px-1 py-0.5 flex flex-wrap items-center justify-between gap-0.5"> */}
-        {/* Participant Role Switcher */}
-        {/* <div className="flex items-center bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0">
-          {ROLES.map((r) => {
-            const isSelected = activeRole === r.id;
-            const Icon = r.icon;
-            return (
-              <button
-                key={r.id}
-                onClick={() => onSelectRole(r.id)}
-                className={`px-0.5 py-0.5 rounded-lg text-xs font-bold transition flex items-center gap-0.5 ${
-                  isSelected
-                    ? 'bg-neutral-800 text-white shadow-xs border border-white/10'
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-              >
-                <Icon className={isSelected ? r.color : 'text-neutral-500'} />
-                <span>{r.label}</span>
-              </button>
-            );
-          })}
-        </div> */}
-
-        {/* Tone Selector: Adam / Watos / Both */}
-        {/* <div className="flex items-center bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0 text-xs">
-          <button
-            onClick={() => onSelectTone('both')}
-            className={`px-0.5 py-0.5 rounded-lg font-bold transition ${
-              activeTone === 'both' ? 'bg-neutral-800 text-white' : 'text-neutral-500 hover:text-white'
-            }`}
-          >
-            الكل
-          </button>
-          <button
-            onClick={() => onSelectTone('adam')}
-            className={`px-0.5 py-0.5 rounded-lg font-bold transition flex items-center gap-0.25 ${
-              activeTone === 'adam' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'text-neutral-500 hover:text-amber-400'
-            }`}
-          >
-            <FaSun className="text-[10px]" />
-            <span>آدام</span>
-          </button>
-          <button
-            onClick={() => onSelectTone('watos')}
-            className={`px-0.5 py-0.5 rounded-lg font-bold transition flex items-center gap-0.25 ${
-              activeTone === 'watos' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : 'text-neutral-500 hover:text-blue-400'
-            }`}
-          >
-            <FaMoon className="text-[10px]" />
-            <span>واطس</span>
-          </button>
-        </div> */}
-
         {/* Language Toggles */}
         <div className="flex items-center gap-0.25 bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0 text-xs">
           <button
@@ -157,7 +85,7 @@ export default function TasbehaNavbar({
                 : 'text-neutral-500 hover:text-neutral-300'
             }`}
           >
-            عربي
+            {t('languages.arabic')}
           </button>
           <button
             onClick={() => onToggleLanguage('coptic_arabic')}
@@ -167,7 +95,7 @@ export default function TasbehaNavbar({
                 : 'text-neutral-500 hover:text-neutral-300'
             }`}
           >
-            قبطي معرب
+            {t('languages.copticArabic')}
           </button>
           <button
             onClick={() => onToggleLanguage('coptic')}
@@ -177,7 +105,7 @@ export default function TasbehaNavbar({
                 : 'text-neutral-500 hover:text-neutral-300'
             }`}
           >
-            ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ
+            {t('languages.coptic')}
           </button>
           <button
             onClick={() => onToggleLanguage('english')}
@@ -187,7 +115,7 @@ export default function TasbehaNavbar({
                 : 'text-neutral-500 hover:text-neutral-300'
             }`}
           >
-            English
+            {t('languages.english')}
           </button>
         </div>
 
@@ -196,10 +124,10 @@ export default function TasbehaNavbar({
         <button
           onClick={onOpenPresentation}
           className="shrink-0 px-0.5 py-0.5 rounded-xl text-xs md:text-sm font-bold bg-neutral-900 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-2 transition"
-          title="شاشة الخورس والتسبيح ملء الشاشة"
+          title={t('presentationTitle')}
         >
           <FaTv className="text-blue-400" />
-          <span className="hidden sm:inline">شاشة التسبيح</span>
+          <span className="hidden sm:inline">{t('presentationMode')}</span>
         </button>
           {/* Columns / Stacked View */}
           <div className="hidden sm:flex items-center bg-neutral-900 p-0.5 rounded-xl border border-neutral-800">
@@ -208,7 +136,7 @@ export default function TasbehaNavbar({
               className={`p-0.5 rounded-lg text-xs transition ${
                 layoutMode === 'columns' ? 'bg-neutral-800 text-blue-400' : 'text-neutral-500'
               }`}
-              title="عرض الأعمدة المتجاورة"
+              title={t('layoutColumns')}
             >
               <FaColumns />
             </button>
@@ -217,7 +145,7 @@ export default function TasbehaNavbar({
               className={`p-0.5 rounded-lg text-xs transition ${
                 layoutMode === 'stacked' ? 'bg-neutral-800 text-blue-400' : 'text-neutral-500'
               }`}
-              title="عرض البطاقات المتتالية"
+              title={t('layoutStacked')}
             >
               <FaThList />
             </button>
@@ -246,7 +174,7 @@ export default function TasbehaNavbar({
               <div className="flex items-center gap-0.5 bg-neutral-900 border border-neutral-700 rounded-xl px-0.5 py-0.5">
                 <input
                   type="text"
-                  placeholder="ابحث في التسبحة..."
+                  placeholder={t('searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
                   className="bg-transparent text-white text-xs outline-hidden w-32 md:w-48 placeholder-neutral-500"
@@ -266,7 +194,7 @@ export default function TasbehaNavbar({
               <button
                 onClick={() => setShowSearch(true)}
                 className="p-0.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-xl border border-neutral-800 transition text-xs"
-                title="بحث في نصوص التسبحة"
+                title={t('searchTooltip')}
               >
                 <FaSearch />
               </button>

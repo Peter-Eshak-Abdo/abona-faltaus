@@ -6,7 +6,13 @@
     "saving": "ϫⲓⲛⲓ...",
     "back": "ⲉⲡⲁϩⲟⲩ",
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "close": "ⲙⲁϣⲑⲁⲙ",
+    "search": "ⲕⲱϯ",
+    "copy": "ⲥϧⲁⲓ",
+    "copied": "ⲁⲩⲥϧⲏⲧϥ",
+    "error": "ⲡⲓⲥⲫⲁⲗⲙⲁ",
+    "success": "ⲁϥϣⲱⲡⲓ"
   },
   "Language": {
     "label": "Ⲁⲥⲡⲓ",
@@ -19,7 +25,7 @@
   "Home": {
     "signInGoogle": "Ⲥⲓⲛ ⲓⲛ · Google",
     "exploreHint": "Ⲕⲱϣ ⲉⲑⲣⲉⲕϫⲓⲙⲓ",
-    "loginRequired": "Please sign in first",
+    "loginRequired": "Please sign in first / Ⲙⲁϣⲉ ⲛ̀ϧⲟⲩⲛ",
     "welcome": "Ⲭⲉⲣⲉ",
     "helloUser": "Ⲭⲉⲣⲉ، {name}",
     "signInPrompt": "Please sign in",
@@ -30,14 +36,19 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "about": "About",
+    "offlineStatus": "Offline Mode",
+    "offlineMessage": "No internet connection",
+    "dailyVerse": "Ⲭⲱ ⲛ̀ϯⲉϩⲟⲟⲩ",
+    "prayerTimes": "Ϯⲁ̀ϫⲡⲓⲁ (Agpeya)",
+    "openPrayer": "Ⲁ̀ϫⲡⲓⲁ ↗",
     "sections": {
       "exams": "Quizzes",
-      "icons": "Icons",
+      "icons": "Icons AI",
       "preparation": "Notes",
       "settings": "Settings",
-      "chat": "Chat",
-      "hymns": "Ⲁⲗϩⲁⲛ",
-      "bible": "Bible",
+      "chat": "Chat AI",
+      "hymns": "Ⲁⲗϩⲁⲛ (Hymns)",
+      "bible": "Ⲡⲓϫⲱⲙ (Bible)",
       "agpeya": "Ϯⲁ̀ϫⲡⲓⲁ (Agpeya)",
       "liturgies": "Ϯⲁ̀ⲛⲁⲫⲟⲣⲁ̀ (Liturgies)",
       "tasbeha": "Ⲡⲓⲧⲱϣ (Tasbeha)",
@@ -45,6 +56,20 @@
       "slides": "Slides AI",
       "articles": "Articles"
     }
+  },
+  "Navigation": {
+    "home": "Ⲡⲓⲏⲓ",
+    "search": "ⲕⲱϯ (Ctrl + K)",
+    "searchPlaceholder": "ⲕⲱϯ...",
+    "settings": "Settings",
+    "back": "ⲉⲡⲁϩⲟⲩ",
+    "menu": "Menu",
+    "liturgiesMenu": "Ϯⲁ̀ⲛⲁⲫⲟⲣⲁ̀ (Liturgies, Tasbeha, Hymns, Bible, Agpeya)",
+    "prepMenu": "Notes & Slides",
+    "aiMenu": "AI Assistant & Icons",
+    "synaxariumMenu": "Ⲡⲓⲥⲩⲛⲁⲝⲁⲣⲓⲟⲛ",
+    "examMenu": "Quizzes",
+    "settingsMenu": "Settings"
   },
   "Settings": {
     "title": "Settings",
@@ -65,6 +90,7 @@
     "profile": "Profile",
     "displayName": "Display name",
     "emailReadOnly": "Email (Read Only)",
+    "accountManagement": "Manage Account / Password",
     "saved": "Saved",
     "saveError": "Error",
     "cacheCleared": "Cache cleared",
@@ -74,6 +100,7 @@
     "notifError": "Error",
     "notifEnableFirst": "Enable notifications first",
     "notifTagFail": "Update failed",
+    "guest": "Guest",
     "categories": {
       "verse": {
         "name": "Daily verse",
@@ -87,6 +114,66 @@
         "name": "Confession",
         "desc": "Confession reminders"
       }
+    }
+  },
+  "Synaxarium": {
+    "title": "Ⲡⲓⲥⲩⲛⲁⲝⲁⲣⲓⲟⲛ ⲛ̀Ⲣⲉⲙⲛ̀ⲭⲏⲙⲓ",
+    "subtitle": "Lives of the Saints, Martyrs, and Feasts",
+    "todaySynaxarium": "Synaxarium of Today",
+    "dailyKatamaros": "Ⲡⲓⲕⲁⲧⲁⲙⲉⲣⲟⲥ",
+    "searchPlaceholder": "ⲕⲱϯ ⲉ̀ⲡⲓⲁⲅⲓⲟⲥ...",
+    "copticMonths": "Ⲁ̀ⲃⲟⲧ ⲛ̀Ⲣⲉⲙⲛ̀ⲭⲏⲙⲓ (13):",
+    "copticDays": "Days of {month}:",
+    "viewMonth": "Full month view",
+    "viewDay": "Day view",
+    "searchResults": "Search results for: \"{query}\"",
+    "monthCommemorations": "Month {month}",
+    "dayCommemorations": "{day} {month}",
+    "foundCount": "{count} results",
+    "loading": "ϫⲓⲛⲓ...",
+    "notFound": "Not found",
+    "notFoundHint": "Try different search term",
+    "listen": "Ⲥⲱⲧⲉⲙ",
+    "stopAudio": "Stop audio",
+    "copySuccess": "Copied",
+    "bookmarkSaved": "Saved \"{title}\"",
+    "bookmarkRemoved": "Removed",
+    "showMore": "Expand ↗",
+    "expandInline": "Expand ▼",
+    "collapseInline": "Collapse ▲",
+    "categories": {
+      "all": "All",
+      "martyrs": "Ⲙⲁⲣⲧⲩⲣⲟⲥ (Martyrs)",
+      "monastics": "Monastics",
+      "patriarchs": "Patriarchs",
+      "biblical": "Prophets & Apostles",
+      "feasts": "Feasts"
+    }
+  },
+  "Tasbeha": {
+    "title": "Ⲡⲓⲧⲱϣ (Tasbeha)",
+    "presentationMode": "Presentation",
+    "presentationTitle": "Full Screen Presentation",
+    "searchPlaceholder": "ⲕⲱϯ ϧⲉⲛ ⲡⲓⲧⲱϣ...",
+    "searchTooltip": "Search praises",
+    "layoutColumns": "Columns",
+    "layoutStacked": "Stacked",
+    "roles": {
+      "all": "All",
+      "people": "Ⲡⲓⲗⲁⲟⲥ (People)",
+      "cantor": "Ⲡⲓⲯⲁⲗⲧⲏⲥ (Cantor)",
+      "priest": "Ⲡⲓⲟⲩⲏⲃ (Priest)"
+    },
+    "tones": {
+      "both": "All",
+      "adam": "Ⲁ̀ⲇⲁⲙ (Adam)",
+      "watos": "Ⲃⲁⲧⲟⲥ (Watos)"
+    },
+    "languages": {
+      "arabic": "العربية",
+      "copticArabic": "قبطي معرب",
+      "coptic": "ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ",
+      "english": "English"
     }
   }
 }

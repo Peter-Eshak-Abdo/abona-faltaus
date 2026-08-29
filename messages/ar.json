@@ -6,7 +6,13 @@
     "saving": "جاري الحفظ...",
     "back": "رجوع",
     "online": "أونلاين",
-    "offline": "أوفلاين"
+    "offline": "أوفلاين",
+    "close": "إغلاق",
+    "search": "بحث",
+    "copy": "نسخ",
+    "copied": "تم النسخ بنجاح",
+    "error": "حدث خطأ",
+    "success": "تم بنجاح"
   },
   "Language": {
     "label": "اللغة",
@@ -30,21 +36,40 @@
     "privacy": "سياسة الخصوصية",
     "terms": "الشروط والأحكام",
     "about": "عن التطبيق",
+    "offlineStatus": "وضع الأوفلاين",
+    "offlineMessage": "لا يوجد اتصال بالإنترنت لجلب التحديثات",
+    "dailyVerse": "آية عشوائية",
+    "prayerTimes": "مواعيد الصلاة (الأجبية)",
+    "openPrayer": "فتح الصلاة ↗",
     "sections": {
-      "exams": "الامتحانات",
+      "exams": "الامتحانات والمسابقات",
       "icons": "مولد الأيقونات الذكي",
       "preparation": "نوتة التحضير الذكية",
-      "settings": "الإعدادات",
-      "chat": "الشات بوت",
-      "hymns": "الألحان",
+      "settings": "الإعدادات والمظهر",
+      "chat": "المساعد الآبائي الذكي",
+      "hymns": "الألحان القبطية",
       "bible": "الكتاب المقدس",
       "agpeya": "الأجبية المقدسة",
       "liturgies": "القداسات الإلهية",
       "tasbeha": "التسبحة والإبصالمودية",
-      "synaxarium": "السنكسار",
+      "synaxarium": "السنكسار القبطي",
       "slides": "صانع العروض التقديمية",
-      "articles": "المقالات"
+      "articles": "المقالات الكنسية"
     }
+  },
+  "Navigation": {
+    "home": "الرئيسية",
+    "search": "بحث سريع (Ctrl + K)",
+    "searchPlaceholder": "بحث...",
+    "settings": "الإعدادات (اللغة والمظهر)",
+    "back": "رجوع",
+    "menu": "القائمة الشاملة",
+    "liturgiesMenu": "الليتورجيا والصلوات (القداس، التسبحة، الألحان، الإنجيل، الأجبية)",
+    "prepMenu": "نوتة التحضير وعروض الشرائح (Slides)",
+    "aiMenu": "المساعد الذكي وتوليد الأيقونات",
+    "synaxariumMenu": "السنكسار والسنوات القبطية",
+    "examMenu": "الامتحانات والمسابقات",
+    "settingsMenu": "الإعدادات واللغة"
   },
   "Settings": {
     "title": "الإعدادات",
@@ -64,7 +89,8 @@
     "notificationsCustomize": "تخصيص أنواع الرسائل:",
     "profile": "البيانات الأساسية",
     "displayName": "الاسم المعروض",
-    "emailReadOnly": "Email (Read Only)",
+    "emailReadOnly": "البريد الإلكتروني (للقراءة فقط)",
+    "accountManagement": "تغيير كلمة المرور / إدارة الحساب",
     "saved": "تم حفظ البيانات",
     "saveError": "خطأ في الحفظ",
     "cacheCleared": "تم مسح الكاش بنجاح",
@@ -74,6 +100,7 @@
     "notifError": "حدث خطأ أثناء تفعيل الإشعارات",
     "notifEnableFirst": "برجاء تفعيل الإشعارات الرئيسية أولاً",
     "notifTagFail": "فشل تحديث إعداد الإشعارات",
+    "guest": "زائر",
     "categories": {
       "verse": {
         "name": "آية اليوم",
@@ -87,6 +114,66 @@
         "name": "مواعيد الاعتراف",
         "desc": "تذكير بمواعيد الاعتراف الخاصة بك"
       }
+    }
+  },
+  "Synaxarium": {
+    "title": "السنكسار القبطي الكامل",
+    "subtitle": "سير الآباء القديسين والشهداء وتذكارات الأعياد لكل يوم من السنة القبطية",
+    "todaySynaxarium": "سنكسار اليوم",
+    "dailyKatamaros": "القطمارس اليومي",
+    "searchPlaceholder": "ابحث باسم القديس، الشهيد، الدير، أو الحدث...",
+    "copticMonths": "شهور السنة القبطية (13 شهراً):",
+    "copticDays": "أيام شهر {month}:",
+    "viewMonth": "عرض كل تذكارات الشهر",
+    "viewDay": "عرض باليوم",
+    "searchResults": "نتائج البحث عن: \"{query}\"",
+    "monthCommemorations": "تذكارات شهر {month} بالكامل",
+    "dayCommemorations": "سنكسار يوم {day} {month}",
+    "foundCount": "تم العثور على {count} تذكار وسيرة عطرة",
+    "loading": "جاري تحميل السنكسار...",
+    "notFound": "لم يتم العثور على تذكارات مطابقة",
+    "notFoundHint": "جرب تغيير معايير البحث أو اختيار يوم قبطي آخر.",
+    "listen": "استماع للسيرة",
+    "stopAudio": "إيقاف الصوت",
+    "copySuccess": "تم نسخ السيرة للحافظة",
+    "bookmarkSaved": "تم حفظ \"{title}\" في المفضلة",
+    "bookmarkRemoved": "تمت الإزالة من المفضلة",
+    "showMore": "فتح في نافذة كاملة ↗",
+    "expandInline": "توسيع في المكان ▼",
+    "collapseInline": "عرض أقل ▲",
+    "categories": {
+      "all": "الكل",
+      "martyrs": "الشهداء والمعترفون",
+      "monastics": "الرهبان والنساك",
+      "patriarchs": "البطاركة والأساقفة",
+      "biblical": "الأنبياء والرسل",
+      "feasts": "الأعياد والتذكارات"
+    }
+  },
+  "Tasbeha": {
+    "title": "التسبحة والإبصالمودية",
+    "presentationMode": "شاشة التسبيح",
+    "presentationTitle": "شاشة الخورس والتسبيح ملء الشاشة",
+    "searchPlaceholder": "ابحث في التسبحة...",
+    "searchTooltip": "بحث في نصوص التسبحة",
+    "layoutColumns": "عرض الأعمدة المتجاورة",
+    "layoutStacked": "عرض البطاقات المتتالية",
+    "roles": {
+      "all": "الكل",
+      "people": "الخورس والشعب",
+      "cantor": "المرتل والمعلم",
+      "priest": "الكاهن"
+    },
+    "tones": {
+      "both": "الكل",
+      "adam": "آدام",
+      "watos": "واطس"
+    },
+    "languages": {
+      "arabic": "عربي",
+      "copticArabic": "قبطي معرب",
+      "coptic": "ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ",
+      "english": "English"
     }
   }
 }

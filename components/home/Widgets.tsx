@@ -2,10 +2,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSun, FaBookOpen } from "react-icons/fa";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 
 export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
+  const t = useTranslations("Home");
   const [verse, setVerse] = useState({
     text: "لأَنَّهُ هكَذَا أَحَبَّ اللهُ الْعَالَمَ حَتَّى بَذَلَ ابْنَهُ الْوَحِيدَ، لِكَيْ لاَ يَهْلِكَ كُلُّ مَنْ يُؤْمِنُ بِهِ، بَلْ تَكُونُ لَهُ الْحَيَاةُ الأَبَدِيَّةُ.",
     ref: "(يوحنا 3: 16)",
@@ -135,7 +137,7 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
                   <div className="w-3 h-3 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600">
                     <FaBookOpen size={16} />
                   </div>
-                  <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">آية عشوائية</span>
+                  <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">{t("dailyVerse")}</span>
                 </div>
                 <p className="text-xl font-bold text-gray-900 dark:text-gray-100 leading-relaxed text-right relative z-10">
                   "{verse.text}"
@@ -164,9 +166,9 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
                     <div className="w-3 h-3 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
                       <FaSun size={16} />
                     </div>
-                    <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">مواعيد الصلاة (الأجبية)</span>
+                    <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">{t("prayerTimes")}</span>
                   </div>
-                  <span className="text-[10px] text-blue-600 font-bold">فتح الصلاة ↗</span>
+                  <span className="text-[10px] text-blue-600 font-bold">{t("openPrayer")}</span>
                 </Link>
 
                 {prayers.map((prayer) => {
@@ -205,9 +207,9 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
                   <div className="w-3 h-3 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
                     <FaSun size={12} />
                   </div>
-                  <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">مواعيد الصلاة (الأجبية)</span>
+                  <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">{t("prayerTimes")}</span>
                 </div>
-                <span className="text-[10px] text-blue-600 font-bold">فتح الصلاة ↗</span>
+                <span className="text-[10px] text-blue-600 font-bold">{t("openPrayer")}</span>
               </Link>
               <div className="flex overflow-x-auto gap-0.5 pb-0.5 scrollbar-none">
                 {prayers.map((prayer) => {
@@ -245,7 +247,7 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
             <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-0.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
               <div className="flex items-center gap-0.5 mb-0.5">
                 <FaSun className="text-amber-500" size={16} />
-                <span className="font-bold text-xs text-amber-500 uppercase tracking-wider">آية اليوم</span>
+                <span className="font-bold text-xs text-amber-500 uppercase tracking-wider">{t("dailyVerse")}</span>
               </div>
               <p className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-0.5 leading-relaxed">
                 "{verse.text}"
