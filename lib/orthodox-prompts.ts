@@ -1,7 +1,4 @@
-/**
- * Orthodox Prompt Engineering Engine & Style Presets
- * Designed specifically for canonical Coptic and Eastern Orthodox iconography & sacred Christian art.
- */
+import { lookupSaintIcon, COPTIC_SAINTS_REGISTRY } from "./coptic-saints-database";
 
 export type IconStyleType = "coptic" | "byzantine" | "realistic";
 export type AspectRatioType = "1:1" | "9:16" | "3:4" | "16:9";
@@ -15,38 +12,40 @@ export interface StyleDefinition {
   samplePrompt: string;
   previewGradient: string;
   systemDirective: string;
+  negativePrompt: string;
 }
 
 export const ICON_STYLES: Record<IconStyleType, StyleDefinition> = {
   coptic: {
     id: "coptic",
     title: "النمط القبطي التقليدي",
-    subtitle: "أسلوب د. إيساك فانوس والأيقونة القبطية الأصيلة",
-    description: "أيقونة قبطية كنسية أصيلة بمدرسة د. إيساك فانوس، عيون روحية واسعة، هالات ذهبية بها صلبان قبطية، خطوط هندسية واضحة، ألوان تمبرا زاهية وخلفية ذهبية مقدسة.",
+    subtitle: "مدرسة د. إيساك فانوس والأيقونة القبطية الأصيلة",
+    description: "أيقونة قبطية كنسية أصيلة بمدرسة د. إيساك فانوس: عيون لوزية واسعة روحية متيقظة، ألوان تمبرا صريحة مسطحة 2D، هالات ذهبية بها صلبان قبطية متساوية الأضلاع، وكتابة اسم القديس بحروف قبطية كنسية دقيقة.",
     badge: "د. إيساك فانوس (قبطي أرثوذكسي)",
     samplePrompt: "السيدة العذراء مريم تحمل الطفل يسوع المسيح محاطة بالملاكين ميخائيل وغبريال",
     previewGradient: "from-amber-600/30 via-yellow-600/20 to-amber-950/40",
-    systemDirective: `Authentic traditional Coptic Orthodox Iconography in the signature canonical style of master Dr. Isaac Fanous (مدرسة د. إيساك فانوس).
-MEDIUM & TECHNIQUE: Traditional 2D flat egg tempera on gessoed wooden icon panel, burnished gold leaf background with engraved sacred motifs, crisp black outlines and geometric stylized contours.
-FIGURE & ANATOMY: Stylized Coptic canonical proportions, large luminous almond-shaped spiritual eyes looking straight at the viewer reflecting heavenly peace, serene peaceful mouth, elongated noble figures.
-LITURGICAL DETAILS: Prominent glowing circular golden halo with distinct Coptic cross markings (IC XC for Christ, MP ΘY for Virgin Mary), authentic traditional Coptic liturgical robes with embroidered crosses and geometric patterns, canonical Coptic hand gestures of blessing (three fingers touching), ancient Coptic text inscriptions.
-COLOR PALETTE: Bright radiant liturgical colors — sacred crimson red, royal ultramarine blue, ochre yellow, pure white, and shimmering gold. High brightness, clear sacred visibility.
-STRICT NEGATIVE EXCLUSIONS: NO 3D rendering, NO photorealism, NO modern western painting, NO cinematic dark shadows, NO dark gloomy lighting, NO Renaissance realism, NO Leonardo Da Vinci style, NO blurry faces, NO anime, NO distortion.`,
+    systemDirective: `Authentic canonical 2D Coptic Orthodox Iconography in the signature sacred style of Dr. Isaac Fanous (مدرسة د. إيساك فانوس للأيقونة القبطية).
+MEDIUM & TECHNIQUE: Traditional 2D flat egg tempera on gessoed wooden board icon, radiant gold leaf background, crisp precise black graphic outlines, flat planar sacred colors.
+ANATOMY & SACRED EXPRESSION: Canonical Coptic proportions, large wide almond-shaped spiritual eyes looking forward with serene eternal peace, noble elongated features, small peaceful holy mouth, canonical Coptic three-finger hand blessing gesture.
+LITURGICAL ATTIRE & HALO: Bright circular golden halos adorned with canonical Coptic cross engravings, authentic Coptic liturgical robes and epitrachelion with embroidered Coptic crosses.
+AUTHENTIC COPTIC INSCRIPTION: Prominent, clear ancient Coptic letters and inscriptions written in authentic Coptic ecclesiastical script framing the top/sides of the icon.
+COLOR PALETTE: Pure liturgical pigments — vermilion red, ultramarine blue, ochre gold, white linen. No secular shadows, divine uncreated heavenly light.`,
+    negativePrompt: `3D CGI, western renaissance oil painting, realistic skin pores, photorealism, heavy shadows, dark gloomy atmosphere, anime, deformed hands, extra fingers, distorted eyes, asymmetric eyes, western cross, Latin characters, distorted letters, modern clothing, fantasy armor, signature, watermark.`,
   },
   byzantine: {
     id: "byzantine",
-    title: "النمط البيزنطي الكلاسيكي",
+    title: "النمط التراثي الأرثوذكسي الكلاسيكي",
     subtitle: "أيقونات جبل آثوس والفسيفساء الأرثوذكسية",
-    description: "أيقونة بيزنطية أرثوذكسية كلاسيكية، أسلوب أيقونات جبل آثوس والفسيفساء المذهبة، ملامح مهيبة، خطوط ذهبية على الملابس (الأسست)، هالات دقيقة وكتابات يونانية وسلافية.",
-    badge: "بيزنطي أرثوذكسي (جبل آثوس)",
+    description: "أيقونة تراثية أرثوذكسية كلاسيكية على طراز جبل آثوس وحامل الأيقونات: ملامح نسكية مهيبة، خطوط ذهبية براقة (الأسست)، هالات محفورة مذهبة، وحروف قبطية ويونانية كنسية.",
+    badge: "تراثي بيزنطي (جبل آثوس)",
     samplePrompt: "السيد المسيح ضابط الكل (البانتوكراتور) ممسكاً بالإنجيل ومباركاً بيده اليمنى",
     previewGradient: "from-blue-600/30 via-amber-600/20 to-stone-900/40",
-    systemDirective: `Masterpiece Eastern Byzantine Orthodox Iconography, classic Mount Athos and Hagia Sophia canonical iconostasis tradition.
-MEDIUM & TECHNIQUE: Canonical 2D Byzantine egg tempera icon on seasoned wood or shimmering Byzantine gold mosaic tesserae, brilliant gold leaf background, rich Byzantine vermilion, lapis lazuli, imperial purple.
-FIGURE & ANATOMY: Sacred solemn ascetic facial features, large vigilant spiritual eyes, refined golden line striations (assist / chrysography) radiating across liturgical vestments.
-LITURGICAL DETAILS: Ornate cruciform halo for Christ with Greek lettering "O Ω N" (He Who Is), canonical Greek abbreviations (IC XC, MP ΘY), traditional Orthodox hand gesture of benediction, holding jeweled Gospel book, inverted byzantine sacred perspective.
-COLOR & LIGHT: Divine uncreated heavenly light, no secular dramatic shadow, majestic transcendent Orthodox sacred atmosphere.
-STRICT NEGATIVE EXCLUSIONS: NO western renaissance oil painting, NO modern digital 3D style, NO photorealism, NO dark gloomy shadows, NO deformed anatomy, NO anime, NO secular interpretation.`,
+    systemDirective: `Masterpiece Eastern Byzantine Orthodox Sacred Iconography, classic Mount Athos and ancient Eastern church iconostasis tradition.
+MEDIUM & TECHNIQUE: 2D Byzantine egg tempera and burnished gold leaf on seasoned wood panel, rich lapis lazuli and imperial vermilion.
+ANATOMY & SACRED EXPRESSION: Ascetic solemn holy face, deep contemplative vigilant eyes, golden striations (chrysography / assist) illuminating garment folds.
+LITURGICAL ATTIRE & HALO: Elaborate golden halo, for Christ a cruciform halo with inscribed letters "O Ω N", holding jeweled Gospel book, traditional Orthodox benediction hand gesture.
+SACRED INSCRIPTIONS: Inscribed holy monograms and titles in authentic Coptic or Greek liturgical script. Divine celestial light without secular shadows.`,
+    negativePrompt: `photorealistic, 3D render, casual realism, western baroque style, naked cherubs, gothic darkness, blurry facial features, low quality, warped anatomy, signature, watermark, modern clothes.`,
   },
   realistic: {
     id: "realistic",
@@ -59,50 +58,50 @@ STRICT NEGATIVE EXCLUSIONS: NO western renaissance oil painting, NO modern digit
     systemDirective: `Masterpiece Classical Eastern Orthodox Sacred Christian Fine Art (inspired by Viktor Vasnetsov, Mikhail Nesterov, and Heinrich Hofmann).
 MEDIUM & STYLE: Exquisite museum-quality sacred classical oil painting, luminous celestial warm divine lighting, rich textured biblical drapery and linen.
 FIGURE & EXPRESSION: Dignified, highly reverent, holy biblical figures with peaceful, prayerful, luminous faces, distinct holy glowing golden halos, reverent orthodox vestments with ornate embroideries.
-SCENE & ATMOSPHERE: Solemn, sacred, heavenly peaceful atmosphere, warm golden amber illumination, crystal clear detailed features, highly respectful liturgical composition.
-STRICT NEGATIVE EXCLUSIONS: NO dark dingy muddy tones, NO modern casual clothing, NO horror or creepy faces, NO blurry distorted hands, NO fantasy RPG style, NO anime.`,
+SCENE & ATMOSPHERE: Solemn, sacred, heavenly peaceful atmosphere, warm golden amber illumination, crystal clear detailed features, highly respectful liturgical composition.`,
+    negativePrompt: `dark dingy muddy tones, modern casual clothing, horror or creepy faces, blurry distorted hands, fantasy RPG style, anime, low quality.`,
   },
 };
 
 export const QUICK_SUGGESTIONS = [
   {
-    title: "السيد المسيح الراعي الصالح",
-    arabicPrompt: "السيد المسيح الراعي الصالح يحمل الخروف الضال على كتفيه بين المروج الخضراء والينابيع الهادئة",
+    title: "السيد المسيح البانتوكراتور (ضابط الكل)",
+    arabicPrompt: "السيد المسيح ضابط الكل ممسكاً بكتاب الحياة ومباركاً بيمينه برداء أحمر وأزرق وهالة صليبية مذهبة بحروف ⲒⲎⲤ ⲠⲬⲤ",
     style: "coptic" as IconStyleType,
   },
   {
-    title: "السيدة العذراء والطفل يسوع",
-    arabicPrompt: "السيدة العذراء مريم جالسة على العرش حاملة الطفل يسوع المسيح محاطة بهالات النور والملائكة",
+    title: "أيقونة القيامة المجيدة ونزول الجحيم (الأناستاسيس)",
+    arabicPrompt: "أيقونة القيامة القبطية: السيد المسيح بلباس النصرة الأبيض يحطم أبواب الجحيم ويقيم آدم وحواء من الجب والشيطان مقيد بالأسفل، مكتوب عليها ⲠⲒⲬⲢⲒⲤⲦⲞⲤ ⲀϤⲦⲰⲚϤ",
     style: "coptic" as IconStyleType,
   },
   {
-    title: "المسيح ضابط الكل (البانتوكراتور)",
-    arabicPrompt: "السيد المسيح البانتوكراتور ضابط الكل ممسكاً بكتاب الحياة ومباركاً بيمينه على خلفية فسيفساء ذهبية",
-    style: "byzantine" as IconStyleType,
+    title: "السيدة العذراء مريم (الثيؤطوكوس)",
+    arabicPrompt: "السيدة العذراء مريم تحمل الطفل يسوع المسيح محاطة بالنجوم الثلاثة البتولية وهالات النور المذهبة بحروف ϮⲐⲈⲞⲦⲞⲔⲞⲤ ⲘⲀⲢⲒⲀ",
+    style: "coptic" as IconStyleType,
   },
   {
     title: "الشهيد العظيم مارجرجس الروماني",
-    arabicPrompt: "الشهيد العظيم مارجرجس يمتطي جواده الأبيض حاملاً رمح الصليب وينتصر على التنين رمز الشر",
+    arabicPrompt: "الشهيد مارجرجس على جواده الأبيض يطعن التنين برمح الصليب ومكتوب اسمه بالقبطي ⲠⲒⲀⲄⲒⲞⲤ ⲄⲈⲰⲢⲄⲒⲞⲤ",
+    style: "coptic" as IconStyleType,
+  },
+  {
+    title: "القديس الأنبا أنطونيوس كوكب البرية",
+    arabicPrompt: "الأنبا أنطونيوس أبو الرهبان بالقلنسوة القبطية ذات الـ 12 صليباً واللحية البيضاء حاملاً الصليب الخشبي والعصا ومكتوب ⲀⲠⲀ ⲀⲚⲦⲰⲚⲒⲞⲤ",
     style: "coptic" as IconStyleType,
   },
   {
     title: "القديس أبونا فلتاؤس السرياني",
-    arabicPrompt: "القديس المعاصر الراهب الصامت أبونا فلتاؤس السرياني بلحيته البيضاء وجلبابه الرهباني ممسكاً بالصليب والمسبحة في قلايته الرهبانية",
-    style: "realistic" as IconStyleType,
+    arabicPrompt: "القديس المعاصر أبونا فلتاؤس السرياني بالقلنسوة الرهبانية واللحية البيضاء حاملاً صليب الجلد والمسبحة ومكتوب ⲀⲠⲀ ⲪⲒⲖⲞⲐⲈⲞⲤ",
+    style: "coptic" as IconStyleType,
+  },
+  {
+    title: "القديس مارمرقس الرسول الإنجيلي",
+    arabicPrompt: "القديس مارمرقس كاروز الديار المصرية ممسكاً بالإنجيل وبجواره الأسد الرمزي ومنارة الإسكندرية ومكتوب ⲠⲒⲀⲄⲒⲞⲤ ⲘⲀⲢⲔⲞⲤ",
+    style: "coptic" as IconStyleType,
   },
   {
     title: "رئيس الملائكة الجليل ميخائيل",
-    arabicPrompt: "رئيس الملائكة الجليل ميخائيل حاملاً سيف الحق وميزان العدالة بأجنحة مهيبة متلألئة",
-    style: "byzantine" as IconStyleType,
-  },
-  {
-    title: "العشاء السري المقدس",
-    arabicPrompt: "السيد المسيح مع تلاميذه الاثني عشر حول مائدة العشاء السري وكسر الخبز في العلية",
-    style: "realistic" as IconStyleType,
-  },
-  {
-    title: "القيامة المجيدة ونزول الجحيم",
-    arabicPrompt: "أيقونة القيامة المجيدة (الأناستاسيس): السيد المسيح القائم من بين الأموات يمسك بآدم وحواء ويحطم أبواب الجحيم",
+    arabicPrompt: "رئيس الملائكة ميخائيل بثياب الشماسية المذهبة وأجنحة نورانية حاملاً سيف الحق وميزان العدالة ومكتوب ⲘⲒⲬⲀⲎⲖ",
     style: "byzantine" as IconStyleType,
   },
 ];
@@ -114,20 +113,32 @@ export function buildEnhancedOrthodoxPrompt(
   userQuery: string,
   style: IconStyleType = "coptic",
   theologicalGuardrails = true
-): { finalPrompt: string; styleDetails: StyleDefinition } {
+): { finalPrompt: string; styleDetails: StyleDefinition; detectedSaint?: any } {
   const styleDef = ICON_STYLES[style] || ICON_STYLES.coptic;
+  const saint = lookupSaintIcon(userQuery);
 
-  let prompt = userQuery.trim();
+  let specificGuidance = "";
+  if (saint) {
+    if (style === "coptic") {
+      specificGuidance = `Subject: ${saint.copticPromptGuidance}. Canonical Inscription: "${saint.copticTitleInscription}". Liturgical Colors: ${saint.canonicalColors.tunic}, ${saint.canonicalColors.mantle}. Key Attributes: ${saint.keyAttributes.join(", ")}.`;
+    } else if (style === "byzantine") {
+      specificGuidance = `Subject: ${saint.byzantinePromptGuidance}. Canonical Inscription: "${saint.copticTitleInscription}". Key Attributes: ${saint.keyAttributes.join(", ")}.`;
+    } else {
+      specificGuidance = `Subject: ${saint.arabicName} in sacred Orthodox realism. Key Attributes: ${saint.keyAttributes.join(", ")}.`;
+    }
+  }
 
-  // Guardrails & Negative guidelines built directly into the prompt description
+  const prompt = userQuery.trim();
   const rules = theologicalGuardrails
-    ? "Strict theological rules: strictly respectful Orthodox Christian depiction, holy aura, modest clothing, no distortion of holy figures, dignified posture, beautiful canonical art."
+    ? "Strict canonical Orthodox iconography rules: authentic respectful facial features, large almond spiritual eyes, correct Coptic cross halo, no distortion, precise sacred symbolism."
     : "";
 
-  const finalPrompt = `Subject: ${prompt}. Art Style: ${styleDef.systemDirective}. Composition: Focused sacred composition, centered iconic posture, majestic and divine sacred art. ${rules}`;
+  const finalPrompt = `${styleDef.systemDirective}\n\n${specificGuidance ? `Canonical Subject: ${specificGuidance}\n` : ""}User Details: ${prompt}.\nComposition: Symmetrical sacred icon composition, reverent holy atmosphere. ${rules}`;
 
   return {
     finalPrompt,
     styleDetails: styleDef,
+    detectedSaint: saint,
   };
 }
+

@@ -91,7 +91,7 @@ export function chunkOrthodoxText(
   maxChunkSize: number = 800,
   overlap: number = 100
 ): string[] {
-  const paragraphs = text.split(/\n\s*\n/);
+  const paragraphs = text.split(/\s*\n/);
   const chunks: string[] = [];
   let currentChunk = "";
 
@@ -154,7 +154,7 @@ export function buildOrthodoxRAGPrompt(
 النص:
 ${doc.content}`
         )
-        .join("\n\n---\n\n")
+        .join("\n---\n")
     : "لا توجد مقتطفات مسترجعة مطابقة مباشرة من قاعدة المعرفة للبحث الحالي.";
 
   return `

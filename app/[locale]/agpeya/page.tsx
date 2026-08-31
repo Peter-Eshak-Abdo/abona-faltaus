@@ -215,13 +215,13 @@ export default function AgpeyaPage() {
       {/* Top Floating Control Bar */}
       <header
         className={cn(
-          "sticky top-0 z-40 backdrop-blur-md border-b px-1 py-0.5 transition-all duration-200",
+          "sticky top-0 z-40 backdrop-blur-md border-b px-0.5 py-0.5 transition-all duration-200",
           prayerMode
             ? "bg-black/80 border-stone-800 text-stone-200"
             : "bg-white/80 dark:bg-zinc-900/80 border-stone-200 dark:border-zinc-800 shadow-xs"
         )}
       >
-        <div className="max-w-8xl mx-auto flex items-center mx-1 justify-between gap-0.5">
+        <div className="max-w-8xl mx-auto flex items-center justify-between gap-0.5">
           <div className="flex items-center gap-0.5">
             <Link
               href="/"
@@ -254,13 +254,13 @@ export default function AgpeyaPage() {
                 toast(prayerMode ? "تم إيقاف وضع الصلاة" : "تم تفعيل وضع الخشوع والصلاة");
               }}
               className={cn(
-                "rounded-xl text-xs font-bold gap-0.5 px-0.5",
+                "rounded-xl text-xs font-bold w-9",
                 prayerMode
                   ? "bg-amber-600 hover:bg-amber-700 text-white"
                   : "border-amber-600/40 text-amber-800 dark:text-amber-400 hover:bg-amber-500/10"
               )}
             >
-              <Flame size={14} className={prayerMode ? "text-yellow-300" : ""} />
+              <Flame size={8} className={prayerMode ? "text-yellow-300" : ""}/>
               <span className="hidden md:inline">{prayerMode ? "وضع الخشوع" : "وضع الصلاة"}</span>
             </Button>
 
@@ -269,26 +269,26 @@ export default function AgpeyaPage() {
               <button
                 type="button"
                 onClick={() => changeFontSize(2)}
-                className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 transition"
+                className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 transition"
                 title="تكبير الخط"
               >
-                <ZoomIn size={14} />
+                <ZoomIn size={22} />
               </button>
-              <span className="text-[11px] font-mono font-bold px-0.5 text-stone-600 dark:text-zinc-400">
+              <span className="text-[11px] font-mono font-bold px-0.25 text-stone-600 dark:text-zinc-400">
                 {fontSize}
               </span>
               <button
                 type="button"
                 onClick={() => changeFontSize(-2)}
-                className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 transition"
+                className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 transition"
                 title="تصغير الخط"
               >
-                <ZoomOut size={14} />
+                <ZoomOut size={22} />
               </button>
             </div>
 
             {/* Bookmark Current Hour */}
-            <button
+            {/* <button
               type="button"
               onClick={() => toggleBookmark(currentHour.id)}
               className="p-0.5 rounded-xl border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 transition"
@@ -299,13 +299,13 @@ export default function AgpeyaPage() {
               ) : (
                 <Bookmark size={16} className="text-stone-400" />
               )}
-            </button>
+            </button> */}
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-8xl mx-auto px-1 pt-1 space-y-1">
+      <main className="max-w-8xl mx-auto px-0.5 pt-0.5 space-y-0.5">
         {/* Hours Selector Horizontal Bar */}
         {!prayerMode && (
           <section className="space-y-0.5">
@@ -350,7 +350,7 @@ export default function AgpeyaPage() {
                     </div>
                     <span
                       className={cn(
-                        "text-[10px] line-clamp-1 mt-1 font-medium",
+                        "text-[10px] line-clamp-1 mt-0.5 font-medium",
                         isSelected ? "text-amber-100/90" : "text-stone-500 dark:text-zinc-400"
                       )}
                     >
@@ -358,7 +358,7 @@ export default function AgpeyaPage() {
                     </span>
 
                     {/* Progress indicator line */}
-                    <div className="w-full h-1 bg-black/10 dark:bg-white/10 rounded-full mt-2 overflow-hidden">
+                    <div className="w-full h-1 bg-black/10 dark:bg-white/10 rounded-full mt-0.5 overflow-hidden">
                       <div
                         className={cn(
                           "h-full rounded-full transition-all duration-300",
@@ -403,7 +403,7 @@ export default function AgpeyaPage() {
               <h1 className="text-2xl sm:text-3xl font-black text-amber-100 tracking-tight">
                 {currentHour.nameAr}
               </h1>
-              <p className="text-sm sm:text-base text-amber-200/90 font-medium mt-1">
+              <p className="text-sm sm:text-base text-amber-200/90 font-medium mt-0.5">
                 {currentHour.themeAr}
               </p>
             </div>
@@ -437,19 +437,19 @@ export default function AgpeyaPage() {
         {/* Auto Scroll Floating Controls (When in Prayer Mode or active) */}
         <div
           className={cn(
-            "flex items-center justify-between p-0.5 rounded-2xl border transition-all text-xs font-bold",
+            "flex flex-wrap items-center justify-between gap-0.5 p-0.5 rounded-2xl border transition-all text-xs font-bold",
             prayerMode
               ? "bg-zinc-900 border-zinc-800"
-              : "bg-white dark:bg-zinc-900 border-stone-200 dark:border-zinc-800 shadow-xs"
+              : "bg-white dark:bg-zinc-900 border-stone-200 dark:border-zinc-800 shadow-sm"
           )}
         >
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-0.5 flex-wrap">
             <Button
               variant="outline"
               // size="sm"
               onClick={() => setAutoScroll(!autoScroll)}
               className={cn(
-                "rounded-xl gap-0.5 h-2 text-xs font-bold",
+                "rounded-xl text-xs font-bold gap-0.5 px-0.5 py-0.5 w-12",
                 autoScroll
                   ? "bg-amber-600 text-white border-amber-600 hover:bg-amber-700"
                   : "border-stone-300 dark:border-zinc-700 text-stone-700 dark:text-zinc-300"
@@ -460,14 +460,17 @@ export default function AgpeyaPage() {
             </Button>
 
             {autoScroll && (
-              <div className="hidden sm:flex items-center gap-0.5 w-8">
-                <span className="text-[10px] text-stone-400">السرعة</span>
+              <div className="flex items-center gap-0.5 bg-stone-100 dark:bg-zinc-800/80 px-0.5 py-0.5 rounded-xl border border-stone-200 dark:border-zinc-700/50">
+                <span className="text-xs font-semibold text-stone-600 dark:text-zinc-300 shrink-0">
+                  السرعة: <span className="text-amber-600 dark:text-amber-400 font-bold font-mono">{scrollSpeed}</span>
+                </span>
                 <Slider
                   value={[scrollSpeed]}
                   onValueChange={(val) => setScrollSpeed(val[0])}
                   min={10}
                   max={70}
                   step={5}
+                  className="w-6 sm:w-8 cursor-pointer"
                 />
               </div>
             )}
@@ -487,7 +490,7 @@ export default function AgpeyaPage() {
                 ].join("\n\n");
                 toggleSpeech(fullPrayerText);
               }}
-              className="rounded-xl gap-0.5 h-2 text-xs font-bold text-amber-700 dark:text-amber-400 hover:bg-amber-500/10"
+              className="rounded-xl text-xs font-bold text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 py-0.5 w-12"
             >
               {isReadingSpeech ? <VolumeX size={14} /> : <Volume2 size={14} />}
               <span className="hidden sm:inline">
@@ -512,7 +515,7 @@ export default function AgpeyaPage() {
                 setCompletedSections((prev) => ({ ...prev, ...allKeys }));
                 toast.success("تم تحديد صلاة الساعة بالكامل كمكتملة 🎉");
               }}
-              className="rounded-xl gap-0.5 h-2 text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-zinc-800"
+              className="rounded-xl text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-zinc-800 py-0.5 w-9"
             >
               <CheckCircle2 size={14} />
               <span className="hidden sm:inline">إتمام الصلاة</span>
@@ -944,7 +947,7 @@ export default function AgpeyaPage() {
                       setSelectedHourId(prevHour.id);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="rounded-2xl gap-0.5 text-xs font-bold"
+                    className="rounded-2xl text-xs font-bold  w-10"
                   >
                     <ChevronRight size={16} />
                     <span>{prevHour.nameAr}</span>
@@ -960,7 +963,7 @@ export default function AgpeyaPage() {
                       setSelectedHourId(nextHour.id);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="rounded-2xl gap-0.5 text-xs font-bold"
+                    className="rounded-2xl text-xs font-bold w-10"
                   >
                     <span>{nextHour.nameAr}</span>
                     <ChevronLeft size={16} />

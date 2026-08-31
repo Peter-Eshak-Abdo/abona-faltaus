@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { buildEnhancedOrthodoxPrompt, IconStyleType, AspectRatioType, ICON_STYLES } from "@/lib/orthodox-prompts";
+import { lookupSaintIcon } from "@/lib/coptic-saints-database";
+import Replicate from "replicate";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -11,90 +13,142 @@ interface GenerateIconRequest {
   aspectRatio?: AspectRatioType;
 }
 
-// 1. ترجمة وتحسين وصف الأيقونة بالإنجليزية + توليد الشرح اللاهوتي بالعربية
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN,
+});
+
+// 1. ترجمة وتحسين وصف الأيقونة بالإنجليزية + البحث المباشر في المصادر الأرثوذكسية للقديسين غير المسجلين
 async function preparePromptAndInsight(
   geminiKey: string,
   userPrompt: string,
   style: IconStyleType
 ): Promise<{ englishPrompt: string; theologicalInsight: string }> {
   const styleDef = ICON_STYLES[style] || ICON_STYLES.coptic;
+  const saintMatch = lookupSaintIcon(userPrompt);
+
+  let saintHint = "";
+  if (saintMatch) {
+    saintHint = `
+    - Pre-indexed Saint: "${saintMatch.arabicName}"
+    - Exact Coptic Inscription: "${saintMatch.copticTitleInscription}" (${saintMatch.copticName})
+    - Liturgical Colors: Tunic: ${saintMatch.canonicalColors.tunic}, Mantle: ${saintMatch.canonicalColors.mantle}
+    - Key Canonical Attributes: ${saintMatch.keyAttributes.join("; ")}
+    - Canonical Specifics: ${saintMatch.copticPromptGuidance}
+    `;
+  }
 
   if (!geminiKey) {
+    const built = buildEnhancedOrthodoxPrompt(userPrompt, style);
     return {
-      englishPrompt: `${styleDef.systemDirective}. Subject: ${userPrompt}. Composition: Centered canonical sacred composition, radiant golden halos, vivid liturgical colors, highly reverent Orthodox Christian sacred art.`,
-      theologicalInsight: "",
+      englishPrompt: built.finalPrompt,
+      theologicalInsight: saintMatch?.theologicalSignificance || "",
     };
   }
 
   try {
     const ai = new GoogleGenAI({ apiKey: geminiKey });
     const promptEngineeringQuery = [
-      "You are a master Coptic & Eastern Byzantine Orthodox Iconographer and professional AI art prompt engineer.",
-      `The user requested an authentic sacred Orthodox Christian artwork described as: "${userPrompt}"`,
-      `Selected Orthodox Art Style: "${styleDef.title}" (${style}).`,
-      `Art Style Canon & Directives:`,
-      styleDef.systemDirective,
+      "You are a master Coptic Orthodox Synaxarium scholar, canonical iconographer, and elite AI art prompt engineer.",
+      `The user requested an authentic sacred icon for: "${userPrompt}".`,
+      `Art Style: "${styleDef.title}" (${style}).`,
       "",
-      "CRITICAL INSTRUCTIONS FOR 'englishPrompt':",
-      "- You must write an authentic, canonical prompt for image generation.",
-      "- If Coptic: Must strictly describe a 2D Coptic icon in Dr. Isaac Fanous school, egg tempera on wooden board, large spiritual eyes, golden halos with Coptic cross markers, vivid liturgical colors, clean geometric outlines, Coptic robes.",
-      "- If Byzantine: Must strictly describe Mount Athos / Hagia Sophia style, gold leaf/mosaic background, assist gold lines on drapery, IC XC / MP ΘY monograms, solemn sacred ascetic posture.",
-      "- If Realistic: Must strictly describe reverent 19th-century Eastern Orthodox sacred church fine art with radiant heavenly golden light, glowing halos, noble serene holy faces.",
-      "- NEVER produce dark gloomy horror, fantasy RPG, modern casual rooms, or renaissance secular paintings.",
-      "- Combine subject details + medium + specific iconographic vestments + holy halos + lighting + strict exclusion keywords.",
+      saintMatch
+        ? `Known Saint Data:\n${saintHint}`
+        : "RESEARCH INSTRUCTION: If the requested saint, martyr, or biblical scene is not in your immediate standard library, USE GOOGLE SEARCH to look up authentic Coptic Orthodox Synaxarium records (e.g. st-takla, copticchurch.net, OrthodoxWiki, Coptic Encyclopedia) to find: 1) The exact historic ecclesiastical Coptic name/spelling (in Coptic Unicode e.g., Ⲁⲡⲁ / Ⲡⲓⲁⲅⲓⲟⲥ / Ϯⲁⲅⲓⲁ), 2) Canonical vestments (monastic hood with 12 crosses, episcopal sakkos, soldier armor, martyr palm), 3) Historic attributes and holy martyrdom symbols.",
       "",
-      "Respond ONLY in valid JSON format with two keys:",
-      '1. "englishPrompt": The complete, highly descriptive English prompt ready for text-to-image AI.',
-      '2. "theologicalInsight": A profound, reverent, 3-4 line spiritual/theological reflection in authentic Arabic church language explaining the iconography symbolism (halo, colors, gestures, spiritual blessing) for the faithful.'
+      "STRICT ICONOGRAPHY CANONICAL RULES:",
+      "- If Coptic: Must strictly be 2D Coptic egg tempera icon panel in Dr. Isaac Fanous school, large spiritual almond eyes, golden halo with canonical Coptic cross engravings, flat bright liturgical pigments, crisp outlines, authentic Coptic inscription at top.",
+      "- If Byzantine: Must strictly be Mount Athos iconostasis style, gold leaf background, assist gold lines, ascetic features, authentic monograms.",
+      "- If Realistic: Dignified 19th-century Eastern Orthodox sacred church art, glowing halos, radiant warm light.",
+      "- ALWAYS write the authentic Coptic name or Greek monogram in the prompt explicitly.",
+      "- NEVER allow 3D CGI, grotesque horror, western renaissance naked figures, modern clothing, or corrupted anatomy.",
+      "",
+      "IMPORTANT: You MUST respond with ONLY a valid JSON code block enclosed in ```json ... ``` containing exactly two keys:",
+      '1. "englishPrompt": The final ready-to-use image prompt combining canonical subject details, exact Coptic script title, vestments, halo, colors, and art medium.',
+      '2. "theologicalInsight": A reverent 3-4 line spiritual and theological commentary in Arabic explaining the saint/scene iconography symbols for the faithful.'
     ].join("\n");
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: promptEngineeringQuery,
       config: {
-        responseMimeType: "application/json",
+        // Enable Google Search Grounding to retrieve live Coptic Synaxarium records for unlisted saints
+        tools: [{ googleSearch: {} }],
       },
     });
 
-    const parsed = JSON.parse(response.text || "{}");
+    const textOutput = response.text || "";
+    let parsed: any = {};
+    try {
+      const jsonMatch = textOutput.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || textOutput.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        parsed = JSON.parse(jsonMatch[1] || jsonMatch[0]);
+      } else {
+        parsed = JSON.parse(textOutput);
+      }
+    } catch {
+      parsed = {};
+    }
+
     const rawEnglish = parsed.englishPrompt || `${userPrompt}, ${styleDef.systemDirective}`;
-    // Bounded guarantee: Prefix with the core style signature
-    const finalPrompt = `${styleDef.systemDirective}\n\nSacred Scene Details: ${rawEnglish}`;
+    const finalPrompt = `${styleDef.systemDirective}\n\nCanonical Details: ${rawEnglish}`;
 
     return {
       englishPrompt: finalPrompt,
-      theologicalInsight: parsed.theologicalInsight || "",
+      theologicalInsight: parsed.theologicalInsight || saintMatch?.theologicalSignificance || "",
     };
   } catch (err) {
-    console.warn("Prompt prep error:", err);
+    console.warn("Prompt prep with search grounding error:", err);
+    const built = buildEnhancedOrthodoxPrompt(userPrompt, style);
     return {
-      englishPrompt: `${styleDef.systemDirective}. Subject: ${userPrompt}. Composition: Centered canonical sacred composition, radiant golden halos, vivid liturgical colors, highly reverent Orthodox Christian sacred art.`,
-      theologicalInsight: "",
+      englishPrompt: built.finalPrompt,
+      theologicalInsight: saintMatch?.theologicalSignificance || "",
     };
   }
 }
 
-import Replicate from "replicate";
 
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN,
-});
+// دالة مساعدة لاستخراج رابط الصورة من مخرجات Replicate
+function extractImageUrl(output: any): string | null {
+  const rawItem = Array.isArray(output) ? output[0] : output;
+  if (!rawItem) return null;
+  let resultUrl = "";
 
-// 2. التوليد عبر Replicate والـ LoRA المدرب
-async function generateWithReplicate(
+  if (typeof rawItem === "string") {
+    resultUrl = rawItem;
+  } else if (rawItem?.href) {
+    resultUrl = String(rawItem.href);
+  } else if (typeof rawItem?.url === "function") {
+    resultUrl = String(rawItem.url());
+  } else if (rawItem?.url?.href) {
+    resultUrl = String(rawItem.url.href);
+  } else if (rawItem?.url) {
+    resultUrl = String(rawItem.url);
+  } else {
+    resultUrl = String(rawItem);
+  }
+
+  resultUrl = resultUrl.trim();
+  return resultUrl.startsWith("http") ? resultUrl : null;
+}
+
+// 2. المحرك الأول: Replicate Fine-Tuned LoRA Model
+async function generateWithPrimaryLoRA(
   promptText: string,
   style: IconStyleType,
   aspectRatio: AspectRatioType
-): Promise<{ imageUrl: string; mimeType: string } | null> {
+): Promise<{ imageUrl: string; engine: string } | null> {
   const token = process.env.REPLICATE_API_TOKEN;
   if (!token) return null;
+
+  const styleDef = ICON_STYLES[style] || ICON_STYLES.coptic;
 
   try {
     let styleTrigger = "";
     if (style === "coptic") {
-      styleTrigger = `coptic_icon_style, traditional 2D Coptic Orthodox icon, Isaac Fanous neo-coptic style, egg tempera, golden halo, authentic Coptic iconography`;
+      styleTrigger = `coptic_icon_style, traditional 2D Coptic Orthodox icon, Isaac Fanous neo-coptic style, egg tempera on wood, golden halo with coptic cross, inscribed authentic Coptic lettering, authentic Coptic iconography`;
     } else if (style === "byzantine") {
-      styleTrigger = `sweet_publishing_style, classic bible story illustration, vintage watercolor comic storybook art, Jim Padgett style`;
+      styleTrigger = `sweet_publishing_style, traditional byzantine icon, Mount Athos iconostasis style, gold chrysography assist lines, sacred orthodox christian icon`;
     } else if (style === "realistic") {
       styleTrigger = `lumo_film_style, cinematic historical biblical drama, realistic 35mm film still, The LUMO Project, authentic first century biblical scene, natural lighting, dramatic film photography`;
     }
@@ -102,11 +156,12 @@ async function generateWithReplicate(
     const fullPrompt = `${styleTrigger}, ${promptText}`;
     const modelIdentifier = "peter-eshak-abdo/biblical-multistyle-lora:d22e4f4de382abffbf614bd2052de1cdafde707ee0a1115e237a3d22996a65fb";
 
-    const output: any = await replicate.run(
+    const output = await replicate.run(
       modelIdentifier as `${string}/${string}`,
       {
         input: {
           prompt: fullPrompt,
+          negative_prompt: styleDef.negativePrompt,
           num_outputs: 1,
           aspect_ratio: aspectRatio || "1:1",
           output_format: "webp",
@@ -115,33 +170,110 @@ async function generateWithReplicate(
       }
     );
 
-    const rawItem: any = Array.isArray(output) ? output[0] : output;
-    let resultUrl = "";
-
-    if (typeof rawItem === "string") {
-      resultUrl = rawItem;
-    } else if (rawItem?.href) {
-      resultUrl = String(rawItem.href);
-    } else if (typeof rawItem?.url === "function") {
-      resultUrl = String(rawItem.url());
-    } else if (rawItem?.url?.href) {
-      resultUrl = String(rawItem.url.href);
-    } else if (rawItem?.url) {
-      resultUrl = String(rawItem.url);
-    } else if (rawItem) {
-      resultUrl = String(rawItem);
+    const imageUrl = extractImageUrl(output);
+    if (imageUrl) {
+      return { imageUrl, engine: "Replicate Coptic LoRA" };
     }
+  } catch (err: any) {
+    console.warn("Primary LoRA generation failed, switching to Fallback:", err?.message || err);
+  }
+  return null;
+}
 
-    resultUrl = resultUrl.trim();
+// 3. المحرك البديل الأول (Fallback 1): Black Forest Labs FLUX.1 Schnell
+async function generateWithFluxSchnell(
+  promptText: string,
+  aspectRatio: AspectRatioType
+): Promise<{ imageUrl: string; engine: string } | null> {
+  const token = process.env.REPLICATE_API_TOKEN;
+  if (!token) return null;
 
-    if (resultUrl.startsWith("http")) {
+  try {
+    const output = await replicate.run(
+      "black-forest-labs/flux-schnell",
+      {
+        input: {
+          prompt: promptText,
+          aspect_ratio: aspectRatio || "1:1",
+          output_format: "webp",
+          output_quality: 90,
+        },
+      }
+    );
+
+    const imageUrl = extractImageUrl(output);
+    if (imageUrl) {
+      return { imageUrl, engine: "FLUX.1 Schnell" };
+    }
+  } catch (err: any) {
+    console.warn("FLUX.1 Schnell fallback failed:", err?.message || err);
+  }
+  return null;
+}
+
+// 4. المحرك البديل الثاني (Fallback 2): Stability AI SDXL Lightning
+async function generateWithSdxl(
+  promptText: string,
+  style: IconStyleType
+): Promise<{ imageUrl: string; engine: string } | null> {
+  const token = process.env.REPLICATE_API_TOKEN;
+  if (!token) return null;
+
+  const styleDef = ICON_STYLES[style] || ICON_STYLES.coptic;
+
+  try {
+    const output = await replicate.run(
+      "bytedance/sdxl-lightning-4step:5599ed30703defd1d160a25a63321b4dec97101d98b467d6ac78b211e2d7334c",
+      {
+        input: {
+          prompt: promptText,
+          negative_prompt: styleDef.negativePrompt,
+          width: 1024,
+          height: 1024,
+          num_outputs: 1,
+        },
+      }
+    );
+
+    const imageUrl = extractImageUrl(output);
+    if (imageUrl) {
+      return { imageUrl, engine: "SDXL Lightning" };
+    }
+  } catch (err: any) {
+    console.warn("SDXL Lightning fallback failed:", err?.message || err);
+  }
+  return null;
+}
+
+// 5. المحرك البديل الثالث (Fallback 3): Google Imagen 3 via Gemini SDK
+async function generateWithImagen3(
+  promptText: string,
+  geminiKey: string,
+  aspectRatio: AspectRatioType
+): Promise<{ imageUrl: string; engine: string } | null> {
+  if (!geminiKey) return null;
+
+  try {
+    const ai = new GoogleGenAI({ apiKey: geminiKey });
+    const response: any = await ai.models.generateImages({
+      model: "imagen-3.0-generate-002",
+      prompt: promptText,
+      config: {
+        numberOfImages: 1,
+        aspectRatio: aspectRatio || "1:1",
+        outputMimeType: "image/jpeg",
+      },
+    });
+
+    const base64Img = response?.generatedImages?.[0]?.image?.imageBytes;
+    if (base64Img) {
       return {
-        imageUrl: resultUrl,
-        mimeType: "image/webp",
+        imageUrl: `data:image/jpeg;base64,${base64Img}`,
+        engine: "Google Imagen 3",
       };
     }
   } catch (err: any) {
-    console.warn("Replicate LoRA Generation Error:", err?.message || err);
+    console.warn("Google Imagen 3 fallback failed:", err?.message || err);
   }
   return null;
 }
@@ -168,17 +300,33 @@ export async function POST(request: Request) {
     const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
     const styleDetails = ICON_STYLES[style] || ICON_STYLES.coptic;
 
-    // ترجمة وهندسة البرومبت وتحضير التأمل اللاهوتي
+    // 1. ترجمة وهندسة البرومبت وتحضير التأمل اللاهوتي مع الحروف القبطية
     const { englishPrompt, theologicalInsight } = await preparePromptAndInsight(apiKey, prompt, style);
 
-    // توليد الصورة عبر Replicate والـ LoRA المدرب
-    let imageResult: { imageUrl: string; mimeType: string } | null = null;
-    
-    imageResult = await generateWithReplicate(englishPrompt, style, aspectRatio);
+    // 2. خطة التوليد المتسلسلة (Multi-Engine Fallback Pipeline)
+    let imageResult: { imageUrl: string; engine: string } | null = null;
+
+    // المحاولة 1: Replicate LoRA الرئيسي
+    imageResult = await generateWithPrimaryLoRA(englishPrompt, style, aspectRatio);
+
+    // المحاولة 2: FLUX.1 Schnell
+    if (!imageResult) {
+      imageResult = await generateWithFluxSchnell(englishPrompt, aspectRatio);
+    }
+
+    // المحاولة 3: Google Imagen 3
+    if (!imageResult) {
+      imageResult = await generateWithImagen3(englishPrompt, apiKey, aspectRatio);
+    }
+
+    // المحاولة 4: SDXL Lightning
+    if (!imageResult) {
+      imageResult = await generateWithSdxl(englishPrompt, style);
+    }
 
     if (!imageResult?.imageUrl) {
       return NextResponse.json(
-        { error: "تعذر توليد الصورة في الوقت الحالي، يرجى المحاولة مرة أخرى أو تعديل الوصف." },
+        { error: "تعذر توليد الصورة عبر محركات الرسم في الوقت الحالي، يرجى المحاولة مرة أخرى أو تعديل الوصف." },
         { status: 500 }
       );
     }
@@ -186,7 +334,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       imageUrl: imageResult.imageUrl,
-      mimeType: imageResult.mimeType,
+      engine: imageResult.engine,
+      mimeType: "image/webp",
       prompt: prompt.trim(),
       style,
       styleTitle: styleDetails.title,
@@ -202,3 +351,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+

@@ -58,3 +58,10 @@ dataset.zip
 *.safetensors
 outputs/
 coptic_liturgy_lora_model/
+
+# Icons and heavy datasets
+/icons/
+/dataset_temp/
+public/*.zip
+*.pdf
+

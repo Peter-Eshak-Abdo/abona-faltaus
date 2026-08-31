@@ -26,10 +26,16 @@ export default function ServiceWorkerRegister() {
     }
   }, []);
 
-  const handleDownloadAll = () => {
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.controller.postMessage({ type: "CACHE_ALL_FILES" });
-      toast.success("جاري تحميل الملفات للعمل بدون إنترنت...");
+  const handleDownloadAll = async () => {
+    if ("serviceWorker" in navigator) {
+      const reg = await navigator.serviceWorker.ready;
+      if (reg.active) {
+        reg.active.postMessage({ type: "CACHE_ALL_FILES" });
+        toast.success("جاري تحميل الملفات للعمل بدون إنترنت...");
+      } else if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: "CACHE_ALL_FILES" });
+        toast.success("جاري تحميل الملفات للعمل بدون إنترنت...");
+      }
     }
     localStorage.setItem("asked_offline_download", "true");
     setShowOfflinePrompt(false);

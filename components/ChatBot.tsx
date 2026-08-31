@@ -421,7 +421,7 @@ export default function ChatBot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={user ? "اكتب رسالتك هنا..." : "برجاء تسجيل الدخول أولاً"}
-              className="flex-1 resize-none bg-transparent outline-none pe-0.5 text-[16px] leading-relaxed overflow-y-auto"
+              className="flex-1 resize-none bg-transparent outline-none pe-0.5 text-[16px] leading-relaxed overflow-y-auto text-black"
               disabled={!user || isLoading}
               minRows={1}
               maxRows={6}
