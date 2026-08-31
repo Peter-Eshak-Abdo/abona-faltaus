@@ -20,18 +20,27 @@ import {
 
 interface Props {
   liturgy: LiturgyDocument;
+  enabledLanguages?: Record<LiturgyLanguage, boolean>;
+  fontSize?: 'sm' | 'base' | 'lg' | 'xl';
   onClose: () => void;
 }
 
-export default function LiturgyPresentationMode({ liturgy, onClose }: Props) {
+export default function LiturgyPresentationMode({
+  liturgy,
+  enabledLanguages: initialLanguages,
+  fontSize = 'base',
+  onClose,
+}: Props) {
   const allSections: LiturgySection[] = liturgy.groups.flatMap((g) => g.sections);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [enabledLanguages, setEnabledLanguages] = useState<Record<LiturgyLanguage, boolean>>({
-    arabic: true,
-    coptic_arabic: true,
-    coptic: true,
-    english: false,
-  });
+  const [enabledLanguages, setEnabledLanguages] = useState<Record<LiturgyLanguage, boolean>>(
+    initialLanguages || {
+      arabic: true,
+      coptic_arabic: true,
+      coptic: true,
+      english: false,
+    }
+  );
 
   const currentSection = allSections[currentIndex] || allSections[0];
 

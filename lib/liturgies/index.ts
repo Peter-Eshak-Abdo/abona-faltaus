@@ -1,33 +1,119 @@
-import { LiturgyDocument, ParticipantRole } from './types';
+import { LiturgyDocument, LiturgyGroup } from './types';
 import { basilLiturgy } from './data/basil';
 import { gregoryLiturgy } from './data/gregory';
 import { cyrilLiturgy } from './data/cyril';
 import { fractionsLiturgy } from './data/fractions';
 import { distributionLiturgy } from './data/distribution';
-
 import fullLiturgiesData from './data/full_liturgies_data.json';
 
 export * from './types';
 export { basilLiturgy, gregoryLiturgy, cyrilLiturgy, fractionsLiturgy, distributionLiturgy };
 
+// Canonical Ordered Sections for Holy Liturgy
+export const CANONICAL_LITURGY_STRUCTURE = [
+  { id: 'agpeya', nameAr: 'صلوات الأجبية (3 و 6 و 9)', icon: 'FaBookOpen' },
+  { id: 'matins_incense', nameAr: 'رفع بخور باكر والعشية', icon: 'FaSun' },
+  { id: 'offertory', nameAr: 'تقديم الحمل وتحليل الخدام', icon: 'FaChurch' },
+  { id: 'word_liturgy', nameAr: 'قداس الموعوظين والقرائات', icon: 'FaScroll' },
+  { id: 'reconciliation', nameAr: 'صلاة الصلح والقبلة', icon: 'FaHeart' },
+  { id: 'anaphora', nameAr: 'الأنافورا وسر التقديس', icon: 'FaCross' },
+  { id: 'litanies_commemoration', nameAr: 'الأواشي ومجمع القديسين', icon: 'FaUsers' },
+  { id: 'fraction', nameAr: 'صلوات القسمة المقدسة', icon: 'FaBreadSlice' },
+  { id: 'communion_distribution', nameAr: 'سر التناول والتوزيع السنوي', icon: 'FaMusic' },
+];
+
+/**
+ * بناء شجرة القداس الكاملة بالترتيب الطقسي الكنسي السليم
+ */
+export function buildCanonicalFullLiturgy(anaphoraType: 'basil' | 'gregory' | 'cyril' = 'basil'): LiturgyDocument {
+  const anaphoraDoc = anaphoraType === 'gregory' ? gregoryLiturgy : anaphoraType === 'cyril' ? cyrilLiturgy : basilLiturgy;
+  
+  // Find annual incense & liturgy files from full dataset
+  const rawAnnual = (fullLiturgiesData as any[]).find((d) => d.id === '00-القداس-السنوى');
+  const annualGroups: LiturgyGroup[] = rawAnnual ? rawAnnual.groups : [];
+
+  const matinsGroup = annualGroups.find((g) => g.title?.arabic?.includes('رفع بخور باكر')) || basilLiturgy.groups[0];
+  const offeringsGroup = basilLiturgy.groups[1] || {
+    id: 'offering-lamb',
+    title: { arabic: 'تقديم الحمل وتحليل الخدام', english: 'Offertory of the Lamb' },
+    badge: 'دورة الحمل',
+    sections: []
+  };
+
+  const wordLiturgyGroup = basilLiturgy.groups[2] || {
+    id: 'liturgy-of-word',
+    title: { arabic: 'قداس الموعوظين والقرائات اليومية', english: 'Liturgy of the Word' },
+    badge: 'الرسائل والإنجيل',
+    sections: []
+  };
+
+  const anaphoraGroups = anaphoraDoc.groups.filter((g) => g.id !== 'matins-incense');
+  const fractionGroups = fractionsLiturgy.groups;
+  const distributionGroups = distributionLiturgy.groups;
+
+  const combinedGroups: LiturgyGroup[] = [
+    {
+      id: 'agpeya-group',
+      title: { arabic: 'صلوات الأجبية للقداس (الثالثة والسادسة)', english: 'Canonical Agpeya Hours' },
+      badge: 'الاستعداد والصلاة',
+      sections: [
+        {
+          id: 'agpeya-third-hour',
+          title: { arabic: 'صلاة الساعة الثالثة', english: 'Third Hour' },
+          speaker: 'all',
+          type: 'prayer',
+          verses: [
+            {
+              arabic: 'باسم الآب والابن والروح القدس، الإله الواحد، آمين. يا ملك السلام، أعطنا سلامك، قرر لنا سلامك، واغفر لنا خطايانا.',
+              coptic_arabic: 'خين إفران إمفيوت نيم إبشيري نيم بي إبنيفما إثؤواب: أو أورو إنتي تي هيريني ماي نان إن تيك هيريني.',
+              coptic: 'Ϧⲉⲛ ⲫ̀ⲣⲁⲛ ⲙ̀Ⲫ̀ⲓⲱⲧ ⲛⲉⲙ Ⲡ̀ϣⲏⲣⲓ ⲛⲉⲙ Ⲡⲓⲡ̀ⲛⲉⲩⲙⲁ Ⲉⲑⲟⲩⲁⲃ: Ⲡ̀ⲟⲩⲣⲟ ⲛ̀ⲧⲉ ϯϩⲓⲣⲏⲛⲏ ⲙⲟⲓ ⲛⲁⲛ ⲛ̀ⲧⲉⲕϩⲓⲣⲏⲛⲏ.'
+            }
+          ]
+        }
+      ]
+    },
+    matinsGroup,
+    offeringsGroup,
+    wordLiturgyGroup,
+    ...anaphoraGroups,
+    ...fractionGroups,
+    ...distributionGroups
+  ];
+
+  return {
+    id: anaphoraType,
+    slug: anaphoraDoc.slug,
+    title: anaphoraDoc.title,
+    subtitle: anaphoraDoc.subtitle,
+    description: anaphoraDoc.description,
+    iconName: anaphoraDoc.iconName,
+    accentColor: anaphoraDoc.accentColor,
+    groups: combinedGroups
+  };
+}
+
+export const CANONICAL_BASIL_LITURGY = buildCanonicalFullLiturgy('basil');
+export const CANONICAL_GREGORY_LITURGY = buildCanonicalFullLiturgy('gregory');
+export const CANONICAL_CYRIL_LITURGY = buildCanonicalFullLiturgy('cyril');
+
 export const ALL_LITURGIES: LiturgyDocument[] = [
-  ...(fullLiturgiesData as any as LiturgyDocument[]),
-  basilLiturgy,
-  gregoryLiturgy,
-  cyrilLiturgy,
+  CANONICAL_BASIL_LITURGY,
+  CANONICAL_GREGORY_LITURGY,
+  CANONICAL_CYRIL_LITURGY,
   fractionsLiturgy,
   distributionLiturgy,
+  ...(fullLiturgiesData as any as LiturgyDocument[]).filter((d) => (d.id as string) !== '00-القداس-السنوى')
 ];
 
 export function getLiturgyById(id: string): LiturgyDocument {
   const found = ALL_LITURGIES.find((l) => l.id === id || l.slug === id);
-  return found || basilLiturgy;
+  return found || CANONICAL_BASIL_LITURGY;
 }
 
 export function filterLiturgySections(
   doc: LiturgyDocument,
   options: {
-    role?: ParticipantRole;
+    role?: any;
     searchQuery?: string;
     groupId?: string;
   }
@@ -36,15 +122,13 @@ export function filterLiturgySections(
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
   return doc.groups
-    .filter((group) => (!groupId || group.id === groupId))
+    .filter((group) => !groupId || group.id === groupId)
     .map((group) => {
       const filteredSections = group.sections.filter((section) => {
-        // Filter by role
         if (role !== 'all' && section.speaker !== role && section.speaker !== 'all') {
           return false;
         }
 
-        // Filter by query
         if (normalizedQuery) {
           const matchTitle =
             section.title.arabic?.toLowerCase().includes(normalizedQuery) ||

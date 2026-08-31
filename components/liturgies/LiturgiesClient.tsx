@@ -1,59 +1,74 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaChurch,
+  FaArrowRight,
   FaSearch,
   FaListUl,
-  FaThLarge,
-  FaArrowRight,
+  FaBookOpen,
+  FaCalendarAlt,
+  FaScroll,
+  FaChevronRight,
+  FaChevronLeft,
+  FaExpand,
+  FaCompress
 } from 'react-icons/fa';
 import {
   LiturgyDocument,
-  LiturgyHymnRef,
+  LiturgyGroup,
   LiturgyLanguage,
   LiturgyLayoutMode,
   ParticipantRole,
 } from '@/lib/liturgies/types';
-import { ALL_LITURGIES, filterLiturgySections } from '@/lib/liturgies';
+import {
+  ALL_LITURGIES,
+  filterLiturgySections,
+  getLiturgyById,
+  CANONICAL_BASIL_LITURGY
+} from '@/lib/liturgies';
 import LiturgyNavbar from './LiturgyNavbar';
 import LiturgyVerseCard from './LiturgyVerseCard';
-import LiturgyHymnModal from './LiturgyHymnModal';
 import LiturgyPresentationMode from './LiturgyPresentationMode';
+import { getCopticDate } from '@/lib/coptic-date';
 
-export default function LiturgiesClient() {
-  const [activeLiturgy, setActiveLiturgy] = useState<LiturgyDocument>(ALL_LITURGIES[0]);
+interface Props {
+  initialLiturgy?: LiturgyDocument;
+}
+
+export default function LiturgiesClient({ initialLiturgy }: Props) {
+  const [activeLiturgy, setActiveLiturgy] = useState<LiturgyDocument>(
+    initialLiturgy || CANONICAL_BASIL_LITURGY
+  );
+  const [activeGroupId, setActiveGroupId] = useState<string | undefined>(undefined);
   const [activeRole, setActiveRole] = useState<ParticipantRole>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [layoutMode, setLayoutMode] = useState<LiturgyLayoutMode>('columns');
+  const [fontSize, setFontSize] = useState<'sm' | 'base' | 'lg' | 'xl'>('base');
+  const [isPresentationOpen, setIsPresentationOpen] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
+
   const [enabledLanguages, setEnabledLanguages] = useState<Record<LiturgyLanguage, boolean>>({
     arabic: true,
     coptic_arabic: true,
     coptic: true,
     english: false,
   });
-  const [layoutMode, setLayoutMode] = useState<LiturgyLayoutMode>('stacked');
-  const [fontSize, setFontSize] = useState<'sm' | 'base' | 'lg' | 'xl'>('base');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeGroupId, setActiveGroupId] = useState<string | undefined>(undefined);
 
-  const [activeHymnModal, setActiveHymnModal] = useState<LiturgyHymnRef | null>(null);
-  const [isPresentationOpen, setIsPresentationOpen] = useState(false);
-  const [showIndexDrawer, setShowIndexDrawer] = useState(false);
-  const [showServicesDrawer, setShowServicesDrawer] = useState(false);
+  // Current liturgical date context
+  const copticToday = useMemo(() => getCopticDate(new Date()), []);
 
-  // Persistence in localStorage
   useEffect(() => {
     const savedLangs = localStorage.getItem('liturgy_langs');
     if (savedLangs) {
       try {
         setEnabledLanguages(JSON.parse(savedLangs));
-      } catch {}
+      } catch (e) {}
     }
-    const savedFont = localStorage.getItem('liturgy_font');
-    if (savedFont && ['sm', 'base', 'lg', 'xl'].includes(savedFont)) {
-      setFontSize(savedFont as any);
-    }
+    const savedFont = localStorage.getItem('liturgy_font') as any;
+    if (savedFont) setFontSize(savedFont);
   }, []);
 
   const toggleLanguage = (lang: LiturgyLanguage) => {
@@ -69,7 +84,6 @@ export default function LiturgiesClient() {
     localStorage.setItem('liturgy_font', size);
   };
 
-  // Filter groups and sections
   const filteredGroups = useMemo(() => {
     return filterLiturgySections(activeLiturgy, {
       role: activeRole,
@@ -79,8 +93,7 @@ export default function LiturgiesClient() {
   }, [activeLiturgy, activeRole, searchQuery, activeGroupId]);
 
   const scrollToGroup = (groupId: string) => {
-    setActiveGroupId(undefined);
-    setShowIndexDrawer(false);
+    setActiveGroupId(groupId);
     const element = document.getElementById(`group-${groupId}`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -89,210 +102,195 @@ export default function LiturgiesClient() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col selection:bg-amber-500/30 selection:text-amber-200" dir="rtl">
-      {/* Top Standalone Navigation Bar */}
-      <div className="hidden md:block">
-        <LiturgyNavbar
-          activeLiturgy={activeLiturgy}
-          onSelectLiturgy={(l) => {
-            setActiveLiturgy(l);
-            setActiveGroupId(undefined);
-          }}
-          activeRole={activeRole}
-          onSelectRole={setActiveRole}
-          enabledLanguages={enabledLanguages}
-          onToggleLanguage={toggleLanguage}
-          layoutMode={layoutMode}
-          onToggleLayout={setLayoutMode}
-          fontSize={fontSize}
-          onChangeFontSize={handleFontSizeChange}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onOpenPresentation={() => setIsPresentationOpen(true)}
-        />
-      </div>
+      {/* Top Navbar */}
+      <LiturgyNavbar
+        activeLiturgy={activeLiturgy}
+        onSelectLiturgy={(l) => {
+          setActiveLiturgy(l);
+          setActiveGroupId(undefined);
+        }}
+        activeRole={activeRole}
+        onSelectRole={setActiveRole}
+        enabledLanguages={enabledLanguages}
+        onToggleLanguage={toggleLanguage}
+        layoutMode={layoutMode}
+        onToggleLayout={setLayoutMode}
+        fontSize={fontSize}
+        onChangeFontSize={handleFontSizeChange}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onOpenPresentation={() => setIsPresentationOpen(true)}
+      />
 
-      {/* Hero Banner for Selected Liturgy */}
-      <div className="relative overflow-hidden border-b border-neutral-800 bg-neutral-900/60 py-1 px-1">
-        <div className="max-w-8xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-1">
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-0.5">
-              <Link
-                href="/"
-                className="p-1 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition"
-                title="الرجوع للرئيسية"
-              >
-                <FaArrowRight size={14} />
-              </Link>
-              <span className="p-1 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 text-base">
-                <FaChurch />
-              </span>
-              <h1 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">
-                {activeLiturgy.title.arabic}
-              </h1>
-            </div>
-            <p className="text-xs text-neutral-400 max-w-2xl leading-relaxed">
-              {activeLiturgy.description}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setShowServicesDrawer(!showServicesDrawer)}
-              className="px-2 py-1 rounded-xl text-xs font-bold bg-neutral-800 text-amber-400 border border-neutral-700 hover:bg-neutral-700 transition flex items-center gap-1"
-            >
-              <FaThLarge />
-              <span>باقي الصلوات (تسبحة، سنكسار...)</span>
-            </button>
-            <button
-              onClick={() => setShowIndexDrawer(!showIndexDrawer)}
-              className="px-2 py-1 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition flex items-center gap-1"
-            >
-              <FaListUl />
-              <span>فهرس أجزاء القداس</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Quick Liturgy Switcher Buttons */}
-        <div className="max-w-8xl mx-auto mt-1 pt-1 border-t border-neutral-800/80 flex items-center gap-1 overflow-x-auto pb-0.5 no-scrollbar">
-          {ALL_LITURGIES.map((lit) => (
-            <button
-              key={lit.id}
-              onClick={() => {
-                setActiveLiturgy(lit);
-                setActiveGroupId(undefined);
-              }}
-              className={`px-2 py-1 rounded-xl text-xs font-bold whitespace-nowrap border transition flex items-center gap-1 ${
-                activeLiturgy.id === lit.id
-                  ? 'bg-amber-500 text-neutral-950 border-amber-400 shadow-md shadow-amber-500/20'
-                  : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:bg-neutral-800 hover:text-white'
-              }`}
-            >
-              <span>{lit.title.arabic}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-        {/* Index Drawer Dropdown */}
+      {/* Main Container with Sidebar Navigation (Orsozoxi / Church Presentation style) */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Quick Canonical Sidebar Navigation */}
         <AnimatePresence>
-          {showIndexDrawer && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="max-w-8xl mx-auto mt-0.5 pt-0.5 border-t border-neutral-800 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-0.5"
+          {showSidebar && (
+            <motion.aside
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 300, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              className="w-18 md:w-20 shrink-0 border-l border-neutral-800 bg-neutral-900/90 flex flex-col h-[calc(100vh-60px)] sticky top-[60px] z-20 overflow-hidden shadow-2xl backdrop-blur-md"
             >
-              <button
-                onClick={() => {
-                  setActiveGroupId(undefined);
-                  setShowIndexDrawer(false);
-                }}
-                className={`text-right p-0.5 rounded-xl text-xs md:text-sm font-bold border transition ${
-                  !activeGroupId
-                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                    : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:bg-neutral-800'
-                }`}
-              >
-                عرض كل القداس كاملاً
-              </button>
-              {activeLiturgy.groups.map((g) => (
+              {/* Sidebar Header */}
+              <div className="p-0.5 border-b border-neutral-800 flex items-center justify-between">
+                <div className="flex items-center gap-0.5">
+                  <span className="p-0.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <FaListUl size={14} />
+                  </span>
+                  <span className="font-bold text-sm text-white">ترتيب القداس الإلهي</span>
+                </div>
                 <button
-                  key={g.id}
-                  onClick={() => scrollToGroup(g.id)}
-                  className={`text-right p-0.5 rounded-xl text-xs md:text-sm font-bold border transition flex items-center justify-between ${
-                    activeGroupId === g.id
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                      : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:bg-neutral-800'
+                  onClick={() => setShowSidebar(false)}
+                  className="p-0.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
+                  title="إخفاء الفهرس"
+                >
+                  <FaChevronRight size={12} />
+                </button>
+              </div>
+
+              {/* Liturgy Day Context Badge */}
+              <div className="p-0.5 bg-amber-500/10 border-b border-amber-500/20 text-xs">
+                <div className="font-bold text-amber-300 flex items-center gap-0.5">
+                  <FaCalendarAlt size={12} />
+                  <span>طقس اليوم: {copticToday.formattedAr}</span>
+                </div>
+                <div className="text-[11px] text-neutral-400 mt-0.5">
+                  قراءات اليوم والمردات مرتبطة تلقائياً
+                </div>
+              </div>
+
+              {/* Group Nav Items */}
+              <div className="flex-1 overflow-y-auto p-0.5 space-y-0.5 divide-y divide-white/5">
+                <button
+                  onClick={() => setActiveGroupId(undefined)}
+                  className={`w-full text-right p-0.5 rounded-xl text-xs font-bold transition flex items-center justify-between ${
+                    !activeGroupId
+                      ? 'bg-amber-500 text-neutral-950 shadow-md shadow-amber-500/20'
+                      : 'text-neutral-300 hover:bg-neutral-800/80 hover:text-white'
                   }`}
                 >
-                  <span>{g.title.arabic}</span>
-                  <span className="text-[10px] text-neutral-500 px-0.5 py-0.25 rounded-full bg-neutral-800">
-                    {g.sections.length} مردات
-                  </span>
+                  <span>عرض كل القداس كاملاً</span>
                 </button>
-              ))}
-            </motion.div>
+
+                {activeLiturgy.groups.map((group, idx) => {
+                  const isSelected = activeGroupId === group.id;
+                  return (
+                    <button
+                      key={group.id}
+                      onClick={() => scrollToGroup(group.id)}
+                      className={`w-full text-right p-0.5 rounded-xl text-xs font-bold transition flex items-center justify-between ${
+                        isSelected
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                          : 'text-neutral-300 hover:bg-neutral-800/80 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-0.5 truncate">
+                        <span className="w-5 h-5 rounded-full bg-neutral-800 flex items-center justify-center text-[10px] text-neutral-400 shrink-0 font-mono">
+                          {idx + 1}
+                        </span>
+                        <span className="truncate">{group.title.arabic}</span>
+                      </div>
+                      <span className="text-[10px] text-neutral-500 px-0.5 py-0.5 rounded-md bg-black/40 shrink-0">
+                        {group.sections.length}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.aside>
           )}
         </AnimatePresence>
 
-      {/* Main Content: Liturgy Groups & Sections */}
-      <main className="flex-1 max-w-8xl mx-auto w-full p-0.5 md:p-0.5 space-y-0.5">
-        {filteredGroups.length === 0 ? (
-          <div className="text-center py-0.5 bg-neutral-900/30 rounded-3xl border border-neutral-800 space-y-0.5">
-            <div className="w-4 h-4 rounded-full bg-neutral-800 flex items-center justify-center mx-auto text-neutral-500 text-2xl">
-              <FaSearch />
+        {/* Content Viewer */}
+        <main className="flex-1 overflow-y-auto p-0.5 md:p-1 space-y-0.5 max-w-6xl mx-auto w-full">
+          {/* Top Bar for Toggling Sidebar & Quick Liturgy Title */}
+          <div className="flex items-center justify-between pb-0.5 border-b border-neutral-800">
+            <div className="flex items-center gap-0.5">
+              {!showSidebar && (
+                <button
+                  onClick={() => setShowSidebar(true)}
+                  className="px-0.5 py-0.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-amber-400 text-xs font-bold flex items-center gap-2 transition"
+                >
+                  <FaListUl size={12} />
+                  <span>فتح الفهرس</span>
+                </button>
+              )}
+              <h2 className="text-xl md:text-2xl font-black text-white">
+                {activeLiturgy.title.arabic}
+              </h2>
             </div>
-            <h3 className="text-xl font-bold text-white">لم يتم العثور على نتائج</h3>
-            <p className="text-sm text-neutral-400">
-              جرب تغيير كلمات البحث أو تغيير محدد الأدوار (الكاهن / الشماس / الشعب).
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setActiveRole('all');
-                setActiveGroupId(undefined);
-              }}
-              className="px-0.5 py-0.5 rounded-xl bg-amber-500 text-neutral-950 font-bold text-xs"
+
+            <Link
+              href="/readings"
+              className="px-0.5 py-0.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-0.5 transition"
             >
-              إعادة ضبط الفلاتر
-            </button>
+              <FaScroll size={12} />
+              <span>القطمارس وقراءات اليوم</span>
+            </Link>
           </div>
-        ) : (
-          filteredGroups.map((group) => (
-            <section
-              key={group.id}
-              id={`group-${group.id}`}
-              className="space-y-0.5 scroll-mt-6"
-            >
-              {/* Group Section Header */}
-              <div className="flex items-center justify-between gap-0.5 border-r-4 border-amber-500 pr-0.5 py-0.25">
-                <div>
-                  <h2 className="text-lg md:text-xl font-extrabold text-white">
-                    {group.title.arabic}
-                  </h2>
-                  {group.title.coptic && (
-                    <span className="text-xs text-blue-400 font-coptic">
-                      {group.title.coptic}
-                    </span>
-                  )}
+
+          {/* Render Groups and 3-Column Sections */}
+          {filteredGroups.length === 0 ? (
+            <div className="text-center py-1 bg-neutral-900/40 rounded-3xl border border-neutral-800 space-y-0.5">
+              <FaSearch className="w-2 h-2 text-neutral-600 mx-auto" />
+              <h3 className="text-lg font-bold text-white">لم يتم العثور على نتائج</h3>
+              <p className="text-xs text-neutral-400">
+                جرب تغيير البحث أو اختيار عرض جميع أجزاء القداس.
+              </p>
+            </div>
+          ) : (
+            filteredGroups.map((group) => (
+              <section
+                key={group.id}
+                id={`group-${group.id}`}
+                className="space-y-0.5 scroll-mt-1"
+              >
+                {/* Group Title */}
+                <div className="flex items-center justify-between border-r-4 border-amber-500 pr-0.5 py-0.5 bg-linear-to-l from-amber-500/5 to-transparent rounded-l-xl">
+                  <div>
+                    <h3 className="text-lg md:text-xl font-black text-white">
+                      {group.title.arabic}
+                    </h3>
+                    {group.badge && (
+                      <span className="text-xs text-amber-400 font-semibold">{group.badge}</span>
+                    )}
+                  </div>
+                  <span className="text-xs text-neutral-500 font-bold bg-neutral-900 px-0.5 py-0.5 rounded-lg border border-neutral-800">
+                    {group.sections.length} صلاة / لحن
+                  </span>
                 </div>
 
-                {group.badge && (
-                  <span className="px-0.5 py-0.25 rounded-full bg-neutral-800/80 border border-neutral-700 text-neutral-300 text-xs font-semibold">
-                    {group.badge}
-                  </span>
-                )}
-              </div>
+                {/* Group Sections Cards (3-Column Layout) */}
+                <div className="space-y-0.5">
+                  {group.sections.map((section) => (
+                    <LiturgyVerseCard
+                      key={section.id}
+                      section={section}
+                      enabledLanguages={enabledLanguages}
+                      layoutMode={layoutMode}
+                      fontSize={fontSize}
+                      onNavigateHyperlink={(target) => {
+                        // Navigate to targeted group or section
+                        const match = activeLiturgy.groups.find((g) => g.id.includes(target) || g.title.arabic.includes(target));
+                        if (match) scrollToGroup(match.id);
+                      }}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))
+          )}
+        </main>
+      </div>
 
-              {/* Sections list inside this group */}
-              <div className="space-y-0.5">
-                {group.sections.map((section) => (
-                  <LiturgyVerseCard
-                    key={section.id}
-                    section={section}
-                    enabledLanguages={enabledLanguages}
-                    layoutMode={layoutMode}
-                    fontSize={fontSize}
-                    onPlayHymn={(hymn) => setActiveHymnModal(hymn)}
-                  />
-                ))}
-              </div>
-            </section>
-          ))
-        )}
-      </main>
-
-      {/* Hymn Slide-over / Modal */}
-      <LiturgyHymnModal
-        hymn={activeHymnModal}
-        onClose={() => setActiveHymnModal(null)}
-      />
-
-      {/* Presentation Fullscreen Mode */}
+      {/* Presentation Fullscreen Modal */}
       {isPresentationOpen && (
         <LiturgyPresentationMode
           liturgy={activeLiturgy}
+          enabledLanguages={enabledLanguages}
+          fontSize={fontSize}
           onClose={() => setIsPresentationOpen(false)}
         />
       )}
