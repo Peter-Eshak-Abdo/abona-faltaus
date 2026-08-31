@@ -10,6 +10,11 @@ export interface LiturgyHymnRef {
   description?: string;
 }
 
+export interface LiturgyHyperlink {
+  text: string;
+  target: string;
+}
+
 export interface LiturgyVerse {
   arabic: string;
   coptic?: string;
@@ -17,6 +22,7 @@ export interface LiturgyVerse {
   coptic_english?: string;
   english?: string;
   hymnRef?: LiturgyHymnRef;
+  slide_number?: number;
 }
 
 export interface LiturgySection {
@@ -33,6 +39,9 @@ export interface LiturgySection {
     english?: string;
   };
   verses: LiturgyVerse[];
+  hyperlinks?: LiturgyHyperlink[];
+  source_file?: string;
+  start_slide?: number;
 }
 
 export interface LiturgyGroup {

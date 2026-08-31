@@ -10,6 +10,11 @@ export interface TasbehaHymnRef {
   description?: string;
 }
 
+export interface TasbehaHyperlink {
+  text: string;
+  target: string;
+}
+
 export interface TasbehaVerse {
   arabic: string;
   coptic?: string;
@@ -17,6 +22,7 @@ export interface TasbehaVerse {
   coptic_english?: string;
   english?: string;
   hymnRef?: TasbehaHymnRef;
+  slide_number?: number;
 }
 
 export interface TasbehaSection {
@@ -34,6 +40,9 @@ export interface TasbehaSection {
   };
   tone?: 'adam' | 'watos' | 'both';
   verses: TasbehaVerse[];
+  hyperlinks?: TasbehaHyperlink[];
+  source_file?: string;
+  start_slide?: number;
 }
 
 export interface TasbehaGroup {

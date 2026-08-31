@@ -213,6 +213,22 @@ export default function LiturgyVerseCard({
         </div>
       )}
 
+      {/* Interactive Hyperlinks / Options (e.g. في حضور الأسقف / قرائات الأيام والأعياد) */}
+      {section.hyperlinks && section.hyperlinks.length > 0 && (
+        <div className="mb-0.5 flex flex-wrap items-center gap-0.5 p-0.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
+          <span className="text-xs font-bold text-amber-400">🔗 خيارات وانتقالات طقسية:</span>
+          {section.hyperlinks.map((hl, hIdx) => (
+            <span
+              key={hIdx}
+              className="inline-flex items-center gap-0.25 px-0.5 py-0.25 rounded-lg bg-amber-500/20 text-amber-200 border border-amber-500/30 text-xs font-semibold hover:bg-amber-500/30 transition cursor-pointer shadow-xs"
+              title={hl.target}
+            >
+              <span>{hl.text}</span>
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Verses Container */}
       <div className="space-y-0.5">
         {section.verses.map((verse, vIdx) => {

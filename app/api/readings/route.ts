@@ -148,23 +148,57 @@ function loadSynaxariumForDay(month: number, day: number) {
   }
 }
 
+import { determineLiturgyDayContext } from "@/lib/coptic-liturgical-engine";
+
+const LENT_PATH = path.join(DATA_DIR, "extracted_data", "GreatLentReadings.json");
+const PENTECOST_PATH = path.join(DATA_DIR, "extracted_data", "PentecostReadings.json");
+
+let lentCache: any[] | null = null;
+let pentecostCache: any[] | null = null;
+
+function loadAllLiturgicalCaches() {
+  loadData();
+  if (!lentCache && fs.existsSync(LENT_PATH)) {
+    lentCache = JSON.parse(fs.readFileSync(LENT_PATH, "utf-8"));
+  }
+  if (!pentecostCache && fs.existsSync(PENTECOST_PATH)) {
+    pentecostCache = JSON.parse(fs.readFileSync(PENTECOST_PATH, "utf-8"));
+  }
+}
+
 export async function POST(request: Request) {
   try {
-    loadData();
+    loadAllLiturgicalCaches();
 
     const body = await request.json();
-    const { copticMonth, copticDay, isSunday } = body;
+    const { copticMonth, copticDay, isSunday, gregorianDate } = body;
+
+    // Use Gregorian Date if provided, otherwise reconstruct
+    const gDate = gregorianDate ? new Date(gregorianDate) : new Date();
+    const liturgicalContext = determineLiturgyDayContext(gDate, copticMonth, copticDay);
 
     let dayRecord: any = null;
 
-    if (isSunday && sundayCache) {
-      // Calculate which Sunday of the month (1st, 2nd, 3rd, 4th, 5th)
+    // 1. Check Moveable Seasons first (Great Lent, Pentecost, Pascha)
+    if (liturgicalContext.season === 'great_lent' && lentCache) {
+      const week = (liturgicalContext as any).lentWeek || 1;
+      const dayOfWeek = (liturgicalContext as any).dayOfWeek || 0;
+      dayRecord = lentCache.find((r: any) => r.Week === week && r.DayOfWeek === dayOfWeek);
+    } else if (liturgicalContext.season === 'pentecost' && pentecostCache) {
+      const week = (liturgicalContext as any).pentecostWeek || 1;
+      const dayOfWeek = (liturgicalContext as any).dayOfWeek || 0;
+      dayRecord = pentecostCache.find((r: any) => r.Week === week && r.DayOfWeek === dayOfWeek);
+    }
+
+    // 2. Sunday Katameros
+    if (!dayRecord && isSunday && sundayCache) {
       const sundayIndex = Math.min(Math.ceil(copticDay / 7), 5);
       dayRecord = sundayCache.find(
         (r: any) => r.Month_Number === copticMonth && r.Day === sundayIndex
       );
     }
 
+    // 3. Annual Days Katameros
     if (!dayRecord && annualCache) {
       dayRecord = annualCache.find(
         (r: any) => r.Month_Number === copticMonth && r.Day === copticDay
@@ -174,9 +208,10 @@ export async function POST(request: Request) {
     const synaxariumEntries = loadSynaxariumForDay(copticMonth, copticDay);
 
     const response = {
-      title: dayRecord?.DayName || "قراءات اليوم",
-      season: dayRecord?.Season || "",
-      dayTune: dayRecord?.Day_Tune || "",
+      title: liturgicalContext.nameAr || dayRecord?.DayName || "قراءات اليوم",
+      season: liturgicalContext.season || dayRecord?.Season || "annual",
+      dayTune: liturgicalContext.tune || dayRecord?.Day_Tune || "annual",
+      liturgicalContext,
       readings: {
         v_psalm: getVerseText(dayRecord?.V_Psalm_Ref || ""),
         v_gospel: getVerseText(dayRecord?.V_Gospel_Ref || ""),

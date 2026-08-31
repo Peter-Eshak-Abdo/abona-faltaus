@@ -189,6 +189,7 @@ export default function KatamarosPage() {
           copticMonth: cDate.month,
           copticDay: cDate.day,
           isSunday,
+          gregorianDate: targetDate.toISOString(),
         }),
       });
 
@@ -581,29 +582,37 @@ export default function KatamarosPage() {
 
               {/* Vespers Tab */}
               <TabsContent value="vespers" className="space-y-1 mt-1">
-                <ReadingItem
-                  id="v_psalm"
-                  title="مزمور عشية"
-                  content={data.readings.v_psalm}
-                  fontSize={fontSize}
-                  isPlaying={playingKey === "v_psalm"}
-                  isLoadingAudio={audioLoading === "v_psalm"}
-                  isBookmarked={!!bookmarkedSections["v_psalm"]}
-                  onPlay={() => playNarration("v_psalm", data.readings.v_psalm)}
-                  onBookmark={() => toggleBookmark("v_psalm", "مزمور عشية")}
-                />
-                <ReadingItem
-                  id="v_gospel"
-                  title="إنجيل عشية"
-                  content={data.readings.v_gospel}
-                  fontSize={fontSize}
-                  isPlaying={playingKey === "v_gospel"}
-                  isLoadingAudio={audioLoading === "v_gospel"}
-                  isBookmarked={!!bookmarkedSections["v_gospel"]}
-                  onPlay={() => playNarration("v_gospel", data.readings.v_gospel)}
-                  onBookmark={() => toggleBookmark("v_gospel", "إنجيل عشية")}
-                  highlight
-                />
+                {data.readings.v_psalm || data.readings.v_gospel ? (
+                  <>
+                    <ReadingItem
+                      id="v_psalm"
+                      title="مزمور عشية"
+                      content={data.readings.v_psalm}
+                      fontSize={fontSize}
+                      isPlaying={playingKey === "v_psalm"}
+                      isLoadingAudio={audioLoading === "v_psalm"}
+                      isBookmarked={!!bookmarkedSections["v_psalm"]}
+                      onPlay={() => playNarration("v_psalm", data.readings.v_psalm)}
+                      onBookmark={() => toggleBookmark("v_psalm", "مزمور عشية")}
+                    />
+                    <ReadingItem
+                      id="v_gospel"
+                      title="إنجيل عشية"
+                      content={data.readings.v_gospel}
+                      fontSize={fontSize}
+                      isPlaying={playingKey === "v_gospel"}
+                      isLoadingAudio={audioLoading === "v_gospel"}
+                      isBookmarked={!!bookmarkedSections["v_gospel"]}
+                      onPlay={() => playNarration("v_gospel", data.readings.v_gospel)}
+                      onBookmark={() => toggleBookmark("v_gospel", "إنجيل عشية")}
+                      highlight
+                    />
+                  </>
+                ) : (
+                  <div className="text-center py-0.5 bg-white dark:bg-zinc-900 rounded-2xl border border-stone-200 dark:border-zinc-800 text-stone-500 text-sm">
+                    لا ترفع صلاة عشية في هذا اليوم حسب الترتيب الطقسي (انتقل لتبويب باكر أو القداس الإلهي)
+                  </div>
+                )}
               </TabsContent>
 
               {/* Matins Tab */}
