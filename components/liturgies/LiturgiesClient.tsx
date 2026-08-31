@@ -14,7 +14,8 @@ import {
   FaChevronRight,
   FaChevronLeft,
   FaExpand,
-  FaCompress
+  FaCompress,
+  FaTimes
 } from 'react-icons/fa';
 import {
   LiturgyDocument,
@@ -33,12 +34,14 @@ import LiturgyNavbar from './LiturgyNavbar';
 import LiturgyVerseCard from './LiturgyVerseCard';
 import LiturgyPresentationMode from './LiturgyPresentationMode';
 import { getCopticDate } from '@/lib/coptic-date';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   initialLiturgy?: LiturgyDocument;
 }
 
 export default function LiturgiesClient({ initialLiturgy }: Props) {
+  const t = useTranslations('Liturgies');
   const [activeLiturgy, setActiveLiturgy] = useState<LiturgyDocument>(
     initialLiturgy || CANONICAL_BASIL_LITURGY
   );
@@ -136,17 +139,16 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
               {/* Sidebar Header */}
               <div className="p-0.5 border-b border-neutral-800 flex items-center justify-between">
                 <div className="flex items-center gap-0.5">
-                  <span className="p-0.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    <FaListUl size={14} />
+                  <span className="font-bold text-amber-400 text-xs flex items-center gap-0.5">
+                    <FaListUl size={12} />
+                    <span>{t('sidebar')}</span>
                   </span>
-                  <span className="font-bold text-sm text-white">ترتيب القداس الإلهي</span>
                 </div>
                 <button
                   onClick={() => setShowSidebar(false)}
-                  className="p-0.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
-                  title="إخفاء الفهرس"
+                  className="text-neutral-400 hover:text-white p-0.5 text-xs"
                 >
-                  <FaChevronRight size={12} />
+                  <FaTimes />
                 </button>
               </div>
 
@@ -154,10 +156,10 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
               <div className="p-0.5 bg-amber-500/10 border-b border-amber-500/20 text-xs">
                 <div className="font-bold text-amber-300 flex items-center gap-0.5">
                   <FaCalendarAlt size={12} />
-                  <span>طقس اليوم: {copticToday.formattedAr}</span>
+                  <span>{t('todayRitual', { date: copticToday.formattedAr })}</span>
                 </div>
                 <div className="text-[11px] text-neutral-400 mt-0.5">
-                  قراءات اليوم والمردات مرتبطة تلقائياً
+                  {t('todayRitualHint')}
                 </div>
               </div>
 
@@ -171,7 +173,7 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
                       : 'text-neutral-300 hover:bg-neutral-800/80 hover:text-white'
                   }`}
                 >
-                  <span>عرض كل القداس كاملاً</span>
+                  <span>{t('allLiturgiesFull')}</span>
                 </button>
 
                 {activeLiturgy.groups.map((group, idx) => {
@@ -214,7 +216,7 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
                   className="px-0.5 py-0.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-amber-400 text-xs font-bold flex items-center gap-2 transition"
                 >
                   <FaListUl size={12} />
-                  <span>فتح الفهرس</span>
+                  <span>{t('openSidebar')}</span>
                 </button>
               )}
               <h2 className="text-xl md:text-2xl font-black text-white">
@@ -227,7 +229,7 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
               className="px-0.5 py-0.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-0.5 transition"
             >
               <FaScroll size={12} />
-              <span>القطمارس وقراءات اليوم</span>
+              <span>{t('readingsLink')}</span>
             </Link>
           </div>
 
@@ -235,9 +237,9 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
           {filteredGroups.length === 0 ? (
             <div className="text-center py-1 bg-neutral-900/40 rounded-3xl border border-neutral-800 space-y-0.5">
               <FaSearch className="w-2 h-2 text-neutral-600 mx-auto" />
-              <h3 className="text-lg font-bold text-white">لم يتم العثور على نتائج</h3>
+              <h3 className="text-lg font-bold text-white">{t('noResults')}</h3>
               <p className="text-xs text-neutral-400">
-                جرب تغيير البحث أو اختيار عرض جميع أجزاء القداس.
+                {t('noResultsHint')}
               </p>
             </div>
           ) : (

@@ -1,5 +1,5 @@
-"use client";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 const sounds = [
   {
@@ -65,31 +65,34 @@ const sounds = [
 ];
 
 const KyamaPlayer: React.FC = () => {
+  const t = useTranslations('Tranim');
+
   return (
     <div id="sec-kyama" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {sounds
         .filter((sound) => sound.monasba === "kyama")
         .map((sound, index) => (
-          <div className="bg-white rounded-lg shadow-sm p-4" key={`kyama-${index}`}>
+          <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-sm p-4 border dark:border-zinc-800" key={`kyama-${index}`}>
             <div className="flex justify-center items-center mb-4">
               <audio controls className="w-full" id={`kyama-audio-${index}`}>
                 <source src={sound.src} type="audio/mpeg" />
-                متصفحك لا يدعم ملفات الصوت.
+                {t('audioNotSupported')}
               </audio>
             </div>
             <div className="text-right">
-              <p className="text-sm">
-                <span className="font-bold">اسم اللحن: </span>
+              <p className="text-sm text-stone-800 dark:text-zinc-200">
+                <span className="font-bold">{t('hymnName')}: </span>
                 {sound.name}
               </p>
-              <p className="text-sm">
-                <span className="font-bold">المناسبة التي يقال فيها: </span>عيد القيامة
+              <p className="text-sm text-stone-800 dark:text-zinc-200">
+                <span className="font-bold">{t('occasion')}: </span>
+                {t('kyamaOccasion')}
               </p>
               <div className="flex justify-between items-center mt-4">
                 <Button variant="outline" size="sm">
-                  تفاصيل
+                  {t('details')}
                 </Button>
-                <small className="text-gray-600">{sound.duration}</small>
+                <small className="text-gray-600 dark:text-zinc-400">{sound.duration}</small>
               </div>
             </div>
           </div>

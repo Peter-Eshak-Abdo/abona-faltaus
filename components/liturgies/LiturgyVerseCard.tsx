@@ -22,6 +22,7 @@ import {
   ParticipantRole,
 } from '@/lib/liturgies/types';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   section: LiturgySection;
@@ -32,47 +33,6 @@ interface Props {
   onNavigateHyperlink?: (target: string) => void;
 }
 
-const ROLE_META: Record<
-  ParticipantRole,
-  { label: string; bg: string; text: string; border: string; icon: any }
-> = {
-  all: {
-    label: 'الكل',
-    bg: 'bg-neutral-800/80',
-    text: 'text-neutral-300',
-    border: 'border-neutral-700',
-    icon: FaChurch,
-  },
-  priest: {
-    label: 'يقول الكاهن',
-    bg: 'bg-amber-950/40',
-    text: 'text-amber-400',
-    border: 'border-amber-500/30',
-    icon: FaChurch,
-  },
-  deacon: {
-    label: 'يقول الشماس',
-    bg: 'bg-emerald-950/40',
-    text: 'text-emerald-400',
-    border: 'border-emerald-500/30',
-    icon: FaUserTie,
-  },
-  people: {
-    label: 'يقول الشعب',
-    bg: 'bg-blue-950/40',
-    text: 'text-blue-400',
-    border: 'border-blue-500/30',
-    icon: FaUsers,
-  },
-  reader: {
-    label: 'يقول القارئ',
-    bg: 'bg-purple-950/40',
-    text: 'text-purple-400',
-    border: 'border-purple-500/30',
-    icon: FaBookOpen,
-  },
-};
-
 export default function LiturgyVerseCard({
   section,
   enabledLanguages,
@@ -81,10 +41,52 @@ export default function LiturgyVerseCard({
   onPlayHymn,
   onNavigateHyperlink,
 }: Props) {
+  const t = useTranslations('Liturgies');
   const [copied, setCopied] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
 
-  const roleInfo = ROLE_META[section.speaker] || ROLE_META.all;
+  const roleMeta: Record<
+    ParticipantRole,
+    { label: string; bg: string; text: string; border: string; icon: any }
+  > = {
+    all: {
+      label: t('roles.all'),
+      bg: 'bg-neutral-800/80',
+      text: 'text-neutral-300',
+      border: 'border-neutral-700',
+      icon: FaChurch,
+    },
+    priest: {
+      label: t('roles.priestSays'),
+      bg: 'bg-amber-950/40',
+      text: 'text-amber-400',
+      border: 'border-amber-500/30',
+      icon: FaChurch,
+    },
+    deacon: {
+      label: t('roles.deaconSays'),
+      bg: 'bg-emerald-950/40',
+      text: 'text-emerald-400',
+      border: 'border-emerald-500/30',
+      icon: FaUserTie,
+    },
+    people: {
+      label: t('roles.peopleSay'),
+      bg: 'bg-blue-950/40',
+      text: 'text-blue-400',
+      border: 'border-blue-500/30',
+      icon: FaUsers,
+    },
+    reader: {
+      label: t('roles.peopleSay'),
+      bg: 'bg-purple-950/40',
+      text: 'text-purple-400',
+      border: 'border-purple-500/30',
+      icon: FaBookOpen,
+    },
+  };
+
+  const roleInfo = roleMeta[section.speaker] || roleMeta.all;
   const RoleIcon = roleInfo.icon;
 
   const fontSizes = {
@@ -110,15 +112,16 @@ export default function LiturgyVerseCard({
       .map((v) => {
         const parts = [];
         if (enabledLanguages.arabic && v.arabic) parts.push(v.arabic);
-        if (enabledLanguages.coptic_arabic && v.coptic_arabic) parts.push(`(${v.coptic_arabic})`);
-        if (enabledLanguages.coptic && v.coptic) parts.push(`[${v.coptic}]`);
+        if (enabledLanguages.coptic_arabic && v.coptic_arabic) parts.push(v.coptic_arabic);
+        if (enabledLanguages.coptic && v.coptic) parts.push(v.coptic);
+        if (enabledLanguages.english && v.english) parts.push(v.english);
         return parts.join('\n');
       })
-      .join('\n\n');
+      .join('\n---\n');
 
-    navigator.clipboard.writeText(`${section.title.arabic}\n\n${textToCopy}`);
+    navigator.clipboard.writeText(textToCopy);
     setCopied(true);
-    toast.success('تم نسخ نص الصلاة بنجاح');
+    toast.success(t('copied'));
     setTimeout(() => setCopied(false), 2000);
   };
 

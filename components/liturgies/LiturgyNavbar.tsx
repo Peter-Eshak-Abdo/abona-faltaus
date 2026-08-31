@@ -13,6 +13,7 @@ import {
   FaFont,
   FaTimes,
 } from 'react-icons/fa';
+import { useTranslations } from 'next-intl';
 import {
   LiturgyDocument,
   LiturgyLanguage,
@@ -37,13 +38,6 @@ interface Props {
   onOpenPresentation: () => void;
 }
 
-const ROLES: { id: ParticipantRole; label: string; icon: any; color: string }[] = [
-  { id: 'all', label: 'الكل', icon: FaChurch, color: 'text-neutral-300' },
-  { id: 'priest', label: 'الكاهن', icon: FaChurch, color: 'text-amber-400' },
-  { id: 'deacon', label: 'الشماس', icon: FaUserTie, color: 'text-emerald-400' },
-  { id: 'people', label: 'الشعب', icon: FaUsers, color: 'text-blue-400' },
-];
-
 export default function LiturgyNavbar({
   activeLiturgy,
   onSelectLiturgy,
@@ -59,7 +53,15 @@ export default function LiturgyNavbar({
   onSearchChange,
   onOpenPresentation,
 }: Props) {
+  const t = useTranslations('Liturgies');
   const [showSearch, setShowSearch] = useState(false);
+
+  const roles: { id: ParticipantRole; label: string; icon: any; color: string }[] = [
+    { id: 'all', label: t('roles.all'), icon: FaChurch, color: 'text-neutral-300' },
+    { id: 'priest', label: t('roles.priest'), icon: FaChurch, color: 'text-amber-400' },
+    { id: 'deacon', label: t('roles.deacon'), icon: FaUserTie, color: 'text-emerald-400' },
+    { id: 'people', label: t('roles.people'), icon: FaUsers, color: 'text-blue-400' },
+  ];
 
   return (
     <div className="sticky top-0 z-30 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800 shadow-xl" dir="rtl">
@@ -89,10 +91,10 @@ export default function LiturgyNavbar({
         <button
           onClick={onOpenPresentation}
           className="shrink-0 px-0.5 py-0.5 rounded-xl text-xs md:text-sm font-bold bg-neutral-900 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-2 transition"
-          title="عرض ملء الشاشة / شاشة الخورس"
+          title={t('presentationTitle')}
         >
           <FaTv className="text-amber-400" />
-          <span className="hidden sm:inline">شاشة القداس</span>
+          <span className="hidden sm:inline">{t('presentationMode')}</span>
         </button>
       </div>
 
@@ -100,7 +102,7 @@ export default function LiturgyNavbar({
       <div className="px-1 py-0.5 flex flex-wrap items-center justify-between gap-0.5">
         {/* Participant Role Switcher */}
         <div className="flex items-center bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0">
-          {ROLES.map((r) => {
+          {roles.map((r) => {
             const isSelected = activeRole === r.id;
             const Icon = r.icon;
             return (
@@ -130,7 +132,7 @@ export default function LiturgyNavbar({
                 : 'text-neutral-500 hover:text-neutral-300'
             }`}
           >
-            عربي
+            {t('languages.arabic')}
           </button>
           <button
             onClick={() => onToggleLanguage('coptic_arabic')}
@@ -140,7 +142,7 @@ export default function LiturgyNavbar({
                 : 'text-neutral-500 hover:text-neutral-300'
             }`}
           >
-            قبطي معرب
+            {t('languages.copticArabic')}
           </button>
           <button
             onClick={() => onToggleLanguage('coptic')}
@@ -150,7 +152,7 @@ export default function LiturgyNavbar({
                 : 'text-neutral-500 hover:text-neutral-300'
             }`}
           >
-            ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ
+            {t('languages.coptic')}
           </button>
           <button
             onClick={() => onToggleLanguage('english')}
@@ -160,7 +162,7 @@ export default function LiturgyNavbar({
                 : 'text-neutral-500 hover:text-neutral-300'
             }`}
           >
-            English
+            {t('languages.english')}
           </button>
         </div>
 
@@ -173,7 +175,7 @@ export default function LiturgyNavbar({
               className={`p-0.5 rounded-lg text-xs transition ${
                 layoutMode === 'columns' ? 'bg-neutral-800 text-amber-400' : 'text-neutral-500'
               }`}
-              title="عرض الأعمدة المتجاورة"
+              title={t('layoutColumns')}
             >
               <FaColumns />
             </button>
@@ -182,7 +184,7 @@ export default function LiturgyNavbar({
               className={`p-0.5 rounded-lg text-xs transition ${
                 layoutMode === 'stacked' ? 'bg-neutral-800 text-amber-400' : 'text-neutral-500'
               }`}
-              title="عرض البطاقات المتتالية"
+              title={t('layoutStacked')}
             >
               <FaThList />
             </button>
@@ -211,7 +213,7 @@ export default function LiturgyNavbar({
               <div className="flex items-center gap-0.5 bg-neutral-900 border border-neutral-700 rounded-xl px-0.5 py-0.5">
                 <input
                   type="text"
-                  placeholder="ابحث في نص القداس..."
+                  placeholder={t('searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
                   className="bg-transparent text-white text-xs outline-hidden w-32 md:w-48 placeholder-neutral-500"
@@ -231,7 +233,7 @@ export default function LiturgyNavbar({
               <button
                 onClick={() => setShowSearch(true)}
                 className="p-0.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-xl border border-neutral-800 transition text-xs"
-                title="بحث في نصوص القداس"
+                title={t('searchTooltip')}
               >
                 <FaSearch />
               </button>

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import localforage from "localforage";
 import { loadBible } from "@/lib/bible-utils";
+import { useTranslations } from "next-intl";
 
 // Components
 import BibleLoading from "@/components/bible/BibleLoading";
@@ -15,9 +16,10 @@ type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
 type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
 
 export default function BibleReaderPage() {
+  const t = useTranslations('Bible');
   const [bibleData, setBibleData] = useState<BookObj[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingStatus, setLoadingStatus] = useState("جاري الاتصال بالسيرفر...");
+  const [loadingStatus, setLoadingStatus] = useState(t('connectingServer'));
   const [loadProgress, setLoadProgress] = useState(0);
   const [tipIndex, setTipIndex] = useState(0);
 
@@ -33,18 +35,27 @@ export default function BibleReaderPage() {
 
   const isInitialized = useRef(false);
 
+  const tips = [
+    t('tips.0'),
+    t('tips.1'),
+    t('tips.2'),
+    t('tips.3'),
+    t('tips.4'),
+    t('tips.5'),
+  ];
+
   useEffect(() => {
     const initData = async () => {
       try {
         setIsLoading(true);
         setLoadProgress(0);
-        setLoadingStatus("جاري فحص البيانات المحفوظة...");
+        setLoadingStatus(t('checkingCache'));
 
         let data = await localforage.getItem<BookObj[]>("offline_bible_data");
         let shouldRefresh = false;
 
         if (!data || data.length === 0) {
-          setLoadingStatus("جاري تحميل الكتاب المقدس (لأول مرة لتصفحه بدون إنترنت)...");
+          setLoadingStatus(t('loadingData'));
           data = (await loadBible((p) => setLoadProgress(p))) as BookObj[];
           if (data && data.length > 0) {
             await localforage.setItem("offline_bible_data", data);

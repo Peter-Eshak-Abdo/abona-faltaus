@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FaPlay, FaStop, FaSearch, FaStar, FaPlusSquare, FaSpinner, FaArrowRight } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import localforage from "localforage";
+import { useTranslations } from "next-intl";
 
 type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
 type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
@@ -28,6 +29,7 @@ export default function ReadingControlsHeader({
   setFontSize,
   setIsSearchOpen,
 }: ReadingControlsHeaderProps) {
+  const t = useTranslations('Bible');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isAudioLoading, setIsAudioLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -59,7 +61,7 @@ export default function ReadingControlsHeader({
 
     const activeBook = bibleData[currentBookIdx];
     const activeChapter = activeBook?.chapters?.[currentChapterIdx] || [];
-    let textToRead = `${activeBook?.name || ""}، الإصحَاحُ ${currentChapterIdx + 1}. `;
+    let textToRead = `${activeBook?.name || ""}، ${t('chapter')} ${currentChapterIdx + 1}. `;
     textToRead += activeChapter.map(v => v.text_vocalized).join(". ");
 
     const cacheKey = `audio_offline_${currentBookIdx}_${currentChapterIdx}`;
@@ -110,7 +112,7 @@ export default function ReadingControlsHeader({
         window.speechSynthesis.speak(utterance);
         setIsPlaying(true);
       } else {
-        alert("خاصية القراءة الصوتية غير مدعومة على متصفحك حالياً.");
+        alert(t('audioNotSupported'));
       }
     } finally {
       setIsAudioLoading(false);
@@ -159,15 +161,15 @@ export default function ReadingControlsHeader({
         <button onClick={() => setFontSize(prev => prev + 2)} className="p-0.5 bg-cyan-200 text-on-surface text-xl rounded-lg font-bold">A+</button>
         <button onClick={() => setFontSize(prev => prev - 2)} className="p-0.5 bg-cyan-200 text-on-surface text-sm rounded-lg font-bold">A-</button>
 
-        <Link href="/bible/favorites" className="p-0.5 bg-yellow-100 text-yellow-600 rounded-lg font-bold flex items-center" title="المفضلة">
+        <Link href="/bible/favorites" className="p-0.5 bg-yellow-100 text-yellow-600 rounded-lg font-bold flex items-center" title={t('favorites')}>
           <FaStar size={18} />
         </Link>
 
-        <Link href="/bible/day" className="p-0.5 bg-amber-200 text-blue-600 rounded-lg font-bold flex items-center" title="إضافة إلى يوم">
+        <Link href="/bible/day" className="p-0.5 bg-amber-200 text-blue-600 rounded-lg font-bold flex items-center" title={t('addToDay')}>
           <FaPlusSquare size={18} />
         </Link>
 
-        <button onClick={() => setIsSearchOpen(true)} className="p-0.5 bg-blue-100 text-blue-600 rounded-lg font-bold flex items-center">
+        <button onClick={() => setIsSearchOpen(true)} className="p-0.5 bg-blue-100 text-blue-600 rounded-lg font-bold flex items-center" title={t('searchBtn')}>
           <FaSearch size={18} />
         </button>
 
@@ -178,7 +180,7 @@ export default function ReadingControlsHeader({
           ${isPlaying ? 'bg-red-600 text-white' : 'bg-blue-600 text-white shadow-md hover:shadow-lg'}`}
         >
           {isAudioLoading ? <FaSpinner size={18} className="animate-spin" /> : isPlaying ? <FaStop size={18} /> : <FaPlay size={18} />}
-          {isAudioLoading ? "جاري التحضير..." : isPlaying ? "إيقاف" : "استمع"}
+          {isAudioLoading ? t('listening') : isPlaying ? t('stop') : t('listen')}
         </button>
       </div>
     </header>

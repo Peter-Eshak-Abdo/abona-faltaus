@@ -38,8 +38,10 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { AGPEYA_HOURS, AgpeyaPrayerHour } from "@/lib/agpeya-data";
+import { useTranslations } from "next-intl";
 
 export default function AgpeyaPage() {
+  const t = useTranslations('Agpeya');
   const [selectedHourId, setSelectedHourId] = useState<string>("baker");
   const [prayerMode, setPrayerMode] = useState<boolean>(false);
   const [autoScroll, setAutoScroll] = useState<boolean>(false);
@@ -116,7 +118,7 @@ export default function AgpeyaPage() {
   // Handle TTS text to speech
   const toggleSpeech = (text: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      toast.error("خاصية القراءة الصوتية غير مدعومة في متصفحك");
+      toast.error(t('audioNotSupported'));
       return;
     }
 
@@ -139,7 +141,7 @@ export default function AgpeyaPage() {
   const handleCopy = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
-    toast.success("تم نسخ النص بنجاح");
+    toast.success(t('copied'));
     setTimeout(() => setCopiedId(null), 2000);
   };
 
@@ -148,7 +150,7 @@ export default function AgpeyaPage() {
       try {
         await navigator.share({
           title,
-          text: `${title}\n\n${text}\n\nمن تطبيق الأجبية المقدسة - أبونا فلتاؤس`,
+          text: `${title}\n\n${text}\n\n${t('shareFooter')}`,
         });
       } catch {
         // Ignored
@@ -165,7 +167,7 @@ export default function AgpeyaPage() {
     setBookmarkedHours(next);
     localStorage.setItem("agpeya_bookmarks", JSON.stringify(next));
     toast.success(
-      bookmarkedHours.includes(hourId) ? "تمت إزالة الساعة من المحفوظات" : "تم حفظ الساعة في المفضلة"
+      bookmarkedHours.includes(hourId) ? t('bookmarkRemoved') : t('bookmarkSaved')
     );
   };
 
@@ -233,7 +235,7 @@ export default function AgpeyaPage() {
             <div className="flex items-center gap-0.5">
               <span className="text-xl font-black text-amber-700 dark:text-amber-500 flex items-center gap-0.5">
                 <BookOpen size={20} />
-                الأجبية المقدسة
+                {t('title')}
               </span>
               <Badge
                 variant="outline"
@@ -248,10 +250,9 @@ export default function AgpeyaPage() {
             {/* Prayer Mode Toggle */}
             <Button
               variant={prayerMode ? "default" : "outline"}
-              // size="sm"
               onClick={() => {
                 setPrayerMode(!prayerMode);
-                toast(prayerMode ? "تم إيقاف وضع الصلاة" : "تم تفعيل وضع الخشوع والصلاة");
+                toast(prayerMode ? t('prayerModeOff') : t('prayerModeOn'));
               }}
               className={cn(
                 "rounded-xl text-xs font-bold w-9",
@@ -260,8 +261,8 @@ export default function AgpeyaPage() {
                   : "border-amber-600/40 text-amber-800 dark:text-amber-400 hover:bg-amber-500/10"
               )}
             >
-              <Flame size={8} className={prayerMode ? "text-yellow-300" : ""}/>
-              <span className="hidden md:inline">{prayerMode ? "وضع الخشوع" : "وضع الصلاة"}</span>
+              <Flame size={15} className={prayerMode ? "text-amber-200 animate-pulse" : ""} />
+              <span className="hidden md:inline">{t('prayerMode')}</span>
             </Button>
 
             {/* Font Size Adjusters */}
@@ -312,10 +313,10 @@ export default function AgpeyaPage() {
             <div className="flex items-center justify-between px-1">
               <span className="text-xs font-bold text-stone-500 dark:text-zinc-400 flex items-center gap-0.5">
                 <Clock size={13} />
-                الصلوات السبع القانونية وصلوات السواعي:
+                {t('hoursList')}:
               </span>
               <span className="text-xs font-bold text-amber-700 dark:text-amber-400">
-                إنجاز الصلاة: {currentHourProgress}%
+                {t('progress', { percent: currentHourProgress })}
               </span>
             </div>
 
@@ -411,11 +412,11 @@ export default function AgpeyaPage() {
             {/* Quick Sections Navigation Filter */}
             <div className="pt-0.5 flex flex-wrap gap-0.5">
               {[
-                { id: "all", label: "كامل الصلاة" },
-                { id: "intro", label: "المقدمة والمزامير" },
-                { id: "gospel", label: "الإنجيل" },
-                { id: "litanies", label: "القطع والطلبات" },
-                { id: "conclusion", label: "الختام" },
+                { id: "all", label: t('sections.all') },
+                { id: "intro", label: t('sections.intro') },
+                { id: "gospel", label: t('sections.gospel') },
+                { id: "litanies", label: t('sections.litanies') },
+                { id: "conclusion", label: t('sections.conclusion') },
               ].map((tab) => (
                 <button
                   key={tab.id}

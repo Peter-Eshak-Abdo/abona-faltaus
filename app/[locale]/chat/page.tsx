@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import { Sparkles, MessageSquare } from "lucide-react";
 import IconGeneratorClient from "@/components/icon-generator/IconGeneratorClient";
+import { useTranslations } from "next-intl";
 
 const ChatBot = dynamic(() => import('@/components/ChatBot'), {
   ssr: false,
@@ -11,6 +12,7 @@ const ChatBot = dynamic(() => import('@/components/ChatBot'), {
 });
 
 export default function ChatPage() {
+  const t = useTranslations('AI');
   const [activeTab, setActiveTab] = useState<"chat" | "icons">("chat");
 
   return (
@@ -27,7 +29,7 @@ export default function ChatPage() {
             }`}
           >
             <MessageSquare size={16} />
-            <span>المساعد الذكي (الشات)</span>
+            <span>{t('chatTitle')}</span>
           </button>
 
           <button
@@ -39,14 +41,14 @@ export default function ChatPage() {
             }`}
           >
             <Sparkles size={16} />
-            <span>توليد الأيقونات والصور 🎨</span>
+            <span>{t('iconsTitle')}</span>
           </button>
         </div>
       </div>
 
       <div className="flex-1 w-full h-full shadow-2xl overflow-hidden md:rounded-b-2xl border border-t-0 border-neutral-800">
         {activeTab === "chat" ? (
-          <Suspense fallback={<div className="flex items-center justify-center h-full">جاري التحميل...</div>}>
+          <Suspense fallback={<div className="flex items-center justify-center h-full">{t('loadingChat')}</div>}>
             <ChatBot />
           </Suspense>
         ) : (

@@ -22,10 +22,12 @@ import VoiceRecorderButton from "@/components/notes/VoiceRecorderButton";
 import LessonsSidebar, { SavedLesson } from "@/components/notes/LessonsSidebar";
 import PresentationBuilderClient from "@/components/slides/PresentationBuilderClient";
 import { supabase } from "@/lib/supabase";
+import { useTranslations } from "next-intl";
 
 export default function PreparationPage() {
+  const t = useTranslations('Preparation');
   const [activeTab, setActiveTab] = useState<"notes" | "slides">("notes");
-  const [title, setTitle] = useState("تحضير درس جديد");
+  const [title, setTitle] = useState(t('newLesson'));
   const [content, setContent] = useState("");
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
@@ -77,7 +79,7 @@ export default function PreparationPage() {
       } = await supabase.auth.getSession();
 
       const lessonData = {
-        title: lessonTitle || topic || "تحضير درس",
+        title: lessonTitle || topic || t('newLesson'),
         note_content: content,
         requirements: { topic, audience, duration, style, mainGoal },
         options,
@@ -138,18 +140,18 @@ export default function PreparationPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "فشل توليد التحضير");
+      if (!res.ok) throw new Error(data.error || t('generateError'));
 
       if (data.result) {
         handleContentChange(data.result);
         const resolvedTitle = topic || title;
         if (topic) handleTitleChange(topic);
         setIsAiModalOpen(false);
-        toast.success("تم تحضير الدرس كاملاً بنجاح! 🪄");
+        toast.success(t('generateSuccess'));
         await saveLessonToDatabase(data.result, resolvedTitle);
       }
     } catch (err: any) {
-      toast.error(err.message || "حدث خطأ أثناء التوليد");
+      toast.error(err.message || t('generateError'));
     } finally {
       setIsGenerating(false);
     }
@@ -168,12 +170,12 @@ export default function PreparationPage() {
     }
     if (lesson.options) setOptions(lesson.options);
     if (lesson.extra_sources) setExtraSources(lesson.extra_sources);
-    toast.success(`تم استرجاع: ${lesson.title}`);
+    toast.success(t('savedSuccess', { title: lesson.title }));
   };
 
   const handleNewLesson = () => {
     setCurrentLessonId(null);
-    setTitle("تحضير درس جديد");
+    setTitle(t('newLesson'));
     setContent("");
     setTopic("");
     setMainGoal("");
@@ -181,7 +183,7 @@ export default function PreparationPage() {
     setExtraSources([""]);
     localStorage.removeItem("prep_draft_content");
     localStorage.removeItem("prep_draft_title");
-    toast.info("تم فتح مسودة درس جديدة");
+    toast.info(t('newDraftOpened'));
   };
 
   return (
@@ -193,8 +195,8 @@ export default function PreparationPage() {
             <ArrowRight size={20} />
           </Link>
           <div>
-            <h1 className="text-lg sm:text-xl font-black">نوتة التحضير الذكية 📝</h1>
-            <p className="text-xs text-[#e8cfae]/80 hidden sm:block">إعداد الدروس والعظات واللقاءات الروحية بمساعدة الـ AI</p>
+            <h1 className="text-lg sm:text-xl font-black">{t('title')}</h1>
+            <p className="text-xs text-[#e8cfae]/80 hidden sm:block">{t('subtitle')}</p>
           </div>
         </div>
 
@@ -210,7 +212,7 @@ export default function PreparationPage() {
               }`}
             >
               <FileText size={15} />
-              <span>نوتة التحضير</span>
+              <span>{t('notesTab')}</span>
             </button>
             <button
               onClick={() => setActiveTab("slides")}
@@ -221,7 +223,7 @@ export default function PreparationPage() {
               }`}
             >
               <Presentation size={15} />
-              <span>شرائح العرض (Slides)</span>
+              <span>{t('slidesTab')}</span>
             </button>
           </div>
 
@@ -238,7 +240,7 @@ export default function PreparationPage() {
               className="flex items-center gap-0.5 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 font-black px-0.5 py-0.5 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95"
             >
               <Sparkles size={16} />
-              <span className="hidden sm:inline">توليد بالـ AI 🪄</span>
+              <span className="hidden sm:inline">{t('generateAi')}</span>
               <span className="sm:hidden">AI 🪄</span>
             </button>
           )}

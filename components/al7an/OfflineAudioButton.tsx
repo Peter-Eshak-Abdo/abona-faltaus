@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Download, Check, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface OfflineAudioButtonProps {
   src: string;
@@ -11,6 +12,7 @@ interface OfflineAudioButtonProps {
 const CACHE_NAME = "archive-audio-cache";
 
 export default function OfflineAudioButton({ src, title }: OfflineAudioButtonProps) {
+  const t = useTranslations('Al7an.offline');
   const [isOfflineReady, setIsOfflineReady] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -46,14 +48,14 @@ export default function OfflineAudioButton({ src, title }: OfflineAudioButtonPro
     if (isDownloading) return;
 
     if (!("caches" in window)) {
-      toast.error("متصفحك لا يدعم خاصية الحفظ بدون إنترنت");
+      toast.error(t('notSupported'));
       return;
     }
 
     try {
       setIsDownloading(true);
       setDownloadProgress(10);
-      toast.info(`جاري تحميل لحن "${title}" للاستماع أوفلاين...`);
+      toast.info(t('downloading', { title }));
 
       let response: Response | null = null;
       let targetUrl = audioUrl;
@@ -80,52 +82,50 @@ export default function OfflineAudioButton({ src, title }: OfflineAudioButtonPro
       }
 
       setDownloadProgress(60);
-
-      // حفظ الملف في الكاش
-      const cache = await caches.open(CACHE_NAME);
-      await cache.put(targetUrl, response.clone());
-
-      // أيضاً نحفظ تحت اسم الرابط الرئيسي لضمان العثور عليه
-      if (targetUrl !== audioUrl) {
-        await cache.put(audioUrl, response);
+      if (response && response.ok) {
+        const cache = await caches.open(CACHE_NAME);
+        await cache.put(targetUrl, response.clone());
+        setIsOfflineReady(true);
+        toast.success(t('saved'));
+      } else {
+        throw new Error("فشل تحميل الملف الصوتي");
       }
-
-      setDownloadProgress(100);
-      setIsOfflineReady(true);
+    } catch (err: any) {
+      console.error("Audio download error:", err);
+      toast.error(err.message || "تعذر تحميل اللحن أوفلاين");
+    } finally {
       setIsDownloading(false);
-      toast.success(`تم حفظ لحن "${title}" أوفلاين بنجاح! يمكنك تشغيله في أي وقت بدون إنترنت.`);
-    } catch (err) {
-      console.error("Download error:", err);
-      setIsDownloading(false);
-      toast.error("فشل تحميل اللحن أوفلاين. يرجى التأكد من اتصال الإنترنت.");
+      setDownloadProgress(0);
     }
   };
 
-  const handleRemove = async (e: React.MouseEvent) => {
+  const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!("caches" in window)) return;
     try {
       const cache = await caches.open(CACHE_NAME);
       await cache.delete(audioUrl);
       await cache.delete(r2Url);
       setIsOfflineReady(false);
-      toast.info(`تم حذف لحن "${title}" من الذاكرة المحلية.`);
+      toast.info(t('removed'));
     } catch (err) {
-      console.error("Delete cache error:", err);
+      console.error("Cache delete error:", err);
     }
   };
 
   if (isOfflineReady) {
     return (
       <div className="flex items-center gap-0.25">
-        <span className="flex items-center gap-0.25 px-0.5 py-0.25 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-          <Check size={14} className="text-emerald-400" />
-          متاح أوفلاين
+        <span
+          className="flex items-center gap-0.25 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-0.5 py-0.25 rounded-full font-medium shadow-xs"
+          title={t('readyBtn')}
+        >
+          <Check size={13} className="text-emerald-400" />
+          <span>{t('readyBtn')}</span>
         </span>
         <button
-          onClick={handleRemove}
-          title="حذف من الأوفلاين لتوفير المساحة"
-          className="p-0.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+          onClick={handleDelete}
+          className="p-0.25 text-neutral-400 hover:text-red-400 hover:bg-red-950/40 rounded-full transition-colors"
+          title={t('deleteBtn')}
         >
           <Trash2 size={13} />
         </button>
@@ -137,22 +137,22 @@ export default function OfflineAudioButton({ src, title }: OfflineAudioButtonPro
     <button
       onClick={handleDownload}
       disabled={isDownloading}
-      className={`flex items-center gap-0.5 px-0.5 py-0.5 rounded-lg text-xs font-semibold transition-all shadow-sm ${
+      className={`flex items-center gap-0.25 text-xs px-0.5 py-0.25 rounded-full font-medium transition-all shadow-xs ${
         isDownloading
           ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-wait"
-          : "bg-orange-500/20 hover:bg-orange-500/30 text-orange-200 border border-orange-500/30 hover:border-orange-500/60 active:scale-95"
+          : "bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 hover:border-neutral-500 active:scale-95"
       }`}
-      title="تحميل هذا اللحن ليعمل بدون إنترنت"
+      title={t('saveBtn')}
     >
       {isDownloading ? (
         <>
           <Loader2 size={13} className="animate-spin text-amber-400" />
-          <span>جاري الحفظ {downloadProgress > 0 ? `${downloadProgress}%` : ""}</span>
+          <span>{downloadProgress}%</span>
         </>
       ) : (
         <>
-          <Download size={13} className="text-orange-400" />
-          <span>حفظ أوفلاين</span>
+          <Download size={13} className="text-neutral-400 group-hover:text-white" />
+          <span>{t('saveBtn')}</span>
         </>
       )}
     </button>

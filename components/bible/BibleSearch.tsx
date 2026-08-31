@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FaTimes, FaSearch } from "react-icons/fa";
+import { useTranslations } from "next-intl";
 
 type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
 type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
@@ -24,6 +25,7 @@ const normalizeArabic = (text: string) => {
 };
 
 export default function BibleSearch({ isOpen, onClose, bibleData, onGoToVerse }: BibleSearchProps) {
+  const t = useTranslations('Bible');
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all"); // 'all', 'old', 'new'
   const [results, setResults] = useState<any[]>([]);
@@ -71,7 +73,7 @@ export default function BibleSearch({ isOpen, onClose, bibleData, onGoToVerse }:
       <div className="bg-white dark:bg-zinc-900 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
         {/* الهيدر */}
         <div className="flex justify-between items-center p-0.5 border-b dark:border-zinc-800">
-          <h2 className="text-xl font-bold text-blue-600">البحث في الكتاب المقدس</h2>
+          <h2 className="text-xl font-bold text-blue-600">{t('searchTitle')}</h2>
           <button onClick={onClose} className="p-0.5 text-zinc-500 hover:text-red-500 rounded-full transition">
             <FaTimes size={20} />
           </button>
@@ -82,7 +84,7 @@ export default function BibleSearch({ isOpen, onClose, bibleData, onGoToVerse }:
           <div className="flex gap-0.5">
             <input
               type="text"
-              placeholder="اكتب كلمة للبحث (مثال: محبة)"
+              placeholder={t('searchPlaceholder')}
               className="flex-1 p-0.5 rounded-lg border dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 focus:ring-2 focus:ring-blue-500 outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -92,51 +94,51 @@ export default function BibleSearch({ isOpen, onClose, bibleData, onGoToVerse }:
               onClick={handleSearch}
               className="px-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition flex items-center gap-0.5"
             >
-              <FaSearch /> بحث
+              <FaSearch /> {t('searchBtn')}
             </button>
           </div>
 
           <div className="flex gap-0.5 text-sm font-bold justify-around">
             <label className="flex items-center gap-0.5 cursor-pointer">
-              <input type="radio" name="filter" checked={filter === "all"} onChange={() => setFilter("all")} />
-              كل الكتاب
+              <input type="radio" name="filter" value="all" checked={filter === "all"} onChange={() => setFilter("all")} />
+              {t('filterAll')}
             </label>
             <label className="flex items-center gap-0.5 cursor-pointer">
-              <input type="radio" name="filter" checked={filter === "old"} onChange={() => setFilter("old")} />
-              العهد القديم
+              <input type="radio" name="filter" value="old" checked={filter === "old"} onChange={() => setFilter("old")} />
+              {t('filterOld')}
             </label>
             <label className="flex items-center gap-0.5 cursor-pointer">
-              <input type="radio" name="filter" checked={filter === "new"} onChange={() => setFilter("new")} />
-              العهد الجديد
+              <input type="radio" name="filter" value="new" checked={filter === "new"} onChange={() => setFilter("new")} />
+              {t('filterNew')}
             </label>
           </div>
         </div>
 
-        {/* النتائج */}
+        {/* نتائج البحث */}
         <div className="flex-1 overflow-y-auto p-0.5 space-y-0.5">
-          {/* التعديل هنا: 4 حالات بدل من شروط متداخلة معقدة */}
           {isSearching ? (
-            <div className="text-center text-zinc-500 py-0.5 font-bold animate-pulse">جاري البحث في الآيات...</div>
+            <p className="text-center text-zinc-500 py-1">{t('searchBtn')}...</p>
           ) : results.length > 0 ? (
             results.map((res, idx) => (
               <div
                 key={idx}
-                onClick={() => onGoToVerse(res.bookIdx, res.chapterIdx, res.verseNum)}
-                className="p-0.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer hover:bg-blue-50 dark:hover:bg-zinc-800 transition group"
+                onClick={() => {
+                  onGoToVerse(res.bookIdx, res.chapterIdx, res.verseNum);
+                  onClose();
+                }}
+                className="p-0.5 rounded-lg border dark:border-zinc-800 hover:bg-blue-50 dark:hover:bg-zinc-800 cursor-pointer transition"
               >
-                <div className="text-blue-600 dark:text-blue-400 font-bold text-sm mb-0.25">
-                  {res.bookName} - إصحاح {res.chapterIdx + 1} : {res.verseNum}
+                <div className="text-sm font-bold text-blue-600">
+                  {res.bookName} {res.chapterIdx + 1} : {res.verseNum}
                 </div>
-                <p className="text-zinc-800 dark:text-zinc-300 font-arabic group-hover:text-black dark:group-hover:text-white text-justify">
+                <div className="text-base text-zinc-800 dark:text-zinc-200 mt-0.25">
                   {res.text}
-                </p>
+                </div>
               </div>
             ))
-          ) : searchTerm && !isSearching ? (
-            <div className="text-center text-green-800 py-0.5 font-bold">دوس علي زرار بحث.</div>
-          ) : (
-            <div className="text-center text-zinc-400 py-0.5 font-bold">ابدأ بكتابة كلمة للبحث عنها...</div>
-          )}
+          ) : searchTerm ? (
+            <p className="text-center text-zinc-500 py-1">{t('noResults')}</p>
+          ) : null}
         </div>
       </div>
     </div>

@@ -38,7 +38,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { getCopticDate, CopticDate, COPTIC_MONTHS, copticToGregorian } from "@/lib/coptic-date";
 import { toast } from "sonner";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { isRtlLocale } from "@/i18n/routing";
 
 interface SynaxariumEntry {
@@ -67,6 +67,7 @@ interface KatamarosResponse {
 }
 
 export default function KatamarosPage() {
+  const t = useTranslations('Readings');
   const locale = useLocale();
   const isRtl = isRtlLocale(locale);
 
@@ -116,9 +117,9 @@ export default function KatamarosPage() {
       const updated = { ...prev, [key]: !prev[key] };
       localStorage.setItem("katamaros-bookmarks", JSON.stringify(updated));
       if (updated[key]) {
-        toast.success(`تم حفظ "${title}" في المفضلة`);
+        toast.success(t('bookmarkSaved', { title }));
       } else {
-        toast.info(`تمت الإزالة من المفضلة`);
+        toast.info(t('bookmarkRemoved'));
       }
       return updated;
     });
@@ -164,7 +165,7 @@ export default function KatamarosPage() {
         setPlayingKey(key);
       }
     } catch (err) {
-      toast.error("تعذر تشغيل الراوي الصوتي حالياً");
+      toast.error(t('audioError'));
     } finally {
       setAudioLoading(null);
     }
@@ -238,7 +239,7 @@ export default function KatamarosPage() {
             </div>
             <div>
               <div className="flex items-center gap-0.5">
-                <h1 className="text-lg font-bold text-amber-950 dark:text-amber-400">القطمارس اليومي</h1>
+                <h1 className="text-lg font-bold text-amber-950 dark:text-amber-400">{t('title')}</h1>
                 {copticInfo && (
                   <Badge variant="outline" className="text-amber-800 border-amber-700/30 dark:text-amber-300 text-xs font-semibold px-0.5">
                     {copticInfo.formattedAr}
@@ -246,7 +247,7 @@ export default function KatamarosPage() {
                 )}
               </div>
               <p className="text-xs text-stone-500 dark:text-zinc-400 font-medium">
-                قراءات الكنيسة القبطية الأرثوذكسية اليومية
+                {t('subtitle')}
               </p>
             </div>
           </div>
@@ -258,7 +259,7 @@ export default function KatamarosPage() {
               <button
                 onClick={() => updateFontSize(-1)}
                 className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
-                title="تصغير الخط"
+                title={t('zoomOut')}
               >
                 <ZoomOut className="w-2.5 h-2.5" />
               </button>
@@ -266,7 +267,7 @@ export default function KatamarosPage() {
               <button
                 onClick={() => updateFontSize(1)}
                 className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
-                title="تكبير الخط"
+                title={t('zoomIn')}
               >
                 <ZoomIn className="w-2.5 h-2.5" />
               </button>
@@ -277,7 +278,7 @@ export default function KatamarosPage() {
               <button
                 onClick={() => changeDateByDays(1)}
                 className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300"
-                title="اليوم التالي"
+                title={t('nextDay')}
               >
                 <ChevronRight className="w-2.5 h-2.5" />
               </button>
@@ -285,12 +286,12 @@ export default function KatamarosPage() {
                 onClick={() => setDate(new Date())}
                 className="px-0.5 text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline"
               >
-                اليوم
+                {t('todayBtn')}
               </button>
               <button
                 onClick={() => changeDateByDays(-1)}
                 className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300"
-                title="اليوم السابق"
+                title={t('prevDay')}
               >
                 <ChevronLeft className="w-2.5 h-2.5" />
               </button>
@@ -324,17 +325,17 @@ export default function KatamarosPage() {
                   variant="outline"
                   className="h-2.5 text-xs font-semibold border-amber-700/30 text-amber-800 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 rounded-lg"
                 >
-                  التحويل بالتقويم القبطي
+                  {t('copticConverter')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-18 p-0.5 space-y-0.5 rounded-2xl shadow-xl bg-white dark:bg-zinc-900 border-amber-900/20" align="end">
                 <div className="space-y-0.5">
-                  <h4 className="text-xs font-bold text-amber-900 dark:text-amber-400">اختر التاريخ القبطي</h4>
-                  <p className="text-[11px] text-stone-500">سيتم حساب اليوم الميلادي ومطابقته مباشرة بالقطمارس</p>
+                  <h4 className="text-xs font-bold text-amber-900 dark:text-amber-400">{t('chooseCopticDate')}</h4>
+                  <p className="text-[11px] text-stone-500">{t('copticDateHint')}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-0.5">
                   <div className="space-y-0.5">
-                    <label className="text-[10px] font-semibold text-stone-600 dark:text-zinc-400">الشهر القبطي</label>
+                    <label className="text-[10px] font-semibold text-stone-600 dark:text-zinc-400">{t('copticMonth')}</label>
                     <select
                       value={selectedCopticMonth}
                       onChange={(e) => setSelectedCopticMonth(Number(e.target.value))}
@@ -348,7 +349,7 @@ export default function KatamarosPage() {
                     </select>
                   </div>
                   <div className="space-y-0.5">
-                    <label className="text-[10px] font-semibold text-stone-600 dark:text-zinc-400">اليوم</label>
+                    <label className="text-[10px] font-semibold text-stone-600 dark:text-zinc-400">{t('copticDay')}</label>
                     <select
                       value={selectedCopticDay}
                       onChange={(e) => setSelectedCopticDay(Number(e.target.value))}
@@ -366,7 +367,7 @@ export default function KatamarosPage() {
                   onClick={handleCopticDateSubmit}
                   className="w-full h-2.5 text-xs bg-amber-700 hover:bg-amber-800 text-white rounded-lg font-bold"
                 >
-                  تطبيق التاريخ
+                  {t('applyDate')}
                 </Button>
               </PopoverContent>
             </Popover>
@@ -379,7 +380,7 @@ export default function KatamarosPage() {
           <div className="flex flex-col justify-center items-center h-80 space-y-0.5">
             <Loader2 className="h-2.5 w-2.5 animate-spin text-amber-700" />
             <span className="text-sm font-semibold text-stone-600 dark:text-zinc-400">
-              جاري تجهيز قراءات اليوم والسنكسار...
+              {t('loading')}
             </span>
           </div>
         ) : data ? (
@@ -390,7 +391,7 @@ export default function KatamarosPage() {
                 <div className="space-y-0.5">
                   <div className="flex items-center justify-center md:justify-start gap-0.5 flex-wrap">
                     <h2 className="text-lg md:text-xl font-bold text-amber-950 dark:text-amber-300">
-                      {data.title || "قراءات اليوم المبارك"}
+                      {data.title || t('todayReadings')}
                     </h2>
                     {data.dayTune && (
                       <Badge className="bg-amber-700/20 text-amber-900 dark:text-amber-300 hover:bg-amber-700/30 border-0 text-xs">
@@ -400,7 +401,7 @@ export default function KatamarosPage() {
                   </div>
                   {data.season && (
                     <p className="text-xs text-stone-600 dark:text-zinc-400">
-                      فصل القراءات: <span className="font-semibold text-amber-800 dark:text-amber-400">{data.season}</span>
+                      {t('seasonLabel')}: <span className="font-semibold text-amber-800 dark:text-amber-400">{data.season}</span>
                     </p>
                   )}
                 </div>
@@ -414,22 +415,22 @@ export default function KatamarosPage() {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="w-full flex flex-wrap h-auto gap-0.5 bg-stone-100/80 dark:bg-zinc-900/80 p-0.5 rounded-xl border border-stone-200/80 dark:border-zinc-800">
                 <TabsTrigger value="all" className="flex-1 min-w-[70px] text-xs font-semibold rounded-lg py-0.5">
-                  الكل
+                  {t('tabs.all')}
                 </TabsTrigger>
                 <TabsTrigger value="vespers" className="flex-1 min-w-[70px] text-xs font-semibold rounded-lg py-0.5">
-                  عشية
+                  {t('tabs.vespers')}
                 </TabsTrigger>
                 <TabsTrigger value="matins" className="flex-1 min-w-[70px] text-xs font-semibold rounded-lg py-0.5">
-                  باكر
+                  {t('tabs.matins')}
                 </TabsTrigger>
                 <TabsTrigger value="epistles" className="flex-1 min-w-[70px] text-xs font-semibold rounded-lg py-0.5">
-                  الرسائل والإبركسيس
+                  {t('tabs.epistles')}
                 </TabsTrigger>
                 <TabsTrigger value="synaxarium" className="flex-1 min-w-[70px] text-xs font-semibold rounded-lg py-0.5">
-                  السنكسار ({data.synaxarium?.length || 0})
+                  {t('tabs.synaxarium', { count: data.synaxarium?.length || 0 })}
                 </TabsTrigger>
                 <TabsTrigger value="liturgy" className="flex-1 min-w-[70px] text-xs font-semibold rounded-lg py-0.5">
-                  القداس الإلهي
+                  {t('tabs.liturgy')}
                 </TabsTrigger>
               </TabsList>
 

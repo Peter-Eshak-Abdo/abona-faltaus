@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
 import al7anData from "@/public/al7an-all.json";
 import OfflineAudioButton from "@/components/al7an/OfflineAudioButton";
+import { useTranslations } from "next-intl";
 
 type Verse = {
   ar?: string;
@@ -25,14 +26,6 @@ type Hymn = {
 };
 
 type HymnMap = Record<string, Hymn[]>;
-const monasbaName = {
-  "snawi": "سنوي",
-  "som-kebir": "صوم كبير",
-  "asbo3-alam": "اسبوع الآلام",
-  "khmacen": "الخماسين",
-  "nhdet-al3dra": "نهضة العذراء",
-  "keahk": "كيهك",
-}
 const merged = (al7anData as any[]).reduce((acc, c) => ({ ...acc, ...c }), {}) as HymnMap;
 const monasbatList = Object.keys(merged);
 const allHymnsFlat = Object.values(merged).flat();
@@ -43,9 +36,18 @@ const waveHeights = Array.from({ length: WAVEFORM_BARS }, (_, i) =>
 );
 
 export default function UnifiedAl7anClient() {
+  const t = useTranslations('Al7an');
   const [searchQuery, setSearchQuery] = useState("");
   const [activeMonasba, setActiveMonasba] = useState<string>(monasbatList[0] || "");
   const [selectedHymn, setSelectedHymn] = useState<Hymn | null>(null);
+
+  const getMonasbaLabel = (key: string) => {
+    try {
+      return t(`seasons.${key}`);
+    } catch {
+      return key;
+    }
+  };
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -157,17 +159,17 @@ export default function UnifiedAl7anClient() {
 
   const handleShare = async () => {
     if (!selectedHymn) return;
-    const monasbaLabel = (monasbaName as any)[activeMonasba] || activeMonasba;
+    const monasbaLabel = getMonasbaLabel(activeMonasba);
     const shareData = {
       title: `${selectedHymn.name} — ${monasbaLabel}`,
-      text: `🎵 ${selectedHymn.name}\n📅 مناسبة: ${monasbaLabel}\n\nاستمع من موقع أبونا فلتاؤس:`,
+      text: `🎵 ${selectedHymn.name}\n📅 ${t('hymnOccasion')}: ${monasbaLabel}\n\n${t('listenFromApp')}`,
       url: window.location.href,
     };
     try {
       if (navigator.share) await navigator.share(shareData);
       else {
         await navigator.clipboard.writeText(`${shareData.text}\n${window.location.href}`);
-        alert("تم نسخ رابط وتفاصيل اللحن إلى الحافظة!");
+        alert(t('shareSuccess'));
       }
     } catch (err) {
       console.error(err);
@@ -279,7 +281,7 @@ export default function UnifiedAl7anClient() {
             </Link>
             <input
               type="text"
-              placeholder="بحث عن لحن..."
+              placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full p-0.5 rounded-lg border border-outline/30 bg-surface-container-highest text-on-surface focus:outline-primary"
@@ -294,7 +296,7 @@ export default function UnifiedAl7anClient() {
                   className={`px-0.5 py-0.25 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${activeMonasba === m ? "bg-primary text-white shadow-md" : "bg-surface-container-high hover:bg-surface-variant"
                     }`}
                 >
-                  {monasbaName[m as keyof typeof monasbaName] ?? m}
+                  {getMonasbaLabel(m)}
                 </button>
               ))}
             </div>
@@ -321,20 +323,18 @@ export default function UnifiedAl7anClient() {
                 <div>
                   <h3 className="font-bold text-sm">{h.name}</h3>
                   <p className="text-xs text-muted-foreground">
-                    {searchQuery ? 'نتائج البحث' :
-                      monasbaName[activeMonasba as keyof typeof monasbaName] ?? activeMonasba
-                    }</p>
+                    {searchQuery ? t('searchResults') : getMonasbaLabel(activeMonasba)}
+                  </p>
                 </div>
                 {h.duration && (
                   <span className="text-xs bg-primary/10 text-primary px-0.5 py-0.25 rounded">
                     {typeof h.duration === "number" ? formatTime(h.duration) : h.duration}
                   </span>
                 )}
-                {/* {h.duration && <span className="text-xs bg-primary/10 text-primary px-0.5 py-0.25 rounded">{h.duration}</span>} */}
               </motion.div>
             ))}
             {displayedHymns.length === 0 && (
-              <p className="text-center text-muted-foreground text-sm mt-1">لا توجد ألحان مطابقة</p>
+              <p className="text-center text-muted-foreground text-sm mt-1">{t('noHymnsFound')}</p>
             )}
           </div>
         </div>
@@ -366,7 +366,7 @@ export default function UnifiedAl7anClient() {
                   </div>
                   <div className="flex-1 overflow-hidden">
                     <h2 className="text-2xl font-bold truncate">{selectedHymn.name}</h2>
-                    <p className="text-sm text-white/50">  {monasbaName[activeMonasba as keyof typeof monasbaName] ?? activeMonasba}</p>
+                    <p className="text-sm text-white/50">{getMonasbaLabel(activeMonasba)}</p>
                   </div>
                 </div>
                 {selectedHymn.src && (
@@ -381,14 +381,14 @@ export default function UnifiedAl7anClient() {
                 {isLoading && (
                   <div className="absolute inset-0 bg-[#1e1e1e]/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-xl">
                     <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-0.25"></div>
-                    <span className="text-sm text-orange-500">جاري تحميل اللحن...</span>
+                    <span className="text-sm text-orange-500">{t('loadingHymn')}</span>
                   </div>
                 )}
                 {hasError && (
                   <div className="absolute inset-0 bg-[#1e1e1e]/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-0.5 rounded-xl text-center">
-                    <span className="text-red-500 text-lg mb-0.25 font-bold">⚠️ تعذر تشغيل الملف الصوتي</span>
+                    <span className="text-red-500 text-lg mb-0.25 font-bold">⚠️ {t('audioError')}</span>
                     <p className="text-xs text-red-300/80 mb-0.5 max-w-xs dir-ltr font-mono bg-black/40 p-0.25 rounded border border-red-500/20">
-                      {audioErrorDetails || "خطأ غير معروف في الاتصال بالسيرفر"}
+                      {audioErrorDetails || t('unknownError')}
                     </p>
                     <button
                       onClick={() => {
@@ -401,7 +401,7 @@ export default function UnifiedAl7anClient() {
                       }}
                       className="px-0.5 py-0.25 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-semibold transition"
                     >
-                      إعادة المحاولة
+                      {t('retry')}
                     </button>
                   </div>
                 )}
@@ -499,54 +499,51 @@ export default function UnifiedAl7anClient() {
                 />
               </div>
 
-              {/* {(selectedHymn.lyrics_ar || selectedHymn.lyrics_copt || selectedHymn.lyrics_ar_copt) && ( */}
-                <div className="flex flex-wrap justify-center gap-0.5 mb-0.5 bg-white/5 py-0.25 px-0.5 rounded-lg shrink-0">
-                  <label className="flex items-center gap-0.25 cursor-pointer text-sm">
-                    <input
-                      type="checkbox"
-                      checked={showAr}
-                      onChange={e => {
-                        const activeCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
-                        if (!e.target.checked && activeCount <= 1) return;
-                        setShowAr(e.target.checked);
-                      }}
-                      className="accent-orange-500 w-2 h-2"
-                    />
-                    عربي
-                  </label>
-                  <label className="flex items-center gap-0.25 cursor-pointer text-sm font-coptic">
-                    <input
-                      type="checkbox"
-                      checked={showCopt}
-                      onChange={e => {
-                        const activeCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
-                        if (!e.target.checked && activeCount <= 1) return;
-                        setShowCopt(e.target.checked);
-                      }}
-                      className="accent-orange-500 w-2 h-2"
-                    />
-                    قبطي
-                  </label>
-                  <label className="flex items-center gap-0.25 cursor-pointer text-sm" dir="ltr">
-                    <input
-                      type="checkbox"
-                      checked={showArCopt}
-                      onChange={e => {
-                        const activeCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
-                        if (!e.target.checked && activeCount <= 1) return;
-                        setShowArCopt(e.target.checked);
-                      }}
-                      className="accent-orange-500 w-2 h-2"
-                    />
-                    معرب
-                  </label>
-                </div>
-              {/* )} */}
+              <div className="flex flex-wrap justify-center gap-0.5 mb-0.5 bg-white/5 py-0.25 px-0.5 rounded-lg shrink-0">
+                <label className="flex items-center gap-0.25 cursor-pointer text-sm">
+                  <input
+                    type="checkbox"
+                    checked={showAr}
+                    onChange={e => {
+                      const activeCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
+                      if (!e.target.checked && activeCount <= 1) return;
+                      setShowAr(e.target.checked);
+                    }}
+                    className="accent-orange-500 w-2 h-2"
+                  />
+                  {t('arabic')}
+                </label>
+                <label className="flex items-center gap-0.25 cursor-pointer text-sm font-coptic">
+                  <input
+                    type="checkbox"
+                    checked={showCopt}
+                    onChange={e => {
+                      const activeCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
+                      if (!e.target.checked && activeCount <= 1) return;
+                      setShowCopt(e.target.checked);
+                    }}
+                    className="accent-orange-500 w-2 h-2"
+                  />
+                  {t('coptic')}
+                </label>
+                <label className="flex items-center gap-0.25 cursor-pointer text-sm" dir="ltr">
+                  <input
+                    type="checkbox"
+                    checked={showArCopt}
+                    onChange={e => {
+                      const activeCount = [showAr, showCopt, showArCopt].filter(Boolean).length;
+                      if (!e.target.checked && activeCount <= 1) return;
+                      setShowArCopt(e.target.checked);
+                    }}
+                    className="accent-orange-500 w-2 h-2"
+                  />
+                  {t('copticArabic')}
+                </label>
+              </div>
 
               <div className="flex-1 overflow-y-auto scrollbar-hide px-0.5">
                 {hasLyrics ? (
                   <div className="flex flex-col gap-0.25 pb-0.25 pt-0.25 text-center bg-white/5 rounded-xl p-0.25">
-                    {/* 🟢 الزرارين هنا لاختيار طريقة العرض */}
                     <div className="flex justify-center gap-0.25 my-0.25">
                       <button
                         onClick={() => setLayoutMode("rows")}
@@ -555,7 +552,7 @@ export default function UnifiedAl7anClient() {
                             : "bg-white/10 hover:bg-white/20 text-white/70"
                           }`}
                       >
-                        صفوف 📜
+                        {t('rows')}
                       </button>
                       <button
                         onClick={() => setLayoutMode("cols")}
@@ -564,7 +561,7 @@ export default function UnifiedAl7anClient() {
                             : "bg-white/10 hover:bg-white/20 text-white/70"
                           }`}
                       >
-                        أعمدة 📑
+                        {t('cols')}
                       </button>
                     </div>
 
@@ -583,21 +580,18 @@ export default function UnifiedAl7anClient() {
                                 : "flex flex-col gap-0.25 text-center"
                                 }`}
                             >
-                              {/* اللغة العربية */}
                               {showAr && verse.ar && (
                                 <div className="flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed px-0.25">
                                   {verse.ar}
                                 </div>
                               )}
 
-                              {/* القبطي المعرب */}
                               {showArCopt && verse.ar_copt && (
                                 <div className="flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap px-0.25">
                                   {verse.ar_copt}
                                 </div>
                               )}
 
-                              {/* القبطي */}
                               {showCopt && verse.copt && (
                                 <div className="flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-0.25">
                                   {verse.copt}
@@ -630,7 +624,7 @@ export default function UnifiedAl7anClient() {
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center opacity-50 space-y-0.25">
                     <span className="text-4xl">📝</span>
-                    <p>الكلمات غير متوفرة لهذا اللحن حالياً</p>
+                    <p>{t('noLyrics')}</p>
                   </div>
                 )}
               </div>
@@ -647,7 +641,7 @@ export default function UnifiedAl7anClient() {
                     }}
                     className="flex items-center gap-0.25 px-0.5 py-0.25 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/30 rounded-xl text-xs font-semibold transition shadow-md"
                   >
-                    📖 عرض المخطوطات والهزات ({getImages(selectedHymn).length})
+                    {t('viewHazat', { count: getImages(selectedHymn).length })}
                   </button>
                 </div>
               )}

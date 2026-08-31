@@ -17,6 +17,7 @@ import {
   LiturgySection,
   ParticipantRole,
 } from '@/lib/liturgies/types';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   liturgy: LiturgyDocument;
@@ -31,6 +32,7 @@ export default function LiturgyPresentationMode({
   fontSize = 'base',
   onClose,
 }: Props) {
+  const t = useTranslations('Liturgies');
   const allSections: LiturgySection[] = liturgy.groups.flatMap((g) => g.sections);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [enabledLanguages, setEnabledLanguages] = useState<Record<LiturgyLanguage, boolean>>(
@@ -103,7 +105,7 @@ export default function LiturgyPresentationMode({
                 : 'bg-neutral-800 text-neutral-400'
             }`}
           >
-            المعرب
+            {t('languages.copticArabic')}
           </button>
           <button
             onClick={() =>
@@ -118,13 +120,13 @@ export default function LiturgyPresentationMode({
                 : 'bg-neutral-800 text-neutral-400'
             }`}
           >
-            القبطي
+            {t('languages.coptic')}
           </button>
 
           <button
             onClick={onClose}
             className="p-0.5 bg-neutral-800 hover:bg-red-600/80 rounded-xl transition text-white"
-            title="خروج من وضع العرض (Esc)"
+            title={t('presentation.close')}
           >
             <FaTimes />
           </button>
@@ -143,12 +145,12 @@ export default function LiturgyPresentationMode({
           {/* Section speaker badge */}
           <div className="inline-block px-1 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-sm font-bold">
             {currentSection.speaker === 'priest'
-              ? 'مرد الكاهن'
+              ? t('roles.priestSays')
               : currentSection.speaker === 'deacon'
-              ? 'مرد الشماس'
+              ? t('roles.deaconSays')
               : currentSection.speaker === 'people'
-              ? 'مرد الشعب'
-              : 'صلاة'}
+              ? t('roles.peopleSay')
+              : t('roles.all')}
           </div>
 
           {/* Verses rendering in Large Presentation Fonts */}
@@ -187,11 +189,11 @@ export default function LiturgyPresentationMode({
           className="px-1 py-0.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 text-white font-bold flex items-center gap-0.5 transition"
         >
           <FaArrowRight />
-          <span>السابق</span>
+          <span>{t('presentation.prev')}</span>
         </button>
 
         <div className="text-xs text-neutral-400 font-mono">
-          استخدم الأسهم ← → أو مسافة للتنقل
+          {t('presentation.shortcutHint')}
         </div>
 
         <button
@@ -199,7 +201,7 @@ export default function LiturgyPresentationMode({
           disabled={currentIndex === allSections.length - 1}
           className="px-1 py-0.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-30 text-black font-bold flex items-center gap-0.5 transition shadow-lg shadow-amber-500/20"
         >
-          <span>التالي</span>
+          <span>{t('presentation.next')}</span>
           <FaArrowLeft />
         </button>
       </div>

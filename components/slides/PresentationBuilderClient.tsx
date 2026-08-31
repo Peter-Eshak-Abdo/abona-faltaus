@@ -25,6 +25,7 @@ import { Slide, SlideTheme, PresentationData, SLIDE_THEMES } from "@/lib/slides/
 import SlideEditor from "@/components/slides/SlideEditor";
 import PresentationView from "@/components/slides/PresentationView";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 const DEFAULT_SLIDES: Slide[] = [
   {
@@ -101,6 +102,7 @@ export default function PresentationBuilderClient({
   initialContent,
   isEmbedded = false,
 }: PresentationBuilderProps = {}) {
+  const t = useTranslations('Slides');
   const [title, setTitle] = useState(initialTitle || "عرض درس مدارس الأحد التفاعلي");
   const [globalTheme, setGlobalTheme] = useState<SlideTheme>("orthodox-dark");
   const [slides, setSlides] = useState<Slide[]>(DEFAULT_SLIDES);
@@ -164,7 +166,7 @@ export default function PresentationBuilderClient({
     const newSlide: Slide = {
       id: `slide-${Date.now()}`,
       slideType: "content",
-      title: `عنصر ${slides.length + 1}`,
+      title: `${t('addSlide')} ${slides.length + 1}`,
       points: ["نقطة ومحور تأملي جديد"],
       notes: "",
       illustrationPrompt: "",
@@ -174,19 +176,19 @@ export default function PresentationBuilderClient({
     setSlides(updated);
     setActiveSlideIndex(updated.length - 1);
     saveToLocal(updated, title, globalTheme);
-    toast.success("تمت إضافة شريحة جديدة");
+    toast.success(t('slideAdded'));
   };
 
   const handleRemoveSlide = (index: number) => {
     if (slides.length <= 1) {
-      toast.error("يجب أن يحتوي العرض على شريحة واحدة على الأقل");
+      toast.error(t('oneSlideMin'));
       return;
     }
     const updated = slides.filter((_, i) => i !== index);
     setSlides(updated);
     setActiveSlideIndex(Math.max(0, index - 1));
     saveToLocal(updated, title, globalTheme);
-    toast.info("تم حذف الشريحة");
+    toast.info(t('slideRemoved'));
   };
 
   const handleReorder = (from: number, to: number) => {
@@ -202,7 +204,7 @@ export default function PresentationBuilderClient({
   // AI Generation Handler
   const handleGenerateWithAI = async () => {
     if (!topic.trim()) {
-      toast.error("يرجى إدخال موضوع العرض أو الدرس");
+      toast.error(t('topicRequired'));
       return;
     }
     setIsGenerating(true);
@@ -223,7 +225,7 @@ export default function PresentationBuilderClient({
 
       const json = await res.json();
       if (!res.ok || !json.data) {
-        throw new Error(json.error || "فشل توليد الشرائح");
+        throw new Error(json.error || t('generateError'));
       }
 
       const generatedData = json.data;
@@ -236,14 +238,15 @@ export default function PresentationBuilderClient({
         saveToLocal(generatedData.slides, generatedData.presentationTitle || topic, globalTheme);
       }
       setIsAiModalOpen(false);
-      toast.success("تم توليد العرض التقديمي الأرثوذكسي بنجاح! 🪄");
+      toast.success(t('generateSuccess'));
     } catch (err: any) {
-      toast.error(err.message || "حدث خطأ أثناء توليد الشرائح");
+      toast.error(err.message || t('generateError'));
     } finally {
       setIsGenerating(false);
     }
   };
 
+  // PPTX Export Handler
   // PPTX Export Handler
   const handleExportPPTX = async () => {
     setIsExporting(true);
@@ -259,7 +262,7 @@ export default function PresentationBuilderClient({
       });
 
       if (!res.ok) {
-        throw new Error("فشل تصدير ملف البوربوينت");
+        throw new Error(t('exportError'));
       }
 
       const blob = await res.blob();
@@ -271,9 +274,9 @@ export default function PresentationBuilderClient({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast.success("تم تصدير ملف PowerPoint (.pptx) بنجاح! 🎉");
+      toast.success(t('exportSuccess'));
     } catch (err: any) {
-      toast.error(err.message || "فشل تصدير PowerPoint");
+      toast.error(err.message || t('exportError'));
     } finally {
       setIsExporting(false);
     }
@@ -291,10 +294,10 @@ export default function PresentationBuilderClient({
             <div>
               <div className="flex items-center gap-0.5">
                 <Presentation className="text-amber-400" size={20} />
-                <h1 className="text-base sm:text-lg font-black">صانع العروض التقديمية الكنسية (Slides AI)</h1>
+                <h1 className="text-base sm:text-lg font-black">{t('title')}</h1>
               </div>
               <p className="text-xs text-[#e8cfae]/80 hidden sm:block">
-                تصميم وتوليد عروض بوربوينت ومدارس الأحد بالذكاء الاصطناعي مع التصدير المباشر
+                {t('subtitle')}
               </p>
             </div>
           </div>
@@ -305,7 +308,7 @@ export default function PresentationBuilderClient({
               className="flex items-center gap-0.5 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 font-black px-0.5 py-0.5 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <Sparkles size={16} />
-              <span>توليد بالـ AI 🪄</span>
+              <span>{t('generateAi')}</span>
             </button>
 
             <button
@@ -313,7 +316,7 @@ export default function PresentationBuilderClient({
               className="flex items-center gap-0.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-0.5 py-0.5 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <Play size={16} />
-              <span>بدء العرض 🖥️</span>
+              <span>{t('startPresentation')}</span>
             </button>
           </div>
         </header>
@@ -330,14 +333,14 @@ export default function PresentationBuilderClient({
               setTitle(e.target.value);
               saveToLocal(slides, e.target.value, globalTheme);
             }}
-            placeholder="عنوان العرض التقديمي..."
+            placeholder={t('titlePlaceholder')}
             className="w-full md:w-1/2 text-lg sm:text-xl font-black bg-transparent border-b-2 border-stone-200 dark:border-zinc-700 focus:border-amber-600 outline-none pb-1 text-[#2d1b18] dark:text-stone-100"
           />
 
           <div className="flex items-center gap-0.5 w-full md:w-auto justify-end flex-wrap">
             {/* Global Theme Selector */}
             <div className="flex items-center gap-0.5">
-              <span className="text-xs font-bold text-stone-500 dark:text-stone-400">الثيم العام:</span>
+              <span className="text-xs font-bold text-stone-500 dark:text-stone-400">{t('globalTheme')}</span>
               <select
                 value={globalTheme}
                 onChange={(e) => {
@@ -362,7 +365,7 @@ export default function PresentationBuilderClient({
               className="flex items-center gap-0.5 px-0.5 py-0.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               {isExporting ? <Loader2 size={16} className="animate-spin" /> : <Presentation size={16} />}
-              <span>تصدير PowerPoint (.pptx)</span>
+              <span>{t('exportPptx')}</span>
             </button>
           </div>
         </div>
@@ -374,14 +377,14 @@ export default function PresentationBuilderClient({
             <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-0.5">
               <div className="flex items-center gap-0.5 text-xs font-black text-stone-700 dark:text-stone-300">
                 <Layers size={16} className="text-amber-600" />
-                <span>الشرائح ({slides.length})</span>
+                <span>{t('slidesCount', { count: slides.length })}</span>
               </div>
               <button
                 onClick={handleAddSlide}
                 className="flex items-center gap-0.25 text-xs font-bold px-0.5 py-0.25 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 rounded-xl transition cursor-pointer"
               >
                 <Plus size={14} />
-                <span>إضافة شريحة</span>
+                <span>{t('addSlide')}</span>
               </button>
             </div>
 
@@ -404,7 +407,7 @@ export default function PresentationBuilderClient({
                   >
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-extrabold text-stone-600 dark:text-stone-300">
-                        {idx + 1}. {s.title || "شريحة بدون عنوان"}
+                        {idx + 1}. {s.title || t('untitledSlide')}
                       </span>
                       <div className="flex items-center gap-0.25 opacity-80 group-hover:opacity-100">
                         <button
