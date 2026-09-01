@@ -13,6 +13,7 @@ export interface GeneratedIconItem {
   styleTitle: string;
   aspectRatio: string;
   theologicalInsight?: string;
+  copticInscription?: string;
   createdAt: string;
   isFavorite?: boolean;
 }
@@ -104,6 +105,13 @@ export default function IconGalleryModal({
               className="max-h-[75vh] w-auto object-contain rounded-2xl shadow-2xl border border-amber-400/20"
               loading="eager"
             />
+            {icon.copticInscription && (
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md px-1.5 py-0.5 rounded-full border border-amber-400/50 shadow-xl pointer-events-none">
+                <span className="text-amber-300 font-coptic text-sm md:text-base font-bold tracking-widest">
+                  {icon.copticInscription}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Right / Information & Actions Area */}

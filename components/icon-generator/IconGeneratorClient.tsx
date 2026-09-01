@@ -162,6 +162,7 @@ export default function IconGeneratorClient() {
         styleTitle: data.styleTitle,
         aspectRatio: data.aspectRatio,
         theologicalInsight: data.theologicalInsight,
+        copticInscription: data.copticInscription,
         createdAt: data.createdAt || new Date().toISOString(),
         isFavorite: false,
       };
@@ -494,6 +495,14 @@ export default function IconGeneratorClient() {
                           alt={currentIcon.prompt}
                           className="w-full h-auto max-h-[500px] object-contain rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
                         />
+
+                        {currentIcon.copticInscription && (
+                          <div className="absolute top-1 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md px-0.5 py-0.5 rounded-full border border-amber-400/50 shadow-xl pointer-events-none z-10">
+                            <span className="text-amber-300 font-coptic text-sm md:text-base font-bold tracking-widest">
+                              {currentIcon.copticInscription}
+                            </span>
+                          </div>
+                        )}
 
                         {/* Hover action overlay */}
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-0.25 p-1">

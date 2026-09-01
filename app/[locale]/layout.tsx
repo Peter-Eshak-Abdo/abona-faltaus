@@ -52,8 +52,8 @@ export const viewport: Viewport = {
   maximumScale: 5,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#5C4538" },
-    { media: "(prefers-color-scheme: dark)", color: "#3a2a1f" },
+    { media: "(prefers-color-scheme: light)", color: "#E7D0AE" },
+    { media: "(prefers-color-scheme: dark)", color: "#121214" },
   ],
 };
 
@@ -232,10 +232,9 @@ export default async function LocaleLayout({ children, params }: Props) {
             }),
           }}
         />
-        <link
-          href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"
-          rel="stylesheet"
-        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preload" as="image" href="/images/eagle.webp" type="image/webp" fetchPriority="high" />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+Coptic&display=swap"
@@ -254,9 +253,9 @@ export default async function LocaleLayout({ children, params }: Props) {
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GOOGLE_TAG_ID}`}
-              strategy="afterInteractive"
+              strategy="lazyOnload"
             />
-            <Script id="google-analytics" strategy="afterInteractive">
+            <Script id="google-analytics" strategy="lazyOnload">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -278,7 +277,6 @@ export default async function LocaleLayout({ children, params }: Props) {
         }
       >
         <NextIntlClientProvider messages={messages}>
-          <ServiceWorkerRegister />
           <FixProcess />
           <div className="background-blur-overlay" />
           <GlobalLoadingProvider>

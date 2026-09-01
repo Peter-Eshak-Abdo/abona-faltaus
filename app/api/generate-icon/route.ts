@@ -22,7 +22,7 @@ async function preparePromptAndInsight(
   geminiKey: string,
   userPrompt: string,
   style: IconStyleType
-): Promise<{ englishPrompt: string; theologicalInsight: string }> {
+): Promise<{ englishPrompt: string; theologicalInsight: string; copticInscription?: string }> {
   const styleDef = ICON_STYLES[style] || ICON_STYLES.coptic;
   const saintMatch = lookupSaintIcon(userPrompt);
 
@@ -42,6 +42,7 @@ async function preparePromptAndInsight(
     return {
       englishPrompt: built.finalPrompt,
       theologicalInsight: saintMatch?.theologicalSignificance || "",
+      copticInscription: saintMatch?.copticTitleInscription,
     };
   }
 
@@ -63,9 +64,10 @@ async function preparePromptAndInsight(
       "- ALWAYS write the authentic Coptic name or Greek monogram in the prompt explicitly.",
       "- NEVER allow 3D CGI, grotesque horror, western renaissance naked figures, modern clothing, or corrupted anatomy.",
       "",
-      "IMPORTANT: You MUST respond with ONLY a valid JSON code block enclosed in ```json ... ``` containing exactly two keys:",
-      '1. "englishPrompt": The final ready-to-use image prompt combining canonical subject details, exact Coptic script title, vestments, halo, colors, and art medium.',
-      '2. "theologicalInsight": A reverent 3-4 line spiritual and theological commentary in Arabic explaining the saint/scene iconography symbols for the faithful.'
+      "IMPORTANT: You MUST respond with ONLY a valid JSON code block enclosed in ```json ... ``` containing exactly these keys:",
+      '1. "englishPrompt": The final ready-to-use image prompt combining canonical subject details, vestments, halo, colors, and art medium.',
+      '2. "theologicalInsight": A reverent 3-4 line spiritual and theological commentary in Arabic explaining the saint/scene iconography symbols for the faithful.',
+      '3. "copticInscription": The exact Coptic title/name inscription in Coptic script (e.g., "ⲠⲒⲀⲄⲒⲞⲤ ⲪⲒⲖⲞⲐⲈⲞⲤ" or "ϮⲐⲈⲞⲦⲞⲔⲞⲤ ⲘⲀⲢⲒⲀ").'
     ].join("\n");
 
     const response = await ai.models.generateContent({
@@ -96,6 +98,7 @@ async function preparePromptAndInsight(
     return {
       englishPrompt: finalPrompt,
       theologicalInsight: parsed.theologicalInsight || saintMatch?.theologicalSignificance || "",
+      copticInscription: parsed.copticInscription || saintMatch?.copticTitleInscription || "",
     };
   } catch (err) {
     console.warn("Prompt prep with search grounding error:", err);
@@ -103,6 +106,7 @@ async function preparePromptAndInsight(
     return {
       englishPrompt: built.finalPrompt,
       theologicalInsight: saintMatch?.theologicalSignificance || "",
+      copticInscription: saintMatch?.copticTitleInscription || "",
     };
   }
 }
@@ -301,22 +305,22 @@ export async function POST(request: Request) {
     const styleDetails = ICON_STYLES[style] || ICON_STYLES.coptic;
 
     // 1. ترجمة وهندسة البرومبت وتحضير التأمل اللاهوتي مع الحروف القبطية
-    const { englishPrompt, theologicalInsight } = await preparePromptAndInsight(apiKey, prompt, style);
+    const { englishPrompt, theologicalInsight, copticInscription } = await preparePromptAndInsight(apiKey, prompt, style);
 
     // 2. خطة التوليد المتسلسلة (Multi-Engine Fallback Pipeline)
     let imageResult: { imageUrl: string; engine: string } | null = null;
 
-    // المحاولة 1: Replicate LoRA الرئيسي
-    imageResult = await generateWithPrimaryLoRA(englishPrompt, style, aspectRatio);
+    // المحاولة 1: Google Imagen 3 (الأعلى دقة للقديسين وملامح الوجه النورانية)
+    imageResult = await generateWithImagen3(englishPrompt, apiKey, aspectRatio);
 
-    // المحاولة 2: FLUX.1 Schnell
+    // المحاولة 2: Replicate LoRA مخصص
     if (!imageResult) {
-      imageResult = await generateWithFluxSchnell(englishPrompt, aspectRatio);
+      imageResult = await generateWithPrimaryLoRA(englishPrompt, style, aspectRatio);
     }
 
-    // المحاولة 3: Google Imagen 3
+    // المحاولة 3: FLUX.1 Schnell
     if (!imageResult) {
-      imageResult = await generateWithImagen3(englishPrompt, apiKey, aspectRatio);
+      imageResult = await generateWithFluxSchnell(englishPrompt, aspectRatio);
     }
 
     // المحاولة 4: SDXL Lightning
@@ -340,6 +344,7 @@ export async function POST(request: Request) {
       style,
       styleTitle: styleDetails.title,
       aspectRatio,
+      copticInscription: copticInscription || "",
       theologicalInsight: theologicalInsight || `أيقونة مباركة تجسد ${prompt} بـ ${styleDetails.title}. شفاعة القديسين وبركتهم تكون معك ومعنا جميعاً آمين.`,
       createdAt: new Date().toISOString(),
     });

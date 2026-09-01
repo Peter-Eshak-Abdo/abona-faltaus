@@ -18,48 +18,39 @@ export interface StyleDefinition {
 export const ICON_STYLES: Record<IconStyleType, StyleDefinition> = {
   coptic: {
     id: "coptic",
-    title: "النمط القبطي التقليدي",
-    subtitle: "مدرسة د. إيساك فانوس والأيقونة القبطية الأصيلة",
-    description: "أيقونة قبطية كنسية أصيلة بمدرسة د. إيساك فانوس: عيون لوزية واسعة روحية متيقظة، ألوان تمبرا صريحة مسطحة 2D، هالات ذهبية بها صلبان قبطية متساوية الأضلاع، وكتابة اسم القديس بحروف قبطية كنسية دقيقة.",
+    title: "الفن القبطي المعاصر (مدرسة إيساك فانوس)",
+    subtitle: "هندسة ونور داخلي، مساحات لونية مسطحة 2D",
+    description: "أيقونة قبطية معاصرة بمدرسة د. إيساك فانوس: خطوط هندسية حادة، عيون واسعة متيقظة، فم صغير، مساحات لونية مسطحة (2D) بدون ظلال أرضية، هالة دائرية ذهبية مثالية بصلبان قبطية.",
     badge: "د. إيساك فانوس (قبطي أرثوذكسي)",
     samplePrompt: "السيدة العذراء مريم تحمل الطفل يسوع المسيح محاطة بالملاكين ميخائيل وغبريال",
     previewGradient: "from-amber-600/30 via-yellow-600/20 to-amber-950/40",
-    systemDirective: `Authentic canonical 2D Coptic Orthodox Iconography in the signature sacred style of Dr. Isaac Fanous (مدرسة د. إيساك فانوس للأيقونة القبطية).
-MEDIUM & TECHNIQUE: Traditional 2D flat egg tempera on gessoed wooden board icon, radiant gold leaf background, crisp precise black graphic outlines, flat planar sacred colors.
-ANATOMY & SACRED EXPRESSION: Canonical Coptic proportions, large wide almond-shaped spiritual eyes looking forward with serene eternal peace, noble elongated features, small peaceful holy mouth, canonical Coptic three-finger hand blessing gesture.
-LITURGICAL ATTIRE & HALO: Bright circular golden halos adorned with canonical Coptic cross engravings, authentic Coptic liturgical robes and epitrachelion with embroidered Coptic crosses.
-AUTHENTIC COPTIC INSCRIPTION: Prominent, clear ancient Coptic letters and inscriptions written in authentic Coptic ecclesiastical script framing the top/sides of the icon.
-COLOR PALETTE: Pure liturgical pigments — vermilion red, ultramarine blue, ochre gold, white linen. No secular shadows, divine uncreated heavenly light.`,
-    negativePrompt: `3D CGI, western renaissance oil painting, realistic skin pores, photorealism, heavy shadows, dark gloomy atmosphere, anime, deformed hands, extra fingers, distorted eyes, asymmetric eyes, western cross, Latin characters, distorted letters, modern clothing, fantasy armor, signature, watermark.`,
+    systemDirective: `Neo-Coptic Orthodox icon, authentic sacred tradition of Dr. Isaac Fanous school.
+VISUAL TRAITS: Sharp geometric lines, large expressive spiritual eyes, small peaceful mouth, 2D flat planar style, divine uncreated light emanating from the face, no external shadows or secular lighting, rich earth tones and pure liturgical pigments (vermilion, ultramarine, ochre), flat golden circular halo with engraved coptic cross, egg tempera texture on seasoned wood panel.`,
+    negativePrompt: `3D render, 3D CGI, realistic, photorealistic, realistic skin pores, shadows, heavy drop shadows, dramatic lighting, western renaissance style, baroque, anime, modern clothes, glowing neon, fantasy RPG, text, letters, words, inscriptions, numbers, signature, watermark, deformed hands, extra fingers, asymmetric eyes.`,
   },
   byzantine: {
     id: "byzantine",
-    title: "النمط التراثي الأرثوذكسي الكلاسيكي",
-    subtitle: "أيقونات جبل آثوس والفسيفساء الأرثوذكسية",
-    description: "أيقونة تراثية أرثوذكسية كلاسيكية على طراز جبل آثوس وحامل الأيقونات: ملامح نسكية مهيبة، خطوط ذهبية براقة (الأسست)، هالات محفورة مذهبة، وحروف قبطية ويونانية كنسية.",
+    title: "الفن البيزنطي التقليدي (جبل آثوس)",
+    subtitle: "هيبة وتفاصيل مذهبة عريقة وخلفيات من الذهب الخالص",
+    description: "أيقونة بيزنطية أرثوذكسية كلاسيكية: ألوان غامقة وثرية (أحمر قاني، أزرق داكن)، خلفيات من الذهب الخالص، تدرج لوني خفيف بالوجوه لإعطاء وقار نسكي، ملابس مطرزة بدقة.",
     badge: "تراثي بيزنطي (جبل آثوس)",
     samplePrompt: "السيد المسيح ضابط الكل (البانتوكراتور) ممسكاً بالإنجيل ومباركاً بيده اليمنى",
     previewGradient: "from-blue-600/30 via-amber-600/20 to-stone-900/40",
-    systemDirective: `Masterpiece Eastern Byzantine Orthodox Sacred Iconography, classic Mount Athos and ancient Eastern church iconostasis tradition.
-MEDIUM & TECHNIQUE: 2D Byzantine egg tempera and burnished gold leaf on seasoned wood panel, rich lapis lazuli and imperial vermilion.
-ANATOMY & SACRED EXPRESSION: Ascetic solemn holy face, deep contemplative vigilant eyes, golden striations (chrysography / assist) illuminating garment folds.
-LITURGICAL ATTIRE & HALO: Elaborate golden halo, for Christ a cruciform halo with inscribed letters "O Ω N", holding jeweled Gospel book, traditional Orthodox benediction hand gesture.
-SACRED INSCRIPTIONS: Inscribed holy monograms and titles in authentic Coptic or Greek liturgical script. Divine celestial light without secular shadows.`,
-    negativePrompt: `photorealistic, 3D render, casual realism, western baroque style, naked cherubs, gothic darkness, blurry facial features, low quality, warped anatomy, signature, watermark, modern clothes.`,
+    systemDirective: `Traditional Byzantine Eastern Orthodox sacred icon masterpiece, classic Mount Athos and ancient Eastern church iconostasis tradition.
+VISUAL TRAITS: Detailed majestic holy robes with golden chrysography assist patterns, pure solid gold leaf background, deep rich liturgical colors (imperial vermilion, deep lapis lazuli), subtle sacred facial shading for solemn ascetic contemplation, highly detailed tempera painting style, sacred and solemn atmosphere, elaborate radiant golden halo.`,
+    negativePrompt: `cartoon, flat design, geometric neo-coptic, modern digital art, smiling, casual posture, 3D, perspective, western baroque, text, words, inscriptions, letters, numbers, blurry facial features, low quality, warped anatomy, signature, watermark, modern clothes.`,
   },
   realistic: {
     id: "realistic",
-    title: "النمط الفني المقدس الواقعي",
-    subtitle: "لوحات كنسية أرثوذكسية كلاسيكية مهيبة",
-    description: "فن كنسي كلاسيكي موقر بأسلوب أساتذة الفن المقدس الأرثوذكسي، إضاءة سماوية نيرة، ملابس تاريخية محتشمة ومهابة روحية فائقة مع هالات مقدسة واضحة.",
-    badge: "فن كنسي كلاسيكي مهيب",
-    samplePrompt: "القديس مارمرقس الرسول يكتب إنجيله وبجواره الأسد الرمزي",
+    title: "الفن القبطي القديم والرهباني (Monastic Fresco)",
+    subtitle: "جداريات الأديرة العتيقة وبساطة فن دير باويط وبوش",
+    description: "مستوحى من الجداريات القديمة في الأديرة القبطية: خطوط تحديد خارجية عريضة (Outlines)، ألوان مسطحة عتيقة، وملمس كأنه مرسوم على جص أو خشب أثري قديم.",
+    badge: "فن جداري رهباني قديم",
+    samplePrompt: "القديس مارمرقس الرسول الإنجيلي كاروز الديار المصرية",
     previewGradient: "from-amber-900/40 via-stone-800/30 to-zinc-950/50",
-    systemDirective: `Masterpiece Classical Eastern Orthodox Sacred Christian Fine Art (inspired by Viktor Vasnetsov, Mikhail Nesterov, and Heinrich Hofmann).
-MEDIUM & STYLE: Exquisite museum-quality sacred classical oil painting, luminous celestial warm divine lighting, rich textured biblical drapery and linen.
-FIGURE & EXPRESSION: Dignified, highly reverent, holy biblical figures with peaceful, prayerful, luminous faces, distinct holy glowing golden halos, reverent orthodox vestments with ornate embroideries.
-SCENE & ATMOSPHERE: Solemn, sacred, heavenly peaceful atmosphere, warm golden amber illumination, crystal clear detailed features, highly respectful liturgical composition.`,
-    negativePrompt: `dark dingy muddy tones, modern casual clothing, horror or creepy faces, blurry distorted hands, fantasy RPG style, anime, low quality.`,
+    systemDirective: `Ancient Monastic Coptic fresco style icon, raw authentic early Christian Egyptian monastic art (inspired by ancient Bawit and Red Sea monastery murals).
+VISUAL TRAITS: Prominent thick graphic outlines, flat earthen primary colors, wide spiritual eyes, historical wall fresco texture with aged patina, ancient Egyptian Christian sacred art influence, dignified holy figure with glowing peaceful halo.`,
+    negativePrompt: `clean modern vectors, modern digital art, realistic proportions, high definition, shiny glossy, perfect symmetry, 3D render, western renaissance, text, letters, words, inscriptions, typography, watermark, signature.`,
   },
 };
 

@@ -23,6 +23,7 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import Background from "./Background";
 import Widgets from "./Widgets";
+import ServantOnboardingTour from "./ServantOnboardingTour";
 
 const getCopticDate = () => {
   const date = new Date();
@@ -48,6 +49,7 @@ export default function HomeClient() {
       { name: t("sections.synaxarium"), href: "/synaxarium", icon: <FaSun /> },
       { name: t("sections.preparation"), href: "/preparation", icon: <FaFileAlt /> },
       { name: t("sections.exams"), href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
+      { name: "صندوق الصراحة والأسئلة", href: "/saraha", icon: <FaChurch /> },
       { name: t("sections.chat"), href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
       { name: t("sections.settings"), href: "/settings", icon: <FaCog /> },
     ],
@@ -347,6 +349,7 @@ export default function HomeClient() {
             <p className="mt-0.5 flex justify-end pe-2">{t("copyright", { year: new Date().getFullYear() })}</p>
           </footer>
         }
+        <ServantOnboardingTour />
       </div>
     </motion.div>
   );

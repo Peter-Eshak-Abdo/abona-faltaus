@@ -125,10 +125,13 @@ export default function SynaxariumPage() {
   };
 
   const stopAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = "";
-    }
+    try {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.removeAttribute("src");
+        audioRef.current.load();
+      }
+    } catch {}
     setPlayingId(null);
     setAudioLoadingId(null);
   };
@@ -144,7 +147,11 @@ export default function SynaxariumPage() {
 
     try {
       // Strip HTML tags for TTS
-      const cleanText = text.replace(/<[^>]*>?/gm, "");
+      const cleanText = (text || "").replace(/<[^>]*>?/gm, "").trim();
+      if (!cleanText) {
+        toast.error("لا يوجد نص متاح للقراءة الصوتية");
+        return;
+      }
       const res = await fetch("/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -161,12 +168,18 @@ export default function SynaxariumPage() {
         audioRef.current.onended = () => {
           setPlayingId(null);
           setAudioLoadingId(null);
+          try {
+            URL.revokeObjectURL(url);
+          } catch {}
         };
-        await audioRef.current.play();
+        await audioRef.current.play().catch(() => {
+          stopAudio();
+        });
         setPlayingId(id);
       }
     } catch {
       toast.error("تعذر تشغيل الصوت حالياً");
+      stopAudio();
     } finally {
       setAudioLoadingId(null);
     }
