@@ -45,7 +45,7 @@ export async function exportToPowerPoint(title: string, markdownContent: string)
         // استخراج أسطر المحتوى
         const bodyLines = lines
           .slice(1)
-          .map((l) => l.replace(/^[*-•]\s*/, "").replace(/[*_`]/g, "").trim())
+          .map((l) => l.replace(/^[*•\-]\s*/, "").replace(/[*_`]/g, "").trim())
           .filter((l) => l.length > 0 && !/^[-*_]{3,}$/.test(l));
 
         if (bodyLines.length === 0) {
