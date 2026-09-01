@@ -98,7 +98,121 @@
 
 ---
 
-## 6. جدول ماذا يمكن إضافته وما يُمنع إضافته
+## 6. خطة معالجة وتحويل كتب وفولدر `rag/` (PDF إلى JSON)
+
+يحتوي مجلد `rag/` على 46 كتاب ومصدر هام تغطي:
+1. **تفاسير العهدين القديم والجديد** (كنيسة مارمرقس بمصر الجديدة: التكوين، الخروج، اللاويين، العدد، التثنية، يشوع، القضاة، صموئيل، الملوك، الأخبار، عزرا، نحميا، طوبيا، يهوديت، أستير، أيوب، المزامير، الجامعة، النشيد، سيراخ، إشعياء، إرميا، المراثي، دانيال، عاموس، يوئيل).
+2. **العقيدة واللاهوت والدفاعيات** (قداسة البابا شنودة الثالث: لاهوت المسيح، طبيعة المسيح، الخلاص في المفهوم الأرثوذكسي، بدعة الخلاص في لحظة، قانون الإيمان، شريعة الزوجة الواحدة، حتمية التجسد الإلهي).
+3. **اللغة القبطية وقواعدها** (أبونا أندرياس المقاري أجزاء 1 و 2).
+4. **الطقوس والليتورجيا والألحان** (ملفات p1 إلى p5 و bo24_004).
+
+---
+
+## 7. سكربت بايثون لتحويل واستخراج ملفات الـ PDF تلقائياً إلى Chunks
+
+لتحويل أي ملف PDF من مجلد `rag/` إلى ملف JSON مهيأ للـ RAG والتدريب:
+
+### تثبيت مكتبات الاستخراج (في حال لم تكن مثبتة):
+```bash
+pip install pypdf pymupdf
+```
+
+### كود السكربت المخصص `scripts/extract_rag_pdf.py`:
+```python
+import fitz # PyMuPDF
+import json
+import os
+import sys
+
+def extract_chunks_from_pdf(pdf_path, author, category, work_title, chunk_size=700, chunk_overlap=100):
+    doc = fitz.open(pdf_path)
+    full_text = ""
+    
+    print(f"📖 جاري قراءة: {pdf_path} (عدد الصفحات: {len(doc)})")
+    for page_num in range(len(doc)):
+        page = doc[page_num]
+        text = page.get_text("text")
+        # تنظيف أسطر الهيدر والفوتر المتكررة
+        lines = [line.strip() for line in text.split("\n") if line.strip()]
+        full_text += " ".join(lines) + "\n\n"
+    
+    # تقسيم النص إلى Chunks بحجم مناسب
+    chunks = []
+    start = 0
+    total_len = len(full_text)
+    chunk_index = 1
+    
+    while start < total_len:
+        end = start + chunk_size
+        chunk_content = full_text[start:end].strip()
+        
+        if len(chunk_content) > 100: # تجاهل القطع الصغيرة جداً
+            chunks.append({
+                "corpus_category": category,
+                "author": author,
+                "work_title": work_title,
+                "reference_location": f"مقطع {chunk_index}",
+                "content": chunk_content,
+                "metadata": {
+                    "source_file": os.path.basename(pdf_path),
+                    "chunk_index": chunk_index
+                }
+            })
+            chunk_index += 1
+            
+        start += (chunk_size - chunk_overlap)
+        
+    return chunks
+
+if __name__ == "__main__":
+    if len(sys.argv) < 5:
+        print("الاستخدام: python scripts/extract_rag_pdf.py <pdf_path> <author> <category> <work_title>")
+        sys.exit(1)
+        
+    pdf_path = sys.argv[1]
+    author = sys.argv[2]
+    category = sys.argv[3]
+    work_title = sys.argv[4]
+    
+    os.makedirs("data/rag_sources", exist_ok=True)
+    chunks = extract_chunks_from_pdf(pdf_path, author, category, work_title)
+    
+    out_name = os.path.splitext(os.path.basename(pdf_path))[0] + ".json"
+    out_path = os.path.join("data/rag_sources", out_name)
+    
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(chunks, f, ensure_ascii=False, indent=2)
+        
+    print(f"✅ تم استخراج {len(chunks)} مقطع بنجاح وحفظها في: {out_path}")
+```
+
+---
+
+## 8. تدريب وتغذية الذكاء الاصطناعي (Fine-Tuning & RAG)
+
+لديك طريقتان متكاملتان لتدريب الذكاء الاصطناعي على هذه البيانات:
+
+### الطريقة الأولى: التخزين السحابي (Vector RAG) - الاسترجاع الفوري
+1. بعد تحويل أي ملف إلى `data/rag_sources/*.json`.
+2. شغّل أمر الفهرسة:
+   ```bash
+   npx tsx scripts/import-rag-json.ts data/rag_sources/your_extracted_file.json
+   ```
+3. يقوم النظام تلقائياً بتوليد Embeddings من خلال **Gemini Embedding** أو المحرك المحلي **Transformers** وتخزينها في جدول `orthodox_documents` في قاعدة بيانات Supabase.
+
+### الطريقة الثانية: توليد داتاسيت Fine-Tuning (سؤال وجواب)
+لتحويل فقرات الـ RAG إلى أزواج تدريبية (Instruction / Output) لتدريب نماذج LoRA المحلية:
+```json
+{
+  "instruction": "ما هو المفهوم الأرثوذكسي لطبيعة السيد المسيح بحسب كتابات البابا شنودة الثالث؟",
+  "input": "",
+  "output": "طبيعة واحدة متجسدة لله الكلمة (ميا فيزيس)، لاهوت كامل وناسوت كامل بغير اختلاط ولا امتزاج ولا تغيير ولا انفصال..."
+}
+```
+
+---
+
+## 9. جدول توثيق المراجع المعتمدة والممنوعة
 
 ### المراجع الموصى بإضافتها (Recommended):
 - تفاسير كنيسة مارمرقس بمصر الجديدة (العهد القديم والجديد).

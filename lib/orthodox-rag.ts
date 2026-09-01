@@ -25,30 +25,63 @@ export interface RAGSearchOptions {
   author?: string;
 }
 
+let localSearchExtractor: any = null;
+async function getLocalSearchExtractor() {
+  if (!localSearchExtractor) {
+    try {
+      const { pipeline } = await import("@xenova/transformers");
+      localSearchExtractor = await pipeline("feature-extraction", "Xenova/all-mpnet-base-v2");
+    } catch (e: any) {
+      console.warn("Could not load local Xenova transformer:", e.message);
+    }
+  }
+  return localSearchExtractor;
+}
+
 /**
- * Generate 768-dimension text embedding using Google Gemini Embedding Model
+ * Generate 768-dimension text embedding with cloud & local fallback
  */
 export async function generateOrthodoxEmbedding(text: string): Promise<number[]> {
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error("Missing GEMINI_API_KEY or GOOGLE_GENERATIVE_AI_API_KEY in environment variables");
+
+  if (apiKey) {
+    const models = ["gemini-embedding-001", "text-embedding-004", "gemini-embedding-2"];
+    for (const modelName of models) {
+      try {
+        const ai = new GoogleGenAI({ apiKey });
+        const response = await ai.models.embedContent({
+          model: modelName,
+          contents: text,
+          config: {
+            outputDimensionality: 768,
+          },
+        });
+
+        const values = (response as any).embedding?.values || (response as any).embeddings?.[0]?.values;
+        if (values && Array.isArray(values) && values.length === 768) {
+          return values;
+        }
+      } catch (err: any) {
+        continue;
+      }
+    }
   }
 
-  const ai = new GoogleGenAI({ apiKey });
-  const response = await ai.models.embedContent({
-    model: "gemini-embedding-001",
-    contents: text,
-    config: {
-      outputDimensionality: 768,
-    },
-  });
-
-  const values = (response as any).embedding?.values || (response as any).embeddings?.[0]?.values;
-  if (!values || !Array.isArray(values) || values.length === 0) {
-    throw new Error("Failed to generate embedding from Gemini API");
+  // Local fallback
+  try {
+    const extractor = await getLocalSearchExtractor();
+    if (extractor) {
+      const output = await extractor(text, { pooling: "mean", normalize: true });
+      const vec = Array.from(output.data) as number[];
+      if (vec && vec.length === 768) {
+        return vec;
+      }
+    }
+  } catch (localErr: any) {
+    console.warn("Local search embedding error:", localErr.message);
   }
 
-  return values;
+  throw new Error("Failed to generate embedding from cloud and local models");
 }
 
 /**
@@ -58,18 +91,33 @@ export async function searchOrthodoxCorpus(
   query: string,
   options: RAGSearchOptions = {}
 ): Promise<OrthodoxDocument[]> {
-  const { threshold = 0.45, limit = 5, category, author } = options;
+  const { threshold = 0.35, limit = 5, category, author } = options;
 
   try {
     const queryEmbedding = await generateOrthodoxEmbedding(query);
 
-    const { data, error } = await supabase.rpc("match_orthodox_documents", {
+    // البحث المخصص أولاً بالتصنيف إذا وجد
+    let { data, error } = await supabase.rpc("match_orthodox_documents", {
       query_embedding: queryEmbedding,
       match_threshold: threshold,
       match_count: limit,
       filter_category: category || null,
       filter_author: author || null,
     });
+
+    // إذا لم تكن هناك نتائج كافية وكان هناك فلتر تصنيف، نبحث في كل التصنيفات
+    if ((!data || data.length === 0) && category) {
+      const fallbackRes = await supabase.rpc("match_orthodox_documents", {
+        query_embedding: queryEmbedding,
+        match_threshold: threshold,
+        match_count: limit,
+        filter_category: null,
+        filter_author: author || null,
+      });
+      if (fallbackRes.data && fallbackRes.data.length > 0) {
+        data = fallbackRes.data;
+      }
+    }
 
     if (error) {
       console.warn("Supabase RPC match_orthodox_documents error:", error);
