@@ -19,7 +19,7 @@ export async function exportToPowerPoint(title: string, markdownContent: string)
       // إذا كان النص كتلة واحدة بدون عناوين
       const allLines = cleanedText
         .split("\n")
-        .map((l) => l.replace(/^[*-•]\s*/, "").replace(/[*#_`]/g, "").trim())
+        .map((l) => l.replace(/^[*•-]\s*/, "").replace(/[*#_`]/g, "").trim())
         .filter(Boolean);
 
       for (let i = 0; i < allLines.length; i += 2) {
