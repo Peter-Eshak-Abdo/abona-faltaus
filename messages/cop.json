@@ -39,8 +39,17 @@
     "offlineStatus": "Offline Mode",
     "offlineMessage": "No internet connection",
     "dailyVerse": "Ⲭⲱ ⲛ̀ϯⲉϩⲟⲟⲩ",
-    "prayerTimes": "Ϯⲁ̀ϫⲡⲓⲁ (Agpeya)",
-    "openPrayer": "Ⲁ̀ϫⲡⲓⲁ ↗",
+    "prayerTimes": "Agpeya Hours",
+    "openPrayer": "Open Prayer ↗",
+    "agpeyaHours": {
+      "baker": "Ϩⲁⲛⲁ̀ⲧⲟⲟⲩⲓ (6 AM)",
+      "third": "ⲅ̅ ⲛ̀ⲁ̀ϫⲡ (9 AM)",
+      "sixth": "ⲋ̅ ⲛ̀ⲁ̀ϫⲡ (12 PM)",
+      "ninth": "ⲑ̅ ⲛ̀ⲁ̀ϫⲡ (3 PM)",
+      "sunset": "Ⲣⲟⲩϩⲓ (5 PM)",
+      "sleep": "ⲉ̀ϫⲱⲣϩ (6 PM)",
+      "midnight": "Ⲡⲓⲧϫⲱⲣϩ (9 PM)"
+    },
     "sections": {
       "exams": "Quizzes",
       "icons": "Icons AI",
@@ -338,7 +347,16 @@
     "progress": "Progress: {percent}%",
     "readPsalms": "Psalms",
     "hoursList": "Hours",
-    "psalmCount": "{count} Psalms"
+    "psalmCount": "{count} Psalms",
+    "hours": {
+      "baker": "Ϩⲁⲛⲁ̀ⲧⲟⲟⲩⲓ (Prime)",
+      "third": "ⲅ̅ ⲛ̀ⲁ̀ϫⲡ (Terce)",
+      "sixth": "ⲋ̅ ⲛ̀ⲁ̀ϫⲡ (Sext)",
+      "ninth": "ⲑ̅ ⲛ̀ⲁ̀ϫⲡ (None)",
+      "sunset": "Ⲣⲟⲩϩⲓ (Sunset)",
+      "sleep": "ⲉ̀ϫⲱⲣϩ (Sleep)",
+      "midnight": "Ⲡⲓⲧϫⲱⲣϩ (Midnight)"
+    }
   },
   "Readings": {
     "title": "Ⲡⲓⲕⲁⲧⲁⲙⲉⲣⲟⲥ (Katamaros)",
@@ -557,6 +575,36 @@
     "scoreOutOf": "Score: {score} of {total}",
     "finalScore": "Final Score",
     "retake": "Retake"
+  },
+  "QuizDashboard": {
+    "title": "Quizzes Dashboard",
+    "subtitle": "Create your quiz and share code or join as admin",
+    "back": "Back",
+    "offline": "Offline",
+    "pendingUpload": "{count} pending upload",
+    "syncing": "Uploading...",
+    "syncOffline": "Upload Offline",
+    "newQuiz": "New Quiz",
+    "enterByCodeTitle": "Enter with Code (8-10 digits)",
+    "enterByCodeDesc": "Type quiz code to manage directly",
+    "codePlaceholder": "e.g. 84920153",
+    "enterBtn": "Enter as Admin",
+    "searching": "Searching...",
+    "codeLengthError": "Code must be 8-10 digits",
+    "quizNotFound": "No quiz found with this code",
+    "searchError": "Error searching for quiz",
+    "quizFound": "Quiz found: {title}",
+    "offlineNotice": "You are offline",
+    "cachedNotice": "Displaying cached quizzes",
+    "confirmDelete": "Delete this quiz?",
+    "recentHistory": "Recent Quizzes History",
+    "noHistory": "No history",
+    "allQuizzes": "All Quizzes",
+    "noQuizzes": "No quizzes yet",
+    "copyCode": "Copy Code",
+    "hostQuiz": "Host / Start",
+    "editQuiz": "Edit",
+    "deleteQuiz": "Delete"
   },
   "Legal": {
     "aboutTitle": "Ⲁⲡⲁ Ⲫⲁⲗⲧⲁⲟⲩⲥ",

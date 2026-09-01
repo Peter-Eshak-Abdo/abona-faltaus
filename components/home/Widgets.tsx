@@ -94,13 +94,13 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
   useEffect(() => {
     const checkPrayerTime = () => {
       const hour = new Date().getHours();
-      if (hour >= 21 || hour < 6) setActivePrayer("نصف الليل");
-      else if (hour >= 6 && hour < 9) setActivePrayer("باكر");
-      else if (hour >= 9 && hour < 12) setActivePrayer("الثالثة");
-      else if (hour >= 12 && hour < 15) setActivePrayer("السادسة");
-      else if (hour >= 15 && hour < 17) setActivePrayer("التاسعة");
-      else if (hour >= 17 && hour < 18) setActivePrayer("الغروب");
-      else if (hour >= 18 && hour < 21) setActivePrayer("النوم");
+      if (hour >= 21 || hour < 6) setActivePrayer("midnight");
+      else if (hour >= 6 && hour < 9) setActivePrayer("baker");
+      else if (hour >= 9 && hour < 12) setActivePrayer("third");
+      else if (hour >= 12 && hour < 15) setActivePrayer("sixth");
+      else if (hour >= 15 && hour < 17) setActivePrayer("ninth");
+      else if (hour >= 17 && hour < 18) setActivePrayer("sunset");
+      else if (hour >= 18 && hour < 21) setActivePrayer("sleep");
     };
     checkPrayerTime();
     const interval = setInterval(checkPrayerTime, 60000);
@@ -108,13 +108,13 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
   }, []);
 
   const prayers = [
-    { id: "باكر", label: "باكر", time: "06:00 ص" },
-    { id: "الثالثة", label: "الساعة الثالثة", time: "09:00 ص" },
-    { id: "السادسة", label: "الساعة السادسة", time: "12:00 م" },
-    { id: "التاسعة", label: "الساعة التاسعة", time: "03:00 م" },
-    { id: "الغروب", label: "الغروب", time: "05:00 م" },
-    { id: "النوم", label: "النوم", time: "06:00 م" },
-    { id: "نصف الليل", label: "نصف الليل", time: "09:00 م" },
+    { id: "baker", label: t("agpeyaHours.baker", { defaultValue: "باكر (06:00 ص)" }), time: "06:00" },
+    { id: "third", label: t("agpeyaHours.third", { defaultValue: "الثالثة (09:00 ص)" }), time: "09:00" },
+    { id: "sixth", label: t("agpeyaHours.sixth", { defaultValue: "السادسة (12:00 م)" }), time: "12:00" },
+    { id: "ninth", label: t("agpeyaHours.ninth", { defaultValue: "التاسعة (03:00 م)" }), time: "15:00" },
+    { id: "sunset", label: t("agpeyaHours.sunset", { defaultValue: "الغروب (05:00 م)" }), time: "17:00" },
+    { id: "sleep", label: t("agpeyaHours.sleep", { defaultValue: "النوم (06:00 م)" }), time: "18:00" },
+    { id: "midnight", label: t("agpeyaHours.midnight", { defaultValue: "نصف الليل (09:00 م)" }), time: "21:00" },
   ];
 
   return (

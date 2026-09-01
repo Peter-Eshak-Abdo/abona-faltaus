@@ -41,6 +41,15 @@
     "dailyVerse": "Random Verse",
     "prayerTimes": "Agpeya Prayer Hours",
     "openPrayer": "Open Prayer ↗",
+    "agpeyaHours": {
+      "baker": "Prime (6 AM)",
+      "third": "Terce (9 AM)",
+      "sixth": "Sext (12 PM)",
+      "ninth": "None (3 PM)",
+      "sunset": "Vespers (5 PM)",
+      "sleep": "Complines (6 PM)",
+      "midnight": "Midnight (9 PM)"
+    },
     "sections": {
       "exams": "Quizzes & Contests",
       "icons": "AI Icon Generator",
@@ -338,7 +347,16 @@
     "progress": "Prayer Progress: {percent}%",
     "readPsalms": "Read Psalms",
     "hoursList": "Canonical Hours",
-    "psalmCount": "{count} Psalms"
+    "psalmCount": "{count} Psalms",
+    "hours": {
+      "baker": "Prime (1st Hour - 6 AM)",
+      "third": "Terce (3rd Hour - 9 AM)",
+      "sixth": "Sext (6th Hour - 12 PM)",
+      "ninth": "None (9th Hour - 3 PM)",
+      "sunset": "Vespers (11th Hour - 5 PM)",
+      "sleep": "Complines (12th Hour - 6 PM)",
+      "midnight": "Midnight (9 PM / Midnight)"
+    }
   },
   "Readings": {
     "title": "Daily Katamaros",
@@ -557,6 +575,36 @@
     "scoreOutOf": "Score: {score} of {total}",
     "finalScore": "Final Score",
     "retake": "Retake Exam"
+  },
+  "QuizDashboard": {
+    "title": "Quizzes Dashboard",
+    "subtitle": "Create your quiz and share code or join as admin from any device with 8-10 digit code",
+    "back": "Back",
+    "offline": "Offline",
+    "pendingUpload": "{count} pending upload",
+    "syncing": "Uploading...",
+    "syncOffline": "Upload Offline",
+    "newQuiz": "New Quiz",
+    "enterByCodeTitle": "Enter Quiz as Admin with Code (8-10 digits)",
+    "enterByCodeDesc": "Type any quiz code to manage and host directly without sign in",
+    "codePlaceholder": "e.g. 84920153",
+    "enterBtn": "Enter as Admin",
+    "searching": "Searching...",
+    "codeLengthError": "Code must be between 8 and 10 digits",
+    "quizNotFound": "No quiz found with this code. Please verify the code.",
+    "searchError": "An error occurred while searching for the quiz",
+    "quizFound": "Quiz found: {title}",
+    "offlineNotice": "You are offline. You can create quizzes and they will sync automatically once connected.",
+    "cachedNotice": "Displaying locally cached quizzes",
+    "confirmDelete": "Are you sure you want to delete this quiz?",
+    "recentHistory": "Recent Quizzes History (Saved on this device)",
+    "noHistory": "No recent quiz history",
+    "allQuizzes": "All Quizzes",
+    "noQuizzes": "No quizzes created yet. Click 'New Quiz' to start!",
+    "copyCode": "Copy Code",
+    "hostQuiz": "Host / Start",
+    "editQuiz": "Edit",
+    "deleteQuiz": "Delete"
   },
   "Legal": {
     "aboutTitle": "Fr. Faltaus El-Souriani",

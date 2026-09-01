@@ -29,10 +29,12 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Quiz } from "@/types/quiz";
+import { useTranslations } from "next-intl";
 
 type QuizHistoryItem = { id: string; code: string; title: string };
 
 export default function Dashboard() {
+  const t = useTranslations("QuizDashboard");
   const router = useRouter();
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -228,17 +230,17 @@ export default function Dashboard() {
     try {
       const quiz = await getQuiz(cleanCode);
       if (!quiz) {
-        setCodeError("لم يتم العثور على مسابقة بهذا الكود. تأكد من صحة الأرقام.");
+        setCodeError(t("quizNotFound"));
         return;
       }
 
       // حفظ في التاريخ المحلي
       saveToHistory(quiz.id, cleanCode, quiz.title);
-      toast.success(`تم العثور على مسابقة: ${quiz.title}`);
+      toast.success(t("quizFound", { title: quiz.title }));
       router.push(`/exam/quiz/quiz/${quiz.id}/host`);
     } catch (err) {
       console.error(err);
-      setCodeError("حدث خطأ أثناء البحث عن المسابقة");
+      setCodeError(t("searchError"));
     } finally {
       setIsEnteringCode(false);
     }
@@ -258,7 +260,7 @@ export default function Dashboard() {
 
   // دالة الحذف
   const handleDelete = async (id: string) => {
-    if (confirm("هل أنت متأكد من حذف هذه المسابقة؟")) {
+    if (confirm(t("confirmDelete"))) {
       await deleteQuiz(id);
       const updatedHistory = history.filter((h) => h.id !== id);
       setHistory(updatedHistory);
@@ -275,28 +277,28 @@ export default function Dashboard() {
           <Link
             href="/"
             className="p-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition shadow-sm"
-            title="رجوع"
+            title={t("back")}
           >
             <ArrowRight size={20} />
           </Link>
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-gray-100 flex items-center gap-0.5">
-              لوحة تحكم المسابقات
+              {t("title")}
             </h1>
             <p className="text-xs sm:text-sm text-zinc-500 font-medium mt-0.5">
-              أنشئ مسابقتك وشارك الكود أو ادخل كأدمن من أي جهاز بكود الـ 10 أرقام
+              {t("subtitle")}
             </p>
           </div>
 
           {!isOnline && (
             <span className="flex items-center gap-0.5 px-1 py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700 rounded-full text-xs font-bold">
               <WifiOff size={13} />
-              أوفلاين
+              {t("offline")}
             </span>
           )}
           {pendingCount > 0 && (
             <span className="flex items-center gap-0.5 px-1 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-700 rounded-full text-xs font-bold">
-              {pendingCount} في انتظار الرفع
+              {t("pendingUpload", { count: pendingCount })}
             </span>
           )}
         </div>
@@ -314,14 +316,14 @@ export default function Dashboard() {
               ) : (
                 <CheckCircle2 size={14} />
               )}
-              {isSyncing ? "جاري الرفع..." : "رفع الأوفلاين"}
+              {isSyncing ? t("syncing") : t("syncOffline")}
             </Button>
           )}
           <Button
             onClick={handleCreateNew}
             className="gap-0.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base rounded-2xl h-3 px-1 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]"
           >
-            <Plus size={18} /> مسابقة جديدة
+            <Plus size={18} /> {t("newQuiz")}
           </Button>
         </div>
       </div>
@@ -331,10 +333,10 @@ export default function Dashboard() {
         <div className="max-w-xl mx-auto text-center space-y-0.5">
           <div className="flex items-center justify-center gap-0.5 text-blue-600 dark:text-blue-400 font-bold text-lg">
             <KeyRound size={20} />
-            <h2>دخول مسابقة كأدمن بكود (8 - 10 أرقام)</h2>
+            <h2>{t("enterByCodeTitle")}</h2>
           </div>
           <p className="text-xs text-zinc-500 font-medium">
-            اكتب كود أي مسابقة للدخول وإدارتها مباشرة من هذا الجهاز دون الحاجة لتسجيل دخول
+            {t("enterByCodeDesc")}
           </p>
 
           <form onSubmit={handleEnterByCode} className="flex flex-col sm:flex-row gap-0.5 mt-0.5">
@@ -343,7 +345,7 @@ export default function Dashboard() {
               maxLength={10}
               value={codeInput}
               onChange={(e) => setCodeInput(e.target.value.replace(/[^0-9]/g, ""))}
-              placeholder="مثال: 84920153"
+              placeholder={t("codePlaceholder")}
               dir="ltr"
               className="flex-1 px-1 py-0.5 border-2 border-blue-200 dark:border-zinc-700 rounded-2xl text-center tracking-[0.2em] font-black text-lg bg-white dark:bg-zinc-800 outline-none focus:border-blue-500 transition-colors"
             />
@@ -352,7 +354,7 @@ export default function Dashboard() {
               disabled={isEnteringCode || codeInput.length < 8 || codeInput.length > 10}
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-1 h-3 rounded-2xl text-sm shadow-md transition disabled:opacity-50"
             >
-              {isEnteringCode ? "جاري البحث..." : "دخول كأدمن"}
+              {isEnteringCode ? t("searching") : t("enterBtn")}
             </Button>
           </form>
 
@@ -365,14 +367,14 @@ export default function Dashboard() {
       {!isOnline && (
         <div className="mb-1 p-1 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-center gap-0.5 text-xs sm:text-sm text-amber-700 dark:text-amber-300">
           <WifiOff size={16} className="shrink-0" />
-          <span>أنت أوفلاين. يمكنك إنشاء مسابقات وستُرفع تلقائياً عند عودة الاتصال.</span>
+          <span>{t("offlineNotice")}</span>
         </div>
       )}
 
       {/* قائمة المسابقات */}
       {loading ? (
         <div className="text-center py-0.5 font-bold text-zinc-400 text-lg animate-pulse">
-          جاري تحميل المسابقات...
+          {t("searching")}
         </div>
       ) : (
         <div className="space-y-0.5">
@@ -392,16 +394,13 @@ export default function Dashboard() {
             <div className="text-center py-0.5 text-zinc-400 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-100 dark:border-zinc-800 p-1">
               <Sparkles className="mx-auto text-blue-500 mb-0.5" size={24} />
               <p className="text-lg font-bold text-zinc-700 dark:text-zinc-200 mb-1">
-                لا توجد مسابقات بعد
-              </p>
-              <p className="text-xs text-zinc-500 mb-1 max-w-sm mx-auto">
-                اضغط على "مسابقة جديدة" لإنشاء مسابقة بكود 10 أرقام، أو ادخل كود مسابقة موجودة بالأعلى
+                {t("noQuizzes")}
               </p>
               <Button
                 onClick={handleCreateNew}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl px-1 h-3 text-sm"
               >
-                إنشاء أول مسابقة
+                {t("newQuiz")}
               </Button>
             </div>
           )}

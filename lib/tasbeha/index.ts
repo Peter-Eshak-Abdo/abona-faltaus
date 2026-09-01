@@ -10,11 +10,11 @@ export * from './types';
 export { midnightTasbeha, vespersTasbeha, matinsTasbeha, kiahkTasbeha };
 
 export const ALL_TASBEHA: TasbehaDocument[] = [
-  ...(fullTasbehaData as any as TasbehaDocument[]),
   midnightTasbeha,
   vespersTasbeha,
   matinsTasbeha,
   kiahkTasbeha,
+  ...(fullTasbehaData as any as TasbehaDocument[]),
 ];
 
 export function getTasbehaById(id: string): TasbehaDocument {
