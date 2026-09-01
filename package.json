@@ -115,7 +115,7 @@
     "@tailwindcss/postcss": "^4.2.1",
     "@types/canvas-confetti": "^1.9.0",
     "@types/cli-progress": "^3.11.6",
-    "@types/dompurify": "^3.0.5",
+    "@types/dompurify": "^3.2.0",
     "@types/dotenv": "^8.2.3",
     "@types/fs-extra": "^11.0.4",
     "@types/js-yaml": "^4.0.9",
