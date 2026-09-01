@@ -124,10 +124,18 @@ function getVerseText(refString: string): string {
 
 function loadSynaxariumForDay(month: number, day: number) {
   try {
+    if (!Number.isInteger(month) || !Number.isInteger(day)) return [];
+    if (month < 1 || month > 13 || day < 1 || day > 30) return [];
+
     const slug = MONTH_SLUGS[month];
     if (!slug) return [];
 
-    const filePath = path.join(SYNAXARIUM_DIR, `${slug}-${day}.yml`);
+    const fileName = `${slug}-${day}.yml`;
+    const synaxariumRoot = path.resolve(SYNAXARIUM_DIR);
+    const filePath = path.resolve(synaxariumRoot, fileName);
+    const rootWithSep = synaxariumRoot.endsWith(path.sep) ? synaxariumRoot : synaxariumRoot + path.sep;
+    if (!(filePath === synaxariumRoot || filePath.startsWith(rootWithSep))) return [];
+
     if (!fs.existsSync(filePath)) return [];
 
     const fileContent = fs.readFileSync(filePath, "utf-8");
