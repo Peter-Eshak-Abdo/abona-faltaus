@@ -146,8 +146,8 @@ export default function SynaxariumPage() {
     setAudioLoadingId(id);
 
     try {
-      // Strip HTML tags for TTS
-      const cleanText = (text || "").replace(/<[^>]*>?/gm, "").trim();
+      // Strip HTML delimiters for TTS to avoid incomplete multi-character sanitization
+      const cleanText = (text || "").replace(/[<>]/g, "").trim();
       if (!cleanText) {
         toast.error("لا يوجد نص متاح للقراءة الصوتية");
         return;
