@@ -40,7 +40,7 @@ export async function exportToPowerPoint(title: string, markdownContent: string)
 
         // استخراج عنوان القسم
         const rawFirstLine = lines[0];
-        const secTitle = rawFirstLine.replace(/^[#*-•\s]+/, "").replace(/[*_`]/g, "").trim() || "عنصر الدرس";
+        const secTitle = rawFirstLine.replace(/^[#*•\-\s]+/, "").replace(/[*_`]/g, "").trim() || "عنصر الدرس";
 
         // استخراج أسطر المحتوى
         const bodyLines = lines
