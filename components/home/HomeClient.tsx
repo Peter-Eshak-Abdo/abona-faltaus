@@ -349,8 +349,8 @@ export default function HomeClient() {
             <p className="mt-0.5 flex justify-end pe-2">{t("copyright", { year: new Date().getFullYear() })}</p>
           </footer>
         }
-        <ServantOnboardingTour />
       </div>
+      <ServantOnboardingTour />
     </motion.div>
   );
 }

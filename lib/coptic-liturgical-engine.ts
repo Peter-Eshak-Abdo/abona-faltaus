@@ -135,11 +135,17 @@ export function determineLiturgyDayContext(gDate: Date, cMonth: number, cDay: nu
   }
 
   // 5. الأعياد والمواسم الثابتة بالتقويم القبطي
-  // عيد النيروز ورأس السنة القبطية (1 توت)
-  if (cMonth === 1 && cDay === 1) {
-    return { id: 'nayrouz', nameAr: 'عيد النيروز المجيد (رأس السنة القبطية)', season: 'nayrouz', tune: 'festive', isFeast: true };
+  // عيد النيروز وأيام النيروز المباركة (1 إلى 16 توت — طقس فرايحي حتى عيد الصليب)
+  if (cMonth === 1 && cDay >= 1 && cDay <= 16) {
+    return {
+      id: cDay === 1 ? 'nayrouz' : `nayrouz_day_${cDay}`,
+      nameAr: cDay === 1 ? 'عيد النيروز المجيد (رأس السنة القبطية)' : `أيام النيروز المباركة (${cDay} توت)`,
+      season: 'nayrouz',
+      tune: 'joyful',
+      isFeast: cDay === 1,
+    };
   }
-  // عيد الصليب المجيد (17 توت، 10 برمهات)
+  // عيد الصليب المجيد (17 توت إلى 19 توت، و 10 برمهات — طقس شعانيني)
   if ((cMonth === 1 && cDay >= 17 && cDay <= 19) || (cMonth === 7 && cDay === 10)) {
     return { id: 'cross_feast', nameAr: 'عيد الصليب المجيد', season: 'cross', tune: 'shaanine', isFeast: true };
   }

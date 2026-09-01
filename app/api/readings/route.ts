@@ -2,31 +2,14 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import yaml from "js-yaml";
+import { determineLiturgyDayContext } from "@/lib/coptic-liturgical-engine";
+import { bookNames, shortBookNames } from "@/lib/books";
 
 // Paths
 const DATA_DIR = path.join(process.cwd(), "data");
-const ANNUAL_PATH = path.join(DATA_DIR, "extracted_data", "AnnualReadings.json");
-const SUNDAY_PATH = path.join(DATA_DIR, "extracted_data", "SundayReadings.json");
-const BIBLE_DIR = path.join(process.cwd(), "public", "bible-json", "bible_fixed.json");
+const READINGS_ANNUAL_DIR = path.join(DATA_DIR, "coptish-datastore", "output", "readings", "annual");
 const SYNAXARIUM_DIR = path.join(DATA_DIR, "coptish-datastore", "data", "readings", "synaxarium");
-
-// ID to Bible abbrev mapping
-const ID_TO_ABBREV: Record<number, string> = {
-  1: "gn", 2: "ex", 3: "lv", 4: "nm", 5: "dt",
-  6: "js", 7: "jd", 8: "rt", 9: "1sm", 10: "2sm",
-  11: "1ki", 12: "2ki", 13: "1ch", 14: "2ch", 15: "ezr",
-  16: "ne", 17: "to", 18: "jdt", 19: "ps", 20: "pr",
-  21: "ec", 22: "so", 23: "wi", 24: "sir", 25: "is",
-  26: "jr", 27: "la", 28: "bar", 29: "ez", 30: "dn",
-  31: "ho", 32: "jl", 33: "am", 34: "ob", 35: "jon",
-  36: "mic", 37: "na", 38: "hab", 39: "zep",
-  40: "mt", 41: "mk", 42: "lk", 43: "jn", 44: "ac",
-  45: "ro", 46: "1co", 47: "2co", 48: "ga", 49: "ep",
-  50: "php", 51: "col", 52: "1th", 53: "2th", 54: "1ti",
-  55: "2ti", 56: "ti", 57: "phm", 58: "hb", 59: "ja",
-  60: "1pe", 61: "2pe", 62: "1jn", 63: "2jn", 64: "3jn",
-  65: "jude", 73: "re",
-};
+const BIBLE_FILE = path.join(process.cwd(), "public", "bible-json", "bible_fixed.json");
 
 const MONTH_SLUGS: Record<number, string> = {
   1: "tout", 2: "baba", 3: "hator", 4: "kiahk", 5: "toba",
@@ -34,24 +17,73 @@ const MONTH_SLUGS: Record<number, string> = {
   10: "paona", 11: "epep", 12: "mesra", 13: "nasie",
 };
 
-// In-memory caches
-let annualCache: any[] | null = null;
-let sundayCache: any[] | null = null;
 let bibleCache: Record<string, any> | null = null;
+const BOOK_NAME_MAP: Record<string, string> = {};
 
-function loadData() {
-  if (annualCache && bibleCache && sundayCache) return;
+function normalizeArabicText(str = "") {
+  return str
+    .toString()
+    .normalize("NFKD")
+    .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]/g, "")
+    .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d).toString())
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
 
+function initBookNameMap() {
+  if (Object.keys(BOOK_NAME_MAP).length > 0) return;
+
+  for (const [abbrev, name] of Object.entries(bookNames)) {
+    BOOK_NAME_MAP[normalizeArabicText(name)] = abbrev;
+  }
+  for (const [abbrev, shortName] of Object.entries(shortBookNames)) {
+    if (shortName) BOOK_NAME_MAP[normalizeArabicText(shortName)] = abbrev;
+  }
+
+  // English and Arabic common alias variations
+  const aliases: Record<string, string> = {
+    "مزمور": "ps", "مزامير": "ps", "psalm": "ps", "psalms": "ps", "ps": "ps",
+    "متى": "mt", "انجيل متى": "mt", "matthew": "mt", "mt": "mt",
+    "مرقس": "mk", "انجيل مرقس": "mk", "mark": "mk", "mk": "mk",
+    "لوقا": "lk", "انجيل لوقا": "lk", "luke": "lk", "lk": "lk",
+    "يوحنا": "jn", "انجيل يوحنا": "jn", "john": "jn", "jn": "jn",
+    "اعمال": "ac", "اعمال الرسل": "ac", "أعمال": "ac", "أعمال الرسل": "ac", "acts": "ac", "ac": "ac",
+    "رومية": "ro", "رسالة رومية": "ro", "romans": "ro", "rom": "ro", "ro": "ro",
+    "1كورنثوس": "1co", "١كورنثوس": "1co", "كورنثوس الاولى": "1co", "كورنثوس الأولى": "1co", "1corinthians": "1co", "1co": "1co",
+    "2كورنثوس": "2co", "٢كورنثوس": "2co", "كورنثوس الثانية": "2co", "2corinthians": "2co", "2co": "2co",
+    "غلاطية": "ga", "galatians": "ga", "ga": "ga",
+    "افسس": "ep", "أفسس": "ep", "ephesians": "ep", "ep": "ep",
+    "فيلبي": "php", "philippians": "php", "php": "php",
+    "كولوسي": "col", "colossians": "col", "col": "col",
+    "1تسالونيكي": "1th", "١تسالونيكي": "1th", "1thessalonians": "1th", "1th": "1th",
+    "2تسالونيكي": "2th", "٢تسالونيكي": "2th", "2thessalonians": "2th", "2th": "2th",
+    "1تيموثاوس": "1ti", "١تيموثاوس": "1ti", "1timothy": "1ti", "1ti": "1ti",
+    "2تيموثاوس": "2ti", "٢تيموثاوس": "2ti", "2timothy": "2ti", "2ti": "2ti",
+    "تيطس": "ti", "titus": "ti", "ti": "ti",
+    "فليمون": "phm", "فيليمون": "phm", "philemon": "phm", "phm": "phm",
+    "عبرانيين": "hb", "hebrews": "hb", "heb": "hb", "hb": "hb",
+    "يعقوب": "ja", "james": "ja", "jas": "ja", "ja": "ja",
+    "1بطرس": "1pe", "١بطرس": "1pe", "1peter": "1pe", "1pet": "1pe", "1pe": "1pe",
+    "2بطرس": "2pe", "٢بطرس": "2pe", "2peter": "2pe", "2pet": "2pe", "2pe": "2pe",
+    "1يوحنا": "1jn", "١يوحنا": "1jn", "1john": "1jn", "1jn": "1jn",
+    "2يوحنا": "2jn", "٢يوحنا": "2jn", "2john": "2jn", "2jn": "2jn",
+    "3يوحنا": "3jn", "٣يوحنا": "3jn", "3john": "3jn", "3jn": "3jn",
+    "يهوذا": "jude", "jude": "jude",
+    "رؤيا": "re", "رؤيا يوحنا": "re", "revelation": "re", "rev": "re", "re": "re"
+  };
+
+  for (const [k, v] of Object.entries(aliases)) {
+    BOOK_NAME_MAP[normalizeArabicText(k)] = v;
+  }
+}
+
+function loadBible() {
+  if (bibleCache) return;
   try {
-    if (fs.existsSync(ANNUAL_PATH)) {
-      annualCache = JSON.parse(fs.readFileSync(ANNUAL_PATH, "utf-8"));
-    }
-    if (fs.existsSync(SUNDAY_PATH)) {
-      sundayCache = JSON.parse(fs.readFileSync(SUNDAY_PATH, "utf-8"));
-    }
-    if (fs.existsSync(BIBLE_DIR)) {
-      const bibleFile = fs.readFileSync(BIBLE_DIR, "utf-8");
-      const rawBible = JSON.parse(bibleFile);
+    initBookNameMap();
+    if (fs.existsSync(BIBLE_FILE)) {
+      const rawBible = JSON.parse(fs.readFileSync(BIBLE_FILE, "utf-8"));
       bibleCache = {};
       rawBible.forEach((book: any) => {
         if (book.abbrev && bibleCache) {
@@ -59,67 +91,93 @@ function loadData() {
         }
       });
     }
-  } catch (error) {
-    console.error("[readings API] Data loading error:", error);
-    throw error;
+  } catch (err) {
+    console.error("[readings API] Bible loading error:", err);
   }
 }
 
-function getVerseText(refString: string): string {
-  if (!bibleCache || !refString) return "";
+function findBookAbbrev(rawBookName: string): string | null {
+  initBookNameMap();
+  const clean = normalizeArabicText(rawBookName).replace(/[^a-z0-9\u0621-\u064A]/g, "");
+  if (BOOK_NAME_MAP[clean]) return BOOK_NAME_MAP[clean];
 
-  const fullText: string[] = [];
-  const parts = refString.split("*@+");
-
-  parts.forEach((part) => {
-    try {
-      const [bookIdStr, rest] = part.split(".");
-      if (!rest) return;
-
-      const bookId = parseInt(bookIdStr);
-      const abbrev = ID_TO_ABBREV[bookId];
-
-      if (!abbrev || !bibleCache![abbrev]) return;
-
-      const [chapterStr, versesStr] = rest.split(":");
-      const chapterNum = parseInt(chapterStr);
-      const bookObj = bibleCache![abbrev];
-
-      if (!bookObj.chapters || chapterNum > bookObj.chapters.length || chapterNum < 1) {
-        return;
-      }
-
-      const chapter = bookObj.chapters[chapterNum - 1];
-
-      let indices: number[] = [];
-      if (versesStr.includes("-")) {
-        const [s, e] = versesStr.split("-").map(Number);
-        for (let i = s; i <= e; i++) indices.push(i);
-      } else if (versesStr.includes(",")) {
-        indices = versesStr.split(",").map(Number);
-      } else {
-        indices = [parseInt(versesStr)];
-      }
-
-      indices.forEach((idx) => {
-        let verseObj = null;
-        if (idx <= chapter.length) {
-          verseObj = chapter[idx - 1];
-        }
-        if (!verseObj || verseObj.verse !== idx) {
-          verseObj = chapter.find((v: any) => v.verse === idx);
-        }
-
-        if (verseObj) {
-          fullText.push(`${verseObj.text_vocalized || verseObj.text} (${idx})`);
-        }
-      });
-    } catch (e) {
-      console.error(`Error parsing reading ref: ${part}`, e);
+  for (const [name, abbrev] of Object.entries(BOOK_NAME_MAP)) {
+    const cleanKey = name.replace(/[^a-z0-9\u0621-\u064A]/g, "");
+    if (clean === cleanKey || clean.includes(cleanKey) || cleanKey.includes(clean)) {
+      return abbrev;
     }
-  });
+  }
+  return null;
+}
 
-  return fullText.join(" ");
+function fetchVocalizedVerses(bookAbbrev: string, startChap: number, startVerse: number, endChap: number, endVerse: number): string {
+  if (!bibleCache || !bibleCache[bookAbbrev]) return "";
+  const book = bibleCache[bookAbbrev];
+  const verses: string[] = [];
+
+  for (let c = startChap; c <= endChap; c++) {
+    const chapterIdx = c - 1;
+    if (chapterIdx < 0 || chapterIdx >= (book.chapters || []).length) continue;
+    const chapter = book.chapters[chapterIdx];
+    if (!Array.isArray(chapter)) continue;
+
+    const fromV = (c === startChap) ? startVerse : 1;
+    const toV = (c === endChap) ? endVerse : chapter.length;
+
+    for (let v = fromV; v <= toV; v++) {
+      let verseObj = chapter[v - 1];
+      if (!verseObj || verseObj.verse !== v) {
+        verseObj = chapter.find((item: any) => item.verse === v);
+      }
+      if (verseObj) {
+        const text = verseObj.text_vocalized || verseObj.text || verseObj.text_plain || "";
+        if (text) {
+          verses.push(`${text} (${v})`);
+        }
+      }
+    }
+  }
+
+  return verses.join(" ");
+}
+
+function parseAndGetVocalizedReading(referenceStr: string): string {
+  if (!referenceStr || !bibleCache) return "";
+  
+  // Split multiple parts joined by &, +, or comma when separate passages
+  const segments = referenceStr.split(/\s*(?:&|\band\b|\+)\s*/i);
+  const vocalizedParts: string[] = [];
+
+  for (const segment of segments) {
+    const norm = normalizeArabicText(segment);
+    // Regex matches Book Name followed by Chapter:Verse or Chapter:Verse-Verse or Chapter:Verse-Chapter:Verse
+    const match = norm.match(/^([a-z\u0621-\u064A0-9\s]+?)\s*(\d+)\s*[:\.]\s*(\d+)(?:\s*[-—–to]+\s*(?:(\d+)\s*[:\.]\s*)?(\d+))?/i);
+    
+    if (match) {
+      const rawBook = match[1].trim();
+      const startChap = parseInt(match[2], 10);
+      const startVerse = parseInt(match[3], 10);
+      let endChap = startChap;
+      let endVerse = startVerse;
+
+      if (match[5]) {
+        if (match[4]) {
+          endChap = parseInt(match[4], 10);
+          endVerse = parseInt(match[5], 10);
+        } else {
+          endVerse = parseInt(match[5], 10);
+        }
+      }
+
+      const abbrev = findBookAbbrev(rawBook);
+      if (abbrev) {
+        const text = fetchVocalizedVerses(abbrev, startChap, startVerse, endChap, endVerse);
+        if (text) vocalizedParts.push(text);
+      }
+    }
+  }
+
+  return vocalizedParts.join("\n\n");
 }
 
 function loadSynaxariumForDay(month: number, day: number) {
@@ -156,81 +214,101 @@ function loadSynaxariumForDay(month: number, day: number) {
   }
 }
 
-import { determineLiturgyDayContext } from "@/lib/coptic-liturgical-engine";
+function extractSectionTextWithVocalizedBible(sectionArray: any[]): string {
+  if (!Array.isArray(sectionArray) || sectionArray.length === 0) return "";
+  const parts: string[] = [];
 
-const LENT_PATH = path.join(DATA_DIR, "extracted_data", "GreatLentReadings.json");
-const PENTECOST_PATH = path.join(DATA_DIR, "extracted_data", "PentecostReadings.json");
+  for (const item of sectionArray) {
+    // 1. Try to fetch vocalized Bible text using Arabic or English title
+    const refAr = item?.title?.arabic || "";
+    const refEn = item?.title?.english || "";
+    
+    let vocalized = parseAndGetVocalizedReading(refAr);
+    if (!vocalized && refEn) {
+      vocalized = parseAndGetVocalizedReading(refEn);
+    }
 
-let lentCache: any[] | null = null;
-let pentecostCache: any[] | null = null;
+    if (vocalized) {
+      parts.push(vocalized);
+      continue;
+    }
 
-function loadAllLiturgicalCaches() {
-  loadData();
-  if (!lentCache && fs.existsSync(LENT_PATH)) {
-    lentCache = JSON.parse(fs.readFileSync(LENT_PATH, "utf-8"));
+    // 2. Fallback to datastore text
+    if (Array.isArray(item?.text)) {
+      for (const t of item.text) {
+        if (t?.arabic) parts.push(t.arabic);
+        else if (typeof t === "string") parts.push(t);
+      }
+    } else if (item?.text?.arabic) {
+      parts.push(item.text.arabic);
+    } else if (typeof item?.text === "string") {
+      parts.push(item.text);
+    }
   }
-  if (!pentecostCache && fs.existsSync(PENTECOST_PATH)) {
-    pentecostCache = JSON.parse(fs.readFileSync(PENTECOST_PATH, "utf-8"));
+
+  return parts.join("\n\n").trim();
+}
+
+function loadAnnualFile(targetDate: Date) {
+  try {
+    const monthStr = String(targetDate.getMonth() + 1).padStart(2, "0");
+    const dayStr = String(targetDate.getDate()).padStart(2, "0");
+    const mmdd = `${monthStr}-${dayStr}`;
+
+    const candidateFile2024 = path.join(READINGS_ANNUAL_DIR, `2024-${mmdd}.json`);
+    if (fs.existsSync(candidateFile2024)) {
+      return JSON.parse(fs.readFileSync(candidateFile2024, "utf-8"));
+    }
+
+    const candidateCurrent = path.join(READINGS_ANNUAL_DIR, `${targetDate.getFullYear()}-${mmdd}.json`);
+    if (fs.existsSync(candidateCurrent)) {
+      return JSON.parse(fs.readFileSync(candidateCurrent, "utf-8"));
+    }
+
+    if (fs.existsSync(READINGS_ANNUAL_DIR)) {
+      const files = fs.readdirSync(READINGS_ANNUAL_DIR);
+      const match = files.find(f => f.endsWith(`-${mmdd}.json`));
+      if (match) {
+        return JSON.parse(fs.readFileSync(path.join(READINGS_ANNUAL_DIR, match), "utf-8"));
+      }
+    }
+  } catch (err) {
+    console.error("[readings API] Annual reading read error:", err);
   }
+  return null;
 }
 
 export async function POST(request: Request) {
   try {
-    loadAllLiturgicalCaches();
+    loadBible();
 
     const body = await request.json();
     const { copticMonth, copticDay, isSunday, gregorianDate } = body;
 
-    // Use Gregorian Date if provided, otherwise reconstruct
     const gDate = gregorianDate ? new Date(gregorianDate) : new Date();
     const liturgicalContext = determineLiturgyDayContext(gDate, copticMonth, copticDay);
 
-    let dayRecord: any = null;
-
-    // 1. Check Moveable Seasons first (Great Lent, Pentecost, Pascha)
-    if (liturgicalContext.season === 'great_lent' && lentCache) {
-      const week = (liturgicalContext as any).lentWeek || 1;
-      const dayOfWeek = (liturgicalContext as any).dayOfWeek || 0;
-      dayRecord = lentCache.find((r: any) => r.Week === week && r.DayOfWeek === dayOfWeek);
-    } else if (liturgicalContext.season === 'pentecost' && pentecostCache) {
-      const week = (liturgicalContext as any).pentecostWeek || 1;
-      const dayOfWeek = (liturgicalContext as any).dayOfWeek || 0;
-      dayRecord = pentecostCache.find((r: any) => r.Week === week && r.DayOfWeek === dayOfWeek);
-    }
-
-    // 2. Sunday Katameros
-    if (!dayRecord && isSunday && sundayCache) {
-      const sundayIndex = Math.min(Math.ceil(copticDay / 7), 5);
-      dayRecord = sundayCache.find(
-        (r: any) => r.Month_Number === copticMonth && r.Day === sundayIndex
-      );
-    }
-
-    // 3. Annual Days Katameros
-    if (!dayRecord && annualCache) {
-      dayRecord = annualCache.find(
-        (r: any) => r.Month_Number === copticMonth && r.Day === copticDay
-      );
-    }
-
+    const annualReadingData = loadAnnualFile(gDate);
     const synaxariumEntries = loadSynaxariumForDay(copticMonth, copticDay);
 
+    const readings = {
+      v_psalm: extractSectionTextWithVocalizedBible(annualReadingData?.["vespers-psalm"]),
+      v_gospel: extractSectionTextWithVocalizedBible(annualReadingData?.["vespers-gospel"]),
+      m_psalm: extractSectionTextWithVocalizedBible(annualReadingData?.["matins-psalm"]),
+      m_gospel: extractSectionTextWithVocalizedBible(annualReadingData?.["matins-gospel"]),
+      pauline: extractSectionTextWithVocalizedBible(annualReadingData?.["pauline-epistle"]),
+      catholic: extractSectionTextWithVocalizedBible(annualReadingData?.["catholic-epistle"]),
+      acts: extractSectionTextWithVocalizedBible(annualReadingData?.["acts-of-the-apostles"]),
+      l_psalm: extractSectionTextWithVocalizedBible(annualReadingData?.["liturgy-psalm"]),
+      l_gospel: extractSectionTextWithVocalizedBible(annualReadingData?.["liturgy-gospel"]),
+    };
+
     const response = {
-      title: liturgicalContext.nameAr || dayRecord?.DayName || "قراءات اليوم",
-      season: liturgicalContext.season || dayRecord?.Season || "annual",
-      dayTune: liturgicalContext.tune || dayRecord?.Day_Tune || "annual",
+      title: liturgicalContext.nameAr || "قراءات اليوم المبارك",
+      season: liturgicalContext.season || "annual",
+      dayTune: liturgicalContext.tune || "annual",
       liturgicalContext,
-      readings: {
-        v_psalm: getVerseText(dayRecord?.V_Psalm_Ref || ""),
-        v_gospel: getVerseText(dayRecord?.V_Gospel_Ref || ""),
-        m_psalm: getVerseText(dayRecord?.M_Psalm_Ref || ""),
-        m_gospel: getVerseText(dayRecord?.M_Gospel_Ref || ""),
-        pauline: getVerseText(dayRecord?.P_Gospel_Ref || ""),
-        catholic: getVerseText(dayRecord?.C_Gospel_Ref || ""),
-        acts: getVerseText(dayRecord?.X_Gospel_Ref || ""),
-        l_psalm: getVerseText(dayRecord?.L_Psalm_Ref || ""),
-        l_gospel: getVerseText(dayRecord?.L_Gospel_Ref || ""),
-      },
+      readings,
       synaxarium: synaxariumEntries,
     };
 
@@ -243,3 +321,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+

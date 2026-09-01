@@ -99,7 +99,7 @@ export default function SynaxariumPage() {
     if (savedBookmarks) {
       try {
         setBookmarkedIds(JSON.parse(savedBookmarks));
-      } catch {}
+      } catch { }
     }
   }, []);
 
@@ -131,7 +131,7 @@ export default function SynaxariumPage() {
         audioRef.current.removeAttribute("src");
         audioRef.current.load();
       }
-    } catch {}
+    } catch { }
     setPlayingId(null);
     setAudioLoadingId(null);
   };
@@ -170,7 +170,7 @@ export default function SynaxariumPage() {
           setAudioLoadingId(null);
           try {
             URL.revokeObjectURL(url);
-          } catch {}
+          } catch { }
         };
         await audioRef.current.play().catch(() => {
           stopAudio();
@@ -273,9 +273,12 @@ export default function SynaxariumPage() {
 
       {/* Sticky Hero Bar */}
       <div className="border-b border-amber-900/10 dark:border-amber-500/10 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-30 shadow-xs">
-        <div className="mx-auto px-2 py-0.5 max-w-8xl flex flex-col md:flex-row items-center justify-between gap-0.5">
+        <div className="mx-auto px-0.5 py-0.5 max-w-8xl flex flex-col md:flex-row items-center justify-between gap-0.5">
           {/* Header title */}
           <div className="flex items-center gap-0.5">
+            <Link href="/" className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline inline-flex">
+              <ArrowRight size={18} className={isRtlLocale(locale) ? "" : "rotate-180"} />
+            </Link>
             <div className="w-3 h-3 rounded-xl bg-red-700/10 dark:bg-red-500/10 text-red-700 dark:text-red-400 flex items-center justify-center font-bold">
               <Flame className="w-2 h-2" />
             </div>
@@ -313,13 +316,13 @@ export default function SynaxariumPage() {
               </button>
             </div>
 
-            <Button
+            {/* <Button
               onClick={handleTodayClick}
               variant="outline"
               className="h-2 text-xs font-bold border-amber-700/30 text-amber-900 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 rounded-lg"
             >
               {t("todaySynaxarium")}
-            </Button>
+            </Button> */}
 
             <Link
               href="/readings"
@@ -669,14 +672,14 @@ function StoryCard({
           </Badge>
         </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-0.25 shrink-0">
           {/* Audio */}
           <Button
             variant="ghost"
             onClick={onPlay}
             disabled={isLoadingAudio}
             className={cn(
-              "h-2 w-2 px-1 rounded-lg",
+              "h-2 w-2 px-0.5 rounded-lg",
               isPlaying ? "text-amber-700 bg-amber-100 dark:bg-amber-950/60" : "text-stone-500"
             )}
             title={isPlaying ? t("stopAudio") : t("listen")}
@@ -694,10 +697,10 @@ function StoryCard({
           <Button
             variant="ghost"
             onClick={handleCopy}
-            className="h-2 w-2 px-1 rounded-lg text-stone-500"
+            className="h-2 w-2 px-0.5 rounded-lg text-stone-500"
             title={t("copySuccess")}
           >
-            {copied ? <Check className="w-1.5 h-1.5 text-green-600" /> : <Copy className="w-1.5 h-1.5" />}
+            {copied ? <Check className=" text-green-600" size={14} /> : <Copy className="" size={14} />}
           </Button>
 
           {/* Bookmark */}
@@ -705,7 +708,7 @@ function StoryCard({
             variant="ghost"
             onClick={onBookmark}
             className={cn(
-              "h-2 w-2 px-1 rounded-lg",
+              "h-2 w-2 px-0.5 rounded-lg",
               isBookmarked ? "text-amber-700" : "text-stone-400"
             )}
             title={isBookmarked ? t("bookmarkSaved", { title: story.titleAr || story.titleEn }) : "Bookmark"}

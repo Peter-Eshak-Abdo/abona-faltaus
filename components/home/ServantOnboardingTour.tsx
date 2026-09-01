@@ -89,6 +89,16 @@ export default function ServantOnboardingTour() {
     }
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        handleComplete();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   const handleNext = () => {
     if (currentStep < SERVANT_TOUR_STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
@@ -121,7 +131,7 @@ export default function ServantOnboardingTour() {
       {/* زر عائم أو استدعاء يدوي لدليل الخادم */}
       <button
         onClick={handleOpenManually}
-        className="fixed bottom-1 right-1 z-40 bg-amber-600/90 hover:bg-amber-600 text-white p-0.5 sm:px-1 sm:py-0.5 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-0.5 text-xs font-bold transition hover:scale-105 border border-amber-400/40"
+        className="fixed bottom-1 right-1 z-40 pointer-events-auto bg-amber-600/90 hover:bg-amber-600 text-white p-0.5 sm:px-1 sm:py-0.5 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-0.5 text-xs font-bold transition hover:scale-105 border border-amber-400/40"
         title="دليل مزايا الموقع للخادم"
       >
         <Sparkles className="w-2 h-2 text-yellow-300 animate-spin-slow" />
@@ -130,22 +140,31 @@ export default function ServantOnboardingTour() {
 
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 bg-black/80 backdrop-blur-md" dir="rtl">
+          <div
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                handleComplete();
+              }
+            }}
+            className="fixed inset-0 z-50 pointer-events-auto flex items-center justify-center p-0.5 sm:p-1 bg-black/80 backdrop-blur-md cursor-pointer"
+            dir="rtl"
+          >
             <motion.div
+              onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.92, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="relative w-full max-w-xl bg-stone-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(251,191,36,0.2)] flex flex-col text-stone-100"
+              className="relative w-full max-w-xl bg-stone-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(251,191,36,0.2)] flex flex-col text-stone-100 cursor-default pointer-events-auto"
             >
               {/* Top Accent Gradient Header */}
-              <div className={`p-1 sm:p-1.5 bg-linear-to-r ${step.color} relative flex items-center justify-between text-white shadow-md`}>
+              <div className={`p-0.5 sm:p-1 bg-linear-to-r ${step.color} relative flex items-center justify-between text-white shadow-md`}>
                 <div className="flex items-center gap-0.5">
-                  <div className="w-3.5 h-3.5 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner">
+                  <div className="w-3 h-3 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner">
                     <StepIcon className="w-2 h-2 text-white" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-black/20 px-0.5 py-0.25 rounded-full">
+                    <span className="text-[20px] font-bold uppercase tracking-wider bg-black/20 px-0.5 py-0.25 rounded-full">
                       خطوة {currentStep + 1} من {SERVANT_TOUR_STEPS.length}
                     </span>
                   </div>
@@ -161,7 +180,7 @@ export default function ServantOnboardingTour() {
               </div>
 
               {/* Body Content with Animation */}
-              <div className="p-1.5 sm:p-2 space-y-1 overflow-y-auto max-h-[60vh]">
+              <div className="p-0.5 sm:p-1 space-y-0.5 overflow-y-auto max-h-[60vh]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentStep}
@@ -171,17 +190,17 @@ export default function ServantOnboardingTour() {
                     transition={{ duration: 0.25 }}
                     className="space-y-0.5 text-right"
                   >
-                    <h2 className="text-lg sm:text-xl font-bold text-amber-200 leading-snug">
+                    <h2 className="text-2xl sm:text-2xl font-bold text-amber-200 leading-snug">
                       {step.title}
                     </h2>
-                    <p className="text-xs sm:text-sm font-semibold text-amber-400/90">
+                    <p className="text-lg sm:text-lg font-semibold text-amber-400/90">
                       {step.subtitle}
                     </p>
-                    <p className="text-xs sm:text-sm text-stone-300 leading-relaxed pt-0.5 font-sans">
+                    <p className="text-lg sm:text-lg text-stone-300 leading-relaxed pt-0.5 font-sans">
                       {step.desc}
                     </p>
 
-                    <div className="mt-1 p-0.5 rounded-2xl bg-amber-950/40 border border-amber-500/20 text-xs text-amber-200 flex items-center gap-0.5 font-medium">
+                    <div className="mt-0.5 p-0.5 rounded-2xl bg-amber-950/40 border border-amber-500/20 text-lg text-amber-200 flex items-center gap-0.5 font-medium">
                       <Sparkles className="w-2 h-2 text-amber-400 shrink-0" />
                       <span>{step.highlightAction}</span>
                     </div>
@@ -190,7 +209,7 @@ export default function ServantOnboardingTour() {
               </div>
 
               {/* Footer navigation */}
-              <div className="p-1 border-t border-stone-800 bg-stone-950/60 flex items-center justify-between gap-1">
+              <div className="p-0.5 border-t border-stone-800 bg-stone-950/60 flex items-center justify-between gap-0.5">
                 {/* Step Indicators (Dots) */}
                 <div className="flex items-center gap-0.25">
                   {SERVANT_TOUR_STEPS.map((_, idx) => (
@@ -211,27 +230,26 @@ export default function ServantOnboardingTour() {
                     <Button
                       onClick={handlePrev}
                       variant="ghost"
-                      size="sm"
-                      className="rounded-xl text-xs text-stone-400 hover:text-white"
+                      className="rounded-xl bg-linear-to-r text-xs from-stone-500 to-stone-600 hover:from-stone-400 hover:to-stone-500 text-stone-400 hover:text-500 w-7"
                     >
-                      <ChevronRight className="w-1.5 h-1.5 ms-0.25" />
+                      <ChevronRight className="w-1 h-1.5" />
                       <span>السابق</span>
                     </Button>
                   )}
 
                   <Button
                     onClick={handleNext}
-                    className="bg-linear-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold rounded-xl text-xs px-1.5 shadow-md flex items-center gap-0.25"
+                    className="bg-linear-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold rounded-xl text-xs shadow-md flex items-center gap-0.25 w-7"
                   >
                     {currentStep === SERVANT_TOUR_STEPS.length - 1 ? (
                       <>
-                        <Check className="w-1.5 h-1.5" />
+                        <Check className="w-1 h-1.5" />
                         <span>ابدأ الاستخدام الآن</span>
                       </>
                     ) : (
                       <>
                         <span>التالي</span>
-                        <ChevronLeft className="w-1.5 h-1.5 me-0.25" />
+                        <ChevronLeft className="w-1 h-1.5" />
                       </>
                     )}
                   </Button>

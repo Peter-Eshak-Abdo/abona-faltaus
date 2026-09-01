@@ -24,6 +24,7 @@ import {
   Share2,
   Copy,
   Check,
+  ArrowRight
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -40,6 +41,7 @@ import { getCopticDate, CopticDate, COPTIC_MONTHS, copticToGregorian } from "@/l
 import { toast } from "sonner";
 import { useLocale, useTranslations } from "next-intl";
 import { isRtlLocale } from "@/i18n/routing";
+import Link from "next/link";
 
 interface SynaxariumEntry {
   titleAr: string;
@@ -88,6 +90,7 @@ export default function KatamarosPage() {
 
   // Coptic Date selector states
   const [showCopticPicker, setShowCopticPicker] = useState(false);
+  const [selectedCopticYear, setSelectedCopticYear] = useState<number>(1740);
   const [selectedCopticMonth, setSelectedCopticMonth] = useState<number>(1);
   const [selectedCopticDay, setSelectedCopticDay] = useState<number>(1);
 
@@ -110,6 +113,26 @@ export default function KatamarosPage() {
       localStorage.setItem("katamaros-font-size", String(next));
       return next;
     });
+  };
+
+  const getTranslatedSeason = (season?: string) => {
+    if (!season) return "";
+    try {
+      const key = season.toLowerCase();
+      return t.has(`seasons.${key}` as any) ? t(`seasons.${key}` as any) : season;
+    } catch {
+      return season;
+    }
+  };
+
+  const getTranslatedTune = (tune?: string) => {
+    if (!tune) return "";
+    try {
+      const key = tune.toLowerCase();
+      return t.has(`tunes.${key}` as any) ? t(`tunes.${key}` as any) : tune;
+    } catch {
+      return tune;
+    }
   };
 
   const toggleBookmark = (key: string, title: string) => {
@@ -178,6 +201,7 @@ export default function KatamarosPage() {
     try {
       const cDate = getCopticDate(targetDate);
       setCopticInfo(cDate);
+      setSelectedCopticYear(cDate.year);
       setSelectedCopticMonth(cDate.month);
       setSelectedCopticDay(cDate.day);
 
@@ -219,21 +243,24 @@ export default function KatamarosPage() {
   };
 
   const handleCopticDateSubmit = () => {
-    if (!copticInfo) return;
-    const gregDate = copticToGregorian(copticInfo.year, selectedCopticMonth, selectedCopticDay);
+    const cYear = selectedCopticYear || copticInfo?.year || 1740;
+    const gregDate = copticToGregorian(cYear, selectedCopticMonth, selectedCopticDay);
     setDate(gregDate);
     setShowCopticPicker(false);
   };
 
   return (
-    <div className="min-h-screen pb-4 bg-stone-50/50 dark:bg-zinc-950 text-stone-900 dark:text-zinc-100" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="min-h-screen pb-1 bg-stone-50/50 dark:bg-zinc-950 text-stone-900 dark:text-zinc-100" dir={isRtl ? "rtl" : "ltr"}>
       <audio ref={audioRef} className="hidden" />
 
       {/* Hero Header */}
       <div className="border-b border-amber-900/10 dark:border-amber-500/10 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md sticky top-0 z-30 shadow-xs">
-        <div className="container mx-auto px-1 py-0.5 max-w-6xl flex flex-col md:flex-row items-center justify-between gap-0.5">
+        <div className="container mx-auto px-0.5 py-0.5 max-w-6xl flex flex-col md:flex-row items-center justify-between gap-0.5">
           {/* Title & Coptic Date */}
           <div className="flex items-center gap-0.5">
+            <Link href="/" className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline inline-flex">
+              <ArrowRight size={18} className={isRtlLocale(locale) ? "" : "rotate-180"} />
+            </Link>
             <div className="w-3 h-3 rounded-xl bg-amber-700/10 dark:bg-amber-500/10 text-amber-800 dark:text-amber-400 flex items-center justify-center font-bold">
               <Church className="w-2.5 h-2.5" />
             </div>
@@ -258,18 +285,18 @@ export default function KatamarosPage() {
             <div className="flex items-center bg-stone-100 dark:bg-zinc-800 rounded-lg p-0.5 border border-stone-200 dark:border-zinc-700">
               <button
                 onClick={() => updateFontSize(-1)}
-                className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
+                className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
                 title={t('zoomOut')}
               >
-                <ZoomOut className="w-2.5 h-2.5" />
+                <ZoomOut className="w-1.5 h-1.5" />
               </button>
-              <span className="px-0.5 text-xs font-bold text-stone-700 dark:text-zinc-300 font-mono">{fontSize}</span>
+              <span className="px-0.25 text-xs font-bold text-stone-700 dark:text-zinc-300 font-mono">{fontSize}</span>
               <button
                 onClick={() => updateFontSize(1)}
-                className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
+                className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
                 title={t('zoomIn')}
               >
-                <ZoomIn className="w-2.5 h-2.5" />
+                <ZoomIn className="w-1.5 h-1.5" />
               </button>
             </div>
 
@@ -277,23 +304,23 @@ export default function KatamarosPage() {
             <div className="flex items-center bg-stone-100 dark:bg-zinc-800 rounded-lg p-0.5 border border-stone-200 dark:border-zinc-700">
               <button
                 onClick={() => changeDateByDays(1)}
-                className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300"
+                className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300"
                 title={t('nextDay')}
               >
-                <ChevronRight className="w-2.5 h-2.5" />
+                <ChevronRight className="w-1.5 h-1.5" />
               </button>
               <button
                 onClick={() => setDate(new Date())}
-                className="px-0.5 text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline"
+                className="px-0.25 text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline"
               >
                 {t('todayBtn')}
               </button>
               <button
                 onClick={() => changeDateByDays(-1)}
-                className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300"
+                className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300"
                 title={t('prevDay')}
               >
-                <ChevronLeft className="w-2.5 h-2.5" />
+                <ChevronLeft className="w-1.5 h-1.5" />
               </button>
             </div>
 
@@ -302,7 +329,7 @@ export default function KatamarosPage() {
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="h-2 text-xs font-normal border-stone-200 dark:border-zinc-700 rounded-lg flex items-center gap-0.5 bg-white dark:bg-zinc-800"
+                  className="h-2 text-xs font-normal border-stone-200 dark:border-zinc-700 rounded-lg flex items-center gap-0.5 bg-white dark:bg-zinc-800 w-8"
                 >
                   <CalendarIcon className="h-2.5 w-2.5 text-amber-700" />
                   <span>{format(date, "d MMM yyyy", { locale: arEG })}</span>
@@ -323,31 +350,17 @@ export default function KatamarosPage() {
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="h-2.5 text-xs font-semibold border-amber-700/30 text-amber-800 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 rounded-lg"
+                  className="h-2.5 text-xs font-semibold border-amber-700/30 text-amber-800 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 rounded-lg w-8"
                 >
                   {t('copticConverter')}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-18 p-0.5 space-y-0.5 rounded-2xl shadow-xl bg-white dark:bg-zinc-900 border-amber-900/20" align="end">
+              <PopoverContent className="w-20 p-0.5 space-y-0.5 rounded-2xl shadow-xl bg-white dark:bg-zinc-900 border-amber-900/20" align="end">
                 <div className="space-y-0.5">
                   <h4 className="text-xs font-bold text-amber-900 dark:text-amber-400">{t('chooseCopticDate')}</h4>
                   <p className="text-[11px] text-stone-500">{t('copticDateHint')}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-0.5">
-                  <div className="space-y-0.5">
-                    <label className="text-[10px] font-semibold text-stone-600 dark:text-zinc-400">{t('copticMonth')}</label>
-                    <select
-                      value={selectedCopticMonth}
-                      onChange={(e) => setSelectedCopticMonth(Number(e.target.value))}
-                      className="w-full text-xs p-0.5 rounded-lg border border-stone-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-800"
-                    >
-                      {COPTIC_MONTHS.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.nameAr} ({m.nameCop})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div className="grid grid-cols-3 gap-0.5">
                   <div className="space-y-0.5">
                     <label className="text-[10px] font-semibold text-stone-600 dark:text-zinc-400">{t('copticDay')}</label>
                     <select
@@ -358,6 +371,34 @@ export default function KatamarosPage() {
                       {Array.from({ length: selectedCopticMonth === 13 ? 6 : 30 }, (_, i) => i + 1).map((d) => (
                         <option key={d} value={d}>
                           {d}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-0.5">
+                    <label className="text-[10px] font-semibold text-stone-600 dark:text-zinc-400">{t('copticMonth')}</label>
+                    <select
+                      value={selectedCopticMonth}
+                      onChange={(e) => setSelectedCopticMonth(Number(e.target.value))}
+                      className="w-full text-xs p-0.5 rounded-lg border border-stone-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-800"
+                    >
+                      {COPTIC_MONTHS.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.nameAr}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-0.5">
+                    <label className="text-[10px] font-semibold text-stone-600 dark:text-zinc-400">{t('copticYear')}</label>
+                    <select
+                      value={selectedCopticYear}
+                      onChange={(e) => setSelectedCopticYear(Number(e.target.value))}
+                      className="w-full text-xs p-0.5 rounded-lg border border-stone-200 dark:border-zinc-700 bg-stone-50 dark:bg-zinc-800"
+                    >
+                      {Array.from({ length: 15 }, (_, i) => (copticInfo?.year || 1742) - 5 + i).map((yr) => (
+                        <option key={yr} value={yr}>
+                          {yr}
                         </option>
                       ))}
                     </select>
@@ -375,7 +416,7 @@ export default function KatamarosPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-0.5 py-1 max-w-5xl space-y-1">
+      <div className="container mx-auto px-0.5 py-1 max-w-5xl space-y-0.5">
         {loading ? (
           <div className="flex flex-col justify-center items-center h-80 space-y-0.5">
             <Loader2 className="h-2.5 w-2.5 animate-spin text-amber-700" />
@@ -395,13 +436,13 @@ export default function KatamarosPage() {
                     </h2>
                     {data.dayTune && (
                       <Badge className="bg-amber-700/20 text-amber-900 dark:text-amber-300 hover:bg-amber-700/30 border-0 text-xs">
-                        {data.dayTune}
+                        {getTranslatedTune(data.dayTune)}
                       </Badge>
                     )}
                   </div>
                   {data.season && (
                     <p className="text-xs text-stone-600 dark:text-zinc-400">
-                      {t('seasonLabel')}: <span className="font-semibold text-amber-800 dark:text-amber-400">{data.season}</span>
+                      {t('seasonLabel')}: <span className="font-semibold text-amber-800 dark:text-amber-400">{getTranslatedSeason(data.season)}</span>
                     </p>
                   )}
                 </div>
@@ -412,7 +453,7 @@ export default function KatamarosPage() {
             </Card>
 
             {/* Category Navigation Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} dir={isRtl ? "rtl" : "ltr"} className="w-full">
               <TabsList className="w-full flex flex-wrap h-auto gap-0.5 bg-stone-100/80 dark:bg-zinc-900/80 p-0.5 rounded-xl border border-stone-200/80 dark:border-zinc-800">
                 <TabsTrigger value="all" className="flex-1 min-w-[70px] text-xs font-semibold rounded-lg py-0.5">
                   {t('tabs.all')}
@@ -435,7 +476,7 @@ export default function KatamarosPage() {
               </TabsList>
 
               {/* All Sections */}
-              <TabsContent value="all" className="space-y-1 mt-1">
+              <TabsContent value="all" className="space-y-0.25 mt-0.5">
                 {/* 1. رفع بخور عشية */}
                 {(data.readings.v_psalm || data.readings.v_gospel) && (
                   <SectionBlock title="رفع بخور عشية" icon={<Moon className="w-2.5 h-2.5 text-indigo-500" />}>
@@ -805,7 +846,6 @@ function ReadingItem({
         <div className="flex items-center gap-0.25">
           {/* Audio Narrator */}
           <Button
-            size="sm"
             variant="ghost"
             onClick={onPlay}
             disabled={isLoadingAudio}
@@ -816,28 +856,26 @@ function ReadingItem({
             title={isPlaying ? "إيقاف القراءة الصوتية" : "استماع للنص"}
           >
             {isLoadingAudio ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="w-2 h-2 animate-spin" />
             ) : isPlaying ? (
-              <VolumeX className="w-3.5 h-3.5" />
+              <VolumeX className="w-2 h-2" />
             ) : (
-              <Volume2 className="w-3.5 h-3.5" />
+              <Volume2 className="w-2 h-2" />
             )}
           </Button>
 
           {/* Copy Text */}
           <Button
-            size="sm"
             variant="ghost"
             onClick={handleCopy}
             className="h-2 w-2 p-0 rounded-lg text-stone-500"
             title="نسخ النص"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-2 h-2 text-green-600" /> : <Copy className="w-2 h-2" />}
           </Button>
 
           {/* Bookmark */}
           <Button
-            size="sm"
             variant="ghost"
             onClick={onBookmark}
             className={cn(
@@ -846,7 +884,7 @@ function ReadingItem({
             )}
             title={isBookmarked ? "محفوظ في المفضلة" : "حفظ في المفضلة"}
           >
-            {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+            {isBookmarked ? <BookmarkCheck className="w-2 h-2" /> : <Bookmark className="w-2 h-2" />}
           </Button>
         </div>
       </CardHeader>
@@ -886,7 +924,6 @@ function SynaxariumCard({
         </CardTitle>
         <div className="flex items-center gap-0.5">
           <Button
-            size="sm"
             variant="ghost"
             onClick={onPlay}
             disabled={isLoadingAudio}
@@ -897,11 +934,11 @@ function SynaxariumCard({
             title={isPlaying ? "إيقاف القراءة" : "استماع لتاريخ القديس"}
           >
             {isLoadingAudio ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="w-2 h-2 animate-spin" />
             ) : isPlaying ? (
-              <VolumeX className="w-3.5 h-3.5" />
+              <VolumeX className="w-2 h-2" />
             ) : (
-              <Volume2 className="w-3.5 h-3.5" />
+              <Volume2 className="w-2 h-2" />
             )}
           </Button>
         </div>

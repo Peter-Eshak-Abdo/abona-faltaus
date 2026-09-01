@@ -11,6 +11,10 @@ export default function PushNotificationSetup() {
 
     const initOneSignal = async () => {
       try {
+        if (OneSignal.User?.PushSubscription || (window as any).OneSignalInitialized) {
+          return;
+        }
+        (window as any).OneSignalInitialized = true;
         await OneSignal.init({
           appId,
           allowLocalhostAsSecureOrigin: process.env.NODE_ENV === 'development',
@@ -34,7 +38,10 @@ export default function PushNotificationSetup() {
             }, 5000);
           }
         }
-      } catch (err) {
+      } catch (err: any) {
+        if (err?.message?.includes('already initialized')) {
+          return;
+        }
         console.warn('OneSignal initialization skipped/failed:', err);
       }
     };
