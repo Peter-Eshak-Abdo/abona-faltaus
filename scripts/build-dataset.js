@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 
 const ICONS_DIR = path.resolve('./icons');
 const TEMP_DIR = path.resolve('./dataset_temp');
@@ -32,8 +32,16 @@ if (fs.existsSync(ZIP_OUTPUT)) {
 }
 
 // Compress using PowerShell Compress-Archive
-const psCommand = `powershell -Command "Compress-Archive -Path '${TEMP_DIR}/*' -DestinationPath '${ZIP_OUTPUT}' -Force"`;
-execSync(psCommand, { stdio: 'inherit' });
+const psArgs = [
+  '-Command',
+  'Compress-Archive',
+  '-Path',
+  `${TEMP_DIR}${path.sep}*`,
+  '-DestinationPath',
+  ZIP_OUTPUT,
+  '-Force'
+];
+execFileSync('powershell', psArgs, { stdio: 'inherit' });
 
 fs.rmSync(TEMP_DIR, { recursive: true, force: true });
 
