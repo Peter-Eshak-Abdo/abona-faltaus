@@ -15,14 +15,14 @@ import { supabase } from "@/lib/supabase";
 let cachedBible: any = null;
 
 export type VerseObj = {
-  verse: number | null;
+  verse: number;
   text_vocalized: string;
   text_plain: string;
 };
 
 export type BookObj = {
   abbrev: string;
-  name?: string;
+  name: string;
   chapters: VerseObj[][];
 };
 
@@ -288,4 +288,140 @@ export async function loadBible(onProgress?: (percent: number) => void): Promise
   if (onProgress) onProgress(100); // اكتمل التحميل
   cachedBible = sortedBooks;
   return cachedBible;
+}
+
+let cachedCopticBible: BookObj[] | null = null;
+
+export const COPTIC_BOOK_NAMES: Record<string, { coptic: string; arabic: string; abbrev: string }> = {
+  Genesis: { coptic: "Ϯⲅⲉⲛⲉⲥⲓⲥ", arabic: "التكوين", abbrev: "gn" },
+  Exodus: { coptic: "Ⲡⲓⲉⲝⲟⲇⲟⲥ", arabic: "الخروج", abbrev: "ex" },
+  Leviticus: { coptic: "Ⲡⲓⲗⲉⲩⲓⲧⲓⲕⲟⲛ", arabic: "اللاويين", abbrev: "lv" },
+  Numeri: { coptic: "Ⲛⲓⲁⲣⲓⲑⲙⲟⲥ", arabic: "العدد", abbrev: "nm" },
+  Deuteronomium: { coptic: "Ⲡⲓⲇⲉⲩⲧⲉⲣⲟⲛⲟⲙⲓⲟⲛ", arabic: "التثنية", abbrev: "dt" },
+  Joshua: { coptic: "Ⲓⲏⲥⲟⲩ ⲡϣⲏⲣⲉ ⲛ̀Ⲛⲁⲩⲏ", arabic: "يشوع", abbrev: "js" },
+  Judges: { coptic: "Ⲛⲓⲕⲣⲓⲧⲏⲥ", arabic: "القضاة", abbrev: "jd" },
+  Ruth: { coptic: "Ⲣⲟⲩⲑ", arabic: "راعوث", abbrev: "rt" },
+  Job: { coptic: "Ⲓⲱⲃ", arabic: "أيوب", abbrev: "job" },
+  Iob: { coptic: "Ⲓⲱⲃ", arabic: "أيوب", abbrev: "job" },
+  Psalmi: { coptic: "Ⲛⲓⲯⲁⲗⲙⲟⲥ", arabic: "المزامير", abbrev: "ps" },
+  Proverbs: { coptic: "Ⲛⲓⲡⲁⲣⲟⲓⲙⲓⲁ", arabic: "الأمثال", abbrev: "pr" },
+  Ecclesiastes: { coptic: "Ⲡⲓⲉⲕⲕⲗⲏⲥⲓⲁⲥⲧⲏⲥ", arabic: "الجامعة", abbrev: "ec" },
+  Song: { coptic: "Ⲡϫⲱ ⲛ̀ⲧⲉ ⲛⲓϫⲱ", arabic: "نشيد الأنشاد", abbrev: "so" },
+  Wisdom: { coptic: "Ϯⲥⲟⲫⲓⲁ ⲛ̀Ⲥⲟⲗⲟⲙⲱⲛ", arabic: "الحكمة", abbrev: "wi" },
+  Sirach: { coptic: "Ϯⲥⲟⲫⲓⲁ ⲛ̀Ⲓⲏⲥⲟⲩ ⲡϣⲏⲣⲉ ⲛ̀Ⲥⲓⲣⲁⲭ", arabic: "يشوع بن سيراخ", abbrev: "sir" },
+  Esther: { coptic: "Ⲉⲥⲑⲏⲣ", arabic: "أستير", abbrev: "es" },
+  Judith: { coptic: "Ⲓⲟⲩⲇⲓⲑ", arabic: "يهوديت", abbrev: "jdt" },
+  Tobit: { coptic: "Ⲧⲱⲃⲓⲧ", arabic: "طوبيا", abbrev: "to" },
+  Baruch: { coptic: "Ⲃⲁⲣⲟⲩⲭ", arabic: "باروخ", abbrev: "bar" },
+  Isaias: { coptic: "Ⲏⲥⲁⲏⲁⲥ", arabic: "إشعياء", abbrev: "is" },
+  Ieremias: { coptic: "Ⲓⲉⲣⲉⲙⲓⲁⲥ", arabic: "إرميا", abbrev: "jr" },
+  Lamentationes: { coptic: "Ⲛⲉϩⲡⲓ ⲛ̀Ⲓⲉⲣⲉⲙⲓⲁⲥ", arabic: "مراثي إرميا", abbrev: "la" },
+  Ezechiel: { coptic: "Ⲓⲉⲍⲉⲕⲓⲏⲗ", arabic: "حزقيال", abbrev: "ez" },
+  Daniel: { coptic: "Ⲇⲁⲛⲓⲏⲗ", arabic: "دانيال", abbrev: "dn" },
+  Osee: { coptic: "Ⲱⲥⲏⲉ", arabic: "هوشع", abbrev: "ho" },
+  Ioel: { coptic: "Ⲓⲱⲏⲗ", arabic: "يوئيل", abbrev: "jl" },
+  Amos: { coptic: "Ⲁⲙⲱⲥ", arabic: "عاموس", abbrev: "am" },
+  Abdias: { coptic: "Ⲁⲃⲇⲓⲟⲩ", arabic: "عوبديا", abbrev: "ob" },
+  Ionas: { coptic: "Ⲓⲱⲛⲁⲥ", arabic: "يونان", abbrev: "jon" },
+  Michaeas: { coptic: "Ⲙⲓⲭⲁⲓⲁⲥ", arabic: "ميخا", abbrev: "mic" },
+  Nahum: { coptic: "Ⲛⲁⲟⲩⲙ", arabic: "ناحوم", abbrev: "na" },
+  Habacuc: { coptic: "Ⲁⲙⲃⲁⲕⲟⲩⲙ", arabic: "حبقوق", abbrev: "hab" },
+  Sophonias: { coptic: "Ⲥⲟⲫⲟⲛⲓⲁⲥ", arabic: "صفنيا", abbrev: "zep" },
+  Aggaeus: { coptic: "Ⲁⲅⲅⲉⲟⲥ", arabic: "حجي", abbrev: "hg" },
+  Zacharias: { coptic: "Ⲍⲁⲭⲁⲣⲓⲁⲥ", arabic: "زكريا", abbrev: "zec" },
+  Malachias: { coptic: "Ⲙⲁⲗⲁⲭⲓⲁⲥ", arabic: "ملاخي", abbrev: "mal" },
+  MAT: { coptic: "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲕⲁⲧⲁ Ⲙⲁⲧⲑⲉⲟⲛ", arabic: "إنجيل متى", abbrev: "mt" },
+  MRK: { coptic: "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲕⲁⲧⲁ Ⲙⲁⲣⲕⲟⲛ", arabic: "إنجيل مرقس", abbrev: "mk" },
+  LUK: { coptic: "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲕⲁⲧⲁ Ⲗⲟⲩⲕⲁⲛ", arabic: "إنجيل لوقا", abbrev: "lk" },
+  JHN: { coptic: "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲕⲁⲧⲁ Ⲓⲱⲁⲛⲛⲏⲛ", arabic: "إنجيل يوحنا", abbrev: "jn" },
+  ACT: { coptic: "Ⲛⲓⲡⲣⲁⲝⲓⲥ ⲛ̀ⲧⲉ ⲛⲓⲁ̀ⲡⲟⲥⲧⲟⲗⲟⲥ", arabic: "أعمال الرسل", abbrev: "ac" },
+  ROM: { coptic: "Ⲡⲣⲟⲥ Ⲣⲱⲙⲉⲟⲩⲥ", arabic: "رومية", abbrev: "ro" },
+  "1CO": { coptic: "Ⲡⲣⲟⲥ Ⲕⲟⲣⲓⲛⲑⲓⲟⲩⲥ Ⲁ̅", arabic: "كورنثوس الأولى", abbrev: "1co" },
+  "2CO": { coptic: "Ⲡⲣⲟⲥ Ⲕⲟⲣⲓⲛⲑⲓⲟⲩⲥ Ⲃ̅", arabic: "كورنثوس الثانية", abbrev: "2co" },
+  GAL: { coptic: "Ⲡⲣⲟⲥ Ⲅⲁⲗⲁⲧⲁⲥ", arabic: "غلاطية", abbrev: "ga" },
+  EPH: { coptic: "Ⲡⲣⲟⲥ Ⲉⲫⲉⲥⲓⲟⲩⲥ", arabic: "أفسس", abbrev: "ep" },
+  PHP: { coptic: "Ⲡⲣⲟⲥ Ⲫⲓⲗⲓⲡⲡⲏⲥⲓⲟⲩⲥ", arabic: "فيلبي", abbrev: "php" },
+  COL: { coptic: "Ⲡⲣⲟⲥ Ⲕⲟⲗⲟⲥⲥⲁⲉⲓⲥ", arabic: "كولوسي", abbrev: "col" },
+  "1TH": { coptic: "Ⲡⲣⲟⲥ Ⲑⲉⲥⲥⲁⲗⲟⲛⲓⲕⲉⲩⲥ Ⲁ̅", arabic: "تسالونيكي الأولى", abbrev: "1th" },
+  "2TH": { coptic: "Ⲡⲣⲟⲥ Ⲑⲉⲥⲥⲁⲗⲟⲛⲓⲕⲉⲩⲥ Ⲃ̅", arabic: "تسالونيكي الثانية", abbrev: "2th" },
+  "1TI": { coptic: "Ⲡⲣⲟⲥ Ⲧⲓⲙⲟⲑⲉⲟⲛ Ⲁ̅", arabic: "تيموثاوس الأولى", abbrev: "1ti" },
+  "2TI": { coptic: "Ⲡⲣⲟⲥ Ⲧⲓⲙⲟⲑⲉⲟⲛ Ⲃ̅", arabic: "تيموثاوس الثانية", abbrev: "2ti" },
+  TIT: { coptic: "Ⲡⲣⲟⲥ Ⲧⲓⲧⲟⲛ", arabic: "تيطس", abbrev: "ti" },
+  PHM: { coptic: "Ⲡⲣⲟⲥ Ⲫⲓⲗⲏⲙⲟⲛⲁ", arabic: "فليمون", abbrev: "phm" },
+  HEB: { coptic: "Ⲡⲣⲟⲥ Ϩⲉⲃⲣⲁⲓⲟⲩⲥ", arabic: "العبرانيين", abbrev: "hb" },
+  JAS: { coptic: "Ⲓⲁⲕⲱⲃⲟⲥ", arabic: "يعقوب", abbrev: "ja" },
+  "1PE": { coptic: "Ⲡⲉⲧⲣⲟⲥ Ⲁ̅", arabic: "بطرس الأولى", abbrev: "1pe" },
+  "2PE": { coptic: "Ⲡⲉⲧⲣⲟⲥ Ⲃ̅", arabic: "بطرس الثانية", abbrev: "2pe" },
+  "1JN": { coptic: "Ⲓⲱⲁⲛⲛⲏⲥ Ⲁ̅", arabic: "يوحنا الأولى", abbrev: "1jn" },
+  "2JN": { coptic: "Ⲓⲱⲁⲛⲛⲏⲥ Ⲃ̅", arabic: "يوحنا الثانية", abbrev: "2jn" },
+  "3JN": { coptic: "Ⲓⲱⲁⲛⲛⲏⲥ Ⲅ̅", arabic: "يوحنا الثالثة", abbrev: "3jn" },
+  JUD: { coptic: "Ⲓⲟⲩⲇⲁ", arabic: "يهوذا", abbrev: "jude" },
+  REV: { coptic: "Ϯⲁ̀ⲡⲟⲕⲁⲗⲩⲙⲯⲓⲥ ⲛ̀ⲧⲉ Ⲓⲱⲁⲛⲛⲏⲥ", arabic: "رؤيا يوحنا", abbrev: "re" },
+};
+
+export async function loadCopticBible(onProgress?: (percent: number) => void): Promise<BookObj[]> {
+  if (cachedCopticBible) return cachedCopticBible;
+
+  if (onProgress) onProgress(20);
+
+  const res = await fetch("/bible-json/coptic_bible.json");
+  if (!res.ok) {
+    throw new Error("Failed to load coptic_bible.json");
+  }
+
+  if (onProgress) onProgress(60);
+  const data = await res.json();
+
+  const canonicalOrder = [...oldTestament, ...newTestament];
+  const books: BookObj[] = [];
+
+  const processSection = (sectionObj: Record<string, any>) => {
+    for (const [bookKey, chMap] of Object.entries(sectionObj)) {
+      const mapping = COPTIC_BOOK_NAMES[bookKey] || {
+        coptic: bookKey,
+        arabic: bookKey,
+        abbrev: bookKey.toLowerCase(),
+      };
+
+      const chaptersList: VerseObj[][] = [];
+      const chNums = Object.keys(chMap).map(Number).sort((a, b) => a - b);
+
+      for (const chNum of chNums) {
+        const versesObj = chMap[String(chNum)] || {};
+        const vNums = Object.keys(versesObj).map(Number).sort((a, b) => a - b);
+
+        const vList: VerseObj[] = [];
+        for (const vNum of vNums) {
+          const vData = versesObj[String(vNum)] || {};
+          const copticText = vData.coptic || "";
+          vList.push({
+            verse: vNum,
+            text_vocalized: copticText,
+            text_plain: copticText,
+          });
+        }
+        chaptersList.push(vList);
+      }
+
+      books.push({
+        abbrev: mapping.abbrev,
+        name: `${mapping.coptic} (${mapping.arabic})`,
+        chapters: chaptersList,
+      });
+    }
+  };
+
+  if (data.old_testament) processSection(data.old_testament);
+  if (data.old_testament_sahidic_supplements) processSection(data.old_testament_sahidic_supplements);
+  if (data.new_testament) processSection(data.new_testament);
+
+  books.sort((a, b) => {
+    const idxA = canonicalOrder.indexOf(a.abbrev);
+    const idxB = canonicalOrder.indexOf(b.abbrev);
+    return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+  });
+
+  if (onProgress) onProgress(100);
+  cachedCopticBible = books;
+  return books;
 }

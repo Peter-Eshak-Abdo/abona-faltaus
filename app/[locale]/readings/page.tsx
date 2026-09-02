@@ -65,6 +65,17 @@ interface KatamarosResponse {
     l_psalm: string;
     l_gospel: string;
   };
+  coptic_readings?: {
+    v_psalm: string;
+    v_gospel: string;
+    m_psalm: string;
+    m_gospel: string;
+    pauline: string;
+    catholic: string;
+    acts: string;
+    l_psalm: string;
+    l_gospel: string;
+  };
   synaxarium: SynaxariumEntry[];
 }
 
@@ -77,6 +88,7 @@ export default function KatamarosPage() {
   const [copticInfo, setCopticInfo] = useState<CopticDate | null>(null);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<KatamarosResponse | null>(null);
+  const [readingsLang, setReadingsLang] = useState<"ar" | "cop">("ar");
 
   // Settings: Font Size & Audio & Bookmarks
   const [fontSize, setFontSize] = useState<number>(18);
@@ -98,6 +110,9 @@ export default function KatamarosPage() {
   useEffect(() => {
     const savedSize = localStorage.getItem("katamaros-font-size");
     if (savedSize) setFontSize(Number(savedSize));
+
+    const savedLang = localStorage.getItem("katamaros-lang");
+    if (savedLang === "ar" || savedLang === "cop") setReadingsLang(savedLang);
 
     const savedBookmarks = localStorage.getItem("katamaros-bookmarks");
     if (savedBookmarks) {
@@ -281,6 +296,28 @@ export default function KatamarosPage() {
 
           {/* Quick Actions & Date Pickers */}
           <div className="flex items-center gap-0.5 flex-wrap justify-center">
+            {/* Language Switcher */}
+            <div className="flex bg-stone-100 dark:bg-zinc-800 rounded-lg p-0.5 border border-stone-200 dark:border-zinc-700 text-xs font-bold">
+              <button
+                onClick={() => {
+                  setReadingsLang("ar");
+                  localStorage.setItem("katamaros-lang", "ar");
+                }}
+                className={`px-1.5 py-0.5 rounded-md transition ${readingsLang === "ar" ? "bg-amber-700 text-white shadow-xs" : "text-stone-600 dark:text-zinc-300"}`}
+              >
+                عربي
+              </button>
+              <button
+                onClick={() => {
+                  setReadingsLang("cop");
+                  localStorage.setItem("katamaros-lang", "cop");
+                }}
+                className={`px-1.5 py-0.5 rounded-md transition ${readingsLang === "cop" ? "bg-amber-700 text-white shadow-xs" : "text-stone-600 dark:text-zinc-300"}`}
+              >
+                ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ (قبطي)
+              </button>
+            </div>
+
             {/* Font Size Controls */}
             <div className="flex items-center bg-stone-100 dark:bg-zinc-800 rounded-lg p-0.5 border border-stone-200 dark:border-zinc-700">
               <button
@@ -453,6 +490,9 @@ export default function KatamarosPage() {
             </Card>
 
             {/* Category Navigation Tabs */}
+            {(() => {
+              const currentReadings = (readingsLang === "cop" && data.coptic_readings) ? data.coptic_readings : data.readings;
+              return (
             <Tabs value={activeTab} onValueChange={setActiveTab} dir={isRtl ? "rtl" : "ltr"} className="w-full">
               <TabsList className="w-full flex flex-wrap h-auto gap-0.5 bg-stone-100/80 dark:bg-zinc-900/80 p-0.5 rounded-xl border border-stone-200/80 dark:border-zinc-800">
                 <TabsTrigger value="all" className="flex-1 min-w-[70px] text-xs font-semibold rounded-lg py-0.5">
@@ -478,28 +518,28 @@ export default function KatamarosPage() {
               {/* All Sections */}
               <TabsContent value="all" className="space-y-0.25 mt-0.5">
                 {/* 1. رفع بخور عشية */}
-                {(data.readings.v_psalm || data.readings.v_gospel) && (
+                {(currentReadings.v_psalm || currentReadings.v_gospel) && (
                   <SectionBlock title="رفع بخور عشية" icon={<Moon className="w-2.5 h-2.5 text-indigo-500" />}>
                     <ReadingItem
                       id="v_psalm"
-                      title="مزمور عشية"
-                      content={data.readings.v_psalm}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲯⲁⲗⲙⲟⲥ ⲛ̀ⲧⲉ ⲣⲟⲩϩⲓ (مزمور عشية)" : "مزمور عشية"}
+                      content={currentReadings.v_psalm}
                       fontSize={fontSize}
                       isPlaying={playingKey === "v_psalm"}
                       isLoadingAudio={audioLoading === "v_psalm"}
                       isBookmarked={!!bookmarkedSections["v_psalm"]}
-                      onPlay={() => playNarration("v_psalm", data.readings.v_psalm)}
+                      onPlay={() => playNarration("v_psalm", currentReadings.v_psalm)}
                       onBookmark={() => toggleBookmark("v_psalm", "مزمور عشية")}
                     />
                     <ReadingItem
                       id="v_gospel"
-                      title="إنجيل عشية"
-                      content={data.readings.v_gospel}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲛ̀ⲧⲉ ⲣⲟⲩϩⲓ (إنجيل عشية)" : "إنجيل عشية"}
+                      content={currentReadings.v_gospel}
                       fontSize={fontSize}
                       isPlaying={playingKey === "v_gospel"}
                       isLoadingAudio={audioLoading === "v_gospel"}
                       isBookmarked={!!bookmarkedSections["v_gospel"]}
-                      onPlay={() => playNarration("v_gospel", data.readings.v_gospel)}
+                      onPlay={() => playNarration("v_gospel", currentReadings.v_gospel)}
                       onBookmark={() => toggleBookmark("v_gospel", "إنجيل عشية")}
                       highlight
                     />
@@ -507,28 +547,28 @@ export default function KatamarosPage() {
                 )}
 
                 {/* 2. رفع بخور باكر */}
-                {(data.readings.m_psalm || data.readings.m_gospel) && (
+                {(currentReadings.m_psalm || currentReadings.m_gospel) && (
                   <SectionBlock title="رفع بخور باكر" icon={<Sun className="w-2 h-2 text-amber-500" />}>
                     <ReadingItem
                       id="m_psalm"
-                      title="مزمور باكر"
-                      content={data.readings.m_psalm}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲯⲁⲗⲙⲟⲥ ⲛ̀ⲧⲉ ⲧⲟⲟⲩⲓ (مزمور باكر)" : "مزمور باكر"}
+                      content={currentReadings.m_psalm}
                       fontSize={fontSize}
                       isPlaying={playingKey === "m_psalm"}
                       isLoadingAudio={audioLoading === "m_psalm"}
                       isBookmarked={!!bookmarkedSections["m_psalm"]}
-                      onPlay={() => playNarration("m_psalm", data.readings.m_psalm)}
+                      onPlay={() => playNarration("m_psalm", currentReadings.m_psalm)}
                       onBookmark={() => toggleBookmark("m_psalm", "مزمور باكر")}
                     />
                     <ReadingItem
                       id="m_gospel"
-                      title="إنجيل باكر"
-                      content={data.readings.m_gospel}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲛ̀ⲧⲉ ⲧⲟⲟⲩⲓ (إنجيل باكر)" : "إنجيل باكر"}
+                      content={currentReadings.m_gospel}
                       fontSize={fontSize}
                       isPlaying={playingKey === "m_gospel"}
                       isLoadingAudio={audioLoading === "m_gospel"}
                       isBookmarked={!!bookmarkedSections["m_gospel"]}
-                      onPlay={() => playNarration("m_gospel", data.readings.m_gospel)}
+                      onPlay={() => playNarration("m_gospel", currentReadings.m_gospel)}
                       onBookmark={() => toggleBookmark("m_gospel", "إنجيل باكر")}
                       highlight
                     />
@@ -536,39 +576,39 @@ export default function KatamarosPage() {
                 )}
 
                 {/* 3. الرسائل والإبركسيس */}
-                {(data.readings.pauline || data.readings.catholic || data.readings.acts) && (
+                {(currentReadings.pauline || currentReadings.catholic || currentReadings.acts) && (
                   <SectionBlock title="الرسائل وسفر أعمال الرسل" icon={<Scroll className="w-2 h-2 text-emerald-600" />}>
                     <ReadingItem
                       id="pauline"
-                      title="البولس (رسالة القديس بولس)"
-                      content={data.readings.pauline}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲡⲁⲩⲗⲟⲥ (رسالة البولس)" : "البولس (رسالة القديس بولس)"}
+                      content={currentReadings.pauline}
                       fontSize={fontSize}
                       isPlaying={playingKey === "pauline"}
                       isLoadingAudio={audioLoading === "pauline"}
                       isBookmarked={!!bookmarkedSections["pauline"]}
-                      onPlay={() => playNarration("pauline", data.readings.pauline)}
+                      onPlay={() => playNarration("pauline", currentReadings.pauline)}
                       onBookmark={() => toggleBookmark("pauline", "رسالة البولس")}
                     />
                     <ReadingItem
                       id="catholic"
-                      title="الكاثوليكون (الرسائل الجامعة)"
-                      content={data.readings.catholic}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲕⲁⲑⲟⲗⲓⲕⲟⲛ (الكاثوليكون)" : "الكاثوليكون (الرسائل الجامعة)"}
+                      content={currentReadings.catholic}
                       fontSize={fontSize}
                       isPlaying={playingKey === "catholic"}
                       isLoadingAudio={audioLoading === "catholic"}
                       isBookmarked={!!bookmarkedSections["catholic"]}
-                      onPlay={() => playNarration("catholic", data.readings.catholic)}
+                      onPlay={() => playNarration("catholic", currentReadings.catholic)}
                       onBookmark={() => toggleBookmark("catholic", "الكاثوليكون")}
                     />
                     <ReadingItem
                       id="acts"
-                      title="الإبركسيس (أعمال الرسل)"
-                      content={data.readings.acts}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲡⲣⲁⲝⲓⲥ (الإبركسيس)" : "الإبركسيس (أعمال الرسل)"}
+                      content={currentReadings.acts}
                       fontSize={fontSize}
                       isPlaying={playingKey === "acts"}
                       isLoadingAudio={audioLoading === "acts"}
                       isBookmarked={!!bookmarkedSections["acts"]}
-                      onPlay={() => playNarration("acts", data.readings.acts)}
+                      onPlay={() => playNarration("acts", currentReadings.acts)}
                       onBookmark={() => toggleBookmark("acts", "الإبركسيس")}
                     />
                   </SectionBlock>
@@ -593,28 +633,28 @@ export default function KatamarosPage() {
                 )}
 
                 {/* 5. مزمور وإنجيل القداس */}
-                {(data.readings.l_psalm || data.readings.l_gospel) && (
+                {(currentReadings.l_psalm || currentReadings.l_gospel) && (
                   <SectionBlock title="قراءات القداس الإلهي" icon={<Church className="w-2 h-2 text-amber-700" />}>
                     <ReadingItem
                       id="l_psalm"
-                      title="مزمور القداس"
-                      content={data.readings.l_psalm}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲯⲁⲗⲙⲟⲥ ⲛ̀ⲧⲉ Ϯⲁ̀ⲛⲁⲫⲟⲣⲁ (مزمور القداس)" : "مزمور القداس"}
+                      content={currentReadings.l_psalm}
                       fontSize={fontSize}
                       isPlaying={playingKey === "l_psalm"}
                       isLoadingAudio={audioLoading === "l_psalm"}
                       isBookmarked={!!bookmarkedSections["l_psalm"]}
-                      onPlay={() => playNarration("l_psalm", data.readings.l_psalm)}
+                      onPlay={() => playNarration("l_psalm", currentReadings.l_psalm)}
                       onBookmark={() => toggleBookmark("l_psalm", "مزمور القداس")}
                     />
                     <ReadingItem
                       id="l_gospel"
-                      title="إنجيل القداس الإلهي"
-                      content={data.readings.l_gospel}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲛ̀ⲧⲉ Ϯⲁ̀ⲛⲁⲫⲟⲣⲁ (إنجيل القداس)" : "إنجيل القداس الإلهي"}
+                      content={currentReadings.l_gospel}
                       fontSize={fontSize}
                       isPlaying={playingKey === "l_gospel"}
                       isLoadingAudio={audioLoading === "l_gospel"}
                       isBookmarked={!!bookmarkedSections["l_gospel"]}
-                      onPlay={() => playNarration("l_gospel", data.readings.l_gospel)}
+                      onPlay={() => playNarration("l_gospel", currentReadings.l_gospel)}
                       onBookmark={() => toggleBookmark("l_gospel", "إنجيل القداس")}
                       highlight
                     />
@@ -624,28 +664,28 @@ export default function KatamarosPage() {
 
               {/* Vespers Tab */}
               <TabsContent value="vespers" className="space-y-1 mt-1">
-                {data.readings.v_psalm || data.readings.v_gospel ? (
+                {currentReadings.v_psalm || currentReadings.v_gospel ? (
                   <>
                     <ReadingItem
                       id="v_psalm"
-                      title="مزمور عشية"
-                      content={data.readings.v_psalm}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲯⲁⲗⲙⲟⲥ ⲛ̀ⲧⲉ ⲣⲟⲩϩⲓ (مزمور عشية)" : "مزمور عشية"}
+                      content={currentReadings.v_psalm}
                       fontSize={fontSize}
                       isPlaying={playingKey === "v_psalm"}
                       isLoadingAudio={audioLoading === "v_psalm"}
                       isBookmarked={!!bookmarkedSections["v_psalm"]}
-                      onPlay={() => playNarration("v_psalm", data.readings.v_psalm)}
+                      onPlay={() => playNarration("v_psalm", currentReadings.v_psalm)}
                       onBookmark={() => toggleBookmark("v_psalm", "مزمور عشية")}
                     />
                     <ReadingItem
                       id="v_gospel"
-                      title="إنجيل عشية"
-                      content={data.readings.v_gospel}
+                      title={readingsLang === "cop" ? "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲛ̀ⲧⲉ ⲣⲟⲩϩⲓ (إنجيل عشية)" : "إنجيل عشية"}
+                      content={currentReadings.v_gospel}
                       fontSize={fontSize}
                       isPlaying={playingKey === "v_gospel"}
                       isLoadingAudio={audioLoading === "v_gospel"}
                       isBookmarked={!!bookmarkedSections["v_gospel"]}
-                      onPlay={() => playNarration("v_gospel", data.readings.v_gospel)}
+                      onPlay={() => playNarration("v_gospel", currentReadings.v_gospel)}
                       onBookmark={() => toggleBookmark("v_gospel", "إنجيل عشية")}
                       highlight
                     />
@@ -661,24 +701,24 @@ export default function KatamarosPage() {
               <TabsContent value="matins" className="space-y-1 mt-1">
                 <ReadingItem
                   id="m_psalm"
-                  title="مزمور باكر"
-                  content={data.readings.m_psalm}
+                  title={readingsLang === "cop" ? "Ⲡⲓⲯⲁⲗⲙⲟⲥ ⲛ̀ⲧⲉ ⲧⲟⲟⲩⲓ (مزمور باكر)" : "مزمور باكر"}
+                  content={currentReadings.m_psalm}
                   fontSize={fontSize}
                   isPlaying={playingKey === "m_psalm"}
                   isLoadingAudio={audioLoading === "m_psalm"}
                   isBookmarked={!!bookmarkedSections["m_psalm"]}
-                  onPlay={() => playNarration("m_psalm", data.readings.m_psalm)}
+                  onPlay={() => playNarration("m_psalm", currentReadings.m_psalm)}
                   onBookmark={() => toggleBookmark("m_psalm", "مزمور باكر")}
                 />
                 <ReadingItem
                   id="m_gospel"
-                  title="إنجيل باكر"
-                  content={data.readings.m_gospel}
+                  title={readingsLang === "cop" ? "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲛ̀ⲧⲉ ⲧⲟⲟⲩⲓ (إنجيل باكر)" : "إنجيل باكر"}
+                  content={currentReadings.m_gospel}
                   fontSize={fontSize}
                   isPlaying={playingKey === "m_gospel"}
                   isLoadingAudio={audioLoading === "m_gospel"}
                   isBookmarked={!!bookmarkedSections["m_gospel"]}
-                  onPlay={() => playNarration("m_gospel", data.readings.m_gospel)}
+                  onPlay={() => playNarration("m_gospel", currentReadings.m_gospel)}
                   onBookmark={() => toggleBookmark("m_gospel", "إنجيل باكر")}
                   highlight
                 />
@@ -688,35 +728,35 @@ export default function KatamarosPage() {
               <TabsContent value="epistles" className="space-y-1 mt-1">
                 <ReadingItem
                   id="pauline"
-                  title="البولس (رسالة القديس بولس)"
-                  content={data.readings.pauline}
+                  title={readingsLang === "cop" ? "Ⲡⲓⲡⲁⲩⲗⲟⲥ (رسالة البولس)" : "البولس (رسالة القديس بولس)"}
+                  content={currentReadings.pauline}
                   fontSize={fontSize}
                   isPlaying={playingKey === "pauline"}
                   isLoadingAudio={audioLoading === "pauline"}
                   isBookmarked={!!bookmarkedSections["pauline"]}
-                  onPlay={() => playNarration("pauline", data.readings.pauline)}
+                  onPlay={() => playNarration("pauline", currentReadings.pauline)}
                   onBookmark={() => toggleBookmark("pauline", "رسالة البولس")}
                 />
                 <ReadingItem
                   id="catholic"
-                  title="الكاثوليكون (الرسائل الجامعة)"
-                  content={data.readings.catholic}
+                  title={readingsLang === "cop" ? "Ⲡⲓⲕⲁⲑⲟⲗⲓⲕⲟⲛ (الكاثوليكون)" : "الكاثوليكون (الرسائل الجامعة)"}
+                  content={currentReadings.catholic}
                   fontSize={fontSize}
                   isPlaying={playingKey === "catholic"}
                   isLoadingAudio={audioLoading === "catholic"}
                   isBookmarked={!!bookmarkedSections["catholic"]}
-                  onPlay={() => playNarration("catholic", data.readings.catholic)}
+                  onPlay={() => playNarration("catholic", currentReadings.catholic)}
                   onBookmark={() => toggleBookmark("catholic", "الكاثوليكون")}
                 />
                 <ReadingItem
                   id="acts"
-                  title="الإبركسيس (أعمال الرسل)"
-                  content={data.readings.acts}
+                  title={readingsLang === "cop" ? "Ⲡⲓⲡⲣⲁⲝⲓⲥ (الإبركسيس)" : "الإبركسيس (أعمال الرسل)"}
+                  content={currentReadings.acts}
                   fontSize={fontSize}
                   isPlaying={playingKey === "acts"}
                   isLoadingAudio={audioLoading === "acts"}
                   isBookmarked={!!bookmarkedSections["acts"]}
-                  onPlay={() => playNarration("acts", data.readings.acts)}
+                  onPlay={() => playNarration("acts", currentReadings.acts)}
                   onBookmark={() => toggleBookmark("acts", "الإبركسيس")}
                 />
               </TabsContent>
@@ -745,29 +785,31 @@ export default function KatamarosPage() {
               <TabsContent value="liturgy" className="space-y-1 mt-1">
                 <ReadingItem
                   id="l_psalm"
-                  title="مزمور القداس"
-                  content={data.readings.l_psalm}
+                  title={readingsLang === "cop" ? "Ⲡⲓⲯⲁⲗⲙⲟⲥ ⲛ̀ⲧⲉ Ϯⲁ̀ⲛⲁⲫⲟⲣⲁ (مزمور القداس)" : "مزمور القداس"}
+                  content={currentReadings.l_psalm}
                   fontSize={fontSize}
                   isPlaying={playingKey === "l_psalm"}
                   isLoadingAudio={audioLoading === "l_psalm"}
                   isBookmarked={!!bookmarkedSections["l_psalm"]}
-                  onPlay={() => playNarration("l_psalm", data.readings.l_psalm)}
+                  onPlay={() => playNarration("l_psalm", currentReadings.l_psalm)}
                   onBookmark={() => toggleBookmark("l_psalm", "مزمور القداس")}
                 />
                 <ReadingItem
                   id="l_gospel"
-                  title="إنجيل القداس الإلهي"
-                  content={data.readings.l_gospel}
+                  title={readingsLang === "cop" ? "Ⲡⲓⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ ⲛ̀ⲧⲉ Ϯⲁ̀ⲛⲁⲫⲟⲣⲁ (إنجيل القداس)" : "إنجيل القداس الإلهي"}
+                  content={currentReadings.l_gospel}
                   fontSize={fontSize}
                   isPlaying={playingKey === "l_gospel"}
                   isLoadingAudio={audioLoading === "l_gospel"}
                   isBookmarked={!!bookmarkedSections["l_gospel"]}
-                  onPlay={() => playNarration("l_gospel", data.readings.l_gospel)}
+                  onPlay={() => playNarration("l_gospel", currentReadings.l_gospel)}
                   onBookmark={() => toggleBookmark("l_gospel", "إنجيل القداس")}
                   highlight
                 />
               </TabsContent>
             </Tabs>
+              );
+            })()}
           </>
         ) : (
           <div className="text-center py-2.5 bg-white dark:bg-zinc-900 rounded-2xl border border-stone-200 dark:border-zinc-800 space-y-0.5">

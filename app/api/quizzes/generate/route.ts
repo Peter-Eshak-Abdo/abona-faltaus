@@ -7,13 +7,11 @@ export const runtime = "nodejs";
 export const maxDuration = 45;
 
 const MODELS = [
-  "gemini-3.6-flash",
-  "gemini-2.5-flash-lite",
-  "gemini-3.1-flash-lite",
   "gemini-2.5-flash",
-  "gemini-3-pro-preview",
+  "gemini-2.5-flash-lite",
+  "gemini-3.6-flash",
+  "gemini-3.1-flash-lite",
   "gemini-2.5-pro",
-  "gemini-3.1-pro",
 ];
 
 export async function POST(request: Request) {
@@ -62,12 +60,18 @@ export async function POST(request: Request) {
 
     for (const modelName of MODELS) {
       try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 12000); // 12s timeout per model to failover immediately
+
         const response = await generateText({
           model: google(modelName),
           system: systemPrompt,
           prompt: `قم بتوليد مسابقة متكاملة عن: ${topic}`,
           temperature: 0.7,
+          abortSignal: controller.signal,
         });
+
+        clearTimeout(timeout);
 
         const rawText = response.text.trim();
         const jsonMatch = rawText.match(/\{[\s\S]*\}/);

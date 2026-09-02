@@ -4,9 +4,7 @@ import { FaPlay, FaStop, FaSearch, FaStar, FaPlusSquare, FaSpinner, FaArrowRight
 import { useState, useRef, useEffect } from "react";
 import localforage from "localforage";
 import { useTranslations } from "next-intl";
-
-type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
-type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
+import type { BookObj, VerseObj } from "@/lib/bible-utils";
 
 type ReadingControlsHeaderProps = {
   bibleData: BookObj[];
@@ -17,6 +15,8 @@ type ReadingControlsHeaderProps = {
   fontSize: number;
   setFontSize: (fn: (prev: number) => number) => void;
   setIsSearchOpen: (open: boolean) => void;
+  language?: "ar" | "cop";
+  onLanguageChange?: (lang: "ar" | "cop") => void;
 };
 
 export default function ReadingControlsHeader({
@@ -28,6 +28,8 @@ export default function ReadingControlsHeader({
   fontSize,
   setFontSize,
   setIsSearchOpen,
+  language = "ar",
+  onLanguageChange,
 }: ReadingControlsHeaderProps) {
   const t = useTranslations('Bible');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -158,6 +160,23 @@ export default function ReadingControlsHeader({
       </div>
 
       <div className="flex flex-wrap gap-0.5 mt-0.5 px-0.5 z-20 justify-around">
+        {onLanguageChange && (
+          <div className="flex bg-zinc-200 dark:bg-zinc-800 p-0.5 rounded-lg text-xs font-bold">
+            <button
+              onClick={() => onLanguageChange("ar")}
+              className={`px-1.5 py-0.5 rounded-md transition ${language === "ar" ? "bg-blue-600 text-white shadow" : "text-zinc-600 dark:text-zinc-300"}`}
+            >
+              عربي
+            </button>
+            <button
+              onClick={() => onLanguageChange("cop")}
+              className={`px-1.5 py-0.5 rounded-md transition ${language === "cop" ? "bg-amber-600 text-white shadow" : "text-zinc-600 dark:text-zinc-300"}`}
+            >
+              ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ (قبطي)
+            </button>
+          </div>
+        )}
+
         <button onClick={() => setFontSize(prev => prev + 2)} className="p-0.5 bg-cyan-200 text-on-surface text-xl rounded-lg font-bold">A+</button>
         <button onClick={() => setFontSize(prev => prev - 2)} className="p-0.5 bg-cyan-200 text-on-surface text-sm rounded-lg font-bold">A-</button>
 

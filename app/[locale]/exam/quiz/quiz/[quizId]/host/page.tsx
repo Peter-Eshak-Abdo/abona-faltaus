@@ -51,17 +51,8 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
   const refreshAllData = async () => {
     try {
       setLoading(true);
-      // نطلب المسابقة سواء كانت بالـ id أو بالكود (8 إلى 10 أرقام)
-      let query = supabase.from("quizzes").select("*");
-      if (/^\d{8,10}$/.test(quizId)) {
-        query = query.eq("code", quizId);
-      } else {
-        query = query.eq("id", quizId);
-      }
-
-      const { data: qData, error: qError } = await query.maybeSingle();
-
-      if (qError) throw qError;
+      const { getQuiz } = await import("@/lib/supabase-utils");
+      const qData = await getQuiz(quizId);
 
       if (qData) {
         setQuiz(qData);
@@ -70,7 +61,9 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
         // التحقق لو المستخدم هو المنشئ أو تم التحقق منه مسبقاً
         const { data: userData } = await supabase.auth.getUser();
         const storedAuth = sessionStorage.getItem(`quiz_admin_auth_${actualQuizId}`);
-        if (storedAuth === "true" || (userData?.user?.id && userData.user.id === qData.created_by) || !qData.admin_code) {
+        const createdBy = (qData as any).created_by || (qData as any).createdBy;
+        const adminCode = (qData as any).admin_code;
+        if (storedAuth === "true" || (userData?.user?.id && userData.user.id === createdBy) || !adminCode) {
           setIsAuthorized(true);
         }
 

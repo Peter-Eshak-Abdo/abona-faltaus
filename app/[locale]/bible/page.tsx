@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import localforage from "localforage";
-import { loadBible } from "@/lib/bible-utils";
+import { loadBible, loadCopticBible } from "@/lib/bible-utils";
 import { useTranslations } from "next-intl";
 
 // Components
@@ -12,12 +12,12 @@ import DayModal from "@/components/bible/DayModal";
 import ReadingControlsHeader from "@/components/bible/ReadingControlsHeader";
 import VerseItem from "@/components/bible/VerseItem";
 
-type VerseObj = { verse: number; text_plain: string; text_vocalized: string };
-type BookObj = { abbrev: string; name: string; chapters: VerseObj[][] };
+import type { BookObj, VerseObj } from "@/lib/bible-utils";
 
 export default function BibleReaderPage() {
   const t = useTranslations('Bible');
   const [bibleData, setBibleData] = useState<BookObj[]>([]);
+  const [language, setLanguage] = useState<"ar" | "cop">("ar");
   const [isLoading, setIsLoading] = useState(true);
   const [loadingStatus, setLoadingStatus] = useState(t('connectingServer'));
   const [loadProgress, setLoadProgress] = useState(0);
@@ -44,6 +44,45 @@ export default function BibleReaderPage() {
     t('tips.5'),
   ];
 
+  const loadBibleByLanguage = async (targetLang: "ar" | "cop") => {
+    try {
+      setIsLoading(true);
+      setLoadProgress(0);
+      setLoadingStatus(targetLang === "cop" ? "جاري تحميل الكتاب المقدس بالقبطية..." : t('loadingData'));
+
+      const cacheKey = targetLang === "cop" ? "offline_coptic_bible_data" : "offline_bible_data";
+      let data = await localforage.getItem<BookObj[]>(cacheKey);
+
+      if (!data || data.length === 0) {
+        if (targetLang === "cop") {
+          data = await loadCopticBible((p) => setLoadProgress(p));
+        } else {
+          data = (await loadBible((p) => setLoadProgress(p))) as BookObj[];
+        }
+        if (data && data.length > 0) {
+          await localforage.setItem(cacheKey, data);
+        }
+      } else {
+        setLoadProgress(100);
+      }
+
+      if (data && data.length > 0) {
+        setBibleData(data);
+        setCurrentBookIdx((prev) => Math.min(prev, data!.length - 1));
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error loading bible language:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleLanguageChange = (lang: "ar" | "cop") => {
+    setLanguage(lang);
+    localStorage.setItem("bible_reader_lang", lang);
+    loadBibleByLanguage(lang);
+  };
+
   useEffect(() => {
     const initData = async () => {
       try {
@@ -51,14 +90,21 @@ export default function BibleReaderPage() {
         setLoadProgress(0);
         setLoadingStatus(t('checkingCache'));
 
-        let data = await localforage.getItem<BookObj[]>("offline_bible_data");
-        let shouldRefresh = false;
+        const savedLang = (localStorage.getItem("bible_reader_lang") as "ar" | "cop") || "ar";
+        setLanguage(savedLang);
+
+        const cacheKey = savedLang === "cop" ? "offline_coptic_bible_data" : "offline_bible_data";
+        let data = await localforage.getItem<BookObj[]>(cacheKey);
 
         if (!data || data.length === 0) {
-          setLoadingStatus(t('loadingData'));
-          data = (await loadBible((p) => setLoadProgress(p))) as BookObj[];
+          setLoadingStatus(savedLang === "cop" ? "جاري تحميل الكتاب المقدس بالقبطية..." : t('loadingData'));
+          if (savedLang === "cop") {
+            data = await loadCopticBible((p) => setLoadProgress(p));
+          } else {
+            data = (await loadBible((p) => setLoadProgress(p))) as BookObj[];
+          }
           if (data && data.length > 0) {
-            await localforage.setItem("offline_bible_data", data);
+            await localforage.setItem(cacheKey, data);
           }
         } else {
           setLoadProgress(100);
@@ -94,7 +140,6 @@ export default function BibleReaderPage() {
         isInitialized.current = true;
       } catch (error) {
         console.error("Error during initialization:", error);
-        // حتى لو حصل خطأ أثناء التحميل، نحاول نقرأ من الكاش لو موجود
         const fallbackData = await localforage.getItem<BookObj[]>("offline_bible_data");
         if (fallbackData && fallbackData.length > 0) {
           setBibleData(fallbackData);
@@ -174,6 +219,8 @@ export default function BibleReaderPage() {
               fontSize={fontSize}
               setFontSize={setFontSize}
               setIsSearchOpen={setIsSearchOpen}
+              language={language}
+              onLanguageChange={handleLanguageChange}
             />
 
             <section className="grow flex flex-col relative max-w-8xl mx-auto w-full">

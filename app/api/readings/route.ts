@@ -10,6 +10,7 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const READINGS_ANNUAL_DIR = path.join(DATA_DIR, "coptish-datastore", "output", "readings", "annual");
 const SYNAXARIUM_DIR = path.join(DATA_DIR, "coptish-datastore", "data", "readings", "synaxarium");
 const BIBLE_FILE = path.join(process.cwd(), "public", "bible-json", "bible_fixed.json");
+const COPTIC_BIBLE_FILE = path.join(process.cwd(), "public", "bible-json", "coptic_bible.json");
 
 const MONTH_SLUGS: Record<number, string> = {
   1: "tout", 2: "baba", 3: "hator", 4: "kiahk", 5: "toba",
@@ -18,6 +19,7 @@ const MONTH_SLUGS: Record<number, string> = {
 };
 
 let bibleCache: Record<string, any> | null = null;
+let copticBibleCache: Record<string, any> | null = null;
 const BOOK_NAME_MAP: Record<string, string> = {};
 
 function normalizeArabicText(str = "") {
@@ -79,10 +81,10 @@ function initBookNameMap() {
 }
 
 function loadBible() {
-  if (bibleCache) return;
+  if (bibleCache && copticBibleCache) return;
   try {
     initBookNameMap();
-    if (fs.existsSync(BIBLE_FILE)) {
+    if (!bibleCache && fs.existsSync(BIBLE_FILE)) {
       const rawBible = JSON.parse(fs.readFileSync(BIBLE_FILE, "utf-8"));
       bibleCache = {};
       rawBible.forEach((book: any) => {
@@ -90,6 +92,40 @@ function loadBible() {
           bibleCache[book.abbrev] = book;
         }
       });
+    }
+
+    if (!copticBibleCache && fs.existsSync(COPTIC_BIBLE_FILE)) {
+      const rawCoptic = JSON.parse(fs.readFileSync(COPTIC_BIBLE_FILE, "utf-8"));
+      copticBibleCache = {};
+      
+      const ABBREV_MAP: Record<string, string> = {
+        Genesis: "gn", Exodus: "ex", Leviticus: "lv", Numeri: "nm", Deuteronomium: "dt",
+        Joshua: "js", Judges: "jd", Ruth: "rt", Iob: "job", Job: "job", Psalmi: "ps",
+        Proverbs: "pr", Ecclesiastes: "ec", Song: "so", Wisdom: "wi", Sirach: "sir",
+        Esther: "es", Judith: "jdt", Tobit: "to", Baruch: "bar", Isaias: "is",
+        Ieremias: "jr", Lamentationes: "la", Ezechiel: "ez", Daniel: "dn",
+        Osee: "ho", Ioel: "jl", Amos: "am", Abdias: "ob", Ionas: "jon", Michaeas: "mic",
+        Nahum: "na", Habacuc: "hab", Sophonias: "zep", Aggaeus: "hg", Zacharias: "zec", Malachias: "mal",
+        MAT: "mt", MRK: "mk", LUK: "lk", JHN: "jn", ACT: "ac", ROM: "ro",
+        "1CO": "1co", "2CO": "2co", GAL: "ga", EPH: "ep", PHP: "php", COL: "col",
+        "1TH": "1th", "2TH": "2th", "1TI": "1ti", "2TI": "2ti", TIT: "ti", PHM: "phm",
+        HEB: "hb", JAS: "ja", "1PE": "1pe", "2PE": "2pe", "1JN": "1jn", "2JN": "2jn",
+        "3JN": "3jn", JUD: "jude", REV: "re"
+      };
+
+      const processCopticSection = (sec: Record<string, any>) => {
+        for (const [bName, chMap] of Object.entries(sec)) {
+          const abbrev = ABBREV_MAP[bName] || bName.toLowerCase();
+          copticBibleCache![abbrev] = {
+            name: bName,
+            chapters: chMap
+          };
+        }
+      };
+
+      if (rawCoptic.old_testament) processCopticSection(rawCoptic.old_testament);
+      if (rawCoptic.old_testament_sahidic_supplements) processCopticSection(rawCoptic.old_testament_sahidic_supplements);
+      if (rawCoptic.new_testament) processCopticSection(rawCoptic.new_testament);
     }
   } catch (err) {
     console.error("[readings API] Bible loading error:", err);
@@ -141,8 +177,34 @@ function fetchVocalizedVerses(bookAbbrev: string, startChap: number, startVerse:
   return verses.join(" ");
 }
 
-function parseAndGetVocalizedReading(referenceStr: string): string {
-  if (!referenceStr || !bibleCache) return "";
+function fetchCopticVerses(bookAbbrev: string, startChap: number, startVerse: number, endChap: number, endVerse: number): string {
+  if (!copticBibleCache || !copticBibleCache[bookAbbrev]) return "";
+  const book = copticBibleCache[bookAbbrev];
+  const verses: string[] = [];
+
+  for (let c = startChap; c <= endChap; c++) {
+    const chapterObj = book.chapters?.[String(c)] || book.chapters?.[c];
+    if (!chapterObj) continue;
+
+    const fromV = (c === startChap) ? startVerse : 1;
+    const allVNums = Object.keys(chapterObj).map(Number).sort((a, b) => a - b);
+    const toV = (c === endChap) ? endVerse : (allVNums.length ? Math.max(...allVNums) : 999);
+
+    for (let v = fromV; v <= toV; v++) {
+      const vData = chapterObj[String(v)] || chapterObj[v];
+      if (vData && vData.coptic) {
+        verses.push(`${vData.coptic} (${v})`);
+      }
+    }
+  }
+
+  return verses.join(" ");
+}
+
+function parseAndGetVocalizedReading(referenceStr: string, isCoptic = false): string {
+  if (!referenceStr) return "";
+  if (!isCoptic && !bibleCache) return "";
+  if (isCoptic && !copticBibleCache) return "";
   
   // Split multiple parts joined by &, +, or comma when separate passages
   const segments = referenceStr.split(/\s*(?:&|\band\b|\+)\s*/i);
@@ -171,7 +233,9 @@ function parseAndGetVocalizedReading(referenceStr: string): string {
 
       const abbrev = findBookAbbrev(rawBook);
       if (abbrev) {
-        const text = fetchVocalizedVerses(abbrev, startChap, startVerse, endChap, endVerse);
+        const text = isCoptic
+          ? fetchCopticVerses(abbrev, startChap, startVerse, endChap, endVerse)
+          : fetchVocalizedVerses(abbrev, startChap, startVerse, endChap, endVerse);
         if (text) vocalizedParts.push(text);
       }
     }
@@ -214,7 +278,7 @@ function loadSynaxariumForDay(month: number, day: number) {
   }
 }
 
-function extractSectionTextWithVocalizedBible(sectionArray: any[]): string {
+function extractSectionTextWithVocalizedBible(sectionArray: any[], isCoptic = false): string {
   if (!Array.isArray(sectionArray) || sectionArray.length === 0) return "";
   const parts: string[] = [];
 
@@ -223,9 +287,9 @@ function extractSectionTextWithVocalizedBible(sectionArray: any[]): string {
     const refAr = item?.title?.arabic || "";
     const refEn = item?.title?.english || "";
     
-    let vocalized = parseAndGetVocalizedReading(refAr);
+    let vocalized = parseAndGetVocalizedReading(refAr, isCoptic);
     if (!vocalized && refEn) {
-      vocalized = parseAndGetVocalizedReading(refEn);
+      vocalized = parseAndGetVocalizedReading(refEn, isCoptic);
     }
 
     if (vocalized) {
@@ -236,10 +300,13 @@ function extractSectionTextWithVocalizedBible(sectionArray: any[]): string {
     // 2. Fallback to datastore text
     if (Array.isArray(item?.text)) {
       for (const t of item.text) {
-        if (t?.arabic) parts.push(t.arabic);
+        if (isCoptic && t?.coptic) parts.push(t.coptic);
+        else if (!isCoptic && t?.arabic) parts.push(t.arabic);
         else if (typeof t === "string") parts.push(t);
       }
-    } else if (item?.text?.arabic) {
+    } else if (isCoptic && item?.text?.coptic) {
+      parts.push(item.text.coptic);
+    } else if (!isCoptic && item?.text?.arabic) {
       parts.push(item.text.arabic);
     } else if (typeof item?.text === "string") {
       parts.push(item.text);
@@ -303,12 +370,25 @@ export async function POST(request: Request) {
       l_gospel: extractSectionTextWithVocalizedBible(annualReadingData?.["liturgy-gospel"]),
     };
 
+    const coptic_readings = {
+      v_psalm: extractSectionTextWithVocalizedBible(annualReadingData?.["vespers-psalm"], true),
+      v_gospel: extractSectionTextWithVocalizedBible(annualReadingData?.["vespers-gospel"], true),
+      m_psalm: extractSectionTextWithVocalizedBible(annualReadingData?.["matins-psalm"], true),
+      m_gospel: extractSectionTextWithVocalizedBible(annualReadingData?.["matins-gospel"], true),
+      pauline: extractSectionTextWithVocalizedBible(annualReadingData?.["pauline-epistle"], true),
+      catholic: extractSectionTextWithVocalizedBible(annualReadingData?.["catholic-epistle"], true),
+      acts: extractSectionTextWithVocalizedBible(annualReadingData?.["acts-of-the-apostles"], true),
+      l_psalm: extractSectionTextWithVocalizedBible(annualReadingData?.["liturgy-psalm"], true),
+      l_gospel: extractSectionTextWithVocalizedBible(annualReadingData?.["liturgy-gospel"], true),
+    };
+
     const response = {
       title: liturgicalContext.nameAr || "قراءات اليوم المبارك",
       season: liturgicalContext.season || "annual",
       dayTune: liturgicalContext.tune || "annual",
       liturgicalContext,
       readings,
+      coptic_readings,
       synaxarium: synaxariumEntries,
     };
 

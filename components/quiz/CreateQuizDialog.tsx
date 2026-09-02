@@ -239,29 +239,29 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
     setIsGeneratingAi(true);
     setAiProgress(0);
 
-    // تقدير الوقت بناء على عدد الأسئلة (مثلاً 5 أسئلة تأخذ تقريباً 10 إلى 15 ثانية)
-    const estimatedTotalSeconds = Math.max(10, Math.round(aiCount * 1.8));
+    // حساب وقت واقعي وديناميكي
+    const estimatedTotalSeconds = Math.max(12, Math.round(aiCount * 2.5));
     setAiTimeLeft(estimatedTotalSeconds);
-    setAiStatusMessage("جاري تحليل الموضوع وصياغة الأسئلة...");
+    setAiStatusMessage("جاري الاتصال بالذكاء الاصطناعي وصياغة الأسئلة...");
 
-    let progressVal = 0;
-    let secondsRemaining = estimatedTotalSeconds;
-
+    let elapsed = 0;
     const interval = setInterval(() => {
-      secondsRemaining = Math.max(1, secondsRemaining - 1);
-      setAiTimeLeft(secondsRemaining);
+      elapsed += 0.5;
+      const remaining = Math.max(1, Math.round(estimatedTotalSeconds - elapsed));
+      setAiTimeLeft(remaining);
 
-      progressVal = Math.min(95, progressVal + (95 / (estimatedTotalSeconds * 2)));
-      setAiProgress(Math.round(progressVal));
+      // يرتفع التقدم تدريجياً حتى 92% وينتظر الاستجابة
+      const progressVal = Math.min(92, Math.round((elapsed / estimatedTotalSeconds) * 90));
+      setAiProgress(progressVal);
 
-      if (progressVal < 30) {
-        setAiStatusMessage("جاري استحضار المراجع والشواهد الكتابية...");
-      } else if (progressVal < 65) {
-        setAiStatusMessage("جاري كتابة الأسئلة والخيارات الذكية وتحديد الإجابات...");
-      } else if (progressVal < 90) {
-        setAiStatusMessage("جاري ضبط مستويات الصعوبة والمراجعة الأرثوذكسية...");
+      if (elapsed < 4) {
+        setAiStatusMessage("جاري استحضار الشواهد الكتابية والمراجع الأرثوذكسية...");
+      } else if (elapsed < 10) {
+        setAiStatusMessage("جاري صياغة الأسئلة والخيارات الذكية وتحديد الإجابات...");
+      } else if (elapsed < 16) {
+        setAiStatusMessage("جاري مراجعة دقة الإجابات وتوزيع درجات الصعوبة...");
       } else {
-        setAiStatusMessage("جاري وضع اللمسات الأخيرة وإعداد المسابقة...");
+        setAiStatusMessage("جاري التجهيز النهائي للمسابقة...");
       }
     }, 500);
 
@@ -461,7 +461,7 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                     <Button
                       onClick={handleGenerateWithAi}
                       disabled={isGeneratingAi || !aiTopic.trim()}
-                      className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-0.25"
+                      className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-0.25 w-6"
                     >
                       <Sparkles className="w-3 h-3" />
                       توليد الأسئلة 🪄

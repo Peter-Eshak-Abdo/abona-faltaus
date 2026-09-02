@@ -147,7 +147,7 @@ export default function Dashboard() {
         // جلب تفاصيل المسابقات المحفوظة في تاريخ الكود المحلي إن لم تكن مكررة
         const validIds = localHistory.map((h) => h.id).filter((id): id is string => !!id && typeof id === "string" && id.includes("-"));
         const validCodes = localHistory.map((h) => h.code).filter((c): c is string => !!c && typeof c === "string");
-        
+
         let historyQuizzes: any[] = [];
 
         if (validIds.length > 0) {
@@ -187,7 +187,14 @@ export default function Dashboard() {
         // دمج النتائج بدون تكرار
         const quizMap = new Map();
         [...userQuizzes, ...historyQuizzes].forEach((q) => {
-          if (q?.id) quizMap.set(q.id, q);
+          if (q?.id) {
+            // إذا لم يكن بالمسابقة كود رقمي ووجد في التاريخ المحلي نرفقه بها
+            const historyItem = localHistory.find((h) => h.id === q.id);
+            if (!q.code && historyItem?.code) {
+              q.code = historyItem.code;
+            }
+            quizMap.set(q.id, q);
+          }
         });
 
         combinedQuizzes = Array.from(quizMap.values());
@@ -220,7 +227,7 @@ export default function Dashboard() {
     if (e) e.preventDefault();
     const cleanCode = codeInput.trim();
     if (cleanCode.length < 8 || cleanCode.length > 10) {
-      setCodeError("الكود يجب أن يكون بين 8 إلى 10 أرقام");
+      setCodeError(t("codeLengthError") || "الكود يجب أن يكون بين 8 إلى 10 أرقام");
       return;
     }
 
@@ -228,7 +235,14 @@ export default function Dashboard() {
     setCodeError("");
 
     try {
-      const quiz = await getQuiz(cleanCode);
+      // 1. نبحث أولاً في المسابقات المحملة مسبقاً في الصفحة
+      let quiz = quizzes.find((q) => q.code === cleanCode || q.id === cleanCode || q.admin_code === cleanCode);
+
+      // 2. إذا لم تكن في الصفحة، نبحث في قاعدة البيانات والكاش
+      if (!quiz) {
+        quiz = await getQuiz(cleanCode);
+      }
+
       if (!quiz) {
         setCodeError(t("quizNotFound"));
         return;
@@ -236,10 +250,11 @@ export default function Dashboard() {
 
       // حفظ في التاريخ المحلي
       saveToHistory(quiz.id, cleanCode, quiz.title);
+      sessionStorage.setItem(`quiz_admin_auth_${quiz.id}`, "true");
       toast.success(t("quizFound", { title: quiz.title }));
       router.push(`/exam/quiz/quiz/${quiz.id}/host`);
     } catch (err) {
-      console.error(err);
+      console.error("handleEnterByCode error:", err);
       setCodeError(t("searchError"));
     } finally {
       setIsEnteringCode(false);
@@ -321,7 +336,7 @@ export default function Dashboard() {
           )}
           <Button
             onClick={handleCreateNew}
-            className="gap-0.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base rounded-2xl h-3 px-1 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]"
+            className="gap-0.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base rounded-2xl h-3 px-1 shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] w-8"
           >
             <Plus size={18} /> {t("newQuiz")}
           </Button>
@@ -352,7 +367,7 @@ export default function Dashboard() {
             <Button
               type="submit"
               disabled={isEnteringCode || codeInput.length < 8 || codeInput.length > 10}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-1 h-3 rounded-2xl text-sm shadow-md transition disabled:opacity-50"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-1 h-3 rounded-2xl text-sm shadow-md transition disabled:opacity-50 w-6"
             >
               {isEnteringCode ? t("searching") : t("enterBtn")}
             </Button>

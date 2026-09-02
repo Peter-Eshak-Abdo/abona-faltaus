@@ -97,7 +97,7 @@ export function QuizCard({ quiz, onEdit, onDelete, index}: any) {
           <h3 className="text-xl font-bold mb-0.25 text-zinc-900 dark:text-zinc-100 truncate">{quiz.title}</h3>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-0.5 line-clamp-2 min-h-[32px]">{quiz.description || "لا يوجد وصف"}</p>
 
-          {/* كود المسابقة */}
+          {/* كود المسابقة الرقمي */}
           {(quiz.code || quiz.admin_code) && (
             <div className="flex items-center justify-between bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 px-0.5 py-0.25 rounded-2xl mb-0.5">
               <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">كود المسابقة:</span>

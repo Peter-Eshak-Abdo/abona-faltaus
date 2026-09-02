@@ -69,3 +69,9 @@ public/*.zip
 /St.Mary Elnozha Liturgy Powerpoint/
 
 /rag/**.pdf
+
+# Coptic raw datasets & build scripts
+/data/coptic_bible/
+scripts/build_coptic_bible.py
+scripts/integrate_sahidic_supplements.py
+scripts/upload_coptic_bible_to_supabase.py

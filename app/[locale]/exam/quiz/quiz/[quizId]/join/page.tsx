@@ -24,19 +24,8 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
 
   useEffect(() => {
     const fetchQuiz = async () => {
-      const isNumericCode = /^\d{8,10}$/.test(quizId);
-      let query = supabase.from("quizzes").select("*");
-      if (isNumericCode) {
-        query = query.eq("code", quizId);
-      } else {
-        query = query.eq("id", quizId);
-      }
-
-      let { data } = await query.maybeSingle();
-      if (!data && isNumericCode) {
-        const { data: byAdmin } = await supabase.from("quizzes").select("*").eq("admin_code", quizId).maybeSingle();
-        if (byAdmin) data = byAdmin;
-      }
+      const { getQuiz } = await import("@/lib/supabase-utils");
+      const data = await getQuiz(quizId);
 
       if (data) {
         setQuiz(data);

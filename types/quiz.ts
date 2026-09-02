@@ -10,6 +10,7 @@ export interface Question {
 export interface Quiz {
   id: string;
   code?: string;
+  admin_code?: string;
   title: string;
   description: string;
   created_by: string;

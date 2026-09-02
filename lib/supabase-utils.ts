@@ -57,31 +57,22 @@ export const createQuiz = async (quiz: Omit<Quiz, "id" | "createdAt"> & { code?:
 export const getQuiz = async (quizIdOrCode: string): Promise<Quiz | null> => {
   const clean = quizIdOrCode.trim();
   const isNumericCode = /^\d{8,10}$/.test(clean);
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean);
 
   let data: any = null;
 
   if (isNumericCode) {
-    // 1. نبحث أولاً في حقل code إن كان موجوداً
+    // البحث في admin_code
     try {
-      const res = await supabase.from("quizzes").select("*").eq("code", clean).maybeSingle();
+      const res = await supabase.from("quizzes").select("*").eq("admin_code", clean).maybeSingle();
       if (res.data) data = res.data;
     } catch {
       // ignore
     }
-
-    // 2. إذا لم نجد، نبحث في admin_code
-    if (!data) {
-      try {
-        const res = await supabase.from("quizzes").select("*").eq("admin_code", clean).maybeSingle();
-        if (res.data) data = res.data;
-      } catch {
-        // ignore
-      }
-    }
   }
 
-  // 3. إذا لم يكن كود رقمي أو لم نجد بالكود، نبحث بالـ id أو كود نصي
-  if (!data) {
+  // 3. إذا كان UUID صالحاً نبحث في حقل id
+  if (!data && isUUID) {
     try {
       const res = await supabase.from("quizzes").select("*").eq("id", clean).maybeSingle();
       if (res.data) data = res.data;
@@ -90,12 +81,40 @@ export const getQuiz = async (quizIdOrCode: string): Promise<Quiz | null> => {
     }
   }
 
-  if (!data && !isNumericCode) {
+  // 4. إذا لم يكن كود رقمي ولا UUID نبحث ككود نصي في admin_code
+  if (!data && !isNumericCode && !isUUID) {
     try {
       const res = await supabase.from("quizzes").select("*").eq("admin_code", clean.toUpperCase()).maybeSingle();
       if (res.data) data = res.data;
     } catch {
       // ignore
+    }
+  }
+
+  // 5. إذا لم نجد في السيرفر، نبحث في التاريخ المحلي والكاش
+  if (!data && typeof window !== "undefined") {
+    try {
+      const savedHistory = localStorage.getItem("my_quizzes_history");
+      if (savedHistory) {
+        const history: any[] = JSON.parse(savedHistory);
+        const match = history.find((h) => h.code === clean || h.id === clean);
+        if (match && match.id) {
+          const res = await supabase.from("quizzes").select("*").eq("id", match.id).maybeSingle();
+          if (res.data) {
+            data = res.data;
+            if (!data.code && match.code) data.code = match.code;
+          }
+        }
+      }
+
+      if (!data) {
+        const { getLocalQuizList } = await import("@/lib/offline-quiz-store");
+        const localList = await getLocalQuizList();
+        const localMatch = localList.find((q: any) => q.code === clean || q.id === clean || q.admin_code === clean);
+        if (localMatch) data = localMatch;
+      }
+    } catch (e) {
+      console.warn("Local lookup fallback error:", e);
     }
   }
 
@@ -110,7 +129,7 @@ export const getQuiz = async (quizIdOrCode: string): Promise<Quiz | null> => {
     questions: data.questions,
     shuffleQuestions: data.shuffle_questions,
     shuffleChoices: data.shuffle_choices,
-    createdAt: new Date(data.created_at),
+    createdAt: new Date(data.created_at || Date.now()),
     createdBy: data.created_by,
   } as unknown as Quiz;
 };
