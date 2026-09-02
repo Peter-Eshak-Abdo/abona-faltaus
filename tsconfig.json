@@ -46,7 +46,8 @@
 , "scripts/test-kholagi.js", "upload.mjs"  ],
   "exclude": [
     "node_modules",
-    "functions"
+    "functions",
+    "data/coptish-datastore"
   ],
   "target": "es5",
   "lib": [
