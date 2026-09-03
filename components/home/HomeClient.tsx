@@ -23,6 +23,8 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import Background from "./Background";
 import Widgets from "./Widgets";
+import { MysteriousExperience } from "./MysteriousExperience";
+import { Trophy } from "lucide-react";
 import ServantOnboardingTour from "./ServantOnboardingTour";
 
 const getCopticDate = () => {
@@ -49,6 +51,7 @@ export default function HomeClient() {
       { name: t("sections.synaxarium"), href: "/synaxarium", icon: <FaSun /> },
       { name: t("sections.preparation"), href: "/preparation", icon: <FaFileAlt /> },
       { name: t("sections.exams"), href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
+      { name: "استبيانات واستمارات الخدمة", href: "/forms", icon: <FaFileAlt /> },
       { name: "صندوق الصراحة والأسئلة", href: "/saraha", icon: <FaChurch /> },
       { name: t("sections.chat"), href: "/chat", icon: <FaFileAlt />, requiresAuth: true },
       { name: t("sections.settings"), href: "/settings", icon: <FaCog /> },
@@ -67,6 +70,17 @@ export default function HomeClient() {
   const [showExploreHint, setShowExploreHint] = useState(false);
   const [menuRadius, setMenuRadius] = useState(135);
   const [isMobile, setIsMobile] = useState(false);
+  const [quizLevel, setQuizLevel] = useState(1);
+
+  useEffect(() => {
+    try {
+      const savedStats = localStorage.getItem("church_quiz_user_profile");
+      if (savedStats) {
+        const parsed = JSON.parse(savedStats);
+        if (parsed.currentLevel) setQuizLevel(parsed.currentLevel);
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -206,6 +220,28 @@ export default function HomeClient() {
       <UserHeader /> */}
       <Background />
       <Widgets showMenu={showMenu} />
+      <MysteriousExperience />
+
+      {/* Standalone Individual Exam Button with Level */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="fixed top-20 left-4 z-30 pointer-events-auto"
+      >
+        <Link href="/exam/individual-questions">
+          <div className="bg-white/80 dark:bg-zinc-900/90 backdrop-blur-md border border-amber-500/40 shadow-xl px-0.5 py-0.5 rounded-2xl flex items-center gap-0.5 hover:scale-105 transition-all text-xs sm:text-sm group">
+            <div className="w-7 h-7 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+              <Trophy size={16} className="group-hover:rotate-12 transition-transform" />
+            </div>
+            <div className="text-right">
+              <div className="font-bold text-stone-800 dark:text-zinc-200">الامتحان الفردي</div>
+              <div className="text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                المستوى {quizLevel}
+              </div>
+            </div>
+          </div>
+        </Link>
+      </motion.div>
 
       {/* <div className="relative z-20 w-dvw h-dvh"> */}
       <div className="absolute inset-0 z-20 w-full h-full pointer-events-none">

@@ -23,6 +23,7 @@ export interface LiturgyVerse {
   english?: string;
   hymnRef?: LiturgyHymnRef;
   slide_number?: number;
+  buttons?: { label: string; target: string; targetId?: string }[];
 }
 
 export interface LiturgySection {
@@ -40,6 +41,7 @@ export interface LiturgySection {
   };
   verses: LiturgyVerse[];
   hyperlinks?: LiturgyHyperlink[];
+  buttons?: { label: string; target: string; targetId?: string }[];
   source_file?: string;
   start_slide?: number;
 }

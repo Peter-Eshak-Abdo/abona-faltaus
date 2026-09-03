@@ -221,22 +221,6 @@ export default function TasbehaVerseCard({
         </div>
       )}
 
-      {/* Interactive Hyperlinks / Options */}
-      {section.hyperlinks && section.hyperlinks.length > 0 && (
-        <div className="mb-0.5 flex flex-wrap items-center gap-0.5 p-0.5 rounded-xl bg-blue-500/10 border border-blue-500/30">
-          <span className="text-xs font-bold text-blue-400">🔗 خيارات وانتقالات التسبحة:</span>
-          {section.hyperlinks.map((hl, hIdx) => (
-            <span
-              key={hIdx}
-              className="inline-flex items-center gap-0.25 px-0.5 py-0.25 rounded-lg bg-blue-500/20 text-blue-200 border border-blue-500/30 text-xs font-semibold hover:bg-blue-500/30 transition cursor-pointer shadow-xs"
-              title={hl.target}
-            >
-              <span>{hl.text}</span>
-            </span>
-          ))}
-        </div>
-      )}
-
       {/* Verses Container */}
       <div className="space-y-0.5">
         {section.verses.map((verse, vIdx) => {
@@ -315,6 +299,30 @@ export default function TasbehaVerseCard({
                     <FaMusic className="text-blue-400" />
                     <span>تسجيل اللحن ومذكرة الهزات: {verse.hymnRef.name}</span>
                   </button>
+                </div>
+              )}
+
+              {/* أزرار الانتقال والروابط التشعبية الخاصة بهذا الربع مباشرة من تحت */}
+              {verse.buttons && verse.buttons.length > 0 && (
+                <div className="mt-0.5 pt-0.5 border-t border-white/5 flex flex-wrap items-center gap-0.5 bg-amber-950/20 p-0.5 rounded-xl border border-amber-500/20">
+                  <span className="text-[11px] font-bold text-amber-400">🔗 روابط تشعبية تابعة لهذا الربع:</span>
+                  {verse.buttons.map((btn, bIdx) => (
+                    <button
+                      key={bIdx}
+                      onClick={() => {
+                        const targetId = btn.targetId || btn.target;
+                        const el = document.getElementById(`sec-${targetId}`) || document.getElementById(targetId);
+                        if (el) {
+                          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        } else {
+                          toast.info(`الانتقال إلى: ${btn.label}`);
+                        }
+                      }}
+                      className="px-0.5 py-0.5 rounded-lg text-xs font-bold bg-amber-600/30 hover:bg-amber-600 text-amber-200 hover:text-white border border-amber-500/40 transition flex items-center gap-0.5 shadow-xs"
+                    >
+                      <span>{btn.label}</span>
+                    </button>
+                  ))}
                 </div>
               )}
             </div>

@@ -1,25 +1,18 @@
 import { TasbehaDocument, ParticipantRole } from './types';
-import { midnightTasbeha } from './data/midnight';
-import { vespersTasbeha } from './data/vespers';
-import { matinsTasbeha } from './data/matins';
+import elnozhaTasbehaData from './data/elnozha_tasbeha.json';
 import { kiahkTasbeha } from './data/kiahk';
 
-import fullTasbehaData from './data/full_tasbeha_data.json';
-
 export * from './types';
-export { midnightTasbeha, vespersTasbeha, matinsTasbeha, kiahkTasbeha };
 
+// الملفات الثلاثة الكاملة المستخرجة بالكامل من باوربوينت كنيسة السيدة العذراء بالنزهة (عشية - نصف الليل - باكر)
 export const ALL_TASBEHA: TasbehaDocument[] = [
-  midnightTasbeha,
-  vespersTasbeha,
-  matinsTasbeha,
+  ...(elnozhaTasbehaData as any as TasbehaDocument[]),
   kiahkTasbeha,
-  ...(fullTasbehaData as any as TasbehaDocument[]),
 ];
 
 export function getTasbehaById(id: string): TasbehaDocument {
   const found = ALL_TASBEHA.find((t) => t.id === id || t.slug === id);
-  return found || midnightTasbeha;
+  return found || ALL_TASBEHA[0];
 }
 
 export function filterTasbehaSections(

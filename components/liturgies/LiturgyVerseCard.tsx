@@ -219,7 +219,7 @@ export default function LiturgyVerseCard({
             <div className="rounded-xl overflow-hidden border border-white/5 bg-black/30">
               {/* Columns Header */}
               <div
-                className={`grid border-b border-white/10 bg-neutral-900/80 text-[11px] font-bold text-neutral-400 p-0.5 ${
+                className={`grid border-b border-white/10 bg-neutral-900/90 text-xs font-black text-neutral-300 divide-x divide-x-reverse divide-white/10 ${
                   activeLangCount === 4
                     ? 'grid-cols-4'
                     : activeLangCount === 3
@@ -229,18 +229,18 @@ export default function LiturgyVerseCard({
                     : 'grid-cols-1'
                 }`}
               >
-                {enabledLanguages.arabic && <div className="text-right text-amber-400">العربية</div>}
-                {enabledLanguages.coptic_arabic && <div className="text-right text-amber-200">قبطي معرب (نطق عربي)</div>}
-                {enabledLanguages.coptic && <div className="text-left text-blue-400" dir="ltr">ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ</div>}
-                {enabledLanguages.english && <div className="text-left text-neutral-300" dir="ltr">English</div>}
+                {enabledLanguages.arabic && <div className="p-0.5 text-right text-amber-300 bg-amber-500/5">النص العربي المترجم</div>}
+                {enabledLanguages.coptic_arabic && <div className="p-0.5 text-right text-amber-200 bg-amber-400/5">القبطي المعرب (نطق عربي)</div>}
+                {enabledLanguages.coptic && <div className="p-0.5 text-left text-blue-300 bg-blue-500/5" dir="ltr">ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ (Coptic)</div>}
+                {enabledLanguages.english && <div className="p-0.5 text-left text-neutral-300 bg-neutral-800/40" dir="ltr">English Translation</div>}
               </div>
 
               {/* Verses Rows */}
-              <div className="divide-y divide-white/5">
+              <div className="divide-y divide-white/10">
                 {section.verses.map((verse, vIdx) => (
-                  <div
-                    key={vIdx}
-                    className={`grid items-center p-0.5 hover:bg-white/5 transition duration-150 ${
+                  <div key={vIdx} className="divide-y divide-white/10">
+                    <div
+                      className={`grid items-stretch divide-x divide-x-reverse divide-white/10 hover:bg-white/5 transition duration-150 ${
                       activeLangCount === 4
                         ? 'grid-cols-4'
                         : activeLangCount === 3
@@ -252,8 +252,8 @@ export default function LiturgyVerseCard({
                   >
                     {/* 1. Arabic View */}
                     {enabledLanguages.arabic && (
-                      <div className="p-0.5">
-                        <p className={`${fonts.arabic} font-serif leading-relaxed text-neutral-100 text-right`}>
+                      <div className="p-0.5 bg-amber-500/5 flex items-center">
+                        <p className={`${fonts.arabic} font-serif font-bold leading-relaxed text-neutral-100 text-right w-full`}>
                           {verse.arabic || '—'}
                         </p>
                       </div>
@@ -261,8 +261,8 @@ export default function LiturgyVerseCard({
 
                     {/* 2. Arabized Coptic (قبطي معرب) */}
                     {enabledLanguages.coptic_arabic && (
-                      <div className="p-0.5">
-                        <p className={`${fonts.arabic} font-sans leading-relaxed text-amber-200 text-right`}>
+                      <div className="p-0.5 bg-amber-400/5 flex items-center">
+                        <p className={`${fonts.arabic} font-sans font-medium leading-relaxed text-amber-200 text-right w-full`}>
                           {verse.coptic_arabic || '—'}
                         </p>
                       </div>
@@ -270,8 +270,8 @@ export default function LiturgyVerseCard({
 
                     {/* 3. Coptic View (قبطي أصيل) */}
                     {enabledLanguages.coptic && (
-                      <div className="p-0.5" dir="ltr">
-                        <p className={`${fonts.coptic} font-coptic leading-relaxed text-blue-200 text-left`}>
+                      <div className="p-0.5 bg-blue-500/5 flex items-center" dir="ltr">
+                        <p className={`${fonts.coptic} font-coptic leading-relaxed text-blue-200 text-left w-full`}>
                           {verse.coptic || '—'}
                         </p>
                       </div>
@@ -279,13 +279,39 @@ export default function LiturgyVerseCard({
 
                     {/* 4. English View */}
                     {enabledLanguages.english && (
-                      <div className="p-0.5" dir="ltr">
-                        <p className={`${fonts.meta} font-sans leading-relaxed text-neutral-300 text-left`}>
+                      <div className="p-0.5 bg-neutral-800/20 flex items-center" dir="ltr">
+                        <p className={`${fonts.meta} font-sans leading-relaxed text-neutral-300 text-left w-full`}>
                           {verse.english || '—'}
                         </p>
                       </div>
                     )}
                   </div>
+
+                  {/* أزرار الروابط التشعبية للربع المحدد من تحت مباشرة */}
+                  {verse.buttons && verse.buttons.length > 0 && (
+                    <div className="px-0.5 py-0.5 border-t border-white/5 bg-amber-950/20 flex flex-wrap items-center gap-0.5">
+                      <span className="text-[10px] font-bold text-amber-400">🔗 روابط تابعة لهذا الربع:</span>
+                      {verse.buttons.map((btn, bIdx) => (
+                        <button
+                          key={bIdx}
+                          onClick={() => {
+                            const targetId = btn.targetId || btn.target;
+                            const el = document.getElementById(`sec-${targetId}`) || document.getElementById(targetId);
+                            if (el) {
+                              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            } else {
+                              onNavigateHyperlink?.(btn.target);
+                              toast.info(`الانتقال إلى: ${btn.label}`);
+                            }
+                          }}
+                          className="px-0.5 py-0.5 rounded-lg text-xs font-bold bg-amber-600/30 hover:bg-amber-600 text-amber-200 hover:text-white border border-amber-500/40 transition flex items-center gap-0.5 shadow-xs"
+                        >
+                          <span>{btn.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 ))}
               </div>
             </div>

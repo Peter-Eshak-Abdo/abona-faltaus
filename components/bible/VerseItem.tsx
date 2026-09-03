@@ -15,6 +15,7 @@ type VerseItemProps = {
   toggleVerseSelection: (verseNum: number) => void;
   favorites: { bIdx: number; cIdx: number; vNum: number }[];
   fontSize: number;
+  language?: "ar" | "cop";
 };
 
 export default function VerseItem({
@@ -27,6 +28,7 @@ export default function VerseItem({
   toggleVerseSelection,
   favorites,
   fontSize,
+  language = "ar",
 }: VerseItemProps) {
   const touchStartPos = useRef({ x: 0, y: 0 });
 
@@ -71,7 +73,10 @@ export default function VerseItem({
   const activeChapter = bibleData[currentBookIdx]?.chapters?.[currentChapterIdx] || [];
   return (
     <div
-      className="w-full space-y-0 text-xl md:text-2xl leading-loose font-arabic px-0.5 max-w-8xl mx-auto"
+      className={`w-full space-y-0 text-xl md:text-2xl leading-loose px-0.5 max-w-8xl mx-auto ${
+        language === "cop" ? "font-coptic text-left" : "font-arabic text-right"
+      }`}
+      dir={language === "cop" ? "ltr" : "rtl"}
       style={{ fontSize: `${fontSize}px` }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -86,16 +91,18 @@ export default function VerseItem({
               key={uniqueKey}
               id={`verse-${verseObj.verse}`}
               onClick={() => toggleVerseSelection(verseObj.verse)}
-              className={`flex gap-0.25 rounded-lg cursor-pointer transition-all duration-200
+              className={`flex gap-0.25 rounded-lg cursor-pointer transition-all duration-200 ${
+                language === "cop" ? "flex-row" : ""
+              }
                 ${isSelected ? 'bg-blue-100 dark:bg-blue-900 shadow-md transform scale-[1.01]' : 'hover:bg-zinc-100 dark:hover:bg-zinc-800'}
-                ${isFav ? 'bg-yellow-500/10 border-r-4 border-yellow-500 shadow-md' : ''}
+                ${isFav ? (language === "cop" ? 'bg-yellow-500/10 border-l-4 border-yellow-500 shadow-md' : 'bg-yellow-500/10 border-r-4 border-yellow-500 shadow-md') : ''}
               `}>
               <span className={`font-bold shrink-0 select-none ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-blue-600 dark:text-blue-400'} ${isFav ? 'text-yellow-600' : ''}`}>
                 {verseObj.verse}
-                {isFav && <FaHeart className="inline ml-0.5 text-red-500 text-sm" />}
+                {isFav && <FaHeart className="inline ml-0.5 mr-0.5 text-red-500 text-sm" />}
               </span>
-              <p className={`text-justify font-arabic ${isSelected ? 'text-black dark:text-white font-semibold' : 'text-zinc-800 dark:text-zinc-300'}`}>
-                {verseObj.text_vocalized}
+              <p className={`text-justify ${language === "cop" ? "font-coptic" : "font-arabic"} ${isSelected ? 'text-black dark:text-white font-semibold' : 'text-zinc-800 dark:text-zinc-300'}`}>
+                {verseObj.text_vocalized || verseObj.text_plain}
               </p>
             </div>
           );

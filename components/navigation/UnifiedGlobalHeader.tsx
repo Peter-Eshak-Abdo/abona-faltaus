@@ -119,6 +119,7 @@ export default function UnifiedGlobalHeader() {
                 width={32}
                 height={32}
                 className="rounded-full border border-amber-500/30 group-hover:scale-105 transition"
+                style={{ width: "auto", height: "auto" }}
                 priority
               />
               <span className="font-bold text-sm sm:text-base text-white group-hover:text-amber-400 transition whitespace-nowrap">

@@ -931,12 +931,20 @@ function ReadingItem({
         </div>
       </CardHeader>
       <CardContent className="p-1">
-        <p
-          className="text-stone-800 dark:text-zinc-200 leading-relaxed font-serif text-justify"
-          style={{ fontSize: `${fontSize}px`, lineHeight: `${fontSize * 1.8}px` }}
-        >
-          {content}
-        </p>
+        {content ? (
+          <p
+            className="text-stone-800 dark:text-zinc-200 leading-relaxed font-serif text-justify"
+            style={{ fontSize: `${fontSize}px`, lineHeight: `${fontSize * 1.8}px` }}
+          >
+            {content}
+          </p>
+        ) : (
+          <div className="p-2 bg-amber-500/10 border border-dashed border-amber-500/30 rounded-2xl text-center">
+            <p className="text-xs text-amber-800 dark:text-amber-300 font-semibold leading-relaxed">
+              تعذر التحويل، يرجى الرجوع إلى المسؤول عن الموقع وإخباره بالعطل.
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

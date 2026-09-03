@@ -46,6 +46,7 @@ export default function SarahaPage() {
   // حالة لوحة تحكم الخادم (Dashboard)
   const [myLinks, setMyLinks] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
+  const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
   const [loadingDashboard, setLoadingDashboard] = useState(false);
   const [newSlug, setNewSlug] = useState("");
   const [newTitle, setNewTitle] = useState("");
@@ -82,10 +83,11 @@ export default function SarahaPage() {
   }, [slug]);
 
   // جلب بيانات الخادم إذا كان مسجلاً وبدون slug
-  const fetchServantDashboard = async (userId: string) => {
+  const fetchServantDashboard = async (userId: string, targetLinkId?: string | null) => {
     setLoadingDashboard(true);
     try {
-      const res = await fetch(`/api/saraha?userId=${userId}`);
+      const queryParam = targetLinkId ? `&linkId=${targetLinkId}` : "";
+      const res = await fetch(`/api/saraha?userId=${userId}${queryParam}`);
       const data = await res.json();
       if (data.success) {
         setMyLinks(data.links || []);
@@ -100,9 +102,9 @@ export default function SarahaPage() {
 
   useEffect(() => {
     if (!slug && user?.id) {
-      fetchServantDashboard(user.id);
+      fetchServantDashboard(user.id, selectedLinkId);
     }
-  }, [slug, user?.id]);
+  }, [slug, user?.id, selectedLinkId]);
 
   // إرسال السؤال السري المجهول
   const handleSendQuestion = async (e: React.FormEvent) => {
@@ -403,10 +405,23 @@ export default function SarahaPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5">
         {/* Active Links Box */}
         <div className="space-y-1">
-          <h2 className="text-sm font-bold text-stone-800 dark:text-zinc-200 flex items-center gap-0.5">
-            <LinkIcon className="w-2 h-2 text-amber-600" />
-            <span>روابطك النشطة للمشاركة</span>
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-stone-800 dark:text-zinc-200 flex items-center gap-0.5">
+              <LinkIcon className="w-2 h-2 text-amber-600" />
+              <span>روابط الصراحة (المحادثات)</span>
+            </h2>
+            {myLinks.length > 0 && (
+              <button
+                onClick={() => setSelectedLinkId(null)}
+                className={`text-[11px] font-bold px-1.5 py-0.5 rounded-lg transition ${selectedLinkId === null
+                    ? "bg-amber-600 text-white"
+                    : "bg-stone-200 dark:bg-zinc-800 text-stone-600 dark:text-stone-300"
+                  }`}
+              >
+                الكل
+              </button>
+            )}
+          </div>
 
           {myLinks.length === 0 ? (
             <Card className="rounded-2xl p-1 text-center border-dashed border-stone-300 dark:border-zinc-700 bg-transparent">
@@ -414,7 +429,6 @@ export default function SarahaPage() {
               <Button
                 onClick={() => setShowCreateModal(true)}
                 variant="outline"
-                size="sm"
                 className="rounded-xl text-xs font-bold"
               >
                 إنشاء أول رابط
@@ -422,26 +436,37 @@ export default function SarahaPage() {
             </Card>
           ) : (
             <div className="space-y-0.5">
-              {myLinks.map((lnk) => (
-                <Card key={lnk.id} className="rounded-2xl p-1 border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs">
-                  <div className="flex items-center justify-between mb-0.5">
-                    <h3 className="text-xs font-bold text-amber-950 dark:text-amber-300 truncate">{lnk.title}</h3>
-                    <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-500/30">نشط</Badge>
-                  </div>
-                  <p className="text-[11px] font-mono text-stone-400 bg-stone-50 dark:bg-zinc-800 p-0.5 rounded-lg truncate mb-0.5">
-                    /saraha/{lnk.slug}
-                  </p>
-                  <div className="flex gap-0.5">
-                    <Button
-                      onClick={() => copyShareLink(lnk.slug)}
-                      size="sm"
-                      className="w-full bg-stone-100 hover:bg-amber-100 text-stone-800 dark:bg-zinc-800 dark:hover:bg-amber-950/60 dark:text-zinc-200 rounded-xl text-xs font-bold"
-                    >
-                      نسخ الرابط للمخدومين
-                    </Button>
-                  </div>
-                </Card>
-              ))}
+              {myLinks.map((lnk) => {
+                const isSelected = selectedLinkId === lnk.id;
+                return (
+                  <Card
+                    key={lnk.id}
+                    onClick={() => setSelectedLinkId(lnk.id)}
+                    className={`rounded-2xl p-1 transition cursor-pointer border ${isSelected
+                        ? "border-amber-600 bg-amber-500/10 dark:bg-amber-950/30 ring-1 ring-amber-600"
+                        : "border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-amber-400"
+                      } shadow-xs`}
+                  >
+                    <div className="flex items-center justify-between mb-0.5">
+                      <h3 className="text-xs font-bold text-amber-950 dark:text-amber-300 truncate">{lnk.title}</h3>
+                      <Badge variant="outline" className={`text-[10px] ${isSelected ? "text-amber-600 border-amber-500" : "text-emerald-600 border-emerald-500/30"}`}>
+                        {isSelected ? "محدد" : "نشط"}
+                      </Badge>
+                    </div>
+                    <p className="text-[11px] font-mono text-stone-400 bg-stone-50 dark:bg-zinc-800 p-0.5 rounded-lg truncate mb-0.5">
+                      /saraha/{lnk.slug}
+                    </p>
+                    <div className="flex gap-0.5" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        onClick={() => copyShareLink(lnk.slug)}
+                        className="w-full bg-stone-100 hover:bg-amber-100 text-stone-800 dark:bg-zinc-800 dark:hover:bg-amber-950/60 dark:text-zinc-200 rounded-xl text-xs font-bold"
+                      >
+                        نسخ الرابط للمخدومين
+                      </Button>
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </div>
@@ -535,6 +560,10 @@ export default function SarahaPage() {
                   className="rounded-xl text-xs font-mono text-left"
                   dir="ltr"
                 />
+                <p className="text-[11px] text-stone-500 mt-1 bg-amber-50 dark:bg-zinc-800 p-1.5 rounded-xl border border-amber-200 dark:border-zinc-700 leading-relaxed">
+                  💡 <strong>ما هو الـ Slug (الاسم الفريد)؟</strong><br />
+                  هو الكلمة الإنجليزية أو الرمز الذي يظهر في نهاية رابط صفحتك على الإنترنت (مثل: <code className="text-amber-700 dark:text-amber-400 font-bold">/saraha/shabab</code>). يجب أن يكون حروف وأرقام إنجليزية بدون مسافات، ويُستخدم لتمييز هذا الصندوق تحديداً عن باقي الروابط الخاصة بالاجتماعات الأخرى.
+                </p>
               </div>
 
               <div>

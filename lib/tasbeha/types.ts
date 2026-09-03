@@ -23,6 +23,7 @@ export interface TasbehaVerse {
   english?: string;
   hymnRef?: TasbehaHymnRef;
   slide_number?: number;
+  buttons?: { label: string; target: string; targetId?: string }[];
 }
 
 export interface TasbehaSection {
@@ -41,6 +42,7 @@ export interface TasbehaSection {
   tone?: 'adam' | 'watos' | 'both';
   verses: TasbehaVerse[];
   hyperlinks?: TasbehaHyperlink[];
+  buttons?: { label: string; target: string; targetId?: string }[];
   source_file?: string;
   start_slide?: number;
 }

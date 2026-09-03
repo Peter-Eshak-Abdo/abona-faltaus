@@ -36,10 +36,18 @@ export default function TasbehaClient() {
   const [fontSize, setFontSize] = useState<'sm' | 'base' | 'lg' | 'xl'>('base');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroupId, setActiveGroupId] = useState<string | undefined>(undefined);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
 
   const [activeHymnModal, setActiveHymnModal] = useState<TasbehaHymnRef | null>(null);
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
   const [showIndexDrawer, setShowIndexDrawer] = useState(false);
+
+  // Ensure initial activeTasbeha is never empty or desynced
+  useEffect(() => {
+    if (!activeTasbeha && ALL_TASBEHA.length > 0) {
+      setActiveTasbeha(ALL_TASBEHA[0]);
+    }
+  }, [activeTasbeha]);
 
   // Persistence in localStorage
   useEffect(() => {
@@ -244,18 +252,50 @@ export default function TasbehaClient() {
                 )}
               </div>
 
+              {/* Hyperlinked Section Buttons (مثل شرائح الباوربوينت والروابط التشعبية) */}
+              {group.sections.length > 1 && (
+                <div className="flex flex-wrap gap-0.5 p-0.5 bg-neutral-900/80 rounded-2xl border border-neutral-800/80">
+                  <button
+                    onClick={() => setActiveSectionId(null)}
+                    className={`px-0.5 py-0.25 rounded-xl text-xs font-bold transition ${
+                      activeSectionId === null
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-neutral-800 text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    عرض المجموعة كاملة
+                  </button>
+                  {group.sections.map((sec) => (
+                    <button
+                      key={sec.id}
+                      onClick={() => setActiveSectionId(sec.id)}
+                      className={`px-0.5 py-0.25 rounded-xl text-xs font-bold transition flex items-center gap-0.5 ${
+                        activeSectionId === sec.id
+                          ? "bg-amber-600 text-white shadow-md ring-1 ring-amber-400"
+                          : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
+                      }`}
+                    >
+                      <span>{sec.title.arabic}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {/* Sections list inside this group */}
               <div className="space-y-1">
-                {group.sections.map((section) => (
-                  <TasbehaVerseCard
-                    key={section.id}
-                    section={section}
-                    enabledLanguages={enabledLanguages}
-                    layoutMode={layoutMode}
-                    fontSize={fontSize}
-                    onPlayHymn={(hymn) => setActiveHymnModal(hymn)}
-                  />
-                ))}
+                {group.sections
+                  .filter((section) => !activeSectionId || section.id === activeSectionId)
+                  .map((section) => (
+                    <div key={section.id} id={`sec-${section.id}`}>
+                      <TasbehaVerseCard
+                        section={section}
+                        enabledLanguages={enabledLanguages}
+                        layoutMode={layoutMode}
+                        fontSize={fontSize}
+                        onPlayHymn={(hymn) => setActiveHymnModal(hymn)}
+                      />
+                    </div>
+                  ))}
               </div>
             </section>
           ))

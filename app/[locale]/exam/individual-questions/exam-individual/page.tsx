@@ -203,7 +203,23 @@ function IndividualQuizArena() {
     if (!el) return;
 
     try {
-      const canvas = await html2canvas(el);
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#18181b",
+        onclone: (clonedDoc) => {
+          const target = clonedDoc.getElementById("quiz-result-card");
+          if (target) {
+            target.querySelectorAll("*").forEach((node: any) => {
+              const style = window.getComputedStyle(node);
+              if (style.color?.includes("lab") || style.backgroundColor?.includes("lab")) {
+                node.style.color = "#ffffff";
+                node.style.backgroundColor = "transparent";
+              }
+            });
+          }
+        },
+      });
       if (navigator.share) {
         canvas.toBlob((blob) => {
           if (!blob) return;

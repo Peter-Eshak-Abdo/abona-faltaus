@@ -28,7 +28,8 @@ import {
   ALL_LITURGIES,
   filterLiturgySections,
   getLiturgyById,
-  CANONICAL_BASIL_LITURGY
+  CANONICAL_BASIL_LITURGY,
+  ELNOZHA_ANNUAL_LITURGY,
 } from '@/lib/liturgies';
 import LiturgyNavbar from './LiturgyNavbar';
 import LiturgyVerseCard from './LiturgyVerseCard';
@@ -43,7 +44,7 @@ interface Props {
 export default function LiturgiesClient({ initialLiturgy }: Props) {
   const t = useTranslations('Liturgies');
   const [activeLiturgy, setActiveLiturgy] = useState<LiturgyDocument>(
-    initialLiturgy || CANONICAL_BASIL_LITURGY
+    initialLiturgy || ELNOZHA_ANNUAL_LITURGY || CANONICAL_BASIL_LITURGY
   );
   const [activeGroupId, setActiveGroupId] = useState<string | undefined>(undefined);
   const [activeRole, setActiveRole] = useState<ParticipantRole>('all');
@@ -267,18 +268,24 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
                 {/* Group Sections Cards (3-Column Layout) */}
                 <div className="space-y-0.5">
                   {group.sections.map((section) => (
-                    <LiturgyVerseCard
-                      key={section.id}
-                      section={section}
-                      enabledLanguages={enabledLanguages}
-                      layoutMode={layoutMode}
-                      fontSize={fontSize}
-                      onNavigateHyperlink={(target) => {
-                        // Navigate to targeted group or section
-                        const match = activeLiturgy.groups.find((g) => g.id.includes(target) || g.title.arabic.includes(target));
-                        if (match) scrollToGroup(match.id);
-                      }}
-                    />
+                    <div key={section.id} id={`sec-${section.id}`}>
+                      <LiturgyVerseCard
+                        section={section}
+                        enabledLanguages={enabledLanguages}
+                        layoutMode={layoutMode}
+                        fontSize={fontSize}
+                        onNavigateHyperlink={(target) => {
+                          const cleanTarget = target.replace('.xml', '').replace('.pptx', '');
+                          const targetEl = document.getElementById(`sec-${cleanTarget}`) || document.getElementById(cleanTarget);
+                          if (targetEl) {
+                            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            return;
+                          }
+                          const match = activeLiturgy.groups.find((g) => g.id.includes(cleanTarget) || g.title.arabic.includes(target));
+                          if (match) scrollToGroup(match.id);
+                        }}
+                      />
+                    </div>
                   ))}
                 </div>
               </section>

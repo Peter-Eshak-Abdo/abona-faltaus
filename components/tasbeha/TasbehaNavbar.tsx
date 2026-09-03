@@ -70,8 +70,21 @@ export default function TasbehaNavbar({
 
   return (
     <div className="sticky top-0 z-30 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800 shadow-xl" dir="rtl">
-      {/* 1. Top Bar: Tasbeha Types Tabs Selector */}
-      <div className="px-1 py-0.5 flex items-center justify-between gap-0.5 overflow-x-auto no-scrollbar border-b border-white/5">
+      {/* 1. Top Bar: Tasbeha Types Tabs Selector (عشية - نصف الليل - باكر) */}
+      <div className="px-0.5 py-0.5 flex items-center justify-center gap-0.5 overflow-x-auto no-scrollbar border-b border-white/5 bg-neutral-900/60">
+        {ALL_TASBEHA.slice(0, 3).map((tas) => (
+          <button
+            key={tas.id}
+            onClick={() => onSelectTasbeha(tas)}
+            className={`px-1 py-0.5 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap border transition flex items-center gap-0.5 ${
+              activeTasbeha.id === tas.id
+                ? 'bg-blue-600 text-white border-blue-400 shadow-md shadow-blue-600/30'
+                : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:bg-neutral-800 hover:text-neutral-200'
+            }`}
+          >
+            <span>{tas.title.arabic}</span>
+          </button>
+        ))}
       </div>
 
       {/* 2. Controls & Filter Bar */}

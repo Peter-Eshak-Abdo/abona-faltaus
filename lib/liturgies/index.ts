@@ -96,18 +96,24 @@ export const CANONICAL_BASIL_LITURGY = buildCanonicalFullLiturgy('basil');
 export const CANONICAL_GREGORY_LITURGY = buildCanonicalFullLiturgy('gregory');
 export const CANONICAL_CYRIL_LITURGY = buildCanonicalFullLiturgy('cyril');
 
+import elnozhaAnnualLiturgyData from './data/elnozha_annual_liturgy.json';
+import elnozhaOccasionsData from './data/elnozha_occasions_liturgies.json';
+
+export const ELNOZHA_ANNUAL_LITURGY: LiturgyDocument = (elnozhaAnnualLiturgyData as any[])[0] || CANONICAL_BASIL_LITURGY;
+
 export const ALL_LITURGIES: LiturgyDocument[] = [
-  CANONICAL_BASIL_LITURGY,
+  ELNOZHA_ANNUAL_LITURGY,
   CANONICAL_GREGORY_LITURGY,
   CANONICAL_CYRIL_LITURGY,
   fractionsLiturgy,
   distributionLiturgy,
-  ...(fullLiturgiesData as any as LiturgyDocument[]).filter((d) => (d.id as string) !== '00-القداس-السنوى')
+  ...(elnozhaOccasionsData as any as LiturgyDocument[]),
+  ...(fullLiturgiesData as any as LiturgyDocument[]).filter((d) => (d.id as string) !== '00-القداس-السنوى' && (d.id as string) !== 'basil')
 ];
 
 export function getLiturgyById(id: string): LiturgyDocument {
   const found = ALL_LITURGIES.find((l) => l.id === id || l.slug === id);
-  return found || CANONICAL_BASIL_LITURGY;
+  return found || ELNOZHA_ANNUAL_LITURGY;
 }
 
 export function filterLiturgySections(

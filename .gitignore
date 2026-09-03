@@ -75,3 +75,7 @@ public/*.zip
 scripts/build_coptic_bible.py
 scripts/integrate_sahidic_supplements.py
 scripts/upload_coptic_bible_to_supabase.py
+
+# Agent Scratch Directory (for scripts, tests, and temporary conversions)
+/agent_scratch/
+

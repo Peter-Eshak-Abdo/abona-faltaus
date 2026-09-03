@@ -244,7 +244,23 @@ function GroupedQuestionsContent() {
     const element = document.getElementById("result-share-box");
     if (!element) return;
 
-    const canvas = await html2canvas(element);
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#18181b",
+      onclone: (clonedDoc) => {
+        const el = clonedDoc.getElementById("result-share-box");
+        if (el) {
+          el.querySelectorAll("*").forEach((node: any) => {
+            const style = window.getComputedStyle(node);
+            if (style.color?.includes("lab") || style.backgroundColor?.includes("lab")) {
+              node.style.color = "#ffffff";
+              node.style.backgroundColor = "transparent";
+            }
+          });
+        }
+      },
+    });
     const dataUrl = canvas.toDataURL("image/png");
     setShareImageURL(dataUrl);
 

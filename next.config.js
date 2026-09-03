@@ -41,6 +41,16 @@ const withPWA = withPWAInit({
           cacheableResponse: { statuses: [0, 200] },
         },
       },
+      // ===== Read-Only APIs (السنكسار، القطمارس، القراءات، آية اليوم) كاش أوفلاين كامل =====
+      {
+        urlPattern: /\/api\/(?:synaxarium|readings|daily-verse|daily-quote|bible\/search).*/,
+        handler: "StaleWhileRevalidate",
+        options: {
+          cacheName: "orthodox-data-cache",
+          expiration: { maxEntries: 200, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
       // ===== API calls: NetworkOnly (الشات والـ AI لا يعملون أوفلاين) =====
       {
         urlPattern: /\/api\/.*/,

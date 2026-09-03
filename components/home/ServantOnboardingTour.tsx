@@ -131,7 +131,7 @@ export default function ServantOnboardingTour() {
       {/* زر عائم أو استدعاء يدوي لدليل الخادم */}
       <button
         onClick={handleOpenManually}
-        className="fixed bottom-1 right-1 z-40 pointer-events-auto bg-amber-600/90 hover:bg-amber-600 text-white p-0.5 sm:px-1 sm:py-0.5 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-0.5 text-xs font-bold transition hover:scale-105 border border-amber-400/40"
+        className="fixed bottom-1 left-1 z-40 pointer-events-auto bg-amber-600/90 hover:bg-amber-600 text-white p-0.5 sm:px-1 sm:py-0.5 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-0.5 text-xs font-bold transition hover:scale-105 border border-amber-400/40"
         title="دليل مزايا الموقع للخادم"
       >
         <Sparkles className="w-2 h-2 text-yellow-300 animate-spin-slow" />

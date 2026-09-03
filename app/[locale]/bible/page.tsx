@@ -226,8 +226,11 @@ export default function BibleReaderPage() {
             <section className="grow flex flex-col relative max-w-8xl mx-auto w-full">
               {/* Reading canvas: flex-1 + overflow-y-auto so the whole chapter is readable on iOS */}
               <article
-                className="p-0.25 flex flex-col gap-0.25 font-title-lg text-title-lg text-on-surface transition-all duration-300 overflow-y-auto max-h-[calc(100dvh-15px)] flex-1 -webkit-overflow-scrolling-touch"
+                className={`p-0.25 flex flex-col gap-0.25 font-title-lg text-title-lg text-on-surface transition-all duration-300 overflow-y-auto max-h-[calc(100dvh-15px)] flex-1 -webkit-overflow-scrolling-touch ${
+                  language === "cop" ? "font-coptic" : ""
+                }`}
                 id="reading-canvas"
+                dir={language === "cop" ? "ltr" : "rtl"}
                 style={{ fontSize: `${fontSize}px`, lineHeight: lineHeight || 1.8 }}
               >
                 <VerseItem
@@ -240,6 +243,7 @@ export default function BibleReaderPage() {
                   toggleVerseSelection={toggleVerseSelection}
                   favorites={favorites}
                   fontSize={fontSize}
+                  language={language}
                 />
                 <div className="h-24" />
               </article>

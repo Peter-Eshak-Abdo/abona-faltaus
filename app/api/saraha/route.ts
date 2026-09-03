@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const runtime = "nodejs";
 
@@ -9,10 +9,11 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get("slug");
     const userId = searchParams.get("userId");
+    const linkId = searchParams.get("linkId");
 
     // 1. إذا كان المطلوب جلب صفحة المخدوم بالـ slug
     if (slug) {
-      const { data: link, error } = await supabase
+      const { data: link, error } = await supabaseAdmin
         .from("saraha_links")
         .select("id, slug, title, description, is_active, user_id")
         .eq("slug", slug)
@@ -28,18 +29,24 @@ export async function GET(request: Request) {
 
     // 2. إذا كان المطلوب جلب لوحة تحكم الخادم
     if (userId) {
-      const { data: links, error: linkErr } = await supabase
+      const { data: links, error: linkErr } = await supabaseAdmin
         .from("saraha_links")
         .select("*")
-        .eq("user_id", userId);
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
 
       if (linkErr) throw linkErr;
 
-      const { data: messages, error: msgErr } = await supabase
+      let msgQuery = supabaseAdmin
         .from("saraha_messages")
         .select("*")
-        .eq("servant_id", userId)
-        .order("created_at", { ascending: false });
+        .eq("servant_id", userId);
+
+      if (linkId) {
+        msgQuery = msgQuery.eq("link_id", linkId);
+      }
+
+      const { data: messages, error: msgErr } = await msgQuery.order("created_at", { ascending: false });
 
       if (msgErr) throw msgErr;
 
@@ -72,7 +79,7 @@ export async function POST(request: Request) {
 
       const cleanSlug = slug.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "");
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from("saraha_links")
         .insert({
           user_id: userId,
@@ -102,7 +109,7 @@ export async function POST(request: Request) {
       }
 
       // إدراج الرسالة بدون تسجيل أي IP أو User Agent أو بيانات شخصية (مجهولة 100%)
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from("saraha_messages")
         .insert({
           link_id: linkId,
@@ -124,7 +131,7 @@ export async function POST(request: Request) {
     // ج. تحديث حالة الرابط أو حذف رسالة
     if (action === "delete_message") {
       const { messageId, userId } = body;
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from("saraha_messages")
         .delete()
         .eq("id", messageId)

@@ -202,18 +202,33 @@ export default function SynaxariumPage() {
         params.set("category", selectedCategory);
       }
 
+      const cacheKey = `synaxarium_${selectedMonth}_${selectedDay}_${viewMode}_${selectedCategory}_${searchQuery.trim()}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed.stories && parsed.stories.length > 0) {
+            setStories(parsed.stories);
+            setTotalCount(parsed.total || parsed.stories.length);
+            setLoading(false);
+          }
+        } catch {}
+      }
+
       const res = await fetch(`/api/synaxarium?${params.toString()}`);
       if (res.ok) {
         const json = await res.json();
         setStories(json.stories || []);
         setTotalCount(json.total || 0);
-      } else {
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify({ stories: json.stories || [], total: json.total || 0 }));
+        } catch {}
+      } else if (!cached) {
         setStories([]);
         setTotalCount(0);
       }
     } catch (err) {
       console.error("Synaxarium fetch error:", err);
-      setStories([]);
     } finally {
       setLoading(false);
     }
