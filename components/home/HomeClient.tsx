@@ -17,15 +17,17 @@ import {
   FaPray,
   FaBookOpen,
 } from "react-icons/fa";
+import dynamicImport from "next/dynamic";
 import LogoHeader from "./LogoHeader";
 import UserHeader from "./UserHeader";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-import Background from "./Background";
 import Widgets from "./Widgets";
-import { MysteriousExperience } from "./MysteriousExperience";
 import { Trophy } from "lucide-react";
-import ServantOnboardingTour from "./ServantOnboardingTour";
+
+const Background = dynamicImport(() => import("./Background"), { ssr: false });
+const MysteriousExperience = dynamicImport(() => import("./MysteriousExperience").then(m => m.MysteriousExperience), { ssr: false });
+const ServantOnboardingTour = dynamicImport(() => import("./ServantOnboardingTour"), { ssr: false });
 
 const getCopticDate = () => {
   const date = new Date();
