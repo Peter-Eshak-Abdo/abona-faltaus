@@ -7,6 +7,7 @@ import { SAINTS_DATA } from "@/lib/saints-data"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import BackButton from "@/components/navigation/BackButton"
 
 export default function JoinQuizPage({ params: paramsPromise }: { params: Promise<{ quizId: string }> }) {
   const params = use(paramsPromise);
@@ -143,8 +144,15 @@ export default function JoinQuizPage({ params: paramsPromise }: { params: Promis
   return (
     <div className="min-h-screen bg-zinc-50 p-0.5" dir="rtl">
       <Card className="max-w-4xl mx-auto shadow-2xl border-none overflow-hidden">
-        <CardHeader className="bg-[#46178f] text-white text-center py-1">
-          <CardTitle className="text-5xl font-black">{quiz.title}</CardTitle>
+        <CardHeader className="bg-[#46178f] text-white flex flex-row items-center justify-between py-1 px-1.5">
+          <BackButton
+            fallbackUrl="/exam"
+            className="p-0.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition flex items-center justify-center"
+            iconSize={18}
+            title="رجوع للمسابقات"
+          />
+          <CardTitle className="text-3xl sm:text-5xl font-black text-center flex-1">{quiz.title}</CardTitle>
+          <div className="w-8" />
         </CardHeader>
 
         <CardContent className="p-1 space-y-1">

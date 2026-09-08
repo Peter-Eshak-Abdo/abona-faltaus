@@ -10,6 +10,7 @@ interface BackButtonProps {
   iconSize?: number;
   title?: string;
   fallbackUrl?: string;
+  children?: React.ReactNode;
 }
 
 export default function BackButton({
@@ -17,6 +18,7 @@ export default function BackButton({
   iconSize = 18,
   title = "الرجوع للخلف",
   fallbackUrl = "/",
+  children,
 }: BackButtonProps) {
   const router = useRouter();
   const locale = useLocale();
@@ -39,10 +41,14 @@ export default function BackButton({
       title={title}
       aria-label={title}
     >
-      <FaArrowRight
-        size={iconSize}
-        className={isRtl ? "" : "rotate-180"}
-      />
+      {children ? (
+        children
+      ) : (
+        <FaArrowRight
+          size={iconSize}
+          className={isRtl ? "" : "rotate-180"}
+        />
+      )}
     </button>
   );
 }

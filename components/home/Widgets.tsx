@@ -88,7 +88,12 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
       }
     };
 
-    fetchRandomVerse();
+    // تأخير جلب الآية لما بعد تحميل الصفحة الأساسي لتجنب حجز الـ Main Thread
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(() => fetchRandomVerse());
+    } else {
+      setTimeout(fetchRandomVerse, 1500);
+    }
   }, []);
 
   useEffect(() => {

@@ -15,6 +15,7 @@ import {
   FaTimes,
 } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
+import BackButton from '@/components/navigation/BackButton';
 import {
   TasbehaDocument,
   TasbehaLanguage,
@@ -71,8 +72,14 @@ export default function TasbehaNavbar({
   return (
     <div className="sticky top-0 z-30 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800 shadow-xl" dir="rtl">
       {/* 1. Top Bar: Tasbeha Types Tabs Selector (عشية - نصف الليل - باكر) */}
-      <div className="px-0.5 py-0.5 flex items-center justify-center gap-0.5 overflow-x-auto no-scrollbar border-b border-white/5 bg-neutral-900/60">
-        {ALL_TASBEHA.slice(0, 3).map((tas) => (
+      <div className="px-0.5 py-0.5 flex items-center justify-between gap-0.5 overflow-x-auto no-scrollbar border-b border-white/5 bg-neutral-900/60">
+        <div className="flex items-center gap-0.5">
+          <BackButton
+            className="p-0.5 rounded-xl bg-neutral-900 text-neutral-300 hover:bg-neutral-800 hover:text-white border border-neutral-800 transition flex items-center justify-center shrink-0"
+            iconSize={16}
+            title="الرجوع للصفحة السابقة"
+          />
+          {ALL_TASBEHA.slice(0, 3).map((tas) => (
           <button
             key={tas.id}
             onClick={() => onSelectTasbeha(tas)}
@@ -85,6 +92,7 @@ export default function TasbehaNavbar({
             <span>{tas.title.arabic}</span>
           </button>
         ))}
+        </div>
       </div>
 
       {/* 2. Controls & Filter Bar */}

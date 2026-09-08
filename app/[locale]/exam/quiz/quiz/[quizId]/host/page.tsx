@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Play, Loader2, RefreshCcw, Lock, KeyRound, ShieldAlert } from "lucide-react"
 import QuizHostGame from "@/components/quiz/QuizHostGame"
 import { toast } from "sonner"
+import BackButton from "@/components/navigation/BackButton"
 
 export default function HostPage({ params: paramsPromise }: { params: Promise<{ quizId: string }> }) {
   const params = use(paramsPromise);
@@ -204,6 +205,12 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
     <div className="min-h-screen bg-[#130722] text-white p-1 sm:p-1 font-sans" dir="rtl">
       <div className="flex justify-between items-center bg-white/5 backdrop-blur-md rounded-3xl p-1 sm:p-1 mb-0.5 border border-white/10 shadow-2xl flex-wrap gap-0.5">
         <div className="flex items-center gap-0.5 flex-wrap">
+          <BackButton
+            fallbackUrl="/exam/quiz/dashboard"
+            className="p-0.5 bg-white/10 hover:bg-white/20 text-purple-200 rounded-2xl transition border border-purple-500/20 flex items-center justify-center"
+            iconSize={18}
+            title="الرجوع للوحة التحكم"
+          />
           <h1 className="text-2xl sm:text-4xl font-black text-purple-200">{quiz?.title}</h1>
           {quiz?.code && (
             <div className="flex items-center gap-0.25 bg-purple-950/80 border border-purple-500/30 px-1 py-0.25 rounded-2xl shadow-inner">

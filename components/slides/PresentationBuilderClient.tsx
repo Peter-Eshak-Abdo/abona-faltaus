@@ -20,6 +20,7 @@ import {
   Check,
 } from "lucide-react";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import { toast } from "sonner";
 import { Slide, SlideTheme, PresentationData, SLIDE_THEMES } from "@/lib/slides/types";
 import SlideEditor from "@/components/slides/SlideEditor";
@@ -288,9 +289,11 @@ export default function PresentationBuilderClient({
       {!isEmbedded && (
         <header className="bg-[#5c4538] dark:bg-zinc-900 text-[#e8cfae] px-1 py-0.5 sm:px-1.5 flex items-center justify-between shadow-md sticky top-0 z-30 pt-[calc(env(safe-area-inset-top,0px)+8px)]">
           <div className="flex items-center gap-0.5">
-            <Link href="/" className="p-0.5 hover:bg-white/10 rounded-xl transition-colors text-white">
-              <ArrowRight size={20} />
-            </Link>
+            <BackButton
+              className="p-0.5 hover:bg-white/10 rounded-xl transition-colors text-white flex items-center justify-center"
+              iconSize={20}
+              title={t('back') || 'الرجوع للخلف'}
+            />
             <div>
               <div className="flex items-center gap-0.5">
                 <Presentation className="text-amber-400" size={20} />

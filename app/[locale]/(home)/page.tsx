@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-export const dynamic = "force-dynamic";
+export const revalidate = 3600; // ISR: كاش للصفحة الرئيسية لمدة ساعة لتقليل TTFB من 3.8 ثانية إلى أقل من 100ms
 import HomeClient from "@/components/home/HomeClient";
 
 export const metadata: Metadata = {

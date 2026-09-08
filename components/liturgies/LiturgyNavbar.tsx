@@ -14,6 +14,7 @@ import {
   FaTimes,
 } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
+import BackButton from '@/components/navigation/BackButton';
 import {
   LiturgyDocument,
   LiturgyLanguage,
@@ -68,6 +69,11 @@ export default function LiturgyNavbar({
       {/* 1. Top Bar: Liturgies Tabs Selector */}
       <div className="px-1 py-0.5 flex items-center justify-between gap-0.5 overflow-x-auto no-scrollbar border-b border-white/5">
         <div className="flex items-center gap-0.5 shrink-0">
+          <BackButton
+            className="p-0.5 rounded-xl bg-neutral-900 text-neutral-300 hover:bg-neutral-800 hover:text-white border border-neutral-800 transition flex items-center justify-center shrink-0"
+            iconSize={16}
+            title="الرجوع للصفحة السابقة"
+          />
           {ALL_LITURGIES.map((lit) => {
             const isActive = activeLiturgy.id === lit.id;
             return (

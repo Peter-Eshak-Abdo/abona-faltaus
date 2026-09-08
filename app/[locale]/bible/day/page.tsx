@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { FaBookOpen, FaPlus, FaCopy, FaEdit, FaTrash, FaCheck, FaTimes, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaBookOpen, FaPlus, FaCopy, FaEdit, FaTrash, FaCheck, FaTimes, FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 
 type DayHistory = { code: string; title: string };
 
@@ -110,10 +111,8 @@ export default function DayPortalPage() {
 
         <div className="flex items-center gap-0.5">
           <div className="relative">
-            <div className="w-3 h-3 rounded-full overflow-hidden bg-white relative flex items-center justify-center">
-              <Link href="/bible" className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition">
-                <FaArrowRight />
-              </Link>
+            <div className="w-3 h-3 rounded-full overflow-hidden relative flex items-center justify-center">
+              <BackButton fallbackUrl="/bible" />
             </div>
           </div>
           <div className="flex flex-row">

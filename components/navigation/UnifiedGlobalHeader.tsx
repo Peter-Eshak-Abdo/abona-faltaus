@@ -69,14 +69,18 @@ export default function UnifiedGlobalHeader() {
 
   const isHome = pathname === '/' || pathname === '';
 
-  // Intelligent Back navigation
+  // Intelligent Back navigation (Native mobile-like history back)
   const handleBack = () => {
-    const parts = pathname.split('/').filter(Boolean);
-    if (parts.length <= 1) {
-      router.push('/');
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
     } else {
-      const parent = `/${parts.slice(0, -1).join('/')}`;
-      router.push(parent);
+      const parts = pathname.split('/').filter(Boolean);
+      if (parts.length <= 1) {
+        router.push('/');
+      } else {
+        const parent = `/${parts.slice(0, -1).join('/')}`;
+        router.push(parent);
+      }
     }
   };
 

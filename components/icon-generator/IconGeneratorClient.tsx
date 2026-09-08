@@ -21,7 +21,8 @@ import {
   Crown,
 } from "lucide-react";
 import Link from "next/link";
-import { FaArrowRight, FaCross } from "react-icons/fa";
+import { FaCross } from "react-icons/fa";
+import BackButton from "@/components/navigation/BackButton";
 import { toast } from "sonner";
 import {
   ICON_STYLES,
@@ -207,13 +208,11 @@ export default function IconGeneratorClient() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-stone-950/85 backdrop-blur-xl border-b border-amber-500/20 px-1 md:px-1.5 py-0.5 flex items-center justify-between shadow-2xl">
         <div className="flex items-center gap-0.5">
-          <Link
-            href="/"
-            className="p-0.5 rounded-full bg-stone-900 border border-amber-500/20 hover:bg-stone-800 text-amber-300 transition-all shadow-md"
-            title="الرجوع للرئيسية"
-          >
-            <FaArrowRight size={16} />
-          </Link>
+          <BackButton
+            className="p-0.5 rounded-full bg-stone-900 border border-amber-500/20 hover:bg-stone-800 text-amber-300 transition-all shadow-md flex items-center justify-center"
+            iconSize={16}
+            title="الرجوع للصفحة السابقة"
+          />
           <div>
             <h1 className="text-lg md:text-xl font-bold bg-linear-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent flex items-center gap-0.5 font-serif">
               <Sparkles className="text-amber-400 animate-pulse" size={20} />

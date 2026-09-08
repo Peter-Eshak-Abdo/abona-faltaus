@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import { motion } from "framer-motion";
 import {
   Sparkles,
@@ -89,13 +90,14 @@ export default function IndividualQuestionsHub() {
         {/* Navigation Bar */}
         <div className="flex items-center justify-between border-b border-zinc-800 pb-1">
           <div className="flex items-center gap-1">
-            <Link
-              href="/exam"
+            <BackButton
+              fallbackUrl="/exam"
               className="p-1 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition flex items-center gap-0.5 text-xs font-bold"
+              title="رجوع للمسابقات"
             >
               <ArrowRight size={16} />
               <span>رجوع للمسابقات</span>
-            </Link>
+            </BackButton>
             <h1 className="text-xl sm:text-2xl font-black bg-linear-to-r from-amber-400 via-rose-400 to-cyan-400 bg-clip-text text-transparent flex items-center gap-1">
               <Trophy className="text-amber-400" size={24} />
               مسابقة الفارس الأرثوذكسي الفردية

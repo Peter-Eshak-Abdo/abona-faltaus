@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import { toast } from "sonner";
 import { exportToPowerPoint, exportToWord, exportToPDF } from "@/lib/prep-export";
 import VoiceRecorderButton from "@/components/notes/VoiceRecorderButton";
@@ -191,9 +192,11 @@ export default function PreparationPage() {
       {/* Header */}
       <header className="bg-[#5c4538] text-[#e8cfae] px-1 py-0.5 sm:px-1 flex items-center justify-between shadow-md sticky top-0 z-30 pt-[calc(env(safe-area-inset-top,0px)+3px)]">
         <div className="flex items-center gap-0.5">
-          <Link href="/" className="p-0.5 hover:bg-white/10 rounded-xl transition-colors text-white">
-            <ArrowRight size={20} />
-          </Link>
+          <BackButton
+            className="p-0.5 hover:bg-white/10 rounded-xl transition-colors text-white flex items-center justify-center"
+            iconSize={20}
+            title={t('back') || 'الرجوع للخلف'}
+          />
           <div>
             <h1 className="text-lg sm:text-xl font-black">{t('title')}</h1>
             <p className="text-xs text-[#e8cfae]/80 hidden sm:block">{t('subtitle')}</p>

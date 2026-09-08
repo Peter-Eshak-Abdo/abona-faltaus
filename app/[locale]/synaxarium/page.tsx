@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import {
   Flame,
   Search,
@@ -291,9 +292,11 @@ export default function SynaxariumPage() {
         <div className="mx-auto px-0.5 py-0.5 max-w-8xl flex flex-col md:flex-row items-center justify-between gap-0.5">
           {/* Header title */}
           <div className="flex items-center gap-0.5">
-            <Link href="/" className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline inline-flex">
-              <ArrowRight size={18} className={isRtlLocale(locale) ? "" : "rotate-180"} />
-            </Link>
+            <BackButton
+              className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
+              iconSize={18}
+              title={t("back")}
+            />
             <div className="w-3 h-3 rounded-xl bg-red-700/10 dark:bg-red-500/10 text-red-700 dark:text-red-400 flex items-center justify-center font-bold">
               <Flame className="w-2 h-2" />
             </div>

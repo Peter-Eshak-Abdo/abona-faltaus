@@ -3,6 +3,7 @@ import { useState, useMemo, useRef, useEffect, TouchEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import { FaArrowRight } from "react-icons/fa";
 import al7anData from "@/public/al7an-all.json";
 import OfflineAudioButton from "@/components/al7an/OfflineAudioButton";
@@ -276,9 +277,11 @@ export default function UnifiedAl7anClient() {
         <div className="p-0.5 shrink-0 flex flex-col gap-0.5">
           <div className="flex-none border-b border-[#dcc0c1]/20 bg-[#f6f3f2]/10 backdrop-blur-md flex items-center justify-between z-10 shadow-2xl rounded-b-4xl">
 
-            <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
-              <FaArrowRight size={18} />
-            </Link>
+            <BackButton
+              className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
+              iconSize={18}
+              title="الرجوع للصفحة السابقة"
+            />
             <input
               type="text"
               placeholder={t('searchPlaceholder')}
@@ -457,7 +460,7 @@ export default function UnifiedAl7anClient() {
                   preload="metadata"
                   onPlay={() => {
                     if (audioCtxRef.current?.state === 'suspended') {
-                      audioCtxRef.current.resume().catch(() => {});
+                      audioCtxRef.current.resume().catch(() => { });
                     }
                     try {
                       setupAudioAnalyser();
@@ -548,8 +551,8 @@ export default function UnifiedAl7anClient() {
                       <button
                         onClick={() => setLayoutMode("rows")}
                         className={`px-0.25 py-0.25 rounded-lg text-sm font-semibold transition ${layoutMode === "rows"
-                            ? "bg-orange-500 text-white shadow-md"
-                            : "bg-white/10 hover:bg-white/20 text-white/70"
+                          ? "bg-orange-500 text-white shadow-md"
+                          : "bg-white/10 hover:bg-white/20 text-white/70"
                           }`}
                       >
                         {t('rows')}
@@ -557,8 +560,8 @@ export default function UnifiedAl7anClient() {
                       <button
                         onClick={() => setLayoutMode("cols")}
                         className={`px-0.25 py-0.25 rounded-lg text-sm font-semibold transition ${layoutMode === "cols"
-                            ? "bg-orange-500 text-white shadow-md"
-                            : "bg-white/10 hover:bg-white/20 text-white/70"
+                          ? "bg-orange-500 text-white shadow-md"
+                          : "bg-white/10 hover:bg-white/20 text-white/70"
                           }`}
                       >
                         {t('cols')}

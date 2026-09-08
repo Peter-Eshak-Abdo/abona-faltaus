@@ -12,11 +12,11 @@ export default function LogoHeader() {
         <Image
           src="/images/eagle.webp"
           alt="Logo"
-          width={60}
-          height={40}
+          width={48}
+          height={48}
+          sizes="48px"
           className="rounded-full border-blue-300 justify-self-start flex-none w-auto h-auto"
           priority
-          loading="eager"
         />
         <h1 className="font-bold text-2xl md:text-4xl flex-initial grow text-center">
           {t("appName")}
@@ -26,12 +26,12 @@ export default function LogoHeader() {
           <Image
             src="/images/eagle.webp"
             alt="Logo"
-            width={60}
-            height={40}
+            width={48}
+            height={48}
+            sizes="48px"
             className="rounded-full border-blue-300 justify-self-end flex-none w-auto h-auto"
             style={{ transform: "scaleX(-1)" }}
             priority
-            loading="eager"
           />
         </div>
       </div>

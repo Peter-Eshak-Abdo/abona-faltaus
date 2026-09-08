@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import localforage from "localforage";
 import Link from "next/link";
-import { FaTrash, FaBookOpen, FaArrowRight } from "react-icons/fa";
+import BackButton from "@/components/navigation/BackButton";
+import { FaTrash, FaBookOpen } from "react-icons/fa";
 import { supabase } from "@/lib/supabase"; // تأكد من مسار السوبابيز عندك
 
 type FavItem = { bIdx: number; cIdx: number; vNum: number };
@@ -61,9 +62,7 @@ export default function FavoritesPage() {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-1 text-zinc-900 dark:text-zinc-100">
       <div className="max-w-8xl mx-auto">
         <div className="flex items-center gap-0.5 mb-1">
-          <Link href="/bible" className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition">
-            <FaArrowRight />
-          </Link>
+          <BackButton fallbackUrl="/bible" />
           <h1 className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">الآيات المفضلة</h1>
         </div>
 

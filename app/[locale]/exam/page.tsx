@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { KeyRound, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import BackButton from "@/components/navigation/BackButton";
 
 export default function ExamPage() {
   const t = useTranslations('Exams');
@@ -42,11 +43,19 @@ export default function ExamPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br flex items-center justify-center">
+    <div className="min-h-screen bg-linear-to-br flex items-center justify-center p-1 sm:p-2">
       <div className="w-full max-w-7xl space-y-1 backdrop-blur-md bg-white/20 dark:bg-black/30 rounded-4xl p-1 border-white/30 dark:border-white/20 shadow-2xl">
-        <div className="text-center mb1">
-          <h1 className="text-5xl font-bold mb-1 text-black drop-shadow-lg">{t('title')}</h1>
-          <p className="text-black/90 drop-shadow-md">{t('subtitle')}</p>
+        <div className="text-center mb-1 relative">
+          <div className="absolute right-0 top-0">
+            <BackButton
+              className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition inline-flex items-center justify-center text-zinc-700 dark:text-zinc-200"
+              iconSize={18}
+              title={t('back') || 'الرجوع للخلف'}
+              fallbackUrl="/"
+            />
+          </div>
+          <h1 className="text-5xl font-bold mb-1 text-black dark:text-white drop-shadow-lg">{t('title')}</h1>
+          <p className="text-black/90 dark:text-zinc-300 drop-shadow-md">{t('subtitle')}</p>
         </div>
 
         {/* كارت الدخول السريع بكود الامتحان */}

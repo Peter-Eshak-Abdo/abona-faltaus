@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import { format } from "date-fns";
 import { arEG } from "date-fns/locale";
 import {
@@ -41,7 +43,6 @@ import { getCopticDate, CopticDate, COPTIC_MONTHS, copticToGregorian } from "@/l
 import { toast } from "sonner";
 import { useLocale, useTranslations } from "next-intl";
 import { isRtlLocale } from "@/i18n/routing";
-import Link from "next/link";
 
 interface SynaxariumEntry {
   titleAr: string;
@@ -303,9 +304,11 @@ export default function KatamarosPage() {
         <div className="container mx-auto px-0.5 py-0.5 max-w-6xl flex flex-col md:flex-row items-center justify-between gap-0.5">
           {/* Title & Coptic Date */}
           <div className="flex items-center gap-0.5">
-            <Link href="/" className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline inline-flex">
-              <ArrowRight size={18} className={isRtlLocale(locale) ? "" : "rotate-180"} />
-            </Link>
+            <BackButton
+              className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
+              iconSize={18}
+              title={t('back') || 'الرجوع للخلف'}
+            />
             <div className="w-3 h-3 rounded-xl bg-amber-700/10 dark:bg-amber-500/10 text-amber-800 dark:text-amber-400 flex items-center justify-center font-bold">
               <Church className="w-2.5 h-2.5" />
             </div>

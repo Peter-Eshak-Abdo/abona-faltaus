@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import {
   BookOpen,
   Volume2,
@@ -225,13 +226,11 @@ export default function AgpeyaPage() {
       >
         <div className="max-w-8xl mx-auto flex items-center justify-between gap-0.5">
           <div className="flex items-center gap-0.5">
-            <Link
-              href="/"
-              className="p-0.5 rounded-lg hover:bg-stone-100 dark:hover:bg-zinc-800 text-stone-500 transition"
-              title="الرئيسية"
-            >
-              <ArrowRight size={18} />
-            </Link>
+            <BackButton
+              className="p-0.5 rounded-lg hover:bg-stone-100 dark:hover:bg-zinc-800 text-stone-500 transition flex items-center justify-center"
+              iconSize={18}
+              title={t('back') || 'الرجوع للخلف'}
+            />
             <div className="flex items-center gap-0.5">
               <span className="text-xl font-black text-amber-700 dark:text-amber-500 flex items-center gap-0.5">
                 <BookOpen size={20} />

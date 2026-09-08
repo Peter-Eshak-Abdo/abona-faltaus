@@ -1,5 +1,4 @@
 "use client";
-export const dynamic = "force-dynamic";
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import Image from "next/image";
@@ -191,7 +190,12 @@ export default function HomeClient() {
       }
     };
 
-    fetchLastCommit();
+    // تأخير جلب تحديثات GitHub بعد اكتمال تفاعل الصفحة
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(() => fetchLastCommit());
+    } else {
+      setTimeout(fetchLastCommit, 2000);
+    }
   }, [t]);
 
   useEffect(() => {
@@ -296,7 +300,16 @@ export default function HomeClient() {
             className="rounded-full bg-transparent shadow-[0_8px_32px_rgba(74,0,18,0.2)] relative focus:outline-none transition-transform duration-500 z-10"
             style={{ outline: "none" }}
           >
-            <Image src="/images/logo.webp" alt="Logo" width={250} height={250} className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full border-2 border-blue-300" priority loading="eager" />
+            <Image
+              src="/images/logo.webp"
+              alt="Logo"
+              width={160}
+              height={160}
+              sizes="(max-width: 768px) 160px, (max-width: 1024px) 220px, 250px"
+              className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full border-2 border-blue-300"
+              priority
+              fetchPriority="high"
+            />
           </motion.button>
         </motion.div>
 

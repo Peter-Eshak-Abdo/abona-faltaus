@@ -56,7 +56,13 @@ export default function NotFound() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => router.back()}
+            onClick={() => {
+              if (typeof window !== "undefined" && window.history.length > 1) {
+                router.back();
+              } else {
+                router.push("/");
+              }
+            }}
             className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 p-1 rounded-xl font-medium transition-colors"
           >
             <FaArrowRight />

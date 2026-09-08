@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from "react";
 import LogoHeader from "@/components/home/LogoHeader";
 import { Link, useRouter } from "@/i18n/navigation";
+import BackButton from "@/components/navigation/BackButton";
 import { supabase } from "@/lib/supabase";
 import { User, Mail, Lock, CheckCircle2, Circle, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -99,11 +100,10 @@ export default function SignUpPage() {
         <Card className="shadow-xl border-amber-900/10 rounded-2xl overflow-hidden bg-white dark:bg-zinc-900">
           <CardHeader className="border-b border-stone-100 dark:border-zinc-800 pb-0.5">
             <CardTitle className="text-center text-amber-900 flex-row dark:text-amber-500 font-bold text-lg">
-              <div className="flex flex-row justify-between">
-                <Link href="/" prefetch={true} className="p-0.5 m-0.5 flex flex-1 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
-                  <FaArrowRight size={18} />
-                </Link>
-                <p className="flex flex-11 items-center align-center">إنشاء حساب جديد</p>
+              <div className="flex flex-row justify-between w-full items-center">
+                <BackButton />
+                <p className="flex-1 text-center font-bold">إنشاء حساب جديد</p>
+                <div className="w-8" />
               </div>
             </CardTitle>
           </CardHeader>

@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
+import BackButton from "@/components/navigation/BackButton";
 
 interface UserProfile {
   id: string;
@@ -173,13 +174,14 @@ export default function AccountInfo() {
   return (
     <Card className="w-full max-w-sm mx-auto shadow-lg rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden" dir="rtl">
       <div className="flex items-center justify-between px-1 py-0.5 border-b border-stone-100 dark:border-zinc-800">
-        <button
-          onClick={() => router.back()}
+        <BackButton
+          fallbackUrl="/"
           className="flex items-center gap-1 text-xs font-semibold text-stone-600 hover:text-stone-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-zinc-800"
+          title="رجوع"
         >
           <ArrowRight className="w-2.5 h-2.5" />
           <span>رجوع</span>
-        </button>
+        </BackButton>
         <span className="text-xs font-bold text-stone-400">الملف الشخصي</span>
       </div>
 

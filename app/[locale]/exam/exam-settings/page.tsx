@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,8 +93,15 @@ export default function ExamSettings() {
       <div className="flex justify-center">
         <div className="w-full md:w-2/3">
           <Card className="shadow">
-            <CardHeader className="bg-blue-500 text-white text-center">
-              <h2 className="text-lg mb-0">إعدادات الامتحان للمجموعات</h2>
+            <CardHeader className="bg-blue-500 text-white flex flex-row items-center justify-between">
+              <BackButton
+                fallbackUrl="/exam"
+                className="p-0.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition flex items-center justify-center"
+                iconSize={16}
+                title="رجوع للمسابقات"
+              />
+              <h2 className="text-lg mb-0 font-bold">إعدادات الامتحان للمجموعات</h2>
+              <div className="w-6" />
             </CardHeader>
 
             <CardContent>

@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getUserQuizzes, deleteQuiz, createQuiz, getQuiz } from "@/lib/supabase-utils";
 import { supabase } from "@/lib/supabase";
 import CreateQuizDialog from "@/components/quiz/CreateQuizDialog";
+import BackButton from "@/components/navigation/BackButton";
 import { Button } from "@/components/ui/button";
 import {
   Plus,
@@ -289,13 +290,12 @@ export default function Dashboard() {
       {/* قسم الترويسة الرئيسي */}
       <div className="flex justify-between items-center mb-1 flex-wrap gap-1">
         <div className="flex items-center gap-0.5">
-          <Link
-            href="/"
-            className="p-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition shadow-sm"
+          <BackButton
+            fallbackUrl="/exam"
+            className="p-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition shadow-sm flex items-center justify-center"
+            iconSize={20}
             title={t("back")}
-          >
-            <ArrowRight size={20} />
-          </Link>
+          />
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-gray-100 flex items-center gap-0.5">
               {t("title")}

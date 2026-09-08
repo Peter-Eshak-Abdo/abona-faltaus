@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 
 export default function SarahaPage() {
   const params = useParams();
@@ -235,9 +236,9 @@ export default function SarahaPage() {
           <Card className="max-w-md w-full p-2 border-stone-200 dark:border-zinc-800 shadow-xl">
             <h2 className="text-lg font-bold text-rose-600 mb-0.5">الرابط غير متاح</h2>
             <p className="text-xs text-stone-500 mb-1">تأكد من صحة الرابط أو تواصل مع الخادم المسؤول.</p>
-            <Button asChild variant="outline" className="rounded-xl">
-              <Link href="/">العودة للرئيسية</Link>
-            </Button>
+            <BackButton fallbackUrl="/" className="inline-flex px-3 py-1.5 rounded-xl border border-stone-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-stone-100 dark:hover:bg-zinc-700 text-xs font-bold transition items-center justify-center gap-1 mx-auto text-stone-700 dark:text-zinc-200">
+              <span>العودة للرئيسية</span>
+            </BackButton>
           </Card>
         </div>
       );
@@ -382,14 +383,22 @@ export default function SarahaPage() {
     <div className="min-h-screen py-2 px-1 sm:px-2 max-w-6xl mx-auto space-y-1.5" dir="rtl">
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 bg-white/80 dark:bg-zinc-900/80 p-1.5 rounded-3xl border border-stone-200 dark:border-zinc-800 shadow-xs">
-        <div>
-          <h1 className="text-xl font-bold text-amber-950 dark:text-amber-200 flex items-center gap-0.5">
-            <HeartHandshake className="w-3 h-3 text-amber-600" />
-            <span>لوحة أسئلة واستفسارات المخدومين (صراحة)</span>
-          </h1>
-          <p className="text-xs text-stone-500 mt-0.25">
-            استقبل أسئلة مخدوميك بخصوصية تامة 100% دون معرفة هوية السائل
-          </p>
+        <div className="flex items-center gap-1">
+          <BackButton
+            fallbackUrl="/"
+            className="p-1 rounded-2xl bg-stone-100 dark:bg-zinc-800 text-stone-700 dark:text-zinc-300 hover:bg-stone-200 dark:hover:bg-zinc-700 transition flex items-center justify-center"
+            iconSize={18}
+            title="الرجوع للصفحة السابقة"
+          />
+          <div>
+            <h1 className="text-xl font-bold text-amber-950 dark:text-amber-200 flex items-center gap-0.5">
+              <HeartHandshake className="w-3 h-3 text-amber-600" />
+              <span>لوحة أسئلة واستفسارات المخدومين (صراحة)</span>
+            </h1>
+            <p className="text-xs text-stone-500 mt-0.25">
+              استقبل أسئلة مخدوميك بخصوصية تامة 100% دون معرفة هوية السائل
+            </p>
+          </div>
         </div>
 
         <Button

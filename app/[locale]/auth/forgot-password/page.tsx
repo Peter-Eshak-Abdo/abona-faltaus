@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import { useState } from "react";
 import LogoHeader from "@/components/home/LogoHeader";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,13 +64,7 @@ export default function ForgotPasswordPage() {
           <CardHeader className="border-b border-stone-100 dark:border-zinc-800 pb-0.5">
             <CardTitle className="text-center flex flex-row items-center text-amber-900 dark:text-amber-500 font-bold text-lg">
               <div className="flex flex-row justify-between w-full items-center">
-                <Link
-                  href="/auth/signin"
-                  className="p-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition"
-                  title="الرجوع لتسجيل الدخول"
-                >
-                  <FaArrowRight size={16} className={isRtl ? "" : "rotate-180"} />
-                </Link>
+                <BackButton fallbackUrl="/auth/signin" />
                 <p className="flex-1 text-center font-bold">استعادة كلمة المرور</p>
                 <div className="w-8" />
               </div>

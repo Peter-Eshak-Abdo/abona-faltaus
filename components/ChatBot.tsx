@@ -12,7 +12,7 @@ import { Button } from "react-day-picker";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import TextareaAutosize from "react-textarea-autosize";
 import Link from "next/link";
-import { FaArrowRight } from "react-icons/fa";
+import BackButton from "@/components/navigation/BackButton";
 import { toast } from "sonner";
 import { ORTHODOX_SUB_BOTS, SubBotPersona, getSubBotById } from "@/lib/orthodox-subbots";
 import PersonaSelector from "@/components/chat/PersonaSelector";
@@ -284,9 +284,7 @@ export default function ChatBot() {
       {/* --- Header المحادثة --- */}
       <div className="flex-none border-b border-[#dcc0c1]/30 bg-[#f6f3f2]/90 backdrop-blur-md px-0.5 py-0.5 flex items-center justify-between z-10 shadow-sm gap-0.5">
         <div className="flex items-center gap-0.5">
-          <Link href="/" prefetch={true} className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition" title="الرجوع للصفحة الرئيسية">
-            <FaArrowRight size={16} />
-          </Link>
+          <BackButton iconSize={16} title="الرجوع للصفحة السابقة" />
           <PersonaSelector
             selectedBotId={selectedBotId}
             onSelectBot={handleSelectPersona}

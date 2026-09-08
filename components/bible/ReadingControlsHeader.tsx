@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
 import { FaPlay, FaStop, FaSearch, FaStar, FaPlusSquare, FaSpinner, FaArrowRight } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import localforage from "localforage";
@@ -127,10 +128,8 @@ export default function ReadingControlsHeader({
 
   return (
     <header className="sticky bg-surface-container-low/95 backdrop-blur-xl z-30 px-1 flex items-center justify-between border-b border-surface-variant/30 flex-col md:flex-row shadow-2xl rounded-4xl pb-0.5">
-      <div className="flex gap-0.5 w-full md:w-auto">
-        <Link href="/" className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline" title="الرجوع للصفحة الرئيسية">
-          <FaArrowRight size={18} />
-        </Link>
+      <div className="flex gap-0.5 w-full md:w-auto items-center">
+        <BackButton title="الرجوع للصفحة السابقة" />
         <select
           className="flex-1 md:flex-none p-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
           value={currentBookIdx}

@@ -28,7 +28,7 @@ export default function BibleReaderPage() {
   const [currentBookIdx, setCurrentBookIdx] = useState(0);
   const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
   const [fontSize, setFontSize] = useState(24);
-  const [lineHeight, setLineHeight] = useState("1.8");
+  const [lineHeight, setLineHeight] = useState("2.3");
   const [selectedVerses, setSelectedVerses] = useState<number[]>([]);
   const [favorites, setFavorites] = useState<{ bIdx: number; cIdx: number; vNum: number }[]>([]);
   const [isDayModalOpen, setIsDayModalOpen] = useState(false);
@@ -226,14 +226,13 @@ export default function BibleReaderPage() {
             />
 
             <section className="grow flex flex-col relative max-w-8xl mx-auto w-full">
-              {/* Reading canvas: flex-1 + overflow-y-auto so the whole chapter is readable on iOS */}
               <article
-                className={`p-0.25 flex flex-col gap-0.25 font-title-lg text-title-lg text-on-surface transition-all duration-300 overflow-y-auto max-h-[calc(100dvh-15px)] flex-1 -webkit-overflow-scrolling-touch ${
+                className={`p-1 sm:p-2 font-title-lg text-title-lg text-on-surface transition-all duration-300 overflow-y-auto max-h-[calc(100dvh-15px)] flex-1 -webkit-overflow-scrolling-touch ${
                   language === "cop" ? "font-coptic" : ""
                 }`}
                 id="reading-canvas"
                 dir={language === "cop" ? "ltr" : "rtl"}
-                style={{ fontSize: `${fontSize}px`, lineHeight: lineHeight || 1.8 }}
+                style={{ fontSize: `${fontSize}px`, lineHeight: lineHeight || "2.3" }}
               >
                 <VerseItem
                   bibleData={bibleData}

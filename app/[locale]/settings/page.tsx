@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import OneSignal from 'react-onesignal';
 import { Link } from "@/i18n/navigation";
+import BackButton from "@/components/navigation/BackButton";
 import { FaArrowRight } from "react-icons/fa";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { isRtlLocale } from "@/i18n/routing";
@@ -195,9 +196,11 @@ export default function SettingsView() {
       <div className="w-full max-w-7xl space-y-0.25">
 
         <div className="text-center">
-          <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline inline-flex">
-            <FaArrowRight size={18} className={isRtlLocale(locale) ? "" : "rotate-180"} />
-          </Link>
+          <BackButton
+            className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
+            iconSize={18}
+            title={t("title")}
+          />
           <h1 className="text-4xl font-bold text-black dark:text-white">{t("title")}</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-0.25">{t("subtitle")}</p>
         </div>
