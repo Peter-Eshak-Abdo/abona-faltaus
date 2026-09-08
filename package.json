@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.18",
-    "@ai-sdk/openai": "^3.0.41",
-    "@ai-sdk/react": "^3.0.148",
+    "@ai-sdk/openai": "^3.0.109",
+    "@ai-sdk/react": "^3.0.280",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@emotion/is-prop-valid": "^1.3.1",
     "@google/genai": "^2.19.0",
