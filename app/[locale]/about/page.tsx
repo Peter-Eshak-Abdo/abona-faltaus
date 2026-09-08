@@ -3,8 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Church, Users, BookOpen, Music, GraduationCap, Heart, Mail, ExternalLink, Link } from "lucide-react";
-// import { Church, Users, BookOpen, Music, GraduationCap, Heart, Mail, Github, ExternalLink } from "lucide-react";
+import { Church, Users, BookOpen, Music, GraduationCap, Heart, Mail, ExternalLink } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { APP_VERSION } from "@/lib/version";
 import router from "next/router";
 import { FaArrowRight } from "react-icons/fa";

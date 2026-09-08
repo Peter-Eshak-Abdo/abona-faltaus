@@ -98,13 +98,13 @@ export default function UnifiedGlobalHeader() {
         }`}
         dir="rtl"
       >
-        <div className="max-w-7xl mx-auto px-0.5 sm:px-1 py-0.5 flex items-center justify-between gap-0.5">
+        <div className="max-w-7xl mx-auto px-0.5 sm:px-1 py-0.25 sm:py-0.5 flex items-center justify-between gap-2">
           {/* 1. Left Side: Back Button & Logo Brand */}
           <div className="flex items-center gap-0.5 shrink-0">
             {!isHome && (
               <button
                 onClick={handleBack}
-                className="p-0.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition flex items-center gap-0.5 text-xs font-bold"
+                className="p-0.5 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition flex items-center gap-0.5 text-xs font-bold"
                 title={tNav('back')}
               >
                 <FaArrowRight className="text-xs" />
@@ -134,11 +134,11 @@ export default function UnifiedGlobalHeader() {
           </div>
 
           {/* 3. Right Side: Quick Action Toolbar */}
-          <div className="flex items-center gap-0.5 shrink-0">
+          <div className="flex items-center gap-0.25 sm:gap-0.5 shrink-0">
             {/* Global Search Button */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-0.5 sm:px-0.5 sm:py-0.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 flex items-center gap-0.5 text-xs transition"
+              className="p-0.25 sm:px-0.5 sm:py-0.5 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 flex items-center gap-0.5 text-xs transition"
               title={tNav('search')}
             >
               <FaSearch className="text-xs text-amber-400" />
@@ -151,7 +151,7 @@ export default function UnifiedGlobalHeader() {
             {/* Quick Link to Settings */}
             <Link
               href="/settings"
-              className="p-0.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition text-xs flex items-center gap-0.5"
+              className="p-0.5 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition text-xs flex items-center"
               title={tNav('settings')}
             >
               <FaCog className="text-sm" />
@@ -160,7 +160,7 @@ export default function UnifiedGlobalHeader() {
             {/* Mobile Menu Toggle Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-0.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition text-xs lg:hidden"
+              className="p-0.5 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition text-xs lg:hidden flex items-center"
               title={tNav('menu')}
             >
               {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
@@ -170,7 +170,7 @@ export default function UnifiedGlobalHeader() {
 
         {/* Mobile Slide-down Navigation Drawer */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-neutral-800 bg-neutral-950/95 backdrop-blur-xl p-3 grid grid-cols-2 sm:grid-cols-3 gap-1.5 animate-in slide-in-from-top duration-200">
+          <div className="lg:hidden border-t border-neutral-800 bg-neutral-950/95 backdrop-blur-xl p-0.5 sm:p-1 grid grid-cols-1 sm:grid-cols-2 gap-0.5 animate-in slide-in-from-top duration-200">
             {MENU_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive = pathname.startsWith(item.href);
@@ -179,13 +179,13 @@ export default function UnifiedGlobalHeader() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`p-0.5 rounded-xl border text-xs font-bold flex items-center gap-0.5 transition ${
+                  className={`p-0.5 rounded-xl border text-xs sm:text-sm font-bold flex items-center gap-0.5 transition min-h-[46px] ${
                     isActive
                       ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
                       : 'bg-neutral-900/70 text-neutral-300 border-neutral-800 hover:bg-neutral-800'
                   }`}
                 >
-                  <Icon className={`text-sm ${item.color}`} />
+                  <Icon className={`text-base shrink-0 ${item.color}`} />
                   <span className="truncate">{item.label}</span>
                 </Link>
               );

@@ -1,0 +1,18 @@
+# Vercel Deployment Ignore
+.git
+.github
+.agents
+.idx
+zcodes
+*.tar
+*.zip
+*.pt
+*.safetensors
+outputs/
+coptic_liturgy_lora_model/
+node_modules
+.next
+*.md
+!README.md
+docs/
+*.log

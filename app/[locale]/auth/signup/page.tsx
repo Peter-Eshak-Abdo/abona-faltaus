@@ -3,8 +3,7 @@
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from "react";
 import LogoHeader from "@/components/home/LogoHeader";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase";
 import { User, Mail, Lock, CheckCircle2, Circle, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -7,36 +7,42 @@ export default function OfflineNotification() {
   const [status, setStatus] = useState<"downloading" | "ready">("downloading");
 
   useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      "serviceWorker" in navigator &&
-      window.workbox !== undefined
-    ) {
-      const wb = window.workbox;
-
-      // 1. عند بدء تثبيت ملفات الموقع
-      wb.addEventListener("installing", () => {
-        setShowStatus(true);
-        setStatus("downloading");
-      });
-
-      // 2. عند انتهاء التثبيت وجاهزية الموقع
-      wb.addEventListener("controlling", () => {
-        setStatus("ready");
-
-        // إخفاء الرسالة بعد 5 ثواني
-        setTimeout(() => {
-          setShowStatus(false);
-        }, 5000);
-      });
-
-      // حالة لو الموقع كان متحمل قبل كده وحصل تحديث
-      wb.addEventListener("activated", (event: any) => {
-        if (!event.isUpdate) {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      // 1. مراقبة حالة تثبيت وجاهزية الكاش
+      navigator.serviceWorker.ready.then(() => {
+        const hasShown = sessionStorage.getItem("offline_ready_banner_shown");
+        if (!hasShown) {
           setStatus("ready");
-          setTimeout(() => setShowStatus(false), 5000);
+          setShowStatus(true);
+          sessionStorage.setItem("offline_ready_banner_shown", "true");
+          setTimeout(() => {
+            setShowStatus(false);
+          }, 6000);
         }
       });
+
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        setStatus("ready");
+        setShowStatus(true);
+        setTimeout(() => setShowStatus(false), 6000);
+      });
+
+      // 2. تتبع انقطاع وعودة الإنترنت
+      const onOffline = () => {
+        setStatus("ready");
+        setShowStatus(true);
+      };
+      const onOnline = () => {
+        setShowStatus(false);
+      };
+
+      window.addEventListener("offline", onOffline);
+      window.addEventListener("online", onOnline);
+
+      return () => {
+        window.removeEventListener("offline", onOffline);
+        window.removeEventListener("online", onOnline);
+      };
     }
   }, []);
 

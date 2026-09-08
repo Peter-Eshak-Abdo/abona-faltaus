@@ -11,6 +11,7 @@ import SelectionToolbar from "@/components/bible/SelectionToolbar";
 import DayModal from "@/components/bible/DayModal";
 import ReadingControlsHeader from "@/components/bible/ReadingControlsHeader";
 import VerseItem from "@/components/bible/VerseItem";
+import VerseTranslationModal from "@/components/bible/VerseTranslationModal";
 
 import type { BookObj, VerseObj } from "@/lib/bible-utils";
 
@@ -32,6 +33,7 @@ export default function BibleReaderPage() {
   const [favorites, setFavorites] = useState<{ bIdx: number; cIdx: number; vNum: number }[]>([]);
   const [isDayModalOpen, setIsDayModalOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isTranslationModalOpen, setIsTranslationModalOpen] = useState(false);
 
   const isInitialized = useRef(false);
 
@@ -50,7 +52,7 @@ export default function BibleReaderPage() {
       setLoadProgress(0);
       setLoadingStatus(targetLang === "cop" ? "جاري تحميل الكتاب المقدس بالقبطية..." : t('loadingData'));
 
-      const cacheKey = targetLang === "cop" ? "offline_coptic_bible_data" : "offline_bible_data";
+      const cacheKey = targetLang === "cop" ? "offline_coptic_bible_data_v2" : "offline_bible_data";
       let data = await localforage.getItem<BookObj[]>(cacheKey);
 
       if (!data || data.length === 0) {
@@ -93,7 +95,7 @@ export default function BibleReaderPage() {
         const savedLang = (localStorage.getItem("bible_reader_lang") as "ar" | "cop") || "ar";
         setLanguage(savedLang);
 
-        const cacheKey = savedLang === "cop" ? "offline_coptic_bible_data" : "offline_bible_data";
+        const cacheKey = savedLang === "cop" ? "offline_coptic_bible_data_v2" : "offline_bible_data";
         let data = await localforage.getItem<BookObj[]>(cacheKey);
 
         if (!data || data.length === 0) {
@@ -262,6 +264,18 @@ export default function BibleReaderPage() {
           setFavorites={setFavorites}
           isDayModalOpen={isDayModalOpen}
           setIsDayModalOpen={setIsDayModalOpen}
+          onOpenTranslation={() => setIsTranslationModalOpen(true)}
+          language={language}
+        />
+
+        <VerseTranslationModal
+          isOpen={isTranslationModalOpen}
+          onClose={() => setIsTranslationModalOpen(false)}
+          bibleData={bibleData}
+          currentBookIdx={currentBookIdx}
+          currentChapterIdx={currentChapterIdx}
+          selectedVerses={selectedVerses}
+          language={language}
         />
 
         {isDayModalOpen && (

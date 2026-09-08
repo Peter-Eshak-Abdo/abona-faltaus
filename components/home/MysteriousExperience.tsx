@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, Compass, X, Sparkles, Volume2, VolumeX, EyeOff, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 
 export function MysteriousExperience() {
   const [activeTab, setActiveTab] = useState<"candle" | "ephemeral" | "compass" | null>(null);
@@ -266,7 +267,7 @@ export function MysteriousExperience() {
                 </p>
                 <div className="pt-0.5 flex justify-center gap-2">
                   <Button asChild size="sm" className="bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs">
-                    <a href="/agpeya">فتح الأجبية الآن</a>
+                    <Link href="/agpeya">فتح الأجبية الآن</Link>
                   </Button>
                 </div>
               </div>

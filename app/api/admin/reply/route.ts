@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { sendPushNotification } from "@/lib/onesignal";
 import { requireAdmin, withErrorHandling } from "@/lib/api-helpers";
+import { AdminReplySchema } from "@/lib/security-validation";
 
 export async function POST(request: Request) {
   return withErrorHandling(async () => {
@@ -14,14 +15,15 @@ export async function POST(request: Request) {
     requireAdmin(user);
 
     const body = await request.json();
-    const { id, reply, userId } = body;
-
-    if (!id || !reply?.trim()) {
+    const validation = AdminReplySchema.safeParse(body);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "البيانات غير مكتملة (id و reply مطلوبان)" },
+        { error: "بيانات الرد غير صالحة", details: validation.error.format() },
         { status: 400 }
       );
     }
+
+    const { id, reply, userId } = validation.data;
 
     const { error } = await supabase
       .from("feedback")

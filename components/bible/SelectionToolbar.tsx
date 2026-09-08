@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { FaCopy, FaShareAlt, FaStar, FaTimes, FaPlusSquare, FaComments, FaBookOpen } from "react-icons/fa";
+import { FaCopy, FaShareAlt, FaStar, FaTimes, FaPlusSquare, FaComments, FaBookOpen, FaLanguage } from "react-icons/fa";
 import localforage from "localforage";
 import { shortBookNames } from "@/lib/books";
 import { toast } from "sonner";
@@ -20,6 +20,8 @@ type SelectionToolbarProps = {
   setFavorites: (favs: { bIdx: number; cIdx: number; vNum: number }[]) => void;
   isDayModalOpen: boolean;
   setIsDayModalOpen: (open: boolean) => void;
+  onOpenTranslation?: () => void;
+  language?: "ar" | "cop";
 };
 
 export default function SelectionToolbar({
@@ -32,6 +34,8 @@ export default function SelectionToolbar({
   setFavorites,
   isDayModalOpen,
   setIsDayModalOpen,
+  onOpenTranslation,
+  language = "ar",
 }: SelectionToolbarProps) {
   const router = useRouter();
   const t = useTranslations('Bible');
@@ -156,6 +160,16 @@ export default function SelectionToolbar({
         exit={{ opacity: 0, y: 50, scale: 0.9 }}
         className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+16px)] left-1/2 -translate-x-1/2 bg-[#2d1b18]/95 backdrop-blur-xl px-0.5 py-0.5 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-amber-500/20 gap-1 max-w-[95vw] overflow-x-auto"
       >
+        {onOpenTranslation && (
+          <button
+            onClick={onOpenTranslation}
+            className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-emerald-300 hover:bg-white/10 transition-colors"
+            title="ترجمة ومعاني الآيات"
+          >
+            <FaLanguage size={16} />
+            <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">ترجمة</span>
+          </button>
+        )}
         <button onClick={handleExplain} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-cyan-300 hover:bg-white/10 transition-colors" title={t('explain')}>
           <FaComments size={16} />
           <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">{t('explain')}</span>

@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import {
   FaMusic,
   FaBook,
@@ -42,6 +42,7 @@ const getCopticDate = () => {
 };
 
 export default function HomeClient() {
+  const router = useRouter();
   const t = useTranslations("Home");
   const sections = useMemo(
     () => [
@@ -225,14 +226,15 @@ export default function HomeClient() {
       <MysteriousExperience />
 
       {/* Standalone Individual Exam Button with Level */}
-      <motion.div
+      {!showMenu && (
+        <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="fixed top-20 left-4 z-30 pointer-events-auto"
+        className="fixed top-18 mx-auto z-30 pointer-events-auto"
       >
         <Link href="/exam/individual-questions">
           <div className="bg-white/80 dark:bg-zinc-900/90 backdrop-blur-md border border-amber-500/40 shadow-xl px-0.5 py-0.5 rounded-2xl flex items-center gap-0.5 hover:scale-105 transition-all text-xs sm:text-sm group">
-            <div className="w-7 h-7 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+            <div className="w-5 h-3 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
               <Trophy size={16} className="group-hover:rotate-12 transition-transform" />
             </div>
             <div className="text-right">
@@ -244,6 +246,7 @@ export default function HomeClient() {
           </div>
         </Link>
       </motion.div>
+      )}
 
       {/* <div className="relative z-20 w-dvw h-dvh"> */}
       <div className="absolute inset-0 z-20 w-full h-full pointer-events-none">
@@ -349,6 +352,7 @@ export default function HomeClient() {
                         e.preventDefault();
                         e.stopPropagation();
                         toast.error(t("loginRequired"));
+                        router.push("/auth/signin");
                       }}
                       title={t("loginRequired")}
                       className="bg-gray-400/90 dark:bg-gray-700/90 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-md border border-gray-400 dark:border-gray-600 transition-all duration-300 cursor-not-allowed text-gray-200 dark:text-gray-400 group relative overflow-hidden opacity-75 grayscale"

@@ -107,6 +107,8 @@ function IndividualQuizArena() {
     return () => clearInterval(timer);
   }, [timerRunning, isFinished, timeLeft, currentQuestion]);
 
+  const [verifiedAnswers, setVerifiedAnswers] = useState<Record<string, { isCorrect: boolean; correctAnswer: string; explanation: string }>>({});
+
   const handleTimeOut = () => {
     if (!currentQuestion) return;
     if (!selectedAnswers[currentQuestion.id]) {
@@ -116,13 +118,50 @@ function IndividualQuizArena() {
     }
   };
 
-  const handleSelectAnswer = (option: string) => {
+  const handleSelectAnswer = async (option: string) => {
     if (selectedAnswers[currentQuestion?.id]) return; // already answered
 
-    const isCorrect = option === currentQuestion.correctAnswer;
     setSelectedAnswers((prev) => ({ ...prev, [currentQuestion.id]: option }));
-    setShowExplanation(true);
     setTimerRunning(false);
+
+    let isCorrect = false;
+    let explanationText = currentQuestion.explanation || "";
+    let correctAns = currentQuestion.correctAnswer || "";
+
+    try {
+      const res = await fetch("/api/exam/individual/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questionId: currentQuestion.id,
+          selectedAnswer: option,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        isCorrect = data.isCorrect;
+        correctAns = data.correctAnswer;
+        explanationText = data.explanation || explanationText;
+      } else {
+        // Local fallback if offline
+        isCorrect = option === currentQuestion.correctAnswer;
+      }
+    } catch {
+      // Local fallback if offline
+      isCorrect = option === currentQuestion.correctAnswer;
+    }
+
+    setVerifiedAnswers((prev) => ({
+      ...prev,
+      [currentQuestion.id]: {
+        isCorrect,
+        correctAnswer: correctAns,
+        explanation: explanationText,
+      },
+    }));
+
+    setShowExplanation(true);
 
     if (isCorrect) {
       const addedPoints = currentQuestion.points + (streak >= 3 ? 10 : 0);
@@ -251,32 +290,32 @@ function IndividualQuizArena() {
   const currentBadge = LEVEL_BADGES.find((b) => b.level === levelParam) || LEVEL_BADGES[0];
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-950 via-zinc-900 to-black text-white p-1 sm:p-2 font-sans flex flex-col justify-between" dir="rtl">
+    <div className="min-h-[100dvh] bg-linear-to-b from-slate-950 via-zinc-900 to-black text-white p-0.5 sm:p-1 font-sans flex flex-col justify-between" dir="rtl">
       {/* Top HUD Bar */}
-      <div className="max-w-4xl mx-auto w-full space-y-1">
-        <div className="flex items-center justify-between border-b border-zinc-800 pb-1">
+      <div className="max-w-4xl mx-auto w-full space-y-0.5">
+        <div className="flex items-center justify-between border-b border-zinc-800 pb-0.5">
           <Link
             href="/exam/individual-questions"
-            className="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-0.5"
+            className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white flex items-center gap-0.5 p-0.25 rounded-lg transition"
           >
-            <ArrowRight size={15} />
+            <ArrowRight size={16} />
             <span>إنهاء / خروج</span>
           </Link>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             {streak >= 2 && (
               <motion.div
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
-                className="flex items-center gap-0.25 px-1 py-0.25 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 text-xs font-black"
+                className="flex items-center gap-0.25 px-0.5 py-0.25 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 text-xs font-black"
               >
                 <Flame size={14} className="animate-bounce" />
-                <span>سلسلة صحيحة x{streak}</span>
+                <span>سلسلة x{streak}</span>
               </motion.div>
             )}
 
-            <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-black">
-              <Zap size={14} />
+            <div className="flex items-center gap-0.5 px-0.5 py-0.25 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs sm:text-sm font-black">
+              <Zap size={15} />
               <span>{score} نقطة</span>
             </div>
           </div>
@@ -285,16 +324,16 @@ function IndividualQuizArena() {
         {/* Progress & Timer Bar */}
         {!isFinished && (
           <div className="space-y-0.5">
-            <div className="flex items-center justify-between text-xs text-zinc-400">
+            <div className="flex items-center justify-between text-xs sm:text-sm text-zinc-400">
               <span className="font-bold">
                 السؤال {currentIdx + 1} من {questions.length}
               </span>
               <span className="flex items-center gap-0.5 font-mono text-amber-400 font-bold">
-                <Clock size={13} /> {timeLeft} ثانية
+                <Clock size={14} /> {timeLeft} ثانية
               </span>
             </div>
 
-            <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-linear-to-r from-blue-500 to-amber-500"
                 style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}
@@ -305,7 +344,7 @@ function IndividualQuizArena() {
       </div>
 
       {/* Main Question / Result Area */}
-      <main className="max-w-4xl mx-auto w-full my-auto py-2">
+      <main className="max-w-4xl mx-auto w-full my-auto py-0.5 sm:py-1">
         <AnimatePresence mode="wait">
           {!isFinished ? (
             <motion.div
@@ -313,35 +352,35 @@ function IndividualQuizArena() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
-              className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-1.5 sm:p-2.5 shadow-2xl space-y-2 backdrop-blur-md"
+              className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-0.5 sm:p-1 shadow-2xl space-y-1 backdrop-blur-md"
             >
               {/* Category & Badge Header */}
-              <div className="flex items-center justify-between gap-1 flex-wrap">
-                <div className="flex items-center gap-1">
-                  <span className="text-xl p-1 rounded-xl bg-black/40 border border-white/10">
+              <div className="flex items-center justify-between gap-0.5 flex-wrap">
+                <div className="flex items-center gap-0.5">
+                  <span className="text-xl p-0.5 rounded-xl bg-black/40 border border-white/10">
                     {categoryMeta?.icon}
                   </span>
                   <div>
                     <h3 className={`text-xs sm:text-sm font-black ${categoryMeta?.color}`}>
                       {categoryMeta?.titleAr}
                     </h3>
-                    <span className="text-[10px] text-zinc-400">
+                    <span className="text-[11px] text-zinc-400">
                       المستوى {currentQuestion.level} ({currentBadge.nameAr})
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   {currentQuestion.mysteryHint && !showMysteryHint && !showExplanation && (
                     <button
                       onClick={() => setShowMysteryHint(true)}
-                      className="px-1 py-0.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold hover:bg-purple-500/20 transition flex items-center gap-0.5"
+                      className="px-0.5 py-0.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold hover:bg-purple-500/20 transition flex items-center gap-0.5"
                     >
-                      <HelpCircle size={13} />
-                      <span>كشف التلميح الغامض 🔮</span>
+                      <HelpCircle size={14} />
+                      <span>كشف التلميح 🔮</span>
                     </button>
                   )}
-                  <span className="px-1 py-0.5 rounded-lg bg-zinc-800 text-[11px] font-bold text-amber-400">
+                  <span className="px-0.5 py-0.5 rounded-lg bg-zinc-800 text-xs font-bold text-amber-400">
                     +{currentQuestion.points} نقطة
                   </span>
                 </div>
@@ -352,7 +391,7 @@ function IndividualQuizArena() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="p-1 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-purple-200 text-xs leading-relaxed"
+                  className="p-0.5 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-purple-200 text-xs sm:text-sm leading-relaxed"
                 >
                   <span className="font-black text-purple-400 ml-0.5">🔮 التلميح الكنسي:</span>
                   {currentQuestion.mysteryHint}
@@ -365,11 +404,12 @@ function IndividualQuizArena() {
               </h2>
 
               {/* Options Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.25 sm:gap-0.5 pt-0.5">
                 {currentQuestion.options.map((option, idx) => {
                   const isSelected = selectedAnswers[currentQuestion.id] === option;
-                  const isCorrect = option === currentQuestion.correctAnswer;
+                  const verified = verifiedAnswers[currentQuestion.id];
                   const hasAnswered = !!selectedAnswers[currentQuestion.id];
+                  const isCorrect = verified ? (verified.correctAnswer === option) : (option === currentQuestion.correctAnswer);
 
                   let btnStyle = "bg-zinc-800/80 hover:bg-zinc-700/80 border-zinc-700 text-zinc-100";
                   if (hasAnswered) {
@@ -387,7 +427,7 @@ function IndividualQuizArena() {
                       key={idx}
                       onClick={() => handleSelectAnswer(option)}
                       disabled={hasAnswered}
-                      className={`p-1.5 rounded-2xl border-2 text-right transition-all font-bold text-xs sm:text-sm flex items-center justify-between gap-1 ${btnStyle}`}
+                      className={`p-0.5 sm:p-1 rounded-2xl border-2 text-right transition-all font-bold text-xs sm:text-sm flex items-center justify-between gap-2 min-h-[52px] ${btnStyle}`}
                     >
                       <span className="flex-1 leading-relaxed">{option}</span>
                       {hasAnswered && isCorrect && (
@@ -406,16 +446,16 @@ function IndividualQuizArena() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-1.5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-1"
+                  className="p-0.5 sm:p-1 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-0.5"
                 >
-                  <div className="text-xs text-zinc-300 leading-relaxed">
+                  <div className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
                     <span className="font-black text-amber-400 ml-0.5">💡 الشرح الكنسي:</span>
-                    {currentQuestion.explanation || "إجابة مباركة وسليمة!"}
+                    {verifiedAnswers[currentQuestion.id]?.explanation || currentQuestion.explanation || "إجابة مباركة وسليمة!"}
                   </div>
 
                   <button
                     onClick={handleNextQuestion}
-                    className="w-full py-1 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm rounded-xl shadow-lg transition active:scale-98 flex items-center justify-center gap-0.5"
+                    className="w-full py-0.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm rounded-xl shadow-lg transition active:scale-98 flex items-center justify-center gap-0.5 min-h-[46px]"
                   >
                     <span>
                       {currentIdx + 1 < questions.length ? "السؤال التالي ⬅️" : "عرض النتيجة النهائية 🏆"}
@@ -430,7 +470,7 @@ function IndividualQuizArena() {
               id="quiz-result-card"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-linear-to-b from-zinc-900 to-zinc-950 border border-amber-500/30 rounded-3xl p-2 sm:p-3 text-center space-y-2 shadow-2xl"
+              className="bg-linear-to-b from-zinc-900 to-zinc-950 border border-amber-500/30 rounded-3xl p-0.5 sm:p-1 text-center space-y-0.5 shadow-2xl"
             >
               <div className="w-16 h-16 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center mx-auto text-3xl shadow-lg shadow-amber-500/20">
                 <Trophy size={32} />

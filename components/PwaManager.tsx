@@ -54,13 +54,14 @@ export default function PwaManager() {
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     // الاستماع لانتهاء عملية التحميل الأوفلاين (Caching)
-    if (typeof window !== "undefined" && "serviceWorker" in navigator && (window as any).workbox !== undefined) {
-      const wb = (window as any).workbox;
-      wb.addEventListener("installed", (event: any) => {
-        if (!event.isUpdate) {
-          setInstallStatus("installed");
-          setTimeout(() => setInstallStatus("idle"), 6000);
-        }
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.ready.then(() => {
+        setInstallStatus("installed");
+        setTimeout(() => setInstallStatus("idle"), 6000);
+      });
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        setInstallStatus("installed");
+        setTimeout(() => setInstallStatus("idle"), 6000);
       });
     }
 

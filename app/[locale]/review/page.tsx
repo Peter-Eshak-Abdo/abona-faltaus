@@ -1,4 +1,4 @@
-import { Link } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
 import { FaArrowRight } from 'react-icons/fa';
 import ReviewClient from './ReviewClient';
 

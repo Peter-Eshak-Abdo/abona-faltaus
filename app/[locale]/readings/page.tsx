@@ -221,6 +221,19 @@ export default function KatamarosPage() {
       setSelectedCopticDay(cDate.day);
 
       const isSunday = targetDate.getDay() === 0;
+      const cacheKey = `katamaros_${cDate.month}_${cDate.day}_${isSunday ? "sun" : "wk"}`;
+
+      // Check offline cache first
+      try {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed) {
+            setData(parsed);
+            setLoading(false);
+          }
+        }
+      } catch {}
 
       const res = await fetch("/api/readings", {
         method: "POST",
@@ -236,12 +249,29 @@ export default function KatamarosPage() {
       if (res.ok) {
         const json = await res.json();
         setData(json);
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(json));
+        } catch {}
       } else {
-        setData(null);
+        // Only nullify if not already loaded from offline cache
+        const cached = localStorage.getItem(cacheKey);
+        if (!cached) setData(null);
       }
     } catch (error) {
-      console.error("Failed to fetch katamaros readings:", error);
-      setData(null);
+      console.warn("Failed to fetch katamaros readings online, checking offline cache:", error);
+      const cDate = getCopticDate(targetDate);
+      const isSunday = targetDate.getDay() === 0;
+      const cacheKey = `katamaros_${cDate.month}_${cDate.day}_${isSunday ? "sun" : "wk"}`;
+      try {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          setData(JSON.parse(cached));
+        } else {
+          setData(null);
+        }
+      } catch {
+        setData(null);
+      }
     } finally {
       setLoading(false);
     }

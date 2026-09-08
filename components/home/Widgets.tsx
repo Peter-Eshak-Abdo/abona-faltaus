@@ -242,7 +242,7 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
-            className="lg:hidden absolute bottom-1 left-1.5 right-1.5 z-10 pointer-events-auto"
+            className="lg:hidden absolute bottom-1 left-1.5 right-1.5 z-10 pointer-events-auto max-w-2/3 mx-auto"
           >
             <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-0.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
               <div className="flex items-center gap-0.5 mb-0.5">

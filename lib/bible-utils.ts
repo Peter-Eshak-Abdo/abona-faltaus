@@ -4,8 +4,8 @@ import {
   newTestament,
   shortBookNames,
 } from "@/lib/books";
-// import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import { transliterateCopticToArabized } from "@/lib/coptic-transliterate";
 
 // const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 // const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -18,6 +18,9 @@ export type VerseObj = {
   verse: number;
   text_vocalized: string;
   text_plain: string;
+  translation?: string;
+  text_coptic_arabic?: string;
+  coptic_meaning?: string;
 };
 
 export type BookObj = {
@@ -221,6 +224,37 @@ export async function loadBible(onProgress?: (percent: number) => void): Promise
   if (cachedBible) return cachedBible;
 
   const canonicalOrder = [...oldTestament, ...newTestament];
+
+  // 1. Try pre-cached local JSON first (instant offline support & zero network delay)
+  try {
+    if (onProgress) onProgress(20);
+    const res = await fetch("/bible-json/bible_fixed.json");
+    if (res.ok) {
+      if (onProgress) onProgress(60);
+      const json: any[] = await res.json();
+      if (Array.isArray(json) && json.length > 0) {
+        const books: BookObj[] = json.map((b) => ({
+          abbrev: b.abbrev,
+          name: bookNames[b.abbrev as keyof typeof bookNames] || b.name || b.abbrev,
+          chapters: b.chapters || [],
+        }));
+
+        books.sort((a, b) => {
+          const indexA = canonicalOrder.indexOf(a.abbrev);
+          const indexB = canonicalOrder.indexOf(b.abbrev);
+          return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+        });
+
+        if (onProgress) onProgress(100);
+        cachedBible = books;
+        return cachedBible;
+      }
+    }
+  } catch (err) {
+    console.warn("Could not load local bible_fixed.json, falling back to Supabase:", err);
+  }
+
+  // 2. Fallback to Supabase
   let allData: any[] = [];
   let from = 0;
   let step = 1000;
@@ -369,7 +403,7 @@ export async function loadCopticBible(onProgress?: (percent: number) => void): P
     throw new Error("Failed to load coptic_bible.json");
   }
 
-  if (onProgress) onProgress(60);
+  if (onProgress) onProgress(50);
   const data = await res.json();
 
   const canonicalOrder = [...oldTestament, ...newTestament];
@@ -393,11 +427,30 @@ export async function loadCopticBible(onProgress?: (percent: number) => void): P
         const vList: VerseObj[] = [];
         for (const vNum of vNums) {
           const vData = versesObj[String(vNum)] || {};
-          const copticText = vData.coptic || "";
+          const copticText = (vData.coptic || "").trim();
+
+          // If verse 0 in Psalms/Lamentations is placeholder '[...]' or empty, skip it
+          if (vNum === 0 && (!copticText || copticText === "[...]")) {
+            continue;
+          }
+
+          // If Psalmi has verse 0 with non-empty text, shift numbering so it starts at 1
+          let displayVerseNum = vNum;
+          if (mapping.abbrev === "ps" && vNums.includes(0)) {
+            // If vNum is 0, it becomes verse 1; following verses shift +1
+            displayVerseNum = vNum + 1;
+          } else if (vNum === 0) {
+            displayVerseNum = 1;
+          }
+
+          const copticArabic = transliterateCopticToArabized(copticText);
+
           vList.push({
-            verse: vNum,
+            verse: displayVerseNum,
             text_vocalized: copticText,
             text_plain: copticText,
+            translation: vData.translation || "",
+            text_coptic_arabic: copticArabic,
           });
         }
         chaptersList.push(vList);

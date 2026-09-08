@@ -238,16 +238,10 @@ export default async function LocaleLayout({ children, params }: Props) {
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+Coptic&display=swap"
-          media="print"
-          // @ts-ignore
-          onLoad="this.media='all'"
         />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
-          media="print"
-          // @ts-ignore
-          onLoad="this.media='all'"
         />
         {process.env.GOOGLE_SITE_VERIFICATION && (
           <meta

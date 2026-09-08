@@ -10,7 +10,8 @@ export function requireAuth(user: any) {
 }
 
 export function requireAdmin(user: any) {
-  if (!user || user.email !== process.env.NEXT_PUBLIC_GMAIL) {
+  const adminEmail = (process.env.NEXT_PUBLIC_GMAIL!).toLowerCase().trim();
+  if (!user || user.email?.toLowerCase().trim() !== adminEmail) {
     throw new Error("FORBIDDEN");
   }
 }
