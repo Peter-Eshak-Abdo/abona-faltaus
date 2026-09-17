@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -21,6 +21,10 @@ import {
   HelpCircle,
   Clock,
   Settings,
+  ChevronRight,
+  ChevronLeft,
+  Printer,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +53,25 @@ export default function ChurchFormsDashboardPage() {
   const [responses, setResponses] = useState<any[]>([]);
   const [loadingForms, setLoadingForms] = useState(false);
   const [loadingResponses, setLoadingResponses] = useState(false);
+  const [dashboardTab, setDashboardTab] = useState<"summary" | "individual">("summary");
+  const [individualIndex, setIndividualIndex] = useState(0);
+
+  // Field response analytics
+  const fieldAnalytics = useMemo(() => {
+    if (!selectedForm || responses.length === 0) return {};
+    const stats: Record<string, Record<string, number>> = {};
+    selectedForm.fields?.forEach((f: any) => {
+      stats[f.id] = {};
+      responses.forEach((r: any) => {
+        const val = r.responses[f.id];
+        if (val !== undefined && val !== null && val !== "") {
+          const strVal = String(val);
+          stats[f.id][strVal] = (stats[f.id][strVal] || 0) + 1;
+        }
+      });
+    });
+    return stats;
+  }, [selectedForm, responses]);
 
   // Modal create
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -398,51 +421,200 @@ export default function ChurchFormsDashboardPage() {
                 </div>
               </Card>
 
-              {/* Responses List */}
+              {/* Google Forms Style Dashboard: Summary & Individual Tabs */}
               <div className="space-y-0.5">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-stone-800 dark:text-zinc-200 flex items-center gap-0.5">
-                    <BarChart3 className="w-2 h-2 text-blue-600" />
-                    <span>الردود المستلمة ({responses.length})</span>
-                  </h3>
+                <div className="flex items-center justify-between flex-wrap gap-0.5 border-b border-stone-200 dark:border-zinc-800 pb-0.5">
+                  <div className="flex items-center gap-0.25 bg-stone-100 dark:bg-zinc-800/80 p-1 rounded-2xl">
+                    <button
+                      type="button"
+                      onClick={() => setDashboardTab("summary")}
+                      className={`px-1 py-0.5 rounded-xl text-xs font-bold transition-all flex items-center gap-0.5 ${
+                        dashboardTab === "summary"
+                          ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
+                          : "text-stone-600 dark:text-zinc-400 hover:text-stone-900"
+                      }`}
+                    >
+                      <BarChart3 className="w-3.5 h-3.5" />
+                      <span>الملخص العام ({responses.length})</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDashboardTab("individual")}
+                      disabled={responses.length === 0}
+                      className={`px-1 py-0.5 rounded-xl text-xs font-bold transition-all flex items-center gap-0.5 ${
+                        dashboardTab === "individual"
+                          ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
+                          : "text-stone-600 dark:text-zinc-400 hover:text-stone-900 disabled:opacity-40"
+                      }`}
+                    >
+                      <UserCheck className="w-3.5 h-3.5" />
+                      <span>الردود الفردية</span>
+                    </button>
+                  </div>
+
+                  {dashboardTab === "individual" && responses.length > 0 && (
+                    <div className="flex items-center gap-0.5">
+                      <Button
+                        variant="outline"
+                        onClick={() => window.print()}
+                        className="rounded-xl text-xs h-3 gap-1 border-stone-300 dark:border-zinc-700"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        <span>طباعة الاستمارة</span>
+                      </Button>
+                      <div className="flex items-center gap-1 text-xs font-bold text-stone-600 dark:text-zinc-400">
+                        <button
+                          type="button"
+                          onClick={() => setIndividualIndex((i) => Math.max(0, i - 1))}
+                          disabled={individualIndex === 0}
+                          className="p-0.5 rounded-lg border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 disabled:opacity-30"
+                        >
+                          <ChevronRight className="w-3 h-3" />
+                        </button>
+                        <span>
+                          {individualIndex + 1} من {responses.length}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setIndividualIndex((i) => Math.min(responses.length - 1, i + 1))}
+                          disabled={individualIndex >= responses.length - 1}
+                          className="p-0.5 rounded-lg border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 disabled:opacity-30"
+                        >
+                          <ChevronLeft className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {loadingResponses ? (
-                  <div className="flex flex-col items-center justify-center py-1 gap-0.5">
+                  <div className="flex flex-col items-center justify-center py-1.5 gap-0.5">
                     <Loader2 className="w-2 h-2 animate-spin text-blue-600" />
-                    <p className="text-xs font-semibold text-stone-500">جاري تحميل الردود...</p>
+                    <p className="text-xs font-semibold text-stone-500">جاري تحميل الردود والإحصائيات...</p>
                   </div>
                 ) : responses.length === 0 ? (
-                  <Card className="rounded-3xl p-6 text-center border-stone-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60">
-                    <HelpCircle className="w-2 h-2 text-stone-400 mx-auto mb-0.5" />
+                  <Card className="rounded-3xl p-1.5 text-center border-stone-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60">
+                    <HelpCircle className="w-2 h-2 text-stone-300 dark:text-zinc-600 mx-auto mb-0.5" />
                     <h4 className="text-sm font-bold text-stone-700 dark:text-zinc-300">لا توجد ردود مسجلة بعد</h4>
                     <p className="text-xs text-stone-500 max-w-sm mx-auto mt-0.5">
-                      شارك الرابط مع المخدومين لتظهر ردودهم وإحصائياتهم هنا مباشرة.
+                      شارك الرابط مع المخدومين لتظهر ردودهم وإحصائياتهم التفاعلية هنا مباشرة.
                     </p>
                   </Card>
-                ) : (
+                ) : dashboardTab === "summary" ? (
+                  /* Summary Analytics View */
                   <div className="space-y-0.5">
-                    {responses.map((resp) => (
-                      <Card key={resp.id} className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 shadow-xs space-y-0.5">
-                        <div className="flex items-center justify-between text-xs text-stone-400 border-b border-stone-100 dark:border-zinc-800 pb-0.5">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-2 h-2" />
-                            {new Date(resp.submitted_at).toLocaleString("ar-EG")}
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.5 text-xs">
-                          {(selectedForm.fields || []).map((f: any) => (
-                            <div key={f.id} className="bg-stone-50 dark:bg-zinc-800/40 p-2 rounded-xl">
-                              <span className="font-bold text-stone-600 dark:text-zinc-400 block mb-0.5">{f.label}:</span>
-                              <span className="text-stone-900 dark:text-zinc-100 font-medium">
-                                {resp.responses[f.id] || "-"}
+                    {/* KPI Summary Cards */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-0.5">
+                      <div className="bg-blue-50/80 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40 rounded-2xl p-0.5 text-center">
+                        <span className="text-[11px] font-bold text-blue-700 dark:text-blue-300 block">إجمالي الردود</span>
+                        <span className="text-2xl font-black text-blue-900 dark:text-blue-100">{responses.length}</span>
+                      </div>
+                      <div className="bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 rounded-2xl p-0.5 text-center">
+                        <span className="text-[11px] font-bold text-amber-700 dark:text-amber-300 block">عدد الأسئلة</span>
+                        <span className="text-2xl font-black text-amber-900 dark:text-amber-100">{selectedForm.fields?.length || 0}</span>
+                      </div>
+                      <div className="bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 rounded-2xl p-0.5 text-center col-span-2 sm:col-span-1">
+                        <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 block">حالة الاستبيان</span>
+                        <span className="text-sm font-bold text-emerald-800 dark:text-emerald-200 mt-1 block">نشط ويستقبل ردوداً</span>
+                      </div>
+                    </div>
+
+                    {/* Per-field Analytics Breakdown */}
+                    <div className="space-y-0.5">
+                      {(selectedForm.fields || []).map((field: any, idx: number) => {
+                        const fieldStats = fieldAnalytics[field.id] || {};
+                        const totalAnswers = Object.values(fieldStats).reduce((a, b) => a + b, 0);
+
+                        return (
+                          <Card key={field.id} className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 shadow-xs space-y-3">
+                            <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800/80 pb-0.5">
+                              <h4 className="text-xs font-bold text-stone-900 dark:text-zinc-100 flex items-center gap-0.5">
+                                <span className="w-5 h-5 rounded-full bg-stone-100 dark:bg-zinc-800 text-stone-600 dark:text-zinc-300 inline-flex items-center justify-center text-[10px] font-bold">
+                                  {idx + 1}
+                                </span>
+                                <span>{field.label}</span>
+                              </h4>
+                              <span className="text-[11px] text-stone-400 font-medium">
+                                {totalAnswers} إجابة
                               </span>
                             </div>
-                          ))}
-                        </div>
-                      </Card>
-                    ))}
+
+                            {field.type === "multiple_choice" || field.type === "rating" ? (
+                              <div className="space-y-0.5 pt-0.5">
+                                {Object.entries(fieldStats).map(([opt, count]) => {
+                                  const pct = totalAnswers > 0 ? Math.round((count / totalAnswers) * 100) : 0;
+                                  return (
+                                    <div key={opt} className="space-y-0.25">
+                                      <div className="flex items-center justify-between text-xs text-stone-700 dark:text-zinc-300">
+                                        <span className="font-semibold">{opt}</span>
+                                        <span className="font-bold text-stone-500 text-[11px]">
+                                          {count} ({pct}%)
+                                        </span>
+                                      </div>
+                                      <div className="w-full bg-stone-100 dark:bg-zinc-800 h-2 rounded-full overflow-hidden">
+                                        <div
+                                          className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
+                                          style={{ width: `${pct}%` }}
+                                        />
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            ) : (
+                              <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
+                                {responses
+                                  .filter((r) => r.responses[field.id])
+                                  .slice(0, 10)
+                                  .map((r, i) => (
+                                    <div
+                                      key={r.id || i}
+                                      className="text-xs bg-stone-50 dark:bg-zinc-800/60 p-0.5 rounded-xl border border-stone-100 dark:border-zinc-800 text-stone-800 dark:text-zinc-200"
+                                    >
+                                      {r.responses[field.id]}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </Card>
+                        );
+                      })}
+                    </div>
                   </div>
+                ) : (
+                  /* Individual Examinee View */
+                  responses[individualIndex] && (
+                    <Card className="rounded-3xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 shadow-sm space-y-4">
+                      <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-0.5 text-xs text-stone-400">
+                        <span className="flex items-center gap-0.5 font-semibold text-stone-600 dark:text-zinc-400">
+                          <UserCheck className="w-4 h-4 text-blue-600" />
+                          <span>استمارة المستجيب #{individualIndex + 1}</span>
+                        </span>
+                        <span className="flex items-center gap-1 text-[11px]">
+                          <Clock className="w-3.5 h-3.5" />
+                          {new Date(responses[individualIndex].submitted_at).toLocaleString("ar-EG")}
+                        </span>
+                      </div>
+
+                      <div className="space-y-0.5">
+                        {(selectedForm.fields || []).map((f: any) => (
+                          <div
+                            key={f.id}
+                            className="bg-stone-50/80 dark:bg-zinc-800/40 p-0.5 rounded-2xl border border-stone-100 dark:border-zinc-800/60 space-y-0.25"
+                          >
+                            <span className="font-bold text-xs text-stone-600 dark:text-zinc-400 block">
+                              {f.label}
+                            </span>
+                            <div className="text-sm font-semibold text-stone-900 dark:text-zinc-100">
+                              {responses[individualIndex].responses[f.id] || (
+                                <span className="text-stone-400 italic font-normal text-xs">لم تتم الإجابة</span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )
                 )}
               </div>
             </>

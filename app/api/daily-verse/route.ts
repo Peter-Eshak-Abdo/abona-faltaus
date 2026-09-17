@@ -144,17 +144,25 @@ export async function GET(request: Request) {
     const notificationTitle = "آية اليوم";
     const notificationBody = `(${verse.verse_number}) ${verse.vocalized_text}\n${reference}`;
 
-    const bookNumberMatch = verse.book_name.match(/^(\d+)/);
-    const bIdx = bookNumberMatch ? parseInt(bookNumberMatch[1], 10) - 1 : 0;
-    const cIdx = verse.chapter_number - 1;
-    const vNum = verse.verse_number;
-
     const appId = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
     const apiKey = process.env.ONESIGNAL_REST_API_KEY;
 
     if (!appId || !apiKey) {
       return NextResponse.json({ error: "Missing API Keys" }, { status: 500 });
     }
+
+    const siteBase =
+      process.env.NEXT_PUBLIC_SITE_URL || "https://abona-faltaus.vercel.app";
+
+    const promptText = `ما هو التفسير الآبائي والروحي للآية: "${verse.vocalized_text}" ${reference}؟`;
+    const interpretUrl = `${siteBase}/chat?bot=bible-interpreter&prompt=${encodeURIComponent(
+      promptText
+    )}`;
+
+    const shareText = `✝️ آية اليوم:\n"${verse.vocalized_text}" ${reference}\n\nتطبيق أبونا فلتاؤس:\n${siteBase}`;
+    const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      shareText
+    )}`;
 
     // إرسال الإشعار
     const response = await fetch("https://onesignal.com/api/v1/notifications", {
@@ -168,17 +176,21 @@ export async function GET(request: Request) {
         included_segments: ["Total Subscriptions"],
         headings: { en: notificationTitle, ar: notificationTitle },
         contents: { en: notificationBody, ar: notificationBody },
-        url:
-          process.env.NEXT_PUBLIC_SITE_URL ||
-          "https://abona-faltaus.vercel.app",
-        chrome_web_icon:
-          "https://abona-faltaus.vercel.app/_next/image?url=%2Fimages%2Flogo.webp&w=640&q=75",
+        url: siteBase,
+        chrome_web_icon: `${siteBase}/images/icons/android-chrome-192x192.png`,
+        chrome_web_badge: `${siteBase}/images/icons/favicon-32x32.png`,
         web_buttons: [
           {
-            id: "save-fav",
-            text: "❤️ حفظ في المفضلة",
-            url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://abona-faltaus.vercel.app"}/api/add-fav-from-notification?bIdx=${bIdx}&cIdx=${cIdx}&vNum=${vNum}`,
-            // url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/add-fav-from-notification?book=${cleanBookName}&chapter=${verse.chapter_number}&verse=${verse.verse_number}`,
+            id: "interpret-verse",
+            text: "📖 تفسير الآية",
+            icon: `${siteBase}/images/icons/favicon-32x32.png`,
+            url: interpretUrl,
+          },
+          {
+            id: "share-verse",
+            text: "📲 مشاركة الآية",
+            icon: `${siteBase}/images/icons/favicon-32x32.png`,
+            url: shareUrl,
           },
         ],
       }),

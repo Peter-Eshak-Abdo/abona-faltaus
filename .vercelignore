@@ -2,6 +2,7 @@
 .git
 .github
 .agents
+.cursor
 .idx
 zcodes
 *.tar
@@ -16,3 +17,10 @@ node_modules
 !README.md
 docs/
 *.log
+agent_scratch/
+St.Mary Elnozha Liturgy Powerpoint/
+kata/
+test/
+*.pdf
+*.pptx
+public/coptic_icons_dataset.zip

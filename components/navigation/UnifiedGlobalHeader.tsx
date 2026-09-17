@@ -21,19 +21,12 @@ import {
   FaCog,
   FaPenFancy,
   FaUserCircle,
+  FaCalendarAlt,
+  FaUsers,
 } from 'react-icons/fa';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import GlobalBreadcrumbs from './GlobalBreadcrumbs';
 import GlobalSearchModal from './GlobalSearchModal';
-
-const MENU_ITEMS = [
-  { href: '/liturgies', label: 'الليتورجيا والصلوات (القداس، التسبحة، الألحان، الإنجيل، الأجبية)', icon: FaChurch, color: 'text-amber-400' },
-  { href: '/preparation', label: 'نوتة التحضير وعروض الشرائح (Slides)', icon: FaFileAlt, color: 'text-teal-400' },
-  { href: '/chat', label: 'المساعد الذكي وتوليد الأيقونات', icon: FaChurch, color: 'text-amber-400' },
-  { href: '/synaxarium', label: 'السنكسار والسنوات القبطية', icon: FaChurch, color: 'text-rose-400' },
-  { href: '/exam/quiz/dashboard', label: 'الامتحانات والمسابقات', icon: FaPenFancy, color: 'text-purple-400' },
-  { href: '/settings', label: 'الإعدادات واللغة', icon: FaCog, color: 'text-neutral-400' },
-];
 
 export default function UnifiedGlobalHeader() {
   const pathname = usePathname();
@@ -47,9 +40,13 @@ export default function UnifiedGlobalHeader() {
 
   const MENU_ITEMS = [
     { href: '/liturgies', label: tNav('liturgiesMenu'), icon: FaChurch, color: 'text-amber-400' },
+    { href: '/calendar', label: 'التقويم القبطي ومناسبات 5 سنوات', icon: FaCalendarAlt, color: 'text-amber-500' },
+    { href: '/synaxarium', label: tNav('synaxariumMenu'), icon: FaChurch, color: 'text-rose-400' },
+    { href: '/class-coordinator', label: 'أمين فصل (توزيع الخدمة والغياب)', icon: FaUsers, color: 'text-emerald-400' },
+    { href: '/forms', label: 'استبيانات واستمارات الخدمة', icon: FaFileAlt, color: 'text-blue-400' },
+    { href: '/saraha', label: 'صندوق الصراحة والاعترافات', icon: FaChurch, color: 'text-indigo-400' },
     { href: '/preparation', label: tNav('prepMenu'), icon: FaFileAlt, color: 'text-teal-400' },
     { href: '/chat', label: tNav('aiMenu'), icon: FaChurch, color: 'text-amber-400' },
-    { href: '/synaxarium', label: tNav('synaxariumMenu'), icon: FaChurch, color: 'text-rose-400' },
     { href: '/exam/quiz/dashboard', label: tNav('examMenu'), icon: FaPenFancy, color: 'text-purple-400' },
     { href: '/settings', label: tNav('settingsMenu'), icon: FaCog, color: 'text-neutral-400' },
   ];

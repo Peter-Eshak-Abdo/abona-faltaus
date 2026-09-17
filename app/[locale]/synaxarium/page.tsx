@@ -307,9 +307,14 @@ export default function SynaxariumPage() {
                   {locale === "en" ? todayCoptic.formattedEn : todayCoptic.formattedAr}
                 </Badge>
               </div>
-              <p className="text-xs text-stone-500 dark:text-zinc-400 font-medium">
-                {t("subtitle")}
-              </p>
+              <div className="flex items-center gap-0.5 flex-wrap">
+                <p className="text-xs text-stone-500 dark:text-zinc-400 font-medium">
+                  {t("subtitle")}
+                </p>
+                <Badge variant="outline" className="bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700/60 text-[10px] font-bold">
+                  إصدار دير السريان العامر الكامل
+                </Badge>
+              </div>
             </div>
           </div>
 

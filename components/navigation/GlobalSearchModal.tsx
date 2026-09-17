@@ -14,6 +14,8 @@ import {
   FaPenFancy,
   FaCog,
   FaArrowRight,
+  FaCalendarAlt,
+  FaUsers,
 } from 'react-icons/fa';
 
 interface Props {
@@ -157,6 +159,42 @@ const SEARCH_CATALOG: SearchItem[] = [
     href: '/exam/quiz/dashboard',
     icon: FaPenFancy,
     keywords: ['امتحان', 'مسابقة', 'أسئلة', 'كويز', 'نقاط'],
+  },
+  {
+    id: 'coptic-calendar',
+    title: 'التقويم القبطي ومناسبات 5 سنوات',
+    subtitle: 'حساب الأعياد والأصوام، نغمة اليوم (سنوي، فرايحي، حزايني)، وروابط القطمارس والسنكسار',
+    category: 'الطقس والتقويم',
+    href: '/calendar',
+    icon: FaCalendarAlt,
+    keywords: ['تقويم', 'أعياد', 'أصوام', 'قطمارس', 'عيد القيامة', 'توت', 'كيهك', 'طوبة', 'برمهات'],
+  },
+  {
+    id: 'class-coordinator',
+    title: 'أمين فصل (توزيع الخدمة والمهام)',
+    subtitle: 'توزيع ذكي وعادل لمهام الخدمة، منع التكرار، وتصدير Word و PDF و WhatsApp',
+    category: 'الخدمة',
+    href: '/class-coordinator',
+    icon: FaUsers,
+    keywords: ['أمين فصل', 'خدام', 'جدول', 'توزيع', 'غياب', 'مدارس الأحد', 'word', 'pdf'],
+  },
+  {
+    id: 'church-forms',
+    title: 'استبيانات واستمارات الخدمة (Church Forms)',
+    subtitle: 'استمارات بيانات بنمط Google Forms ومظهر كنسي مع ملخص تحليلي للردود',
+    category: 'الخدمة',
+    href: '/forms',
+    icon: FaFileAlt,
+    keywords: ['استبيان', 'استمارة', 'فورم', 'بيانات المخدومين', 'إحصائيات'],
+  },
+  {
+    id: 'saraha-box',
+    title: 'صندوق الصراحة والاعترافات السرية',
+    subtitle: 'طرح أسئلة للمخدومين بسرية تامة مع خلفيات كنسية ورسائل بركة مخصصة',
+    category: 'الخدمة والشباب',
+    href: '/saraha',
+    icon: FaChurch,
+    keywords: ['صراحة', 'سؤال سري', 'اعتراف', 'مخدومين', 'خادم'],
   },
   {
     id: 'settings-page',

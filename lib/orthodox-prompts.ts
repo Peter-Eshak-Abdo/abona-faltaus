@@ -15,6 +15,37 @@ export interface StyleDefinition {
   negativePrompt: string;
 }
 
+export const CANONICAL_COPTIC_RULES = {
+  colors: [
+    { name: "الأبيض", meaning: "طهر ونقاء وبهاء النور الإلهي", hex: "#FFFFFF" },
+    { name: "الأحمر", meaning: "الخلاص والمجد وفداء دم الشهداء", hex: "#C02626" },
+    { name: "الأخضر الزاهي", meaning: "الحياة والتجديد وقوة القيامة", hex: "#16A34A" },
+    { name: "الأخضر الشاحب", meaning: "للموت والشر المدحور", hex: "#86A789" },
+    { name: "الأزرق", meaning: "السماء الأبدية والمجد الإلهي", hex: "#2563EB" },
+    { name: "البنفسجي", meaning: "الاتحاد بالله والملوكية الروحية", hex: "#7C3AED" },
+    { name: "البني", meaning: "النسك والتقشف وتواضع الرهبنة", hex: "#78350F" },
+    { name: "الأصفر", meaning: "النور الإلهي الساطع غير المخلوق", hex: "#EAB308" },
+    { name: "الذهبي", meaning: "الملكوت والأبدية وحضرة الله الفائقة", hex: "#D4AF37" }
+  ],
+  perspective: {
+    title: "المنظور المسطح والروحي (Flat Spiritual Perspective)",
+    description: "الأيقونة القبطية لا تتبع المنظور الأرضي الواقعي أو البعد المكاني ثلاثي الأبعاد، بل تقدم واقعاً روحياً مسطحاً (2D)؛ لأن العمق الروحي أهم من البعد المكاني، وكل تفصيلة وضعت لخدمة الرسالة اللاهوتية وليس الجمال الشكلي فقط."
+  },
+  facialFeatures: [
+    { feature: "العين الكبيرة", meaning: "البصيرة الروحية وعمق الرؤية والإدراك الإلهي بدلاً من التركيز على الماديات" },
+    { feature: "الفم الصغير", meaning: "الصمت الهادئ وحفظ أسرار الله وترجمة الحكمة الإلهية بدون ثرثرة كلامية" },
+    { feature: "الوجه المستقيم", meaning: "الثبات والاتزان والوقوف الدائم في حضرة الله بقوة وسلام" },
+    { feature: "الابتسامة الهادئة", meaning: "فرح وسلام داخلي عميق ومطمئن دون إظهار الأسنان" },
+    { feature: "الجسد والملابس", meaning: "ملابس من نور سماوي دون إبراز لتفاصيل الجسم العضلي المادية" }
+  ],
+  symbols: [
+    { symbol: "الصليب المقدس", meaning: "رمز المجد والانتصار والغلبة بالقيامة" },
+    { symbol: "الكتاب المقدس", meaning: "كلمة الله الحية وإنجيل الخلاص للبشرية" },
+    { symbol: "يد البركة", meaning: "الحضور الإلهي المباشر ونيل البركة (أصابع IC XC)" },
+    { symbol: "الهالة المذهبة", meaning: "المجد والنور الإلهي غير المخلوق المحيط بالقديسين" }
+  ]
+};
+
 export const ICON_STYLES: Record<IconStyleType, StyleDefinition> = {
   coptic: {
     id: "coptic",
@@ -24,9 +55,29 @@ export const ICON_STYLES: Record<IconStyleType, StyleDefinition> = {
     badge: "د. إيساك فانوس (قبطي أرثوذكسي)",
     samplePrompt: "السيدة العذراء مريم تحمل الطفل يسوع المسيح محاطة بالملاكين ميخائيل وغبريال",
     previewGradient: "from-amber-600/30 via-yellow-600/20 to-amber-950/40",
-    systemDirective: `Neo-Coptic Orthodox icon, authentic sacred tradition of Dr. Isaac Fanous school.
-VISUAL TRAITS: Sharp geometric lines, large expressive spiritual eyes, small peaceful mouth, 2D flat planar style, divine uncreated light emanating from the face, no external shadows or secular lighting, rich earth tones and pure liturgical pigments (vermilion, ultramarine, ochre), flat golden circular halo with engraved coptic cross, egg tempera texture on seasoned wood panel.`,
-    negativePrompt: `3D render, 3D CGI, realistic, photorealistic, realistic skin pores, shadows, heavy drop shadows, dramatic lighting, western renaissance style, baroque, anime, modern clothes, glowing neon, fantasy RPG, text, letters, words, inscriptions, numbers, signature, watermark, deformed hands, extra fingers, asymmetric eyes.`,
+    systemDirective: `Neo-Coptic Orthodox sacred icon, authentic canon of Dr. Isaac Fanous school and ancient Coptic theology.
+CANONICAL COPTIC ICONOGRAPHIC LAWS:
+1. PERSPECTIVE: Strictly 2D flat spiritual perspective. Non-linear vanishing point. Spiritual depth prioritized over worldly physical spatial illusion. No secular 3D drop shadows.
+2. FACIAL FEATURES:
+   - Large prominent almond spiritual eyes expressing heavenly contemplation and divine perception.
+   - Small quiet mouth symbolizing sacred silence, keeping divine mysteries, and speaking through prayer.
+   - Upright balanced head showing spiritual stability and eternal steadfastness before God.
+   - Serene peaceful subtle smile of interior divine peace, never showing teeth.
+   - Holy garments rendered as draperies of uncreated light, without physical muscular contours.
+3. CANONICAL LITURGICAL COLORS:
+   - White: Purity and divine radiance.
+   - Red: Salvation, martyrs blood, and divine glory.
+   - Bright Green: Life, renewal, and resurrection power.
+   - Deep Celestial Blue: Eternal heaven and divine glory.
+   - Imperial Purple: Union with God and spiritual sovereignty.
+   - Earthy Brown: Monastic asceticism and humility.
+   - Luminous Gold: Uncreated divine light, the Heavenly Kingdom, and eternity.
+4. SACRED SYMBOLS:
+   - Perfectly circular pure gold halo with engraved Coptic Cross.
+   - Hand formed in the canonical Coptic blessing gesture (IC XC fingers).
+   - Holy Gospel book or martyr cross held firmly.
+   - Egg tempera brushwork on seasoned wooden panel texture.`,
+    negativePrompt: `3D render, 3D CGI, photorealistic, realistic skin pores, drop shadows, cast shadows, secular lighting, western renaissance style, baroque, smiling with teeth, mouth open, muscular anatomical definition, anime, modern clothes, glowing neon, fantasy RPG, text, letters, watermark, signature, deformed hands, extra fingers.`,
   },
   byzantine: {
     id: "byzantine",

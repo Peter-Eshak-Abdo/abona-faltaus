@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import {
   ICON_STYLES,
   QUICK_SUGGESTIONS,
+  CANONICAL_COPTIC_RULES,
   IconStyleType,
   AspectRatioType,
 } from "@/lib/orthodox-prompts";
@@ -401,6 +402,78 @@ export default function IconGeneratorClient() {
                         {item.title}
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                {/* 4. Canonical Coptic Iconography Secrets Guide */}
+                <div className="bg-stone-900/70 border border-amber-500/20 rounded-3xl p-1 backdrop-blur-md space-y-0.5">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-amber-300 flex items-center gap-0.5">
+                      <Sparkles size={16} className="text-amber-400" />
+                      أسرار وقواعد الأيقونة القبطية الأرثوذكسية:
+                    </h3>
+                    <span className="text-[10px] font-bold px-1 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                      قواعد معتمدة
+                    </span>
+                  </div>
+
+                  {/* 1. Colors */}
+                  <div>
+                    <h4 className="text-xs font-bold text-amber-200/90 mb-0.5 flex items-center gap-0.5">
+                      <span>🎨</span> 1. دلالات الألوان في الأيقونة:
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-0.5">
+                      {CANONICAL_COPTIC_RULES.colors.map((c, i) => (
+                        <div key={i} className="p-1 rounded-xl bg-stone-950/60 border border-stone-800 flex items-start gap-0.5">
+                          <span className="w-3.5 h-3.5 rounded-full shrink-0 mt-0.5 border border-white/20" style={{ backgroundColor: c.hex }} />
+                          <div>
+                            <span className="block text-[11px] font-bold text-stone-200">{c.name}</span>
+                            <span className="block text-[9px] text-stone-400 leading-tight">{c.meaning}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 2. Perspective */}
+                  <div className="p-1 rounded-2xl bg-amber-500/5 border border-amber-500/15">
+                    <h4 className="text-xs font-bold text-amber-300 mb-0.5 flex items-center gap-0.5">
+                      <span>📐</span> 2. المنظور الروحي المسطح (Flat 2D):
+                    </h4>
+                    <p className="text-[11px] text-stone-300 leading-relaxed">
+                      {CANONICAL_COPTIC_RULES.perspective.description}
+                    </p>
+                  </div>
+
+                  {/* 3. Features & 4. Symbols */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.5">
+                    <div className="p-1 rounded-2xl bg-stone-950/60 border border-stone-800">
+                      <h4 className="text-xs font-bold text-amber-200 mb-0.5 flex items-center gap-0.5">
+                        <span>👁️</span> 3. الملامح الروحية:
+                      </h4>
+                      <ul className="text-[10px] text-stone-300 space-y-0.5">
+                        {CANONICAL_COPTIC_RULES.facialFeatures.slice(0, 3).map((f, i) => (
+                          <li key={i} className="flex items-start gap-0.5">
+                            <span className="text-amber-400 font-bold">•</span>
+                            <span><strong>{f.feature}:</strong> {f.meaning}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="p-1 rounded-2xl bg-stone-950/60 border border-stone-800">
+                      <h4 className="text-xs font-bold text-amber-200 mb-0.5 flex items-center gap-0.5">
+                        <span>☦️</span> 4. الرموز الكنسية:
+                      </h4>
+                      <ul className="text-[10px] text-stone-300 space-y-0.5">
+                        {CANONICAL_COPTIC_RULES.symbols.map((s, i) => (
+                          <li key={i} className="flex items-start gap-0.5">
+                            <span className="text-amber-400 font-bold">•</span>
+                            <span><strong>{s.symbol}:</strong> {s.meaning}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>

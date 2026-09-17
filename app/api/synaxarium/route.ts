@@ -66,6 +66,18 @@ function categorizeStory(title: string, text: string): SynaxariumStory["category
 function loadAllSynaxariumIndex(): SynaxariumStory[] {
   if (synaxariumIndexCache) return synaxariumIndexCache;
 
+  const deirElSurianPath = path.join(DATA_DIR, "synaxarium", "synaxarium_deir_elsurian.json");
+  if (fs.existsSync(deirElSurianPath)) {
+    try {
+      const content = fs.readFileSync(deirElSurianPath, "utf-8");
+      const list = JSON.parse(content) as SynaxariumStory[];
+      synaxariumIndexCache = list;
+      return list;
+    } catch (err) {
+      console.error("Error reading synaxarium_deir_elsurian.json", err);
+    }
+  }
+
   const list: SynaxariumStory[] = [];
 
   for (const m of COPTIC_MONTHS) {

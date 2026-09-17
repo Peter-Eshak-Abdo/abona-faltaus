@@ -15,6 +15,8 @@ import {
   FaSun,
   FaPray,
   FaBookOpen,
+  FaCalendarAlt,
+  FaUsers,
 } from "react-icons/fa";
 import dynamicImport from "next/dynamic";
 import LogoHeader from "./LogoHeader";
@@ -51,6 +53,8 @@ export default function HomeClient() {
       { name: t("sections.bible"), href: "/bible", icon: <FaBookOpen /> },
       { name: t("sections.agpeya"), href: "/agpeya", icon: <FaPray /> },
       { name: t("sections.synaxarium"), href: "/synaxarium", icon: <FaSun /> },
+      { name: "التقويم القبطي والأعياد", href: "/calendar", icon: <FaCalendarAlt /> },
+      { name: "أمين فصل (توزيع الخدمة)", href: "/class-coordinator", icon: <FaUsers /> },
       { name: t("sections.preparation"), href: "/preparation", icon: <FaFileAlt /> },
       { name: t("sections.exams"), href: "/exam/quiz/dashboard", icon: <FaPenFancy /> },
       { name: "استبيانات واستمارات الخدمة", href: "/forms", icon: <FaFileAlt /> },

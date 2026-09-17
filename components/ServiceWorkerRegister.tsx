@@ -7,6 +7,37 @@ export default function ServiceWorkerRegister() {
   const [showOfflinePrompt, setShowOfflinePrompt] = useState(false);
 
   useEffect(() => {
+    // إزالة علامة إعادة التحميل عند استقرار الصفحة بنجاح
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("chunk_reload_attempt");
+
+      const handleChunkError = (event: ErrorEvent | PromiseRejectionEvent) => {
+        const errorMsg = "message" in event ? event.message : String((event as any).reason);
+        if (
+          errorMsg &&
+          (errorMsg.includes("Loading chunk") ||
+            errorMsg.includes("ChunkLoadError") ||
+            errorMsg.includes("Failed to fetch dynamically imported module"))
+        ) {
+          const hasReloaded = sessionStorage.getItem("chunk_reload_attempt");
+          if (!hasReloaded) {
+            sessionStorage.setItem("chunk_reload_attempt", "true");
+            window.location.reload();
+          }
+        }
+      };
+
+      window.addEventListener("error", handleChunkError);
+      window.addEventListener("unhandledrejection", handleChunkError);
+
+      return () => {
+        window.removeEventListener("error", handleChunkError);
+        window.removeEventListener("unhandledrejection", handleChunkError);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
     if (
       typeof window !== "undefined" &&
       "serviceWorker" in navigator &&
@@ -15,7 +46,8 @@ export default function ServiceWorkerRegister() {
       navigator.serviceWorker
         .register("/sw.js")
         .then((reg) => {
-          // console.log("✅ SW registered", reg.scope);
+          // فحص التحديثات عند التصفح
+          reg.update();
 
           const hasAsked = localStorage.getItem("asked_offline_download");
           if (!hasAsked) {

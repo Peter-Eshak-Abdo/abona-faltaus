@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import {
   ShieldCheck,
   Send,
@@ -52,8 +53,19 @@ export default function SarahaPage() {
   const [newSlug, setNewSlug] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
+  const [selectedBgTheme, setSelectedBgTheme] = useState("orthodox-parchment");
+  const [customThankYouMessage, setCustomThankYouMessage] = useState("صلواتك من أجل خدمتنا، ربنا يبارك حياتك ويسندك دايماً!");
   const [isCreatingLink, setIsCreatingLink] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  // Background Theme Definitions
+  const SARAHA_THEMES = [
+    { id: "orthodox-parchment", name: "ورق بردي وقور", bgClass: "bg-[#FAF9F5] text-stone-900", cardClass: "bg-white/95 border-[#D4AF37]/40 shadow-xl", accent: "#D4AF37" },
+    { id: "sacred-burgundy", name: "عنابي كنسي ديري", bgClass: "bg-radial from-[#4A0012] via-[#240008] to-stone-950 text-stone-100", cardClass: "bg-[#33000C]/90 border-amber-500/40 text-stone-100 shadow-2xl", accent: "#E5A93C" },
+    { id: "monastery-candle", name: "ضوء شموع ديرية", bgClass: "bg-radial from-amber-950/60 via-stone-950 to-black text-amber-50", cardClass: "bg-stone-900/90 border-amber-600/40 text-amber-100 shadow-2xl", accent: "#F59E0B" },
+    { id: "celestial-blue", name: "سماء الأيقونة الزرقاء", bgClass: "bg-radial from-sky-950 via-slate-950 to-black text-sky-50", cardClass: "bg-slate-900/90 border-sky-500/40 text-sky-100 shadow-2xl", accent: "#38BDF8" },
+    { id: "ancient-mosaic", name: "موزاييك أثري ذهبي", bgClass: "bg-radial from-stone-900 via-stone-950 to-black text-stone-100", cardClass: "bg-stone-900/90 border-[#D4AF37]/50 text-stone-100 shadow-2xl", accent: "#EAB308" }
+  ];
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }: any) => {
@@ -160,6 +172,12 @@ export default function SarahaPage() {
 
     setIsCreatingLink(true);
     try {
+      const metaPayload = JSON.stringify({
+        bgTheme: selectedBgTheme,
+        thankYou: customThankYouMessage.trim() || "صلواتك من أجل خدمتنا، ربنا يبارك حياتك ويسندك دايماً!",
+      });
+      const combinedDesc = `${newDescription.trim() || "اكتب سؤالك بكل صراحة وبدون ظهور هويتك."}:::meta:${metaPayload}`;
+
       const res = await fetch("/api/saraha", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -168,7 +186,7 @@ export default function SarahaPage() {
           userId: user.id,
           slug: newSlug.trim(),
           title: newTitle.trim() || "صندوق أسئلة واستفسارات الخدمة",
-          description: newDescription.trim() || "اكتب سؤالك بكل صراحة وبدون ظهور هويتك.",
+          description: combinedDesc,
         }),
       });
 
@@ -193,10 +211,11 @@ export default function SarahaPage() {
   const copyShareLink = (s: string) => {
     const fullUrl = `${window.location.origin}/saraha/${s}`;
     navigator.clipboard.writeText(fullUrl);
-    toast.success("تم نسخ رابط الصراحة لمشاركته مع المخدومين!");
+    toast.success("تم نسخ الرابط لمشاركته مع المخدومين!");
   };
 
   const handleDeleteMessage = async (messageId: string) => {
+    if (!user) return;
     if (!confirm("هل أنت متأكد من حذف هذا السؤال؟")) return;
     try {
       const res = await fetch("/api/saraha", {
@@ -216,6 +235,23 @@ export default function SarahaPage() {
       toast.error("تعذر الحذف");
     }
   };
+
+  const respondentMeta = useMemo(() => {
+    let desc = linkData?.description || "";
+    let themeId = "orthodox-parchment";
+    let thankYou = "صلواتك من أجل خدمتنا، ربنا يبارك حياتك ويسندك دايماً!";
+    if (desc.includes(":::meta:")) {
+      const parts = desc.split(":::meta:");
+      desc = parts[0].trim();
+      try {
+        const meta = JSON.parse(parts[1]);
+        if (meta.bgTheme) themeId = meta.bgTheme;
+        if (meta.thankYou) thankYou = meta.thankYou;
+      } catch {}
+    }
+    const themeObj = SARAHA_THEMES.find((t) => t.id === themeId) || SARAHA_THEMES[0];
+    return { desc, themeObj, thankYou };
+  }, [linkData]);
 
   // ==========================================
   // 1. عرض صفحة المخدوم (إرسال السؤال السري)
@@ -245,30 +281,30 @@ export default function SarahaPage() {
     }
 
     return (
-      <div className="min-h-screen py-3 px-1 flex flex-col items-center justify-center relative" dir="rtl">
-        {/* Background glow */}
+      <div className={cn("min-h-screen py-1 px-0.5 flex flex-col items-center justify-center relative transition-colors duration-500", respondentMeta.themeObj.bgClass)} dir="rtl">
+        {/* Background ambient glow */}
         <div className="absolute inset-0 bg-radial from-amber-500/10 via-transparent to-transparent pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-lg w-full relative z-10 space-y-1.5"
+          className="max-w-lg w-full relative z-10 space-y-3"
         >
           {/* Header Card */}
-          <Card className="rounded-3xl border-amber-900/20 dark:border-amber-500/20 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl shadow-2xl overflow-hidden text-center">
-            <CardHeader className="pb-1 pt-2 px-1.5 bg-linear-to-b from-amber-500/10 to-transparent">
-              <div className="mx-auto w-4 h-4 rounded-2xl bg-amber-600/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-0.5 shadow-xs">
-                <ShieldCheck className="w-2.5 h-2.5" />
+          <Card className={cn("rounded-3xl backdrop-blur-xl shadow-2xl overflow-hidden text-center transition-all", respondentMeta.themeObj.cardClass)}>
+            <CardHeader className="pb-0.5 pt-0.5 px-1 bg-linear-to-b from-amber-500/10 to-transparent">
+              <div className="mx-auto w-3 h-3 rounded-2xl bg-amber-600/15 text-amber-500 flex items-center justify-center mb-2 shadow-xs">
+                <ShieldCheck className="w-2 h-2" />
               </div>
-              <CardTitle className="text-xl font-bold text-amber-950 dark:text-amber-100">
+              <CardTitle className="text-xl font-bold tracking-tight">
                 {linkData.title}
               </CardTitle>
-              <CardDescription className="text-xs text-stone-600 dark:text-zinc-400 mt-0.5 leading-relaxed">
-                {linkData.description}
+              <CardDescription className="text-xs mt-1 leading-relaxed opacity-85">
+                {respondentMeta.desc}
               </CardDescription>
 
               {/* Privacy Guarantee Badge */}
-              <div className="mt-1 inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-semibold">
+              <div className="mt-0.5 inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
                 <EyeOff className="w-1.5 h-1.5" />
                 <span>هويتك مجهولة 100% ولن تظهر للخادم إطلاقاً</span>
               </div>
@@ -281,19 +317,26 @@ export default function SarahaPage() {
                   animate={{ scale: 1, opacity: 1 }}
                   className="py-2 space-y-1 text-center"
                 >
-                  <div className="w-5 h-5 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <div className="w-5 h-5 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-md">
                     <CheckCircle2 className="w-3 h-3" />
                   </div>
-                  <h3 className="text-base font-bold text-stone-800 dark:text-zinc-100">
+                  <h3 className="text-lg font-bold">
                     وصل سؤالك للخادم بنجاح!
                   </h3>
+
+                  {/* Servant Custom Thank You / Blessing */}
+                  <div className="p-0.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs leading-relaxed font-semibold max-w-sm mx-auto text-amber-900 dark:text-amber-200 shadow-xs">
+                    <p className="mb-1 text-[11px] font-black uppercase opacity-75">رسالة وبركة من الخادم:</p>
+                    <p className="text-sm font-serif">"{respondentMeta.thankYou}"</p>
+                  </div>
+
                   <p className="text-xs text-stone-500 max-w-xs mx-auto">
                     شكراً لثقتك وصراحتك. سيقوم الخادم بمراجعة سؤالك والصلاة من أجلك والرد عليه في الخدمة.
                   </p>
                   <Button
                     onClick={() => setIsSentSuccess(false)}
                     variant="outline"
-                    className="rounded-xl text-xs font-bold mt-1"
+                    className="rounded-xl text-xs font-bold mt-1 border-stone-300 dark:border-zinc-700"
                   >
                     إرسال سؤال آخر
                   </Button>
@@ -576,14 +619,55 @@ export default function SarahaPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-0.25">
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-0.5">
                   رسالة توجيهية للمخدومين (اختياري):
                 </label>
                 <Textarea
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                   placeholder="اكتب سؤالك بكل صراحة وبدون ظهور هويتك للخادم..."
-                  className="rounded-xl text-xs resize-none min-h-[70px]"
+                  className="rounded-xl text-xs resize-none min-h-[50px]"
+                />
+              </div>
+
+              {/* Orthodox Background Theme Selector */}
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-1">
+                  اختر الخلفية والمظهر الأرثوذكسي لصفحة المخدوم:
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-0.5">
+                  {SARAHA_THEMES.map((theme) => (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      onClick={() => setSelectedBgTheme(theme.id)}
+                      className={cn(
+                        "p-1 rounded-xl text-right text-xs font-bold border transition flex flex-col justify-between h-4",
+                        selectedBgTheme === theme.id
+                          ? "border-amber-600 bg-amber-500/15 ring-2 ring-amber-500/30"
+                          : "border-stone-200 dark:border-zinc-700 hover:bg-stone-50 dark:hover:bg-zinc-800"
+                      )}
+                    >
+                      <span className="text-[11px] leading-tight">{theme.name}</span>
+                      <div className="flex items-center gap-1">
+                        <span className="w-3 h-3 rounded-full border border-black/20" style={{ backgroundColor: theme.accent }} />
+                        {selectedBgTheme === theme.id && <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold">✓ مُختار</span>}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Thank You / Blessing after submission */}
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-0.5">
+                  جملة وبركة تظهر للمخدوم فور إرسال سؤاله:
+                </label>
+                <Input
+                  value={customThankYouMessage}
+                  onChange={(e) => setCustomThankYouMessage(e.target.value)}
+                  placeholder="مثال: صلواتك من أجل خدمتنا، ربنا يبارك حياتك ويسندك دايماً!"
+                  className="rounded-xl text-xs"
                 />
               </div>
 
