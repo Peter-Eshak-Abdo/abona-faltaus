@@ -1,4 +1,5 @@
 import { createBrowserClient } from "@supabase/ssr";
+import { createClient as createJsClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
 
 if (typeof window === "undefined" && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
@@ -6,21 +7,36 @@ if (typeof window === "undefined" && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
   dotenv.config({ path: ".env" });
 }
 
-let _supabase: ReturnType<typeof createBrowserClient> | null = null;
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-// حزمة @supabase/ssr مع Singleton pattern محكم لمنع تكرار النسخ (Multiple GoTrueClient instances)
+let _browserClient: ReturnType<typeof createBrowserClient> | null = null;
+
 export const getSupabaseClient = () => {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-
   if (typeof window === "undefined") {
-    return createBrowserClient(url, key);
+    // بيئة الخادم: عميل مستقل عديم الحالة (Stateless) يمنع تسريب الجلسات ومشاكل الكوكيز
+    return createJsClient(url, key, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
   }
-  if (!_supabase) {
-    _supabase = createBrowserClient(url, key);
+  // بيئة المتصفح: Singleton محكم لمنع تكرار النسخ (Multiple GoTrueClient instances)
+  if (!_browserClient) {
+    _browserClient = createBrowserClient(url, key);
   }
-  return _supabase;
+  return _browserClient;
 };
 
-export const supabase = getSupabaseClient();
-
+// Proxy شفاف يضمن استدعاء العميل المناسب وفقاً للبيئة الحالية (Client vs Server)
+export const supabase = new Proxy({} as ReturnType<typeof getSupabaseClient>, {
+  get(_target, prop) {
+    const client = getSupabaseClient() as any;
+    const value = client[prop];
+    if (typeof value === "function") {
+      return value.bind(client);
+    }
+    return value;
+  },
+});

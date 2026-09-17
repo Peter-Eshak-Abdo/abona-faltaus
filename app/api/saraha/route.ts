@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
-// GET: جلب صندوق الخادم ورسائله (للخادم) أو جلب بيانات الرابط (للمخدوم)
+// GET: جلب صندوق الخادم ورسائله (للخادم بعد التحقق) أو جلب بيانات الرابط (للمخدوم)
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -11,7 +12,7 @@ export async function GET(request: Request) {
     const userId = searchParams.get("userId");
     const linkId = searchParams.get("linkId");
 
-    // 1. إذا كان المطلوب جلب صفحة المخدوم بالـ slug
+    // 1. إذا كان المطلوب جلب صفحة المخدوم بالـ slug (عام ومتاح للجميع)
     if (slug) {
       const { data: link, error } = await supabaseAdmin
         .from("saraha_links")
@@ -27,12 +28,25 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: true, link });
     }
 
-    // 2. إذا كان المطلوب جلب لوحة تحكم الخادم
+    // 2. إذا كان المطلوب جلب لوحة تحكم الخادم ورسائله (يتطلب التحقق من هوية الخادم)
     if (userId) {
+      const serverSupabase = await createClient();
+      const {
+        data: { user: currentUser },
+      } = await serverSupabase.auth.getUser();
+
+      if (!currentUser) {
+        return NextResponse.json({ error: "يجب تسجيل الدخول للوصول لصندوق الصراحة" }, { status: 401 });
+      }
+
+      if (currentUser.id !== userId) {
+        return NextResponse.json({ error: "غير مصرح لك بالوصول لرسائل هذا الحساب" }, { status: 403 });
+      }
+
       const { data: links, error: linkErr } = await supabaseAdmin
         .from("saraha_links")
         .select("*")
-        .eq("user_id", userId)
+        .eq("user_id", currentUser.id)
         .order("created_at", { ascending: false });
 
       if (linkErr) throw linkErr;
@@ -40,7 +54,7 @@ export async function GET(request: Request) {
       let msgQuery = supabaseAdmin
         .from("saraha_messages")
         .select("*")
-        .eq("servant_id", userId);
+        .eq("servant_id", currentUser.id);
 
       if (linkId) {
         msgQuery = msgQuery.eq("link_id", linkId);
@@ -70,10 +84,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { action } = body;
 
-    // أ. إنشاء رابط جديد للخادم
+    const serverSupabase = await createClient();
+    const {
+      data: { user: currentUser },
+    } = await serverSupabase.auth.getUser();
+
+    // أ. إنشاء رابط جديد للخادم (يتطلب تسجيل دخول)
     if (action === "create_link") {
-      const { userId, slug, title, description } = body;
-      if (!userId || !slug) {
+      if (!currentUser) {
+        return NextResponse.json({ error: "يجب تسجيل الدخول لإنشاء رابط" }, { status: 401 });
+      }
+
+      const { slug, title, description } = body;
+      if (!slug) {
         return NextResponse.json({ error: "بيانات الرابط غير مكتملة" }, { status: 400 });
       }
 
@@ -82,7 +105,7 @@ export async function POST(request: Request) {
       const { data, error } = await supabaseAdmin
         .from("saraha_links")
         .insert({
-          user_id: userId,
+          user_id: currentUser.id,
           slug: cleanSlug,
           title: title?.trim() || "صندوق أسئلة واستفسارات الخدمة",
           description: description?.trim() || "اكتب سؤالك بكل صراحة وبدون ظهور هويتك.",
@@ -101,7 +124,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, link: data });
     }
 
-    // ب. إرسال رسالة مجهولة تماماً من المخدوم
+    // ب. إرسال رسالة مجهولة تماماً من المخدوم (عام بدون تسجيل دخول)
     if (action === "send_message") {
       const { linkId, servantId, content } = body;
       if (!linkId || !servantId || !content?.trim()) {
@@ -128,14 +151,18 @@ export async function POST(request: Request) {
       });
     }
 
-    // ج. تحديث حالة الرابط أو حذف رسالة
+    // ج. حذف رسالة (يتطلب أن يكون المستخدم هو الخادم المستلم)
     if (action === "delete_message") {
-      const { messageId, userId } = body;
+      if (!currentUser) {
+        return NextResponse.json({ error: "يجب تسجيل الدخول" }, { status: 401 });
+      }
+
+      const { messageId } = body;
       const { error } = await supabaseAdmin
         .from("saraha_messages")
         .delete()
         .eq("id", messageId)
-        .eq("servant_id", userId);
+        .eq("servant_id", currentUser.id);
 
       if (error) throw error;
       return NextResponse.json({ success: true });

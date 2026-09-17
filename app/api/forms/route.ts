@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
@@ -10,7 +11,12 @@ export async function GET(request: Request) {
     const userId = searchParams.get("userId");
     const userEmail = searchParams.get("userEmail");
 
-    // 1. جلب استبيان محدد للمخدومين للإجابة عليه
+    const serverSupabase = await createClient();
+    const {
+      data: { user: currentUser },
+    } = await serverSupabase.auth.getUser();
+
+    // 1. جلب استبيان محدد
     if (formId) {
       const { data: form, error } = await supabaseAdmin
         .from("church_forms")
@@ -22,24 +28,60 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: "الاستبيان غير موجود" }, { status: 404 });
       }
 
-      // جلب الردود للوحة التحكم
-      const { data: responses } = await supabaseAdmin
-        .from("church_form_responses")
-        .select("*")
-        .eq("form_id", formId)
-        .order("submitted_at", { ascending: false });
+      // التحقق من الصلاحيات: هل المستخدم الحالي هو المالك أو خادم معتمد؟
+      const isOwner = currentUser && currentUser.id === form.user_id;
+      const isAdminCollaborator =
+        currentUser &&
+        currentUser.email &&
+        Array.isArray(form.admin_collaborators) &&
+        form.admin_collaborators.includes(currentUser.email.toLowerCase().trim());
 
-      return NextResponse.json({ success: true, form, responses: responses || [] });
+      // إذا كان المالك أو المشرف، نرسل الردود. عدا ذلك (المخدوم)، لا نرسل الردود لمنع تسريب البيانات
+      let responses: any[] = [];
+      if (isOwner || isAdminCollaborator) {
+        const { data: fetchedResponses } = await supabaseAdmin
+          .from("church_form_responses")
+          .select("*")
+          .eq("form_id", formId)
+          .order("submitted_at", { ascending: false });
+
+        responses = fetchedResponses || [];
+      }
+
+      return NextResponse.json({
+        success: true,
+        form: {
+          id: form.id,
+          title: form.title,
+          description: form.description,
+          fields: form.fields,
+          is_active: form.is_active,
+          user_id: form.user_id,
+          admin_collaborators: isOwner || isAdminCollaborator ? form.admin_collaborators : [],
+          created_at: form.created_at,
+        },
+        responses,
+      });
     }
 
-    // 2. جلب كافة استبيانات الخادم والمشاريع المشترك بها كـ Admin
+    // 2. جلب كافة استبيانات الخادم (يتطلب تسجيل دخول مؤكد)
     if (userId || userEmail) {
+      if (!currentUser) {
+        return NextResponse.json({ error: "يجب تسجيل الدخول أولاً" }, { status: 401 });
+      }
+
+      // التحقق من أن المستخدم يطلب بياناته الخاصة فقط
+      if (userId && currentUser.id !== userId) {
+        return NextResponse.json({ error: "غير مصرح لك بالوصول لهذه الاستبيانات" }, { status: 403 });
+      }
+
+      const activeEmail = (currentUser.email || userEmail || "").toLowerCase().trim();
       let query = supabaseAdmin.from("church_forms").select("*");
 
-      if (userId && userEmail) {
-        query = query.or(`user_id.eq.${userId},admin_collaborators.cs.{${userEmail}}`);
-      } else if (userId) {
-        query = query.eq("user_id", userId);
+      if (currentUser.id && activeEmail) {
+        query = query.or(`user_id.eq.${currentUser.id},admin_collaborators.cs.{${activeEmail}}`);
+      } else {
+        query = query.eq("user_id", currentUser.id);
       }
 
       const { data: forms, error } = await query.order("created_at", { ascending: false });
@@ -60,17 +102,26 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { action } = body;
 
-    // أ. إنشاء استبيان جديد
+    const serverSupabase = await createClient();
+    const {
+      data: { user: currentUser },
+    } = await serverSupabase.auth.getUser();
+
+    // أ. إنشاء استبيان جديد (يتطلب تسجيل دخول)
     if (action === "create_form") {
-      const { userId, title, description, fields, adminCollaborators } = body;
-      if (!userId || !title?.trim()) {
+      if (!currentUser) {
+        return NextResponse.json({ error: "يجب تسجيل الدخول لإنشاء استبيان" }, { status: 401 });
+      }
+
+      const { title, description, fields, adminCollaborators } = body;
+      if (!title?.trim()) {
         return NextResponse.json({ error: "يرجى تحديد عنوان الاستبيان" }, { status: 400 });
       }
 
       const { data, error } = await supabaseAdmin
         .from("church_forms")
         .insert({
-          user_id: userId,
+          user_id: currentUser.id,
           title: title.trim(),
           description: description?.trim() || "",
           fields: fields || [],
@@ -84,7 +135,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, form: data });
     }
 
-    // ب. تقديم إجابة استبيان من مخدوم
+    // ب. تقديم إجابة استبيان من مخدوم (عام ومفتوح)
     if (action === "submit_response") {
       const { formId, responses } = body;
       if (!formId || !responses) {
@@ -104,16 +155,34 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, response: data });
     }
 
-    // ج. تحديث خدام الإدارة (Admins)
+    // ج. تحديث خدام الإدارة (Admins) (يتطلب أن يكون المستخدم المالك الفعلي)
     if (action === "add_admin") {
+      if (!currentUser) {
+        return NextResponse.json({ error: "يجب تسجيل الدخول" }, { status: 401 });
+      }
+
       const { formId, newAdminEmail } = body;
-      const { data: form } = await supabaseAdmin
+      if (!formId || !newAdminEmail?.trim()) {
+        return NextResponse.json({ error: "بيانات الإضافة غير مكتملة" }, { status: 400 });
+      }
+
+      const { data: form, error: formErr } = await supabaseAdmin
         .from("church_forms")
-        .select("admin_collaborators")
+        .select("user_id, admin_collaborators")
         .eq("id", formId)
         .single();
 
-      const updatedAdmins = Array.from(new Set([...(form?.admin_collaborators || []), newAdminEmail.trim().toLowerCase()]));
+      if (formErr || !form) {
+        return NextResponse.json({ error: "الاستبيان غير موجود" }, { status: 404 });
+      }
+
+      if (form.user_id !== currentUser.id) {
+        return NextResponse.json({ error: "غير مصرح لك بإضافة مدراء لهذا الاستبيان" }, { status: 403 });
+      }
+
+      const updatedAdmins = Array.from(
+        new Set([...(form?.admin_collaborators || []), newAdminEmail.trim().toLowerCase()])
+      );
 
       const { error } = await supabaseAdmin
         .from("church_forms")

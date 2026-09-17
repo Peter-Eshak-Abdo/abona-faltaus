@@ -79,3 +79,4 @@ scripts/upload_coptic_bible_to_supabase.py
 # Agent Scratch Directory (for scripts, tests, and temporary conversions)
 /agent_scratch/
 
+system-*.md
