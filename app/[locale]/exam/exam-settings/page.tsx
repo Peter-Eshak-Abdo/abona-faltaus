@@ -89,26 +89,26 @@ export default function ExamSettings() {
   const selectedMax = calculateMaxForSelected();
 
   return (
-    <div className="py-5">
+    <div className="py-20">
       <div className="flex justify-center">
         <div className="w-full md:w-2/3">
           <Card className="shadow">
             <CardHeader className="bg-blue-500 text-white flex flex-row items-center justify-between">
               <BackButton
                 fallbackUrl="/exam"
-                className="p-0.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition flex items-center justify-center"
+                className="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition flex items-center justify-center"
                 iconSize={16}
                 title="رجوع للمسابقات"
               />
               <h2 className="text-lg mb-0 font-bold">إعدادات الامتحان للمجموعات</h2>
-              <div className="w-6" />
+              <div className="w-24" />
             </CardHeader>
 
             <CardContent>
               {/* اختيار الفئات */}
-              <div className="mb-4">
-                <h5 className="text-lg mb-3">اختر الفئات:</h5>
-                <div className="flex flex-wrap gap-2">
+              <div className="mb-16">
+                <h5 className="text-lg mb-12">اختر الفئات:</h5>
+                <div className="flex flex-wrap gap-8">
                   {categories.map((cat) => (
                     <Button
                       key={cat.name}
@@ -123,8 +123,8 @@ export default function ExamSettings() {
               </div>
 
               {/* عدد الأسئلة */}
-              <div className="mb-4">
-                <label className="block mb-2">
+              <div className="mb-16">
+                <label className="block mb-8">
                   عدد الأسئلة (الحد الأقصى: {selectedMax})
                 </label>
                 <Slider
@@ -132,7 +132,7 @@ export default function ExamSettings() {
                   max={selectedMax}
                   value={[questionCount]}
                   onValueChange={(value) => setQuestionCount(value[0])}
-                  className="mb-2"
+                  className="mb-8"
                 />
                 <div className="flex justify-between">
                   <span>1</span>
@@ -142,8 +142,8 @@ export default function ExamSettings() {
               </div>
 
               {/* عدد المجموعات */}
-              <div className="mb-4">
-                <label className="block mb-2">عدد المجموعات:</label>
+              <div className="mb-16">
+                <label className="block mb-8">عدد المجموعات:</label>
                 <Input
                   type="number"
                   min="1"
@@ -155,8 +155,8 @@ export default function ExamSettings() {
               </div>
 
               {/* الوقت لكل مجموعة */}
-              <div className="mb-4">
-                <label className="block mb-2">الوقت لكل مجموعة (بالدقائق):</label>
+              <div className="mb-16">
+                <label className="block mb-8">الوقت لكل مجموعة (بالدقائق):</label>
                 <Input
                   type="number"
                   min="1"
@@ -168,7 +168,7 @@ export default function ExamSettings() {
               </div>
 
               {/* الأزرار */}
-              <div className="flex justify-between mt-4">
+              <div className="flex justify-between mt-16">
                 <Link href="/exam">
                   <Button variant="secondary">رجوع</Button>
                 </Link>

@@ -120,37 +120,37 @@ export default function AudioPlayerBottomBar() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-surface/90 backdrop-blur-xl border-t border-surface-variant shadow-[0_-8px_30px_rgba(31,31,31,0.08)] transform translate-y-0 transition-transform duration-300" id="audio-player">
-      <div className="max-w-4xl mx-auto px-1 py-1 flex flex-col md:flex-row items-center gap-1 md:gap-8">
-        <div className="flex items-center gap-1 w-full md:w-auto justify-center">
-          <button className="w-2 h-2 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container transition-colors">
-            <span className="material-symbols-outlined">replay_10</span>
+      <div className="max-w-4xl mx-auto px-3 py-2 flex flex-col md:flex-row items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-2 w-full md:w-auto justify-center">
+          <button className="w-7 h-7 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container transition-colors">
+            <span className="material-symbols-outlined text-[18px]">replay_10</span>
           </button>
-          <button onClick={toggleAudio} className="w-3 h-3 flex items-center justify-center rounded-full bg-primary text-on-primary shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+          <button onClick={toggleAudio} className="w-9 h-9 flex items-center justify-center rounded-full bg-primary text-on-primary shadow-lg hover:shadow-xl hover:scale-105 transition-all">
             {isPlaying ? (
-              <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>pause</span>
+              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>pause</span>
             ) : (
-              <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
+              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
             )}
           </button>
-          <button className="w-2 h-2 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container transition-colors">
-            <span className="material-symbols-outlined">forward_10</span>
+          <button className="w-7 h-7 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container transition-colors">
+            <span className="material-symbols-outlined text-[18px]">forward_10</span>
           </button>
         </div>
-        <div className="grow flex items-center gap-1 w-full">
-          <span className="font-label-sm text-label-sm text-on-surface-variant w-10 text-left">0:00</span>
-          <div className="grow relative h-2 bg-surface-container-high rounded-full cursor-pointer group">
+        <div className="grow flex items-center gap-2 w-full">
+          <span className="font-label-sm text-xs text-on-surface-variant w-10 text-left">0:00</span>
+          <div className="grow relative h-1.5 bg-surface-container-high rounded-full cursor-pointer group">
             <div className="right-0 top-0 h-full bg-primary rounded-full w-0 relative">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-primary rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
           </div>
-          <span className="font-label-sm text-label-sm text-on-surface-variant w-10">0:00</span>
+          <span className="font-label-sm text-xs text-on-surface-variant w-10">0:00</span>
         </div>
-        <div className="hidden md:flex items-center gap-0.5">
-          <button className="w-2 h-2 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" title="سرعة القراءة">
-            <span className="font-label-sm font-bold">1x</span>
+        <div className="hidden md:flex items-center gap-1.5">
+          <button className="w-7 h-7 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" title="سرعة القراءة">
+            <span className="font-label-sm text-xs font-bold">1x</span>
           </button>
-          <button className="w-2 h-2 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
-            <span className="material-symbols-outlined">volume_up</span>
+          <button className="w-7 h-7 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+            <span className="material-symbols-outlined text-[18px]">volume_up</span>
           </button>
         </div>
       </div>

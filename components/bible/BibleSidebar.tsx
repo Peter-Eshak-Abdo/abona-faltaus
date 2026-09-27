@@ -225,11 +225,11 @@ export default function BibleSidebar() {
   const activeBook = bibleData[currentBookIdx];
 
   return (
-    <aside className="w-auto shrink-0 bg-surface border-l border-surface-variant flex flex-col z-10 shadow-lg shadow-surface-variant/20 sticky top-6 max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar p-0.5 h-min">
+    <aside className="w-auto shrink-0 bg-surface border-l border-surface-variant flex flex-col z-10 shadow-lg shadow-surface-variant/20 sticky top-24 max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar p-2 h-min">
 
-      <div className="flex gap-1 w-full md:w-auto">
+      <div className="flex gap-4 w-full md:w-auto">
           <select
-            className="flex-1 md:flex-none p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+            className="flex-1 md:flex-none p-4 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
             value={currentBookIdx}
             onChange={(e) => {
               setCurrentBookIdx(Number(e.target.value));
@@ -244,7 +244,7 @@ export default function BibleSidebar() {
           </select>
 
           <select
-            className="w-8 p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-28 p-2 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold text-xs focus:ring-2 focus:ring-blue-500 outline-none"
             value={currentChapterIdx}
             onChange={(e) => setCurrentChapterIdx(Number(e.target.value))}
           >
@@ -256,16 +256,16 @@ export default function BibleSidebar() {
           </select>
         </div>
 
-        <div className="flex justify-center gap-0.5 mb-1">
-          <button onClick={() => setFontSize(prev => prev + 2)} className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded">A+</button>
-          <button onClick={() => setFontSize(prev => prev - 2)} className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded">A-</button>
-          <Link href="/bible/favorites" className="p-0.5 bg-yellow-100 text-yellow-600 rounded-lg font-bold" title="المفضلة">
+        <div className="flex justify-center gap-2 mb-4">
+          <button onClick={() => setFontSize(prev => prev + 2)} className="p-2 bg-zinc-200 dark:bg-zinc-800 rounded">A+</button>
+          <button onClick={() => setFontSize(prev => prev - 2)} className="p-2 bg-zinc-200 dark:bg-zinc-800 rounded">A-</button>
+          <Link href="/bible/favorites" className="p-2 bg-yellow-100 text-yellow-600 rounded-lg font-bold" title="المفضلة">
             <FaStar size={8} />
           </Link>
-          <Link href="/bible/day" className="text-blue-600 bg-amber-200 text-sm rounded-lg font-bold p-0.5" title="إضافة إلى يوم">
+          <Link href="/bible/day" className="text-blue-600 bg-amber-200 text-sm rounded-lg font-bold p-2" title="إضافة إلى يوم">
             <FaPlusSquare size={8} />
           </Link>
-          <button onClick={() => setIsSearchOpen(true)} className="p-0.5 bg-blue-100 text-blue-600 rounded-lg font-bold">
+          <button onClick={() => setIsSearchOpen(true)} className="p-2 bg-blue-100 text-blue-600 rounded-lg font-bold">
             <FaSearch size={8} />
           </button>
 
@@ -286,9 +286,9 @@ export default function BibleSidebar() {
           </button>
         </div>
         {isTTSLoading && (
-          <div className="flex flex-col items-center justify-center p-1 my-1 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/30 dark:border-blue-800">
-            <div className="flex items-center gap-1">
-              <svg className="w-3 h-3 text-blue-600 animate-spin dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <div className="flex flex-col items-center justify-center p-4 my-4 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/30 dark:border-blue-800">
+            <div className="flex items-center gap-4">
+              <svg className="w-12 h-12 text-blue-600 animate-spin dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -296,8 +296,8 @@ export default function BibleSidebar() {
                 {ttsLoadingMessage}
               </span>
             </div>
-            <div className="w-full bg-blue-200 rounded-full h-1.5 mt-1 dark:bg-blue-700 overflow-hidden">
-              <div className="bg-blue-600 h-1.5 rounded-full animate-pulse w-full"></div>
+            <div className="w-full bg-blue-200 rounded-full h-6 mt-4 dark:bg-blue-700 overflow-hidden">
+              <div className="bg-blue-600 h-6 rounded-full animate-pulse w-full"></div>
             </div>
           </div>
         )}

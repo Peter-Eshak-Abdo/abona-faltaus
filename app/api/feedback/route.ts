@@ -17,7 +17,7 @@ export async function GET() {
   let query = supabase
     .from("feedback")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("id", { ascending: false });
 
   if (isAdmin) {
     // Admin sees all feedback
@@ -29,7 +29,10 @@ export async function GET() {
 
   const { data, error } = await query;
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("Feedback query error:", error);
+    return NextResponse.json([]);
+  }
   return NextResponse.json(data || []);
 }
 

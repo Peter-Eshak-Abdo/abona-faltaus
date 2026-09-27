@@ -316,18 +316,18 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
   if (typeof window === 'undefined' || !open) return null
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-1 z-50 font-sans" dir="rtl">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50 font-sans" dir="rtl">
       <motion.div
         initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl shadow-2xl max-w-5xl w-full max-h-[95vh] flex flex-col overflow-hidden border border-white/20 relative"
       >
         {/* Modal التوليد بالذكاء الاصطناعي */}
         {isAiModalOpen && (
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-0.5">
-            <div className="bg-white dark:bg-zinc-900 border border-amber-500/30 rounded-3xl p-0.5 max-w-lg w-full shadow-2xl space-y-0.5">
-              <div className="flex justify-between items-center border-b pb-0.5">
-                <div className="flex items-center gap-0.25">
-                  <div className="p-0.25 bg-amber-500/10 text-amber-500 rounded-xl">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-2">
+            <div className="bg-white dark:bg-zinc-900 border border-amber-500/30 rounded-3xl p-2 max-w-lg w-full shadow-2xl space-y-2">
+              <div className="flex justify-between items-center border-b pb-2">
+                <div className="flex items-center gap-1">
+                  <div className="p-1 bg-amber-500/10 text-amber-500 rounded-xl">
                     <Sparkles size={22} />
                   </div>
                   <h3 className="text-xl font-black text-zinc-800 dark:text-white">توليد مسابقة بالذكاء الاصطناعي</h3>
@@ -335,7 +335,7 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                 <button
                   disabled={isGeneratingAi}
                   onClick={() => setIsAiModalOpen(false)}
-                  className="text-zinc-400 hover:text-red-500 p-0.5 disabled:opacity-30"
+                  className="text-zinc-400 hover:text-red-500 p-2 disabled:opacity-30"
                 >
                   <X size={20} />
                 </button>
@@ -343,13 +343,13 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
 
               {/* شاشة الـ Loading المتقدمة للـ AI */}
               {isGeneratingAi ? (
-                <div className="py-1 px-0.5 space-y-0.5 text-center">
-                  <div className="relative w-4 h-4 mx-auto flex items-center justify-center">
+                <div className="py-4 px-2 space-y-2 text-center">
+                  <div className="relative w-16 h-16 mx-auto flex items-center justify-center">
                     <div className="absolute inset-0 rounded-full border-4 border-amber-500/20 border-t-amber-500 animate-spin" />
                     <Sparkles className="text-amber-500 animate-pulse" size={16} />
                   </div>
 
-                  <div className="space-y-0.5">
+                  <div className="space-y-2">
                     <h4 className="text-lg font-black text-zinc-800 dark:text-zinc-100">
                       الذكاء الاصطناعي يُنشئ مسابقتك الآن
                     </h4>
@@ -359,16 +359,16 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                   </div>
 
                   {/* شريط التقدم النسبة المئوية */}
-                  <div className="space-y-0.5">
+                  <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs font-black text-zinc-500 dark:text-zinc-400">
                       <span>التقدم: {aiProgress}%</span>
-                      <span className="flex items-center gap-0.25 text-amber-600 dark:text-amber-400">
+                      <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
                         <Clock size={13} />
                         الوقت المتبقي التقديري: {aiTimeLeft > 0 ? `${aiTimeLeft} ثانية` : "لحظات..."}
                       </span>
                     </div>
 
-                    <div className="w-full h-3 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700 p-0.5">
+                    <div className="w-full h-12 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700 p-2">
                       <div
                         className="h-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-600 rounded-full transition-all duration-500 ease-out shadow-sm"
                         style={{ width: `${aiProgress}%` }}
@@ -382,25 +382,25 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                 </div>
               ) : (
                 <>
-                  <div className="space-y-0.5">
+                  <div className="space-y-2">
                     <div>
-                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">الموضوع أو النص الكتابي / الطقسي</label>
+                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-4">الموضوع أو النص الكتابي / الطقسي</label>
                       <input
                         type="text"
                         value={aiTopic}
                         onChange={(e) => setAiTopic(e.target.value)}
                         placeholder="مثال: سفر يونان، شخصية مارمرقس، صوم الرسل..."
-                        className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.5 text-sm font-bold outline-none focus:border-amber-500"
+                        className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none focus:border-amber-500"
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-0.5">
+                    <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">عدد الأسئلة</label>
+                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-4">عدد الأسئلة</label>
                         <select
                           value={aiCount}
                           onChange={(e) => setAiCount(Number(e.target.value))}
-                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
+                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-1 text-sm font-bold outline-none"
                         >
                           <option value={5}>5 أسئلة (~10 ث)</option>
                           <option value={10}>10 أسئلة (~18 ث)</option>
@@ -413,11 +413,11 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                         </select>
                       </div>
                       <div>
-                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">المرحلة المستهدفة</label>
+                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-4">المرحلة المستهدفة</label>
                         <select
                           value={aiAudience}
                           onChange={(e) => setAiAudience(e.target.value)}
-                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
+                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-1 text-sm font-bold outline-none"
                         >
                           <option value="مدارس أحد">مدارس أحد</option>
                           <option value="إعدادي">إعدادي</option>
@@ -428,13 +428,13 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-0.25">
+                    <div className="grid grid-cols-2 gap-1">
                       <div>
-                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">نوع الأسئلة</label>
+                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-4">نوع الأسئلة</label>
                         <select
                           value={aiType}
                           onChange={(e) => setAiType(e.target.value as any)}
-                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
+                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-1 text-sm font-bold outline-none"
                         >
                           <option value="mixed">ميكس (اختر + صح وخطأ)</option>
                           <option value="choice">اختيار من متعدد فقط</option>
@@ -442,11 +442,11 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                         </select>
                       </div>
                       <div>
-                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-1">مستوى الصعوبة</label>
+                        <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 block mb-4">مستوى الصعوبة</label>
                         <select
                           value={aiDifficulty}
                           onChange={(e) => setAiDifficulty(e.target.value)}
-                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-0.25 text-sm font-bold outline-none"
+                          className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-1 text-sm font-bold outline-none"
                         >
                           <option value="سهل">سهل ومباشر</option>
                           <option value="متوسط">متوسط</option>
@@ -456,14 +456,14 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
                     </div>
                   </div>
 
-                  <div className="flex gap-0.25 justify-end pt-0.25">
+                  <div className="flex gap-1 justify-end pt-1">
                     <Button variant="ghost" onClick={() => setIsAiModalOpen(false)}>إلغاء</Button>
                     <Button
                       onClick={handleGenerateWithAi}
                       disabled={isGeneratingAi || !aiTopic.trim()}
-                      className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-0.25 w-6"
+                      className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-1 w-24"
                     >
-                      <Sparkles className="w-3 h-3" />
+                      <Sparkles className="w-12 h-12" />
                       توليد الأسئلة 🪄
                     </Button>
                   </div>
@@ -474,12 +474,12 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
         )}
 
         {/* Header Custom */}
-        <div className="p-0.5 border-b bg-white dark:bg-zinc-800 flex justify-between items-center">
-          <div className="flex items-center gap-1">
+        <div className="p-2 border-b bg-white dark:bg-zinc-800 flex justify-between items-center">
+          <div className="flex items-center gap-4">
             <h2 className="text-2xl font-black bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               {isEditing ? 'تعديل المسابقة' : 'مسابقة جديدة'}
             </h2>
-            <div className="flex bg-zinc-100 dark:bg-zinc-700 p-0.5 rounded-xl">
+            <div className="flex bg-zinc-100 dark:bg-zinc-700 p-2 rounded-xl">
               <button
                 onClick={() => setActiveTab("edit")}
                 className={`p-0.5 rounded-lg flex items-center gap-1 font-bold transition-all ${activeTab === 'edit' ? 'bg-white dark:bg-zinc-600 shadow-sm text-blue-600' : 'text-zinc-500'}`}
@@ -488,57 +488,57 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
               </button>
             </div>
           </div>
-          <button onClick={() => onOpenChange(false)} className="bg-zinc-100 hover:bg-red-100 hover:text-red-500 p-0.5 rounded-full transition-colors text-zinc-500">
+          <button onClick={() => onOpenChange(false)} className="bg-zinc-100 hover:bg-red-100 hover:text-red-500 p-2 rounded-full transition-colors text-zinc-500">
             <X size={24} />
           </button>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-1 space-y-0.5">
+        <div className="flex-1 overflow-y-auto p-4 space-y-2">
           <>
             {/* Basic Info */}
-            <div className="space-y-0.5">
+            <div className="space-y-2">
               <input
                 type="text"
-                className="w-full min-w-14 text-3xl font-black bg-transparent border-b-4 border-zinc-200 focus:border-blue-500 outline-none transition-all pb-1 dark:text-white"
+                className="w-full min-w-56 text-3xl font-black bg-transparent border-b-4 border-zinc-200 focus:border-blue-500 outline-none transition-all pb-4 dark:text-white"
                 value={title} onChange={(e) => setTitle(e.target.value)}
                 placeholder="عنوان المسابقة..."
               />
-              <div className="flex flex-wrap gap-1 items-center">
+              <div className="flex flex-wrap gap-4 items-center">
                 <div className="flex-1">
                   <textarea
-                    className="w-full min-w-16 bg-white dark:bg-zinc-800 rounded-2xl border-2 border-zinc-100 dark:border-zinc-700 p-1 font-medium focus:border-blue-500 outline-none"
+                    className="w-full min-w-64 bg-white dark:bg-zinc-800 rounded-2xl border-2 border-zinc-100 dark:border-zinc-700 p-4 font-medium focus:border-blue-500 outline-none"
                     rows={1} value={description} onChange={(e) => setDescription(e.target.value)}
                     placeholder="وصف بسيط..."
                   />
                 </div>
-                <div className="flex flex-wrap gap-0.5 p-0.5 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800">
-                  <label className="flex items-center gap-0.5 cursor-pointer font-bold text-blue-700 dark:text-blue-300">
+                <div className="flex flex-wrap gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800">
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-blue-700 dark:text-blue-300">
                     <Checkbox checked={shuffleQuestions} onCheckedChange={(c) => setShuffleQuestions(!!c)} />
                     أسئلة عشوائية
                   </label>
-                  <label className="flex items-center gap-0.5 cursor-pointer font-bold text-blue-700 dark:text-blue-300">
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-blue-700 dark:text-blue-300">
                     <Checkbox checked={shuffleChoices} onCheckedChange={(c) => setShuffleChoices(!!c)} />
                     خيارات عشوائية
                   </label>
                 </div>
-                <div className="flex flex-wrap gap-0.5 p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
+                <div className="flex flex-wrap gap-2 p-2 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
                   <Button
                     variant="default"
                     size="normal"
                     onClick={() => setIsAiModalOpen(true)}
-                    className="h-4 text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold"
+                    className="h-16 text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold"
                   >
-                    <Sparkles size={14} className="ml-1 text-yellow-200" /> توليد بالـ AI 🪄
+                    <Sparkles size={14} className="ml-4 text-yellow-200" /> توليد بالـ AI 🪄
                   </Button>
-                  <Button variant="outline" size="normal" onClick={downloadTemplate} className="h-4 text-xs">
+                  <Button variant="outline" size="normal" onClick={downloadTemplate} className="h-16 text-xs">
                     <Clock size={6} /> تحميل Template
                   </Button>
-                  <Button variant="outline" size="normal" onClick={() => fileInputRef.current?.click()} className="h-4 text-xs">
+                  <Button variant="outline" size="normal" onClick={() => fileInputRef.current?.click()} className="h-16 text-xs">
                     <Upload size={6} /> استيراد Excel
                   </Button>
                   <input ref={fileInputRef} type="file" accept=".xlsx, .xls" className="hidden" onChange={handleFileUpload} />
-                  <Button variant="outline" size="normal" onClick={exportToExcel} className="h-4 text-xs">
+                  <Button variant="outline" size="normal" onClick={exportToExcel} className="h-16 text-xs">
                     <LayoutDashboard size={6} /> تصدير الأسئلة
                   </Button>
                 </div>
@@ -546,70 +546,70 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
             </div>
 
             {/* Questions Editor */}
-            <div className="space-y-0.5">
+            <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-black text-zinc-700 dark:text-zinc-300">الأسئلة ({questions.length})</h3>
-                <div className="flex gap-2">
+                <div className="flex gap-8">
                   <button
                     onClick={() => setIsAiModalOpen(true)}
-                    className="bg-amber-600 hover:bg-amber-700 text-white p-1 rounded-2xl font-bold flex items-center gap-1 text-sm shadow-md transition-all active:scale-95"
+                    className="bg-amber-600 hover:bg-amber-700 text-white p-4 rounded-2xl font-bold flex items-center gap-4 text-sm shadow-md transition-all active:scale-95"
                   >
                     <Sparkles size={16} /> توليد بالـ AI
                   </button>
-                  <button onClick={addQuestion} className="bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-2xl font-black shadow-lg shadow-blue-200 flex items-center gap-1 transition-transform active:scale-95">
+                  <button onClick={addQuestion} className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-2xl font-black shadow-lg shadow-blue-200 flex items-center gap-4 transition-transform active:scale-95">
                     <Plus size={20} /> إضافة سؤال
                   </button>
                 </div>
               </div>
 
-              <Accordion type="multiple" className="space-y-0.5">
+              <Accordion type="multiple" className="space-y-2">
                 {questions.map((q, idx) => (
                   <AccordionItem key={q.id} value={q.id} className="border-2 border-zinc-100 dark:border-zinc-800 rounded-3xl overflow-hidden bg-white dark:bg-zinc-800 shadow-sm">
-                    <div className="flex items-center px-1 py-0.5 bg-zinc-50/50 dark:bg-zinc-800/50">
-                      <span className="w-4 h-3 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center font-black text-zinc-600 dark:text-zinc-300">{idx + 1}</span>
-                      <AccordionTrigger className="flex-1 px-0.5 hover:no-underline">
+                    <div className="flex items-center px-4 py-2 bg-zinc-50/50 dark:bg-zinc-800/50">
+                      <span className="w-16 h-12 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center font-black text-zinc-600 dark:text-zinc-300">{idx + 1}</span>
+                      <AccordionTrigger className="flex-1 px-2 hover:no-underline">
                         <span className="font-bold text-lg text-right truncate max-w-50">{q.text || "سؤال جديد يحتاج نص..."}</span>
                       </AccordionTrigger>
-                      <button onClick={() => setQuestions(questions.filter((_, i) => i !== idx))} className="text-zinc-400 hover:text-red-500 px-1"><Trash2 size={20} /></button>
+                      <button onClick={() => setQuestions(questions.filter((_, i) => i !== idx))} className="text-zinc-400 hover:text-red-500 px-4"><Trash2 size={20} /></button>
                     </div>
-                    <AccordionContent className="p-0.5 space-y-0.5 border-t border-zinc-100 dark:border-zinc-700">
-                      <div className="grid grid-cols-2 gap-0.5">
-                        <div className="space-y-0.5">
+                    <AccordionContent className="p-2 space-y-2 border-t border-zinc-100 dark:border-zinc-700">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-2">
                           <label className="text-sm font-black text-zinc-500">نوع السؤال</label>
                           <select
-                            className="w-full p-0.5 rounded-xl border-2 border-zinc-100 dark:bg-zinc-700 dark:border-zinc-600 font-bold outline-none focus:border-blue-500"
+                            className="w-full p-2 rounded-xl border-2 border-zinc-100 dark:bg-zinc-700 dark:border-zinc-600 font-bold outline-none focus:border-blue-500"
                             value={q.type} onChange={(e) => updateQuestion(idx, { type: e.target.value })}
                           >
                             <option value="multiple-choice">اختيارات متعددة</option>
                             <option value="true-false">صح / خطأ</option>
                           </select>
                         </div>
-                        <div className="space-y-0.5">
+                        <div className="space-y-2">
                           <label className="text-sm font-black text-zinc-500">الوقت (ثواني)</label>
-                          <div className="flex items-center gap-0.5 bg-zinc-100 dark:bg-zinc-700 p-0.5 rounded-xl">
+                          <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-700 p-2 rounded-xl">
                             <Clock size={12} className="text-zinc-400" />
                             <input type="number" className="bg-transparent font-bold w-full outline-none" value={q.timeLimit} onChange={(e) => updateQuestion(idx, { timeLimit: +e.target.value })} />
                           </div>
                         </div>
                       </div>
 
-                      <div className="space-y-0.5">
+                      <div className="space-y-2">
                         <label className="text-sm font-black text-zinc-500">نص السؤال</label>
                         <textarea
-                          className="w-full p-0.5 rounded-xl border-2 border-zinc-100 dark:bg-zinc-700 dark:border-zinc-600 font-bold focus:border-blue-500 outline-none"
+                          className="w-full p-2 rounded-xl border-2 border-zinc-100 dark:bg-zinc-700 dark:border-zinc-600 font-bold focus:border-blue-500 outline-none"
                           value={q.text} onChange={(e) => updateQuestion(idx, { text: e.target.value })}
                           placeholder="ما هو السؤال؟"
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-0.5">
+                      <div className="grid grid-cols-2 gap-2">
                         {q.choices.map((choice, cIdx) => (
                           <div key={cIdx} className={`flex items-center gap-0.5 p-0.5 rounded-2xl transition-all border-2 ${q.correctAnswer === cIdx ? 'border-green-500 bg-green-50 dark:bg-green-900/20 shadow-md' : 'border-transparent bg-zinc-50 dark:bg-zinc-900/50'}`}>
-                            <div className={`w-2 h-2 rounded-lg ${COLORS[cIdx]} flex items-center justify-center text-white font-black`}>
+                            <div className={`w-8 h-8 rounded-lg ${COLORS[cIdx]} flex items-center justify-center text-white font-black`}>
                               {String.fromCharCode(65 + cIdx)}
                             </div>
                             <input
-                              type="text" className="flex-1 bg-transparent p-0.5 font-bold outline-none"
+                              type="text" className="flex-1 bg-transparent p-2 font-bold outline-none"
                               value={choice} onChange={(e) => {
                                 const newChoices = [...q.choices];
                                 newChoices[cIdx] = e.target.value;
@@ -636,12 +636,12 @@ export default function CreateQuizDialog({ open, onOpenChange, onSuccess, initia
         </div>
 
         {/* Footer */}
-        <div className="p-0.5 border-t bg-white dark:bg-zinc-800 flex justify-end gap-1">
-          <button onClick={() => onOpenChange(false)} className="p-1 font-black text-zinc-500 hover:bg-zinc-100 rounded-2xl transition-colors">إلغاء</button>
+        <div className="p-2 border-t bg-white dark:bg-zinc-800 flex justify-end gap-4">
+          <button onClick={() => onOpenChange(false)} className="p-4 font-black text-zinc-500 hover:bg-zinc-100 rounded-2xl transition-colors">إلغاء</button>
           <button
             onClick={validateAndSubmit}
             disabled={isSubmitting}
-            className="p-1 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black shadow-xl shadow-blue-200 dark:shadow-none hover:scale-105 active:scale-95 disabled:opacity-50 transition-all"
+            className="p-4 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black shadow-xl shadow-blue-200 dark:shadow-none hover:scale-105 active:scale-95 disabled:opacity-50 transition-all"
           >
             {isSubmitting ? "جاري الحفظ..." : (isEditing ? "حفظ التعديلات ✨" : "نشر المسابقة 🚀")}
           </button>

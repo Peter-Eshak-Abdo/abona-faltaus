@@ -78,7 +78,7 @@ export default function IconGalleryModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-0.5 sm:p-1 md:p-1.5 bg-black/85 backdrop-blur-xl overflow-y-auto" dir="rtl">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-xl overflow-y-auto" dir="rtl">
         {/* Overlay dismiss */}
         <div className="absolute inset-0" onClick={onClose} />
 
@@ -91,14 +91,14 @@ export default function IconGalleryModal({
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-1 left-1 z-20 w-2 h-2 rounded-full bg-black/60 text-stone-300 hover:text-white hover:bg-black/90 flex items-center justify-center transition-colors border border-white/10"
+            className="absolute top-4 left-4 z-20 w-8 h-8 rounded-full bg-black/60 text-stone-300 hover:text-white hover:bg-black/90 flex items-center justify-center transition-colors border border-white/10"
             title="إغلاق"
           >
             <X size={18} />
           </button>
 
           {/* Left / Image preview Area */}
-          <div className="w-full md:w-1/2 bg-black/70 flex items-center justify-center p-1 relative min-h-[320px] md:min-h-[460px] overflow-hidden">
+          <div className="w-full md:w-1/2 bg-black/70 flex items-center justify-center p-4 relative min-h-[320px] md:min-h-[460px] overflow-hidden">
             <img
               src={icon.imageUrl}
               alt={icon.prompt}
@@ -106,7 +106,7 @@ export default function IconGalleryModal({
               loading="eager"
             />
             {icon.copticInscription && (
-              <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md px-1.5 py-0.5 rounded-full border border-amber-400/50 shadow-xl pointer-events-none">
+              <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md px-6 py-2 rounded-full border border-amber-400/50 shadow-xl pointer-events-none">
                 <span className="text-amber-300 font-coptic text-sm md:text-base font-bold tracking-widest">
                   {icon.copticInscription}
                 </span>
@@ -115,25 +115,25 @@ export default function IconGalleryModal({
           </div>
 
           {/* Right / Information & Actions Area */}
-          <div className="w-full md:w-1/2 p-1 md:p-1.5 flex flex-col justify-between overflow-y-auto bg-stone-900/90 text-stone-200">
+          <div className="w-full md:w-1/2 p-4 md:p-6 flex flex-col justify-between overflow-y-auto bg-stone-900/90 text-stone-200">
             <div>
-              <div className="flex items-center gap-0.5 mb-0.5">
-                <span className="text-xs font-bold px-1 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-0.5">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-bold px-4 py-2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-2">
                   <Sparkles size={13} />
                   {icon.styleTitle}
                 </span>
-                <span className="text-xs text-stone-400 bg-stone-800 px-0.5 py-0.25 rounded-full">
+                <span className="text-xs text-stone-400 bg-stone-800 px-2 py-1 rounded-full">
                   نسبة {icon.aspectRatio}
                 </span>
               </div>
 
-              <h2 className="text-xl md:text-2xl font-bold text-amber-100 mb-0.5 leading-snug">
+              <h2 className="text-xl md:text-2xl font-bold text-amber-100 mb-2 leading-snug">
                 {icon.prompt}
               </h2>
 
               {icon.theologicalInsight && (
-                <div className="my-1 p-1 rounded-2xl bg-amber-950/30 border border-amber-500/20 relative">
-                  <div className="flex items-center gap-0.5 text-amber-400 text-xs font-bold mb-0.5">
+                <div className="my-4 p-4 rounded-2xl bg-amber-950/30 border border-amber-500/20 relative">
+                  <div className="flex items-center gap-2 text-amber-400 text-xs font-bold mb-2">
                     <BookOpen size={14} />
                     <span>التأمل والشرح اللاهوتي للأيقونة</span>
                   </div>
@@ -145,10 +145,10 @@ export default function IconGalleryModal({
             </div>
 
             {/* Action buttons */}
-            <div className="mt-1 pt-1 border-t border-white/10 flex flex-wrap gap-0.5">
+            <div className="mt-4 pt-4 border-t border-white/10 flex flex-wrap gap-2">
               <button
                 onClick={handleDownload}
-                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 bg-linear-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold py-0.5 px-1 rounded-xl shadow-lg transition-all text-sm"
+                className="flex-1 min-w-[130px] flex items-center justify-center gap-8 bg-linear-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold py-2 px-4 rounded-xl shadow-lg transition-all text-sm"
               >
                 <Download size={16} />
                 <span>تحميل بدقة عالية</span>
@@ -156,7 +156,7 @@ export default function IconGalleryModal({
 
               <button
                 onClick={handleShare}
-                className="flex items-center justify-center gap-0.5 bg-stone-800 hover:bg-stone-700 text-stone-200 py-0.5 px-1 rounded-xl border border-stone-700 transition-all text-sm"
+                className="flex items-center justify-center gap-2 bg-stone-800 hover:bg-stone-700 text-stone-200 py-2 px-4 rounded-xl border border-stone-700 transition-all text-sm"
               >
                 {copied ? <Check size={16} className="text-emerald-400" /> : <Share2 size={16} />}
                 <span>{copied ? "تم النسخ" : "مشاركة"}</span>

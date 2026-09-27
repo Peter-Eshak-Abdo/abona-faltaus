@@ -78,28 +78,28 @@ export default function CopticCalendarPage() {
   const getFeastBadge = (type: FeastType) => {
     switch (type) {
       case "major_lord":
-        return <Badge className="bg-amber-600 text-white font-bold text-[10px]"><Crown className="w-3 h-3 me-1 inline" /> عيد سيدي كبير</Badge>;
+        return <Badge className="bg-amber-600 text-white font-bold text-[10px]"><Crown className="w-12 h-12 me-4 inline" /> عيد سيدي كبير</Badge>;
       case "minor_lord":
-        return <Badge className="bg-amber-500/80 text-white font-bold text-[10px]"><Sparkles className="w-3 h-3 me-1 inline" /> عيد سيدي صغير</Badge>;
+        return <Badge className="bg-amber-500/80 text-white font-bold text-[10px]"><Sparkles className="w-12 h-12 me-4 inline" /> عيد سيدي صغير</Badge>;
       case "virgin_mary":
-        return <Badge className="bg-blue-600 text-white font-bold text-[10px]"><Heart className="w-3 h-3 me-1 inline" /> والدة الإله</Badge>;
+        return <Badge className="bg-blue-600 text-white font-bold text-[10px]"><Heart className="w-12 h-12 me-4 inline" /> والدة الإله</Badge>;
       case "fast":
-        return <Badge className="bg-purple-700 text-white font-bold text-[10px]"><Flame className="w-3 h-3 me-1 inline" /> صوم مقدس</Badge>;
+        return <Badge className="bg-purple-700 text-white font-bold text-[10px]"><Flame className="w-12 h-12 me-4 inline" /> صوم مقدس</Badge>;
       default:
         return null;
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 pb-2" dir="rtl">
+    <div className="min-h-screen bg-[#FAF9F5] dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 pb-8" dir="rtl">
       {/* Header */}
       <header className="border-b border-[#EBE9E0] dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-1 py-0.5 flex items-center justify-between">
-          <div className="flex items-center gap-1">
+        <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <BackButton />
             <div>
-              <h1 className="text-lg md:text-xl font-black text-[#4A0012] dark:text-amber-400 flex items-center gap-1">
-                <CalendarIcon className="w-5 h-5" />
+              <h1 className="text-lg md:text-xl font-black text-[#4A0012] dark:text-amber-400 flex items-center gap-4">
+                <CalendarIcon className="w-20 h-20" />
                 التقويم القبطي الأرثوذكسي الشامل
               </h1>
               <p className="text-xs text-stone-500 dark:text-neutral-400">
@@ -108,12 +108,12 @@ export default function CopticCalendarPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-1">
-            <div className="bg-stone-100 dark:bg-neutral-800 p-1 rounded-xl flex items-center gap-1 border border-stone-200 dark:border-neutral-700">
+          <div className="flex items-center gap-4">
+            <div className="bg-stone-100 dark:bg-neutral-800 p-4 rounded-xl flex items-center gap-4 border border-stone-200 dark:border-neutral-700">
               <button
                 onClick={() => setViewMode("monthly")}
                 className={cn(
-                  "px-1 py-0.5 rounded-lg text-xs font-bold transition",
+                  "px-4 py-2 rounded-lg text-xs font-bold transition",
                   viewMode === "monthly"
                     ? "bg-[#4A0012] text-white shadow-sm"
                     : "text-stone-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
@@ -124,7 +124,7 @@ export default function CopticCalendarPage() {
               <button
                 onClick={() => setViewMode("timeline")}
                 className={cn(
-                  "px-1 py-0.5 rounded-lg text-xs font-bold transition",
+                  "px-4 py-2 rounded-lg text-xs font-bold transition",
                   viewMode === "timeline"
                     ? "bg-[#4A0012] text-white shadow-sm"
                     : "text-stone-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
@@ -137,16 +137,16 @@ export default function CopticCalendarPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-1 py-1.5 space-y-1">
+      <main className="max-w-6xl mx-auto px-4 py-6 space-y-4">
         {/* Quick Year Selector Bar */}
-        <div className="flex items-center justify-between gap-0.5 overflow-x-auto pb-2 scrollbar-none">
-          <div className="flex items-center gap-0.5">
+        <div className="flex items-center justify-between gap-2 overflow-x-auto pb-8 scrollbar-none">
+          <div className="flex items-center gap-2">
             {YEARS.map((yr) => (
               <button
                 key={yr}
                 onClick={() => setSelectedYear(yr)}
                 className={cn(
-                  "px-1 py-0.5 rounded-xl text-sm font-black transition border",
+                  "px-4 py-2 rounded-xl text-sm font-black transition border",
                   selectedYear === yr
                     ? "bg-[#4A0012] text-amber-200 border-[#4A0012] shadow-md shadow-[#4A0012]/20"
                     : "bg-white dark:bg-neutral-900 text-stone-700 dark:text-neutral-300 border-[#EBE9E0] dark:border-neutral-800 hover:bg-stone-50"
@@ -157,35 +157,35 @@ export default function CopticCalendarPage() {
             ))}
           </div>
 
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-2">
             <Link
               href="/synaxarium"
-              className="px-1 py-0.5 text-xs font-bold bg-amber-500/10 text-amber-900 dark:text-amber-300 rounded-xl border border-amber-500/20 hover:bg-amber-500/20 transition flex items-center gap-0.5"
+              className="px-4 py-2 text-xs font-bold bg-amber-500/10 text-amber-900 dark:text-amber-300 rounded-xl border border-amber-500/20 hover:bg-amber-500/20 transition flex items-center gap-2"
             >
-              <Scroll className="w-4 h-4" />
+              <Scroll className="w-16 h-16" />
               <span>السنكسار</span>
             </Link>
             <Link
               href="/readings"
-              className="px-1 py-0.5 text-xs font-bold bg-[#4A0012]/10 text-[#4A0012] dark:text-amber-300 rounded-xl border border-[#4A0012]/20 hover:bg-[#4A0012]/20 transition flex items-center gap-0.5"
+              className="px-4 py-2 text-xs font-bold bg-[#4A0012]/10 text-[#4A0012] dark:text-amber-300 rounded-xl border border-[#4A0012]/20 hover:bg-[#4A0012]/20 transition flex items-center gap-2"
             >
-              <BookOpen className="w-4 h-4" />
+              <BookOpen className="w-16 h-16" />
               <span>القطمارس</span>
             </Link>
           </div>
         </div>
 
         {viewMode === "monthly" ? (
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             {/* Month Header Controller */}
             <Card className="rounded-2xl border-[#EBE9E0] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm">
-              <CardContent className="p-0.5 flex items-center justify-between">
+              <CardContent className="p-2 flex items-center justify-between">
                 <Button
                   variant="outline"
                   onClick={handlePrevMonth}
                   className="rounded-xl border-stone-200 dark:border-neutral-700"
                 >
-                  <ChevronRight className="w-4 h-4 me-1" />
+                  <ChevronRight className="w-16 h-16 me-4" />
                   الشهر السابق
                 </Button>
 
@@ -193,7 +193,7 @@ export default function CopticCalendarPage() {
                   <h2 className="text-xl font-black text-[#4A0012] dark:text-amber-400">
                     {MONTH_NAMES_AR[selectedMonth - 1]} {selectedYear}
                   </h2>
-                  <p className="text-xs text-stone-500 dark:text-neutral-400 font-medium mt-0.5">
+                  <p className="text-xs text-stone-500 dark:text-neutral-400 font-medium mt-2">
                     الشهر {selectedMonth} من السنة الميلادية
                   </p>
                 </div>
@@ -204,13 +204,13 @@ export default function CopticCalendarPage() {
                   className="rounded-xl border-stone-200 dark:border-neutral-700"
                 >
                   الشهر التالي
-                  <ChevronLeft className="w-4 h-4 ms-1" />
+                  <ChevronLeft className="w-16 h-16 ms-4" />
                 </Button>
               </CardContent>
             </Card>
 
             {/* Days Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {monthDays.map((day) => {
                 const isToday = new Date().toISOString().split("T")[0] === day.dateStr;
                 return (
@@ -218,7 +218,7 @@ export default function CopticCalendarPage() {
                     key={day.dateStr}
                     onClick={() => setActiveDay(day)}
                     className={cn(
-                      "p-0.5 rounded-2xl border transition cursor-pointer flex flex-col justify-between min-h-[140px]",
+                      "p-2 rounded-2xl border transition cursor-pointer flex flex-col justify-between min-h-[140px]",
                       isToday
                         ? "border-[#4A0012] bg-amber-500/10 dark:border-amber-400 shadow-md ring-2 ring-[#4A0012]/30"
                         : "bg-white dark:bg-neutral-900 border-[#EBE9E0] dark:border-neutral-800 hover:border-[#4A0012]/40 hover:shadow-sm"
@@ -226,8 +226,8 @@ export default function CopticCalendarPage() {
                   >
                     <div>
                       {/* Top Date Row */}
-                      <div className="flex items-center justify-between mb-1.5">
-                        <div className="flex items-baseline gap-1.5">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-baseline gap-6">
                           <span className="text-xl font-black text-stone-900 dark:text-white font-mono">
                             {day.gregorianDate.getDate()}
                           </span>
@@ -239,7 +239,7 @@ export default function CopticCalendarPage() {
                         {/* Coptic Date Badge */}
                         <Badge
                           variant="secondary"
-                          className="bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 font-bold text-[11px] rounded-lg px-0.5"
+                          className="bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 font-bold text-[11px] rounded-lg px-2"
                         >
                           {day.copticDate.day} {day.copticDate.monthNameAr}
                         </Badge>
@@ -252,10 +252,10 @@ export default function CopticCalendarPage() {
                     </div>
 
                     {/* Footer Info */}
-                    <div className="mt-0.5 pt-0.5 border-t border-stone-100 dark:border-neutral-800 flex items-center justify-between text-[11px]">
+                    <div className="mt-2 pt-2 border-t border-stone-100 dark:border-neutral-800 flex items-center justify-between text-[11px]">
                       {/* Liturgical Tune */}
                       <span className={cn(
-                        "px-1.5 py-0.5 rounded-md font-bold text-[10px]",
+                        "px-6 py-2 rounded-md font-bold text-[10px]",
                         day.tune === "joyful" && "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300",
                         day.tune === "lent" && "bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300",
                         day.tune === "shaanine" && "bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300",
@@ -268,8 +268,8 @@ export default function CopticCalendarPage() {
 
                       {/* Fasting indicator */}
                       {day.isFastingDay ? (
-                        <span className="flex items-center gap-1 text-purple-700 dark:text-purple-300 font-semibold text-[10px]">
-                          <Flame className="w-3 h-3 text-purple-600" />
+                        <span className="flex items-center gap-4 text-purple-700 dark:text-purple-300 font-semibold text-[10px]">
+                          <Flame className="w-12 h-12 text-purple-600" />
                           {day.canEatFish ? "مسموح سمك" : "صوم انقطاعي"}
                         </span>
                       ) : day.isNonFastingPeriod ? (
@@ -287,12 +287,12 @@ export default function CopticCalendarPage() {
           </div>
         ) : (
           /* 5-Year Major Feasts Timeline */
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             {fiveYearsFeasts.map((yearGroup) => (
               <Card key={yearGroup.year} className="rounded-2xl border-[#EBE9E0] dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden shadow-sm">
-                <CardHeader className="bg-[#4A0012]/5 dark:bg-neutral-800/50 border-b border-[#EBE9E0] dark:border-neutral-800 py-0.5 px-0.5">
-                  <CardTitle className="text-lg font-black text-[#4A0012] dark:text-amber-400 flex items-center gap-2">
-                    <Crown className="w-5 h-5 text-amber-500" />
+                <CardHeader className="bg-[#4A0012]/5 dark:bg-neutral-800/50 border-b border-[#EBE9E0] dark:border-neutral-800 py-2 px-2">
+                  <CardTitle className="text-lg font-black text-[#4A0012] dark:text-amber-400 flex items-center gap-8">
+                    <Crown className="w-20 h-20 text-amber-500" />
                     أعياد ومناسبات عام {yearGroup.year}م — ({yearGroup.year - 284} للشهداء)
                   </CardTitle>
                 </CardHeader>
@@ -302,10 +302,10 @@ export default function CopticCalendarPage() {
                     <div
                       key={idx}
                       onClick={() => setActiveDay(evt)}
-                      className="p-0.5 hover:bg-stone-50 dark:hover:bg-neutral-800/40 transition flex items-center justify-between gap-0.5 cursor-pointer"
+                      className="p-2 hover:bg-stone-50 dark:hover:bg-neutral-800/40 transition flex items-center justify-between gap-2 cursor-pointer"
                     >
-                      <div className="flex items-center gap-0.5">
-                        <div className="w-3 text-center shrink-0">
+                      <div className="flex items-center gap-2">
+                        <div className="w-12 text-center shrink-0">
                           <span className="block text-base font-black text-stone-900 dark:text-white font-mono">
                             {evt.gregorianDate.getDate()}
                           </span>
@@ -315,7 +315,7 @@ export default function CopticCalendarPage() {
                         </div>
 
                         <div>
-                          <div className="flex items-center gap-0.5 mb-0.5">
+                          <div className="flex items-center gap-2 mb-2">
                             <h4 className="text-sm font-bold text-stone-900 dark:text-white">
                               {evt.titleAr}
                             </h4>
@@ -327,13 +327,13 @@ export default function CopticCalendarPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-0.5 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0">
                         {evt.isFastingDay && (
                           <Badge variant="outline" className="border-purple-300 text-purple-700 dark:text-purple-300 text-[10px]">
                             {evt.fastingNoteAr || "صوم"}
                           </Badge>
                         )}
-                        <ChevronLeft className="w-4 h-4 text-stone-400" />
+                        <ChevronLeft className="w-16 h-16 text-stone-400" />
                       </div>
                     </div>
                   ))}
@@ -345,14 +345,14 @@ export default function CopticCalendarPage() {
 
         {/* Day Details Modal */}
         {activeDay && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-1">
-            <div className="bg-white dark:bg-neutral-900 rounded-2xl max-w-md w-full p-1 border border-[#EBE9E0] dark:border-neutral-800 shadow-2xl space-y-1">
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-neutral-900 rounded-2xl max-w-md w-full p-4 border border-[#EBE9E0] dark:border-neutral-800 shadow-2xl space-y-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <Badge className="bg-[#4A0012] text-amber-200 font-bold mb-1">
+                  <Badge className="bg-[#4A0012] text-amber-200 font-bold mb-4">
                     {activeDay.dayOfWeekAr} {activeDay.gregorianDate.getDate()} {MONTH_NAMES_AR[activeDay.gregorianDate.getMonth()]} {activeDay.gregorianDate.getFullYear()}م
                   </Badge>
-                  <h3 className="text-lg font-black text-[#4A0012] dark:text-amber-400 mt-1">
+                  <h3 className="text-lg font-black text-[#4A0012] dark:text-amber-400 mt-4">
                     {activeDay.titleAr}
                   </h3>
                   <p className="text-xs font-bold text-stone-600 dark:text-neutral-400">
@@ -361,13 +361,13 @@ export default function CopticCalendarPage() {
                 </div>
                 <button
                   onClick={() => setActiveDay(null)}
-                  className="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-white"
+                  className="p-4 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-white"
                 >
                   ✕
                 </button>
               </div>
 
-              <div className="space-y-0.5 py-0.5 border-y border-stone-100 dark:border-neutral-800 text-xs">
+              <div className="space-y-2 py-2 border-y border-stone-100 dark:border-neutral-800 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-stone-500 dark:text-neutral-400 font-medium">الطقس الكنسي:</span>
                   <span className="font-bold text-amber-700 dark:text-amber-400">طقس {activeDay.tuneNameAr}</span>
@@ -390,19 +390,19 @@ export default function CopticCalendarPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-0.5 pt-0.5">
+              <div className="grid grid-cols-2 gap-2 pt-2">
                 <Link
                   href={activeDay.synaxariumUrl}
-                  className="w-full py-0.5 px-0.5 text-center text-xs font-bold rounded-xl bg-amber-600 text-white hover:bg-amber-700 transition flex items-center justify-center gap-0.5"
+                  className="w-full py-2 px-2 text-center text-xs font-bold rounded-xl bg-amber-600 text-white hover:bg-amber-700 transition flex items-center justify-center gap-2"
                 >
-                  <Scroll className="w-3.5 h-3.5" />
+                  <Scroll className="w-14 h-14" />
                   <span>سنكسار اليوم</span>
                 </Link>
                 <Link
                   href={activeDay.readingsUrl}
-                  className="w-full py-0.5 px-0.5 text-center text-xs font-bold rounded-xl bg-[#4A0012] text-white hover:bg-[#6B1124] transition flex items-center justify-center gap-0.5"
+                  className="w-full py-2 px-2 text-center text-xs font-bold rounded-xl bg-[#4A0012] text-white hover:bg-[#6B1124] transition flex items-center justify-center gap-2"
                 >
-                  <BookOpen className="w-3.5 h-3.5" />
+                  <BookOpen className="w-14 h-14" />
                   <span>قطمارس اليوم</span>
                 </Link>
               </div>

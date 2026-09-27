@@ -1,0 +1,205 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
+import { useTranslations } from 'next-intl';
+import {
+  FaArrowRight,
+  FaHome,
+  FaSearch,
+  FaSun,
+  FaMoon,
+  FaBars,
+  FaTimes,
+  FaChurch,
+  FaMusic,
+  FaBook,
+  FaFileAlt,
+  FaCog,
+  FaPenFancy,
+  FaUserCircle,
+  FaCalendarAlt,
+  FaUsers,
+} from 'react-icons/fa';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import GlobalBreadcrumbs from './GlobalBreadcrumbs';
+import GlobalSearchModal from './GlobalSearchModal';
+
+export default function UnifiedGlobalHeader() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { theme, setTheme } = useTheme();
+  const tNav = useTranslations('Navigation');
+  const tHome = useTranslations('Home');
+  const [mounted, setMounted] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const MENU_ITEMS = [
+    { href: '/liturgies', label: tNav('liturgiesMenu'), icon: FaChurch, color: 'text-amber-400' },
+    { href: '/calendar', label: 'التقويم القبطي ومناسبات 5 سنوات', icon: FaCalendarAlt, color: 'text-amber-500' },
+    { href: '/synaxarium', label: tNav('synaxariumMenu'), icon: FaChurch, color: 'text-rose-400' },
+    { href: '/class-coordinator', label: 'أمين فصل (توزيع الخدمة والغياب)', icon: FaUsers, color: 'text-emerald-400' },
+    { href: '/forms', label: 'استبيانات واستمارات الخدمة', icon: FaFileAlt, color: 'text-blue-400' },
+    { href: '/saraha', label: 'صندوق الصراحة والاعترافات', icon: FaChurch, color: 'text-indigo-400' },
+    { href: '/preparation', label: tNav('prepMenu'), icon: FaFileAlt, color: 'text-teal-400' },
+    { href: '/chat', label: tNav('aiMenu'), icon: FaChurch, color: 'text-amber-400' },
+    { href: '/exam/quiz/dashboard', label: tNav('examMenu'), icon: FaPenFancy, color: 'text-purple-400' },
+    { href: '/settings', label: tNav('settingsMenu'), icon: FaCog, color: 'text-neutral-400' },
+  ];
+
+  useEffect(() => {
+    setMounted(true);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const isHome = pathname === '/' || pathname === '';
+
+  // Intelligent Back navigation (Native mobile-like history back)
+  const handleBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      const parts = pathname.split('/').filter(Boolean);
+      if (parts.length <= 1) {
+        router.push('/');
+      } else {
+        const parent = `/${parts.slice(0, -1).join('/')}`;
+        router.push(parent);
+      }
+    }
+  };
+
+  const cycleTheme = () => {
+    if (!mounted) return;
+    if (theme === 'light') setTheme('dark');
+    else if (theme === 'dark') setTheme('gold');
+    else setTheme('light');
+  };
+
+  // If on homepage, render a sleek floating top toolbar
+  return (
+    <>
+      <header
+        className={`sticky top-0 z-40 w-full transition-all duration-300 ${
+          isHome
+            ? 'bg-transparent'
+            : 'bg-neutral-950/85 dark:bg-neutral-950/85 backdrop-blur-md border-b border-neutral-800 shadow-md'
+        }`}
+        dir="rtl"
+      >
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 py-1 sm:py-2 flex items-center justify-between gap-8">
+          {/* 1. Left Side: Back Button & Logo Brand */}
+          <div className="flex items-center gap-2 shrink-0">
+            {!isHome && (
+              <button
+                onClick={handleBack}
+                className="p-2 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition flex items-center gap-2 text-xs font-bold"
+                title={tNav('back')}
+              >
+                <FaArrowRight className="text-xs" />
+                <span className="hidden md:inline">{tNav('back')}</span>
+              </button>
+            )}
+
+            <Link href="/" className="flex items-center gap-2 group">
+              <Image
+                src="/images/eagle.webp"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="rounded-full border border-amber-500/30 group-hover:scale-105 transition"
+                style={{ width: "auto", height: "auto" }}
+                priority
+              />
+              <span className="font-bold text-sm sm:text-base text-white group-hover:text-amber-400 transition whitespace-nowrap">
+                أبونا فلتاؤس
+              </span>
+            </Link>
+          </div>
+
+          {/* 2. Middle: Dynamic Breadcrumbs (Hidden on mobile) */}
+          <div className="hidden lg:flex flex-1 items-center justify-start px-2 overflow-hidden">
+            <GlobalBreadcrumbs />
+          </div>
+
+          {/* 3. Right Side: Quick Action Toolbar */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Global Search Button */}
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="p-1 sm:px-2 sm:py-2 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 flex items-center gap-2 text-xs transition"
+              title={tNav('search')}
+            >
+              <FaSearch className="text-xs text-amber-400" />
+              <span className="hidden sm:inline font-medium text-neutral-400">{tNav('searchPlaceholder')}</span>
+              <kbd className="hidden sm:inline-block text-[10px] font-mono px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-500">
+                ⌘K
+              </kbd>
+            </button>
+
+            {/* Quick Link to Settings */}
+            <Link
+              href="/settings"
+              className="p-2 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition text-xs flex items-center"
+              title={tNav('settings')}
+            >
+              <FaCog className="text-sm" />
+            </Link>
+
+            {/* Mobile Menu Toggle Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition text-xs lg:hidden flex items-center"
+              title={tNav('menu')}
+            >
+              {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Slide-down Navigation Drawer */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden border-t border-neutral-800 bg-neutral-950/95 backdrop-blur-xl p-2 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-2 animate-in slide-in-from-top duration-200">
+            {MENU_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`p-0.5 rounded-xl border text-xs sm:text-sm font-bold flex items-center gap-0.5 transition min-h-[46px] ${
+                    isActive
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                      : 'bg-neutral-900/70 text-neutral-300 border-neutral-800 hover:bg-neutral-800'
+                  }`}
+                >
+                  <Icon className={`text-base shrink-0 ${item.color}`} />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </header>
+
+      {/* Global Search Palette Modal */}
+      <GlobalSearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
+    </>
+  );
+}

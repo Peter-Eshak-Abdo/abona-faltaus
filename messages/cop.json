@@ -126,6 +126,7 @@
     }
   },
   "Synaxarium": {
+    "back": "ⲉⲡⲁϩⲟⲩ",
     "title": "Ⲡⲓⲥⲩⲛⲁⲝⲁⲣⲓⲟⲛ ⲛ̀Ⲣⲉⲙⲛ̀ⲭⲏⲙⲓ",
     "subtitle": "Lives of the Saints, Martyrs, and Feasts",
     "todaySynaxarium": "Synaxarium of Today",
@@ -321,6 +322,7 @@
     ]
   },
   "Agpeya": {
+    "back": "ⲉⲡⲁϩⲟⲩ",
     "title": "Ϯⲁ̀ϫⲡⲓⲁ (Agpeya)",
     "subtitle": "Book of Canonical Hours",
     "prayerModeOn": "Prayer Mode On",
@@ -359,6 +361,7 @@
     }
   },
   "Readings": {
+    "back": "ⲉⲡⲁϩⲟⲩ",
     "title": "Ⲡⲓⲕⲁⲧⲁⲙⲉⲣⲟⲥ (Katamaros)",
     "subtitle": "Daily Lectionary Readings",
     "seasonLabel": "Season",
@@ -523,6 +526,7 @@
     }
   },
   "Preparation": {
+    "back": "ⲉⲡⲁϩⲟⲩ",
     "title": "Preparation Notes 📝",
     "subtitle": "Lesson & Sermon Preparation",
     "notesTab": "Notes",
@@ -586,6 +590,7 @@
     "loadingChat": "Loading..."
   },
   "Exams": {
+    "back": "ⲉⲡⲁϩⲟⲩ",
     "title": "Exams & Quizzes",
     "subtitle": "Test Your Biblical Knowledge",
     "groupedTitle": "Grouped Questions",
@@ -632,6 +637,19 @@
     "hostQuiz": "Host / Start",
     "editQuiz": "Edit",
     "deleteQuiz": "Delete"
+  },
+  "Slides": {
+    "title": "Presentation Builder",
+    "subtitle": "PowerPoint & Slides AI",
+    "back": "ⲉⲡⲁϩⲟⲩ",
+    "generateAi": "AI Generate",
+    "startPresentation": "Start Presentation",
+    "titlePlaceholder": "Title...",
+    "globalTheme": "Theme:",
+    "exportPptx": "Export PPTX",
+    "slidesCount": "{count} slides",
+    "addSlide": "Add Slide",
+    "untitledSlide": "Untitled Slide"
   },
   "Legal": {
     "aboutTitle": "Ⲁⲡⲁ Ⲫⲁⲗⲧⲁⲟⲩⲥ",

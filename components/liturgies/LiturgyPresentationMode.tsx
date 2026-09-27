@@ -74,12 +74,12 @@ export default function LiturgyPresentationMode({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black text-white flex flex-col justify-between p-1 md:p-1.5 select-none"
+      className="fixed inset-0 z-50 bg-black text-white flex flex-col justify-between p-4 md:p-6 select-none"
       dir="rtl"
     >
       {/* Header Bar */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-0.5">
-        <div className="flex items-center gap-0.5">
+      <div className="flex items-center justify-between border-b border-white/10 pb-2">
+        <div className="flex items-center gap-2">
           <FaChurch className="text-amber-400 text-2xl" />
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-amber-400">
@@ -91,7 +91,7 @@ export default function LiturgyPresentationMode({
           </div>
         </div>
 
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-2">
           <button
             onClick={() =>
               setEnabledLanguages((prev) => ({
@@ -125,7 +125,7 @@ export default function LiturgyPresentationMode({
 
           <button
             onClick={onClose}
-            className="p-0.5 bg-neutral-800 hover:bg-red-600/80 rounded-xl transition text-white"
+            className="p-2 bg-neutral-800 hover:bg-red-600/80 rounded-xl transition text-white"
             title={t('presentation.close')}
           >
             <FaTimes />
@@ -134,16 +134,16 @@ export default function LiturgyPresentationMode({
       </div>
 
       {/* Main Slide Body */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-5xl mx-auto my-1 overflow-y-auto px-0.5">
+      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-5xl mx-auto my-4 overflow-y-auto px-2">
         <motion.div
           key={currentIndex}
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.2 }}
-          className="space-y-1 w-full"
+          className="space-y-4 w-full"
         >
           {/* Section speaker badge */}
-          <div className="inline-block px-1 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-sm font-bold">
+          <div className="inline-block px-4 py-2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-sm font-bold">
             {currentSection.speaker === 'priest'
               ? t('roles.priestSays')
               : currentSection.speaker === 'deacon'
@@ -155,7 +155,7 @@ export default function LiturgyPresentationMode({
 
           {/* Verses rendering in Large Presentation Fonts */}
           {currentSection.verses.map((verse, idx) => (
-            <div key={idx} className="space-y-0.5">
+            <div key={idx} className="space-y-2">
               {/* Arabic */}
               {enabledLanguages.arabic && (
                 <h1 className="text-3xl md:text-5xl font-serif font-bold text-neutral-100 leading-tight">
@@ -182,11 +182,11 @@ export default function LiturgyPresentationMode({
       </div>
 
       {/* Bottom Navigation Toolbar */}
-      <div className="flex items-center justify-between border-t border-white/10 pt-0.5">
+      <div className="flex items-center justify-between border-t border-white/10 pt-2">
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className="px-1 py-0.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 text-white font-bold flex items-center gap-0.5 transition"
+          className="px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 text-white font-bold flex items-center gap-2 transition"
         >
           <FaArrowRight />
           <span>{t('presentation.prev')}</span>
@@ -199,7 +199,7 @@ export default function LiturgyPresentationMode({
         <button
           onClick={handleNext}
           disabled={currentIndex === allSections.length - 1}
-          className="px-1 py-0.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-30 text-black font-bold flex items-center gap-0.5 transition shadow-lg shadow-amber-500/20"
+          className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-30 text-black font-bold flex items-center gap-2 transition shadow-lg shadow-amber-500/20"
         >
           <span>{t('presentation.next')}</span>
           <FaArrowLeft />

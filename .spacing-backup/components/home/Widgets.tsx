@@ -1,0 +1,269 @@
+"use client";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaSun, FaBookOpen } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { supabase } from "@/lib/supabase";
+import Link from "next/link";
+
+export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
+  const t = useTranslations("Home");
+  const [verse, setVerse] = useState({
+    text: "لأَنَّهُ هكَذَا أَحَبَّ اللهُ الْعَالَمَ حَتَّى بَذَلَ ابْنَهُ الْوَحِيدَ، لِكَيْ لاَ يَهْلِكَ كُلُّ مَنْ يُؤْمِنُ بِهِ، بَلْ تَكُونُ لَهُ الْحَيَاةُ الأَبَدِيَّةُ.",
+    ref: "(يوحنا 3: 16)",
+  });
+  const [activePrayer, setActivePrayer] = useState("");
+
+  useEffect(() => {
+    const fetchRandomVerse = async () => {
+      // فحص الكاش المؤقت لآية اليوم
+      const cached = localStorage.getItem("daily_verse_cache");
+      if (cached) {
+        try {
+          const { item, timestamp } = JSON.parse(cached);
+          // تجديد كل ساعتين
+          if (Date.now() - timestamp < 2 * 60 * 60 * 1000 && item?.text) {
+            setVerse(item);
+            return;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      try {
+        const { count } = await supabase
+          .from("bible_verses")
+          .select("*", { count: "exact", head: true });
+
+        if (count) {
+          const randomOffset = Math.floor(Math.random() * count);
+          const { data } = await supabase
+            .from("bible_verses")
+            .select("vocalized_text, book_name, chapter_number, verse_number")
+            .range(randomOffset, randomOffset)
+            .single();
+
+          if (data) {
+            const DB_TO_ARABIC: Record<string, string> = {
+              "01-Genesis": "التكوين", "02-Exodus": "الخروج", "03-Leviticus": "اللاويين",
+              "04-Numbers": "العدد", "05-Deuteronomy": "التثنية", "06-Joshua": "يشوع",
+              "07-Judges": "القضاة", "08-Ruth": "راعوث", "09-1-Samuel": "صموئيل الأول",
+              "10-2-Samuel": "صموئيل الثاني", "11-1-Kings": "الملوك الأول", "12-2-Kings": "الملوك الثاني",
+              "13-1-Chronicles": "أخبار الأيام الأول", "14-2-Chronicles": "أخبار الأيام الثاني",
+              "15-Ezra": "عزرا", "16-Nehmiah": "نحميا", "17-tobit__deu": "طوبيا",
+              "18-judith__deu": "يهوديت", "19-1-Esther": "أستير", "19-2-esther-the-rest__deu": "تتمة أستير",
+              "20-Job": "أيوب", "21-1-Psalms": "المزامير", "21-2-Psalm-151__Deu": "مزمور 151",
+              "22-Proverbs": "الأمثال", "23-Ecclesiastes": "الجامعة", "24-Song-of-Songs": "نشيد الأنشاد",
+              "25-wisdom__deu": "الحكمة", "26-sirach__deu": "يشوع بن سيراخ", "27-Isiah": "إشعياء",
+              "28-Jeremiah": "إرميا", "29-Lamentations": "مراثي إرميا", "30-baruch__deu": "باروخ",
+              "31-Ezekiel": "حزقيال", "32-1-Daniel": "دانيال", "32-2-daniel-the-rest__deu": "تتمة دانيال",
+              "33-Hosea": "هوشع", "34-Joel": "يوئيل", "35-Amos": "عاموس", "36-Obadiah": "عوبديا",
+              "37-Jonah": "يونان", "38-Micah": "ميخا", "39-Nahum": "ناحوم", "40-Habakuk": "حبقوق",
+              "41-Zephaniah": "صفنيا", "42-Haggai": "حجي", "43-Zechariah": "زكريا", "44-Malachi": "ملاخي",
+              "45-first-maccabees__deu": "المكابيين الأول", "46-second-maccabees__deu": "المكابيين الثاني",
+              "47-Matthew": "إنجيل متى", "48-Mark": "إنجيل مرقس", "49-Luke": "إنجيل لوقا",
+              "50-John": "إنجيل يوحنا", "51-Acts": "أعمال الرسل", "52-Romans": "رسالة رومية",
+              "53-1-Corinthians": "رسالة كورنثوس الأولى", "54-2-Corinthians": "رسالة كورنثوس الثانية",
+              "55-Galatians": "رسالة غلاطية", "56-Ephesians": "رسالة أفسس", "57-Philipians": "رسالة فيلبي",
+              "58-Colossians": "رسالة كولوسي", "59-1-thessalonians": "رسالة تسالونيكي الأولى",
+              "60-2-thessalonians": "رسالة تسالونيكي الثانية", "61-1-Timothy": "رسالة تيموثاوس الأولى",
+              "62-2-Timothy": "رسالة تيموثاوس الثانية", "63-Titus": "رسالة تيطس", "64-Phillemon": "رسالة فليمون",
+              "65-Hebrews": "رسالة عبرانيين", "66-James": "رسالة يعقوب", "67-1-Peter": "رسالة بطرس الأولى",
+              "68-2-Peter": "رسالة بطرس الثانية", "69-1-John": "رسالة يوحنا الأولى",
+              "70-2-John": "رسالة يوحنا الثانية", "71-3-John": "رسالة يوحنا الثالثة",
+              "72-Jude": "رسالة يهوذا", "73-Revelation": "سفر الرؤيا"
+            };
+            const arabicBookName = DB_TO_ARABIC[data.book_name] || data.book_name.replace(/^\d+-/, "");
+            const newVerse = {
+              text: data.vocalized_text,
+              ref: `(${arabicBookName} ${data.chapter_number} : ${data.verse_number})`,
+            };
+            setVerse(newVerse);
+            localStorage.setItem("daily_verse_cache", JSON.stringify({ item: newVerse, timestamp: Date.now() }));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching verse:", error);
+      }
+    };
+
+    // تأخير جلب الآية لما بعد تحميل الصفحة الأساسي لتجنب حجز الـ Main Thread
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(() => fetchRandomVerse());
+    } else {
+      setTimeout(fetchRandomVerse, 1500);
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkPrayerTime = () => {
+      const hour = new Date().getHours();
+      if (hour >= 21 || hour < 6) setActivePrayer("midnight");
+      else if (hour >= 6 && hour < 9) setActivePrayer("baker");
+      else if (hour >= 9 && hour < 12) setActivePrayer("third");
+      else if (hour >= 12 && hour < 15) setActivePrayer("sixth");
+      else if (hour >= 15 && hour < 17) setActivePrayer("ninth");
+      else if (hour >= 17 && hour < 18) setActivePrayer("sunset");
+      else if (hour >= 18 && hour < 21) setActivePrayer("sleep");
+    };
+    checkPrayerTime();
+    const interval = setInterval(checkPrayerTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const prayers = [
+    { id: "baker", label: t("agpeyaHours.baker", { defaultValue: "باكر (06:00 ص)" }), time: "06:00" },
+    { id: "third", label: t("agpeyaHours.third", { defaultValue: "الثالثة (09:00 ص)" }), time: "09:00" },
+    { id: "sixth", label: t("agpeyaHours.sixth", { defaultValue: "السادسة (12:00 م)" }), time: "12:00" },
+    { id: "ninth", label: t("agpeyaHours.ninth", { defaultValue: "التاسعة (03:00 م)" }), time: "15:00" },
+    { id: "sunset", label: t("agpeyaHours.sunset", { defaultValue: "الغروب (05:00 م)" }), time: "17:00" },
+    { id: "sleep", label: t("agpeyaHours.sleep", { defaultValue: "النوم (06:00 م)" }), time: "18:00" },
+    { id: "midnight", label: t("agpeyaHours.midnight", { defaultValue: "نصف الليل (09:00 م)" }), time: "21:00" },
+  ];
+
+  return (
+    <>
+      {/* Desktop Widgets */}
+      <div className="hidden lg:flex absolute inset-0 z-10 pointer-events-none justify-between p-2 items-center">
+        {/* Right Widget: Daily Verse */}
+        <AnimatePresence>
+          {showMenu && (
+            <motion.div
+              initial={{ opacity: 0, x: 48, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 48, scale: 0.9 }}
+              transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
+              className="w-[320px] pointer-events-auto hover:scale-[1.02] transition-transform duration-700"
+            >
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-2 shadow-lg flex flex-col gap-2 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-transparent pointer-events-none"></div>
+                <div className="flex items-center gap-2">
+                  <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600">
+                    <FaBookOpen size={16} />
+                  </div>
+                  <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">{t("dailyVerse")}</span>
+                </div>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100 leading-relaxed text-right relative z-10">
+                  "{verse.text}"
+                </p>
+                <div className="flex justify-end mt-2">
+                  <span className="font-bold text-xs text-blue-600 bg-blue-500/10 px-4 py-2 rounded-full">{verse.ref}</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Left Widget: Prayer Status */}
+        <AnimatePresence>
+          {showMenu && (
+            <motion.div
+              initial={{ opacity: 0, x: -48, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: -48, scale: 0.9 }}
+              transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
+              className="w-68 pointer-events-auto hover:scale-[1.02] transition-transform duration-700"
+            >
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-6 shadow-lg flex flex-col gap-4 relative overflow-hidden">
+                <Link href="/agpeya" className="flex items-center justify-between gap-2 mb-2 hover:opacity-80 transition">
+                  <div className="flex items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+                      <FaSun size={16} />
+                    </div>
+                    <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">{t("prayerTimes")}</span>
+                  </div>
+                  <span className="text-[10px] text-blue-600 font-bold">{t("openPrayer")}</span>
+                </Link>
+
+                {prayers.map((prayer) => {
+                  const isActive = activePrayer === prayer.id;
+                  return (
+                    <Link
+                      href="/agpeya"
+                      key={prayer.id}
+                      className={`flex items-center justify-between py-0.5 border-b border-gray-200/50 dark:border-gray-700/50 relative hover:bg-amber-500/10 rounded-lg transition ${isActive ? 'bg-blue-50/50 dark:bg-blue-900/10 rounded-lg px-2' : 'px-2'}`}
+                    >
+                      {isActive && <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-4 h-6 bg-blue-600 rounded-l-full"></div>}
+                      <span className={`text-sm ${isActive ? 'text-blue-600 font-bold' : 'text-gray-800 dark:text-gray-200'}`}>{prayer.label}</span>
+                      <span className={`text-xs ${isActive ? 'text-blue-600 font-bold' : 'text-gray-600 dark:text-gray-400'}`}>{prayer.time}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Mobile Widget: Prayer Status */}
+      <AnimatePresence>
+        {!showMenu && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+            className="lg:hidden absolute top-36 left-6 right-6 z-10 pointer-events-auto"
+          >
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-2 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
+              <Link href="/agpeya" className="flex items-center justify-between gap-2 mb-2 hover:opacity-80">
+                <div className="flex items-center gap-2">
+                  <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+                    <FaSun size={12} />
+                  </div>
+                  <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">{t("prayerTimes")}</span>
+                </div>
+                <span className="text-[10px] text-blue-600 font-bold">{t("openPrayer")}</span>
+              </Link>
+              <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-none">
+                {prayers.map((prayer) => {
+                  const isActive = activePrayer === prayer.id;
+                  return (
+                    <Link
+                      href="/agpeya"
+                      key={prayer.id}
+                      className={`flex-none p-0.5 rounded-xl border text-center transition-all ${isActive
+                        ? "bg-blue-600 text-white border-blue-600 shadow-sm scale-105"
+                        : "bg-white/40 dark:bg-gray-800/40 border-gray-200/50 dark:border-gray-700/50 text-gray-700 dark:text-gray-300"
+                        }`}
+                    >
+                      <div className={`text-xs font-bold ${isActive ? "text-white" : ""}`}>{prayer.label}</div>
+                      <div className={`text-[10px] ${isActive ? "text-blue-100" : "text-gray-500 dark:text-gray-400"}`}>{prayer.time}</div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Widget: Daily Verse */}
+      <AnimatePresence>
+        {!showMenu && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+            className="lg:hidden absolute bottom-4 left-6 right-6 z-10 pointer-events-auto max-w-2/3 mx-auto"
+          >
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-2 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
+              <div className="flex items-center gap-2 mb-2">
+                <FaSun className="text-amber-500" size={16} />
+                <span className="font-bold text-xs text-amber-500 uppercase tracking-wider">{t("dailyVerse")}</span>
+              </div>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 leading-relaxed">
+                "{verse.text}"
+              </p>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-600 dark:text-gray-400">{verse.ref}</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

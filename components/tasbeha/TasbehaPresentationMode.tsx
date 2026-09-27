@@ -98,12 +98,12 @@ export default function TasbehaPresentationMode({ tasbeha, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black text-white flex flex-col justify-between p-1 md:p-1.5 select-none"
+      className="fixed inset-0 z-50 bg-black text-white flex flex-col justify-between p-4 md:p-6 select-none"
       dir="rtl"
     >
       {/* Header Bar */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-0.5">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between border-b border-white/10 pb-2">
+        <div className="flex items-center gap-4">
           <FaMusic className="text-amber-400 text-2xl" />
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-amber-400">
@@ -115,7 +115,7 @@ export default function TasbehaPresentationMode({ tasbeha, onClose }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-2">
           {/* خورس قبلي / بحري Indicator */}
           <div
             className={`px-0.5 py-0.5 rounded-full text-xs font-black border transition ${
@@ -160,7 +160,7 @@ export default function TasbehaPresentationMode({ tasbeha, onClose }: Props) {
 
           <button
             onClick={onClose}
-            className="p-0.5 bg-neutral-800 hover:bg-red-600/80 rounded-xl transition text-white"
+            className="p-2 bg-neutral-800 hover:bg-red-600/80 rounded-xl transition text-white"
             title="خروج من وضع العرض (Esc)"
           >
             <FaTimes />
@@ -169,19 +169,19 @@ export default function TasbehaPresentationMode({ tasbeha, onClose }: Props) {
       </div>
 
       {/* Main Slide Body */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-5xl mx-auto my-1 overflow-y-auto px-1 w-full">
+      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-5xl mx-auto my-4 overflow-y-auto px-4 w-full">
         <motion.div
           key={currentIndex}
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.15 }}
-          className="space-y-0.5 w-full"
+          className="space-y-2 w-full"
         >
           {/* Section speaker / tone badge */}
-          <div className="inline-flex items-center gap-0.5 px-0.5 py-0.5 rounded-full bg-neutral-900 border border-neutral-700 text-sm font-bold text-amber-300">
+          <div className="inline-flex items-center gap-2 px-2 py-2 rounded-full bg-neutral-900 border border-neutral-700 text-sm font-bold text-amber-300">
             <span>{currentSlide.sectionTitle}</span>
             {currentSlide.tone && currentSlide.tone !== 'both' && (
-              <span className="text-amber-400 flex items-center gap-0.25">
+              <span className="text-amber-400 flex items-center gap-1">
                 • {currentSlide.tone === 'adam' ? 'لحن آدام' : 'لحن واطس'}
               </span>
             )}
@@ -227,11 +227,11 @@ export default function TasbehaPresentationMode({ tasbeha, onClose }: Props) {
       </div>
 
       {/* Bottom Navigation Toolbar */}
-      <div className="flex items-center justify-between border-t border-white/10 pt-0.5">
+      <div className="flex items-center justify-between border-t border-white/10 pt-2">
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className="px-1 py-0.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 text-white font-bold flex items-center gap-0.5 transition"
+          className="px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 text-white font-bold flex items-center gap-2 transition"
         >
           <FaArrowRight />
           <span>السابق</span>
@@ -244,7 +244,7 @@ export default function TasbehaPresentationMode({ tasbeha, onClose }: Props) {
         <button
           onClick={handleNext}
           disabled={currentIndex === presentationSlides.length - 1}
-          className="px-0.5 py-0.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-30 text-neutral-950 font-bold flex items-center gap-0.5 transition shadow-lg shadow-amber-500/20"
+          className="px-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-30 text-neutral-950 font-bold flex items-center gap-2 transition shadow-lg shadow-amber-500/20"
         >
           <span>التالي</span>
           <FaArrowLeft />

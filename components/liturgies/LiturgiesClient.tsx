@@ -133,39 +133,39 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
           {showSidebar && (
             <motion.aside
               initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 300, opacity: 1 }}
+              animate={{ width: 260, opacity: 1 }}
               exit={{ width: 0, opacity: 0 }}
-              className="w-18 md:w-20 shrink-0 border-l border-neutral-800 bg-neutral-900/90 flex flex-col h-[calc(100vh-60px)] sticky top-[60px] z-20 overflow-hidden shadow-2xl backdrop-blur-md"
+              className="w-64 md:w-72 shrink-0 border-l border-neutral-800 bg-neutral-900/90 flex flex-col h-[calc(100vh-60px)] sticky top-[60px] z-20 overflow-hidden shadow-xl backdrop-blur-md"
             >
               {/* Sidebar Header */}
-              <div className="p-0.5 border-b border-neutral-800 flex items-center justify-between">
-                <div className="flex items-center gap-0.5">
-                  <span className="font-bold text-amber-400 text-xs flex items-center gap-0.5">
+              <div className="p-2 border-b border-neutral-800 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-amber-400 text-xs flex items-center gap-2">
                     <FaListUl size={12} />
                     <span>{t('sidebar')}</span>
                   </span>
                 </div>
                 <button
                   onClick={() => setShowSidebar(false)}
-                  className="text-neutral-400 hover:text-white p-0.5 text-xs"
+                  className="text-neutral-400 hover:text-white p-2 text-xs"
                 >
                   <FaTimes />
                 </button>
               </div>
 
               {/* Liturgy Day Context Badge */}
-              <div className="p-0.5 bg-amber-500/10 border-b border-amber-500/20 text-xs">
-                <div className="font-bold text-amber-300 flex items-center gap-0.5">
+              <div className="p-2 bg-amber-500/10 border-b border-amber-500/20 text-xs">
+                <div className="font-bold text-amber-300 flex items-center gap-2">
                   <FaCalendarAlt size={12} />
                   <span>{t('todayRitual', { date: copticToday.formattedAr })}</span>
                 </div>
-                <div className="text-[11px] text-neutral-400 mt-0.5">
+                <div className="text-[11px] text-neutral-400 mt-2">
                   {t('todayRitualHint')}
                 </div>
               </div>
 
               {/* Group Nav Items */}
-              <div className="flex-1 overflow-y-auto p-0.5 space-y-0.5 divide-y divide-white/5">
+              <div className="flex-1 overflow-y-auto p-2 space-y-2 divide-y divide-white/5">
                 <button
                   onClick={() => setActiveGroupId(undefined)}
                   className={`w-full text-right p-0.5 rounded-xl text-xs font-bold transition flex items-center justify-between ${
@@ -189,13 +189,13 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
                           : 'text-neutral-300 hover:bg-neutral-800/80 hover:text-white'
                       }`}
                     >
-                      <div className="flex items-center gap-0.5 truncate">
-                        <span className="w-5 h-5 rounded-full bg-neutral-800 flex items-center justify-center text-[10px] text-neutral-400 shrink-0 font-mono">
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="w-20 h-20 rounded-full bg-neutral-800 flex items-center justify-center text-[10px] text-neutral-400 shrink-0 font-mono">
                           {idx + 1}
                         </span>
                         <span className="truncate">{group.title.arabic}</span>
                       </div>
-                      <span className="text-[10px] text-neutral-500 px-0.5 py-0.5 rounded-md bg-black/40 shrink-0">
+                      <span className="text-[10px] text-neutral-500 px-2 py-2 rounded-md bg-black/40 shrink-0">
                         {group.sections.length}
                       </span>
                     </button>
@@ -207,14 +207,14 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
         </AnimatePresence>
 
         {/* Content Viewer */}
-        <main className="flex-1 overflow-y-auto p-0.5 md:p-1 space-y-0.5 max-w-6xl mx-auto w-full">
+        <main className="flex-1 overflow-y-auto p-2 md:p-4 space-y-2 max-w-6xl mx-auto w-full">
           {/* Top Bar for Toggling Sidebar & Quick Liturgy Title */}
-          <div className="flex items-center justify-between pb-0.5 border-b border-neutral-800">
-            <div className="flex items-center gap-0.5">
+          <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
+            <div className="flex items-center gap-2">
               {!showSidebar && (
                 <button
                   onClick={() => setShowSidebar(true)}
-                  className="px-0.5 py-0.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-amber-400 text-xs font-bold flex items-center gap-2 transition"
+                  className="px-2 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-amber-400 text-xs font-bold flex items-center gap-8 transition"
                 >
                   <FaListUl size={12} />
                   <span>{t('openSidebar')}</span>
@@ -227,7 +227,7 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
 
             <Link
               href="/readings"
-              className="px-0.5 py-0.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-0.5 transition"
+              className="px-2 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-2 transition"
             >
               <FaScroll size={12} />
               <span>{t('readingsLink')}</span>
@@ -236,8 +236,8 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
 
           {/* Render Groups and 3-Column Sections */}
           {filteredGroups.length === 0 ? (
-            <div className="text-center py-1 bg-neutral-900/40 rounded-3xl border border-neutral-800 space-y-0.5">
-              <FaSearch className="w-2 h-2 text-neutral-600 mx-auto" />
+            <div className="text-center py-4 bg-neutral-900/40 rounded-3xl border border-neutral-800 space-y-2">
+              <FaSearch className="w-8 h-8 text-neutral-600 mx-auto" />
               <h3 className="text-lg font-bold text-white">{t('noResults')}</h3>
               <p className="text-xs text-neutral-400">
                 {t('noResultsHint')}
@@ -248,10 +248,10 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
               <section
                 key={group.id}
                 id={`group-${group.id}`}
-                className="space-y-0.5 scroll-mt-1"
+                className="space-y-2 scroll-mt-1"
               >
                 {/* Group Title */}
-                <div className="flex items-center justify-between border-r-4 border-amber-500 pr-0.5 py-0.5 bg-linear-to-l from-amber-500/5 to-transparent rounded-l-xl">
+                <div className="flex items-center justify-between border-r-4 border-amber-500 pr-2 py-2 bg-linear-to-l from-amber-500/5 to-transparent rounded-l-xl">
                   <div>
                     <h3 className="text-lg md:text-xl font-black text-white">
                       {group.title.arabic}
@@ -260,13 +260,13 @@ export default function LiturgiesClient({ initialLiturgy }: Props) {
                       <span className="text-xs text-amber-400 font-semibold">{group.badge}</span>
                     )}
                   </div>
-                  <span className="text-xs text-neutral-500 font-bold bg-neutral-900 px-0.5 py-0.5 rounded-lg border border-neutral-800">
+                  <span className="text-xs text-neutral-500 font-bold bg-neutral-900 px-2 py-2 rounded-lg border border-neutral-800">
                     {group.sections.length} صلاة / لحن
                   </span>
                 </div>
 
                 {/* Group Sections Cards (3-Column Layout) */}
-                <div className="space-y-0.5">
+                <div className="space-y-2">
                   {group.sections.map((section) => (
                     <div key={section.id} id={`sec-${section.id}`}>
                       <LiturgyVerseCard

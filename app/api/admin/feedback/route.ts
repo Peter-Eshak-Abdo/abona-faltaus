@@ -15,7 +15,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from("feedback")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("id", { ascending: false });
 
     if (error) {
       throw new Error(error.message);

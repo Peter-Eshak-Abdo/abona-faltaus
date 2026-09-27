@@ -145,8 +145,8 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
   // يستخدم عندما نجد Sections في الملف
   const renderPrayerStyle = (sections: any[]) => {
     return sections.map((section: any, idx: number) => (
-      <div key={idx} className="mb-0.5">
-        {section.title && <h3 className="text-center font-bold text-gray-400 mb-0.5">{section.title}</h3>}
+      <div key={idx} className="mb-2">
+        {section.title && <h3 className="text-center font-bold text-gray-400 mb-2">{section.title}</h3>}
         <div className="border rounded-lg overflow-hidden shadow-sm">
           {section.verses && Array.isArray(section.verses) && section.verses.map((verse: any, vIdx: number) => (
             <TextUnit key={vIdx} content={verse} index={vIdx} isGrid={true} />
@@ -165,17 +165,17 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
       if (!readingData || !Array.isArray(readingData)) return null;
 
       return (
-        <section key={item.key} className="mb-0.5 border rounded-xl overflow-hidden shadow bg-white">
-          <div className="bg-blue-900 text-white p-0.5 text-center font-bold text-xl">
+        <section key={item.key} className="mb-2 border rounded-xl overflow-hidden shadow bg-white">
+          <div className="bg-blue-900 text-white p-2 text-center font-bold text-xl">
             {item.label}
           </div>
 
-          <div className="p-0.5">
+          <div className="p-2">
             {readingData.map((block: any, bIdx: number) => (
               <div key={bIdx} className="">
                 {/* عنوان القراءة */}
                 {block.title && (
-                  <div className="bg-amber-50 border border-amber-100 p-0.5 rounded text-center mx-auto w-fit">
+                  <div className="bg-amber-50 border border-amber-100 p-2 rounded text-center mx-auto w-fit">
                     {showArabic && block.title.arabic && <h4 className="font-bold text-gray-800">{block.title.arabic}</h4>}
                     {showCoptic && block.title.coptic && <p className="font-coptic text-blue-800">{block.title.coptic}</p>}
                     {showEnglish && block.title.english && <p className="text-sm text-gray-500">{block.title.english}</p>}
@@ -216,16 +216,16 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
   return (
     <div className="flex flex-col min-h-[calc(100vh-100px)]">
       {/* Top Navbar */}
-      <div className="bg-white p-1 shadow-sm border-b sticky top-0 z-20 flex justify-between items-center gap-1">
+      <div className="bg-white p-4 shadow-sm border-b sticky top-0 z-20 flex justify-between items-center gap-4">
         {/* Dropdown File Switcher */}
         <div className="relative">
-          <button onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-0.5 p-0.5 bg-gray-100 rounded-lg text-sm font-bold truncate max-w-full">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg text-sm font-bold truncate max-w-full">
             {getDisplayName(siblings[currentIndex]?.replace('.json', ''))} ▼
           </button>
           {menuOpen && (
-            <div className="absolute top-full right-0 md:w-40 w-20 max-h-[60vh] overflow-y-auto bg-white shadow-xl border z-50 rounded mt-1">
+            <div className="absolute top-full right-0 w-64 max-h-[60vh] overflow-y-auto bg-white dark:bg-zinc-900 shadow-xl border border-stone-200 dark:border-zinc-800 z-50 rounded-xl mt-2 p-1">
               {siblings.map((f, i) => (
-                <button key={f} onClick={() => goToFile(f)} className={`w-full text-right p-0.5 border-b text-sm ${i === currentIndex ? 'bg-blue-50 font-bold border-r-4 border-r-blue-600' : ''}`}>
+                <button key={f} onClick={() => goToFile(f)} className={`w-full text-right p-1.5 rounded-lg border-b text-xs ${i === currentIndex ? 'bg-blue-50 font-bold border-r-4 border-r-blue-600' : ''}`}>
                   {getDisplayName(f.replace('.json', ''))}
                 </button>
               ))}
@@ -234,7 +234,7 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
         </div>
 
         {/* Language Checkboxes */}
-        <div className="flex gap-0.5 text-xs font-bold bg-gray-50 p-0.5 rounded-lg border">
+        <div className="flex gap-2 text-xs font-bold bg-gray-50 p-2 rounded-lg border">
           <label className="flex items-center cursor-pointer select-none"><input type="checkbox" checked={showArabic} onChange={e => setShowArabic(e.target.checked)} /> <span>عربى</span></label>
           <label className="flex items-center cursor-pointer select-none"><input type="checkbox" checked={showCoptic} onChange={e => setShowCoptic(e.target.checked)} /> <span>Copt</span></label>
           <label className="flex items-center cursor-pointer select-none"><input type="checkbox" checked={showEnglish} onChange={e => setShowEnglish(e.target.checked)} /> <span>Eng</span></label>
@@ -243,7 +243,7 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
 
       {/* Main Content Body */}
       <div
-        className="flex-1 p-0.5 md:p-0.5 bg-gray-100">
+        className="flex-1 p-2 md:p-2 bg-gray-100">
         <article
           className="max-w-8xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden min-h-[600px]"
           /* touch-pan-y: يخبر المتصفح أن العنصر يقبل السكرول العمودي، مما يحسن الأداء */
@@ -252,22 +252,22 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
         >
 
           {/* Header */}
-          <header className="bg-blue-50 p-0.5 text-center border-b">
+          <header className="bg-blue-50 p-2 text-center border-b">
             {showCoptic && pageTitle.coptic && <h1 className="text-2xl font-bold font-coptic text-blue-900">{pageTitle.coptic}</h1>}
             {showArabic && pageTitle.arabic && <h2 className="text-xl font-bold font-serif text-gray-800">{pageTitle.arabic}</h2>}
             {showEnglish && pageTitle.english && <h3 className="text-sm text-gray-500">{pageTitle.english}</h3>}
           </header>
 
-          <div className="p-0.5 md:p-0.5">
+          <div className="p-2 md:p-2">
             {isPrayer ? (
               renderPrayerStyle(data.sections)
             ) : isReading ? (
               renderReadingStyle(availableReadings)
             ) : (
               <div className="text-center text-gray-400">
-                <p className="text-4xl mb-0.5">📂</p>
+                <p className="text-4xl mb-2">📂</p>
                 <p>لا يوجد محتوى نصي معترف به.</p>
-                <details className="mt-1 text-xs text-left bg-gray-50 p-1 rounded dir-ltr overflow-auto">
+                <details className="mt-4 text-xs text-left bg-gray-50 p-4 rounded dir-ltr overflow-auto">
                   <summary>Raw JSON Structure</summary>
                   <pre>{JSON.stringify(data, null, 2)}</pre>
                 </details>
@@ -279,7 +279,7 @@ export default function PrayerViewer({ context, nextDirectoryLink }: Props) {
       </div>
 
       {/* Footer Info */}
-      <div className="text-center py-0.5 bg-gray-50 text-gray-400 text-xs border-t">
+      <div className="text-center py-2 bg-gray-50 text-gray-400 text-xs border-t">
         الملف {currentIndex + 1} من {siblings.length}
       </div>
     </div>

@@ -31,10 +31,10 @@ export default function GlobalBreadcrumbs() {
   if (segments.length === 0) return null;
 
   return (
-    <nav className="flex items-center gap-1 text-xs text-neutral-400 overflow-x-auto no-scrollbar whitespace-nowrap" dir="rtl" aria-label="Breadcrumbs">
+    <nav className="flex items-center gap-4 text-xs text-neutral-400 overflow-x-auto no-scrollbar whitespace-nowrap" dir="rtl" aria-label="Breadcrumbs">
       <Link
         href="/"
-        className="flex items-center gap-0.5 text-neutral-400 hover:text-amber-400 transition"
+        className="flex items-center gap-2 text-neutral-400 hover:text-amber-400 transition"
         title="الرئيسية"
       >
         <FaHome className="text-xs" />
@@ -58,17 +58,17 @@ export default function GlobalBreadcrumbs() {
         const Icon = meta?.icon;
 
         return (
-          <div key={href} className="flex items-center gap-1">
+          <div key={href} className="flex items-center gap-4">
             <FaChevronLeft className="text-[9px] text-neutral-600 shrink-0" />
             {isLast ? (
-              <span className="font-bold text-neutral-100 flex items-center gap-0.5">
+              <span className="font-bold text-neutral-100 flex items-center gap-2">
                 {Icon && <Icon className="text-[11px] text-amber-400" />}
                 <span>{label}</span>
               </span>
             ) : (
               <Link
                 href={href}
-                className="text-neutral-400 hover:text-amber-400 flex items-center gap-0.5 transition"
+                className="text-neutral-400 hover:text-amber-400 flex items-center gap-2 transition"
               >
                 {Icon && <Icon className="text-[11px] text-neutral-500" />}
                 <span>{label}</span>

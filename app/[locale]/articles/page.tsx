@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function ArticlesPage() {
   return (
-    <main className="min-h-screen py-1 px-0.5 md:px-1 max-w-6xl mx-auto">
-      <div className="text-center mb-0.5">
-        <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-linear-to-r from-amber-600 via-orange-500 to-yellow-600 mb-0.5 drop-shadow-sm">
+    <main className="min-h-screen py-4 px-2 md:px-4 max-w-6xl mx-auto">
+      <div className="text-center mb-2">
+        <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-linear-to-r from-amber-600 via-orange-500 to-yellow-600 mb-2 drop-shadow-sm">
           المقالات الروحية والكنسية
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">

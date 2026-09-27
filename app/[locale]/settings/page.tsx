@@ -185,34 +185,34 @@ export default function SettingsView() {
 
   if (loading || !mounted) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-primary"></div>
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-transparent flex items-center justify-center p-0.25">
-      <div className="w-full max-w-7xl space-y-0.25">
+    <div className="min-h-screen bg-transparent flex items-center justify-center p-1">
+      <div className="w-full max-w-7xl space-y-1">
 
         <div className="text-center">
           <BackButton
-            className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
+            className="p-2 m-2 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
             iconSize={18}
             title={t("title")}
           />
           <h1 className="text-4xl font-bold text-black dark:text-white">{t("title")}</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-0.25">{t("subtitle")}</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">{t("subtitle")}</p>
         </div>
 
         {/* وضع الأوفلاين ومسح الكاش */}
         <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
-          <CardHeader className="pb-0.25">
-            <CardTitle className="flex items-center gap-0.25"><HardDrive className="w-3 h-3 text-gray-500" /> {t("storage")}</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-1"><HardDrive className="w-12 h-12 text-gray-500" /> {t("storage")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-0.25">
-            <div className="flex items-center justify-between p-0.25 rounded-lg bg-gray-100 dark:bg-gray-800">
-              <div className="flex items-center gap-0.25">
+          <CardContent className="space-y-1">
+            <div className="flex items-center justify-between p-1 rounded-lg bg-gray-100 dark:bg-gray-800">
+              <div className="flex items-center gap-1">
                 <WifiOff className={isOfflineMode ? "text-red-500" : "text-green-500"} />
                 <span className="font-medium">{t("connectionStatus")}</span>
               </div>
@@ -228,11 +228,11 @@ export default function SettingsView() {
 
         {/* اللغة */}
         <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
-          <CardHeader className="pb-0.25">
-            <CardTitle className="flex items-center gap-0.25"><Languages className="w-3 h-3 text-amber-600" /> {tLang("title")}</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-1"><Languages className="w-12 h-12 text-amber-600" /> {tLang("title")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between gap-0.5 flex-wrap">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
               <span className="font-medium">{tLang("hint")}</span>
               <LanguageSwitcher />
             </div>
@@ -241,8 +241,8 @@ export default function SettingsView() {
 
         {/* المظهر */}
         <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
-          <CardHeader className="pb-0.25">
-            <CardTitle className="flex items-center gap-0.25"><Palette className="w-3 h-3 text-blue-500" /> {t("appearance")}</CardTitle>
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-1"><Palette className="w-12 h-12 text-blue-500" /> {t("appearance")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -250,7 +250,7 @@ export default function SettingsView() {
               <select
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
-                className="bg-white dark:bg-zinc-800 border rounded-lg p-0.25 outline-none focus:ring-2 ring-blue-500"
+                className="bg-white dark:bg-zinc-800 border rounded-lg p-1 outline-none focus:ring-2 ring-blue-500"
               >
                 <option value="system">{t("themeSystem")}</option>
                 <option value="light">{t("themeLight")}</option>
@@ -264,10 +264,10 @@ export default function SettingsView() {
         {/* الإشعارات المتقدمة */}
         <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-0.25"><Bell className="w-3 h-3 text-red-500" /> {t("notifications")}</CardTitle>
+            <CardTitle className="flex items-center gap-1"><Bell className="w-12 h-12 text-red-500" /> {t("notifications")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-0.25">
-            <div className="flex items-center justify-between p-0.25 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+          <CardContent className="space-y-1">
+            <div className="flex items-center justify-between p-1 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
               <div>
                 <p className="font-bold text-blue-900 dark:text-blue-100">{t("notificationsMain")}</p>
                 <p className="text-sm text-blue-700 dark:text-blue-300">{t("notificationsMainHint")}</p>
@@ -276,14 +276,14 @@ export default function SettingsView() {
                 onClick={toggleMainSubscription}
                 className={`w-5 h-2 rounded-full transition-all relative ${isOptedIn ? 'bg-green-500' : 'bg-gray-400'}`}
               >
-                <span className={`top-1/2 -translate-y-1/2 absolute w-1.5 h-1.5 bg-white rounded-full transition-all ${isOptedIn ? 'left-0.25' : 'right-0.25'}`} />
+                <span className={`top-1/2 -translate-y-1/2 absolute w-1.5 h-1.5 bg-white rounded-full transition-all ${isOptedIn ? 'left-1' : 'right-1'}`} />
               </button>
             </div>
 
-            <div className="grid gap-0.25 transition-opacity" style={{ opacity: isOptedIn ? 1 : 0.5 }}>
+            <div className="grid gap-1 transition-opacity" style={{ opacity: isOptedIn ? 1 : 0.5 }}>
               <p className="text-sm font-semibold text-gray-500">{t("notificationsCustomize")}</p>
               {NOTIFICATION_CATEGORIES.map((cat) => (
-                <div key={cat.id} className="flex items-center justify-between p-0.25 border-b border-black/5 dark:border-white/5 last:border-0">
+                <div key={cat.id} className="flex items-center justify-between p-1 border-b border-black/5 dark:border-white/5 last:border-0">
                   <div>
                     <p className="font-medium dark:text-gray-200">{cat.name}</p>
                     <p className="text-xs text-gray-500">{cat.desc}</p>
@@ -293,7 +293,7 @@ export default function SettingsView() {
                     onClick={() => toggleTag(cat.id)}
                     className={`w-5 h-2 rounded-full transition-all relative ${tags[cat.id] === 'true' && isOptedIn ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-700'}`}
                   >
-                    <span className={`top-1/2 -translate-y-1/2 absolute w-1.5 h-1.5 bg-white rounded-full transition-all ${tags[cat.id] === 'true' && isOptedIn ? 'left-0.25' : 'right-0.25'}`} />
+                    <span className={`top-1/2 -translate-y-1/2 absolute w-1.5 h-1.5 bg-white rounded-full transition-all ${tags[cat.id] === 'true' && isOptedIn ? 'left-1' : 'right-1'}`} />
                   </button>
                 </div>
               ))}
@@ -303,9 +303,9 @@ export default function SettingsView() {
 
         {/* الملف الشخصي */}
         <Card className="backdrop-blur-lg bg-white/60 dark:bg-black/40 border-white/40 dark:border-white/10 shadow-xl">
-          <CardHeader><CardTitle className="flex items-center gap-0.25"><User className="w-3 h-3 text-green-500" /> {t("profile")}</CardTitle></CardHeader>
-          <CardContent className="space-y-0.25">
-            <div className="space-y-0.25">
+          <CardHeader><CardTitle className="flex items-center gap-1"><User className="w-12 h-12 text-green-500" /> {t("profile")}</CardTitle></CardHeader>
+          <CardContent className="space-y-1">
+            <div className="space-y-1">
               <Label>{t("displayName")}</Label>
               <Input
                 value={settings.displayName}
@@ -313,24 +313,24 @@ export default function SettingsView() {
                 className="bg-white/50 dark:bg-black/20"
               />
             </div>
-            <div className="space-y-0.25 text-left" dir="ltr">
+            <div className="space-y-1 text-left" dir="ltr">
               <Label className="block text-left">{t("emailReadOnly")}</Label>
               <Input value={settings.email} disabled className="opacity-60" />
             </div>
-            <div className="pt-1 border-t border-black/5 dark:border-white/5 space-y-0.5">
+            <div className="pt-4 border-t border-black/5 dark:border-white/5 space-y-2">
               <Link
                 href="/auth/profile"
-                className="w-full flex h-3 rounded-xl justify-center items-center gap-0.5 border border-amber-700/30 text-amber-900 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 text-sm font-semibold transition"
+                className="w-full flex h-12 rounded-xl justify-center items-center gap-2 border border-amber-700/30 text-amber-900 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 text-sm font-semibold transition"
               >
                 {t("accountManagement")}
               </Link>
             </div>
 
-            <Button onClick={saveProfile} disabled={saving} className="w-full flex h-3 rounded-xl justify-center items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold">
+            <Button onClick={saveProfile} disabled={saving} className="w-full flex h-12 rounded-xl justify-center items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold">
               {saving ? tCommon("saving") : tCommon("save")}
             </Button>
 
-            <div className="flex justify-center gap-0.25 pointer-events-auto flex-wrap">
+            <div className="flex justify-center gap-1 pointer-events-auto flex-wrap">
               <Link href="/privacy" className="hover:underline">{tHome("privacy")}</Link>
               <span>•</span>
               <Link href="/terms" className="hover:underline">{tHome("terms")}</Link>

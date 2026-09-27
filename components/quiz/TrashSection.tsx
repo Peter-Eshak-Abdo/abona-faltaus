@@ -35,9 +35,9 @@ export default function TrashSection({ userId, onClose, onRestore }: any) {
   }
 
   return (
-    <Card className="mt-1 border-red-200 bg-red-50/20 backdrop-blur-sm shadow-inner" dir="rtl">
-      <CardHeader className="flex flex-row items-center justify-between border-b border-red-100 pb-3">
-        <div className="flex items-center gap-1">
+    <Card className="mt-4 border-red-200 bg-red-50/20 backdrop-blur-sm shadow-inner" dir="rtl">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-red-100 pb-12">
+        <div className="flex items-center gap-4">
           <Trash2 className="text-red-600" size={20} />
           <CardTitle className="text-red-600 text-lg font-bold">سلة المحذوفات</CardTitle>
         </div>
@@ -45,17 +45,17 @@ export default function TrashSection({ userId, onClose, onRestore }: any) {
           <X size={18} />
         </Button>
       </CardHeader>
-      <CardContent className="pt-1">
+      <CardContent className="pt-4">
         {trashed.length === 0 ? (
-          <p className="text-center py-1 text-gray-500 font-medium">لا توجد مسابقات محذوفة حالياً.</p>
+          <p className="text-center py-4 text-gray-500 font-medium">لا توجد مسابقات محذوفة حالياً.</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {trashed.map(q => (
-              <div key={q.id} className="bg-white p-1 rounded-xl border border-red-100 flex justify-between items-center shadow-sm">
+              <div key={q.id} className="bg-white p-4 rounded-xl border border-red-100 flex justify-between items-center shadow-sm">
                 <span className="font-bold text-gray-700">{q.title}</span>
-                <div className="flex gap-1">
+                <div className="flex gap-4">
                   <Button size="sm" variant="outline" onClick={() => handleRestore(q.id)} className="text-green-600 border-green-200 hover:bg-green-50">
-                    <RotateCcw size={14} className="ml-1" /> استعادة
+                    <RotateCcw size={14} className="ml-4" /> استعادة
                   </Button>
                   <Button size="sm" variant="destructive" onClick={() => handlePermanentDelete(q.id)}>
                     حذف نهائي

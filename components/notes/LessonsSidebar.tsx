@@ -109,7 +109,7 @@ export default function LessonsSidebar({
           setIsOpen(true);
           fetchLessons();
         }}
-        className="flex items-center gap-0.25 px-0.5 py-0.25 bg-[#5c4538]/90 hover:bg-[#5c4538] text-[#e8cfae] rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all border border-[#e8cfae]/20 active:scale-95"
+        className="flex items-center gap-1 px-2 py-1 bg-[#5c4538]/90 hover:bg-[#5c4538] text-[#e8cfae] rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all border border-[#e8cfae]/20 active:scale-95"
         title="الدروس السابقة"
       >
         <PanelRight size={16} />
@@ -137,27 +137,27 @@ export default function LessonsSidebar({
               dir="rtl"
             >
               {/* Header */}
-              <div className="p-1 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/60">
-                <div className="flex items-center gap-0.25">
+              <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/60">
+                <div className="flex items-center gap-1">
                   <BookOpen size={18} className="text-amber-500" />
                   <h2 className="font-black text-base text-amber-100">دروسي المحفوظة</h2>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-0.25 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition"
+                  className="p-1 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition"
                 >
                   <X size={18} />
                 </button>
               </div>
 
               {/* Action Button: درس جديد */}
-              <div className="p-0.5 border-b border-zinc-800/80">
+              <div className="p-2 border-b border-zinc-800/80">
                 <button
                   onClick={() => {
                     onNewLesson();
                     setIsOpen(false);
                   }}
-                  className="w-full py-0.5 px-1 bg-amber-600 hover:bg-amber-500 text-zinc-950 font-black rounded-xl text-xs sm:text-sm flex items-center justify-center gap-0.25 transition shadow-md"
+                  className="w-full py-2 px-4 bg-amber-600 hover:bg-amber-500 text-zinc-950 font-black rounded-xl text-xs sm:text-sm flex items-center justify-center gap-1 transition shadow-md"
                 >
                   <Plus size={16} />
                   <span>تحضير درس جديد</span>
@@ -165,14 +165,14 @@ export default function LessonsSidebar({
               </div>
 
               {/* القائمة */}
-              <div className="flex-1 overflow-y-auto p-1 space-y-0.25">
+              <div className="flex-1 overflow-y-auto p-4 space-y-1">
                 {loading ? (
-                  <div className="flex flex-col items-center justify-center py-1 text-zinc-500 gap-0.25">
+                  <div className="flex flex-col items-center justify-center py-4 text-zinc-500 gap-1">
                     <Loader2 size={24} className="animate-spin text-amber-500" />
                     <span className="text-xs">جاري تحميل دروسك...</span>
                   </div>
                 ) : lessons.length === 0 ? (
-                  <div className="text-center py-2 px-1 text-zinc-500 space-y-0.25">
+                  <div className="text-center py-8 px-4 text-zinc-500 space-y-1">
                     <BookOpen size={32} className="mx-auto opacity-30 text-amber-500" />
                     <p className="text-xs">لا توجد دروس محفوظة حتى الآن.</p>
                     <p className="text-[11px] text-zinc-600">
@@ -193,11 +193,11 @@ export default function LessonsSidebar({
                           : "bg-zinc-800/80 hover:bg-zinc-800 border-zinc-700/50 hover:border-zinc-600"
                       }`}
                     >
-                      <div className="flex-1 min-w-0 pr-0.25">
+                      <div className="flex-1 min-w-0 pr-1">
                         <p className="font-bold text-xs sm:text-sm text-stone-200 truncate">
                           {lesson.title || "درس بدون عنوان"}
                         </p>
-                        <div className="flex items-center gap-0.25 text-[10px] text-zinc-400 mt-0.5">
+                        <div className="flex items-center gap-1 text-[10px] text-zinc-400 mt-2">
                           <Calendar size={11} className="text-amber-500/80" />
                           <span>
                             {lesson.created_at
@@ -213,7 +213,7 @@ export default function LessonsSidebar({
 
                       <button
                         onClick={(e) => deleteLesson(lesson.id, e)}
-                        className="p-0.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
+                        className="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
                         title="حذف الدرس"
                       >
                         <Trash2 size={14} />

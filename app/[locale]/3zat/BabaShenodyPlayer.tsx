@@ -57,12 +57,12 @@ const BabaShenodyPlayer: React.FC = () => {
   return (
     <div
       id="sec-babaShenody"
-      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12"
     >
       {sounds
         .filter((sound) => sound.monasba === "babaShenody")
         .map((sound, index) => (
-          <Card key={`babaShenody-${index}`} className="shadow-sm pt-3 ps-3">
+          <Card key={`babaShenody-${index}`} className="shadow-sm pt-12 ps-12">
             <CardContent>
               <div className="flex justify-center items-center">
                 <audio

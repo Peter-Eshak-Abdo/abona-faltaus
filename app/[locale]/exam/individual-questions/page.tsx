@@ -84,32 +84,32 @@ export default function IndividualQuestionsHub() {
     LEVEL_BADGES.find((b) => b.level === userStats.currentLevel) || LEVEL_BADGES[0];
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-950 via-zinc-900 to-black text-white p-1 sm:p-2 font-sans" dir="rtl">
+    <div className="min-h-screen bg-linear-to-b from-slate-950 via-zinc-900 to-black text-white p-4 sm:p-8 font-sans" dir="rtl">
       {/* Top Header */}
-      <div className="max-w-7xl mx-auto space-y-1">
+      <div className="max-w-7xl mx-auto space-y-4">
         {/* Navigation Bar */}
-        <div className="flex items-center justify-between border-b border-zinc-800 pb-1">
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+          <div className="flex items-center gap-4">
             <BackButton
               fallbackUrl="/exam"
-              className="p-1 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition flex items-center gap-0.5 text-xs font-bold"
+              className="p-4 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition flex items-center gap-2 text-xs font-bold"
               title="رجوع للمسابقات"
             >
               <ArrowRight size={16} />
               <span>رجوع للمسابقات</span>
             </BackButton>
-            <h1 className="text-xl sm:text-2xl font-black bg-linear-to-r from-amber-400 via-rose-400 to-cyan-400 bg-clip-text text-transparent flex items-center gap-1">
+            <h1 className="text-xl sm:text-2xl font-black bg-linear-to-r from-amber-400 via-rose-400 to-cyan-400 bg-clip-text text-transparent flex items-center gap-4">
               <Trophy className="text-amber-400" size={24} />
               مسابقة الفارس الأرثوذكسي الفردية
             </h1>
           </div>
 
-          <div className="flex items-center gap-1">
-            <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-black">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-black">
               <span>{userStats.totalScore} نقطة</span>
               <Sparkles size={14} />
             </div>
-            <div className="hidden sm:flex items-center gap-0.5 px-1 py-0.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold">
+            <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold">
               <span>{currentBadge.icon} {currentBadge.nameAr}</span>
             </div>
           </div>
@@ -119,11 +119,11 @@ export default function IndividualQuestionsHub() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-3xl p-2 bg-linear-to-r from-blue-950/70 via-indigo-950/60 to-purple-950/70 border border-blue-500/20 shadow-2xl backdrop-blur-md"
+          className="relative overflow-hidden rounded-3xl p-8 bg-linear-to-r from-blue-950/70 via-indigo-950/60 to-purple-950/70 border border-blue-500/20 shadow-2xl backdrop-blur-md"
         >
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-2">
-            <div className="space-y-1 text-center md:text-right">
-              <div className="inline-flex items-center gap-0.5 px-1 py-0.25 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs font-bold">
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-4 text-center md:text-right">
+              <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs font-bold">
                 <Flame size={14} /> نظام المستويات والتحدي التراكمي
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-white">
@@ -135,7 +135,7 @@ export default function IndividualQuestionsHub() {
             </div>
 
             {/* Level Selector Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-1 bg-black/40 p-1 rounded-2xl border border-white/10">
+            <div className="flex flex-wrap items-center justify-center gap-4 bg-black/40 p-4 rounded-2xl border border-white/10">
               {LEVEL_BADGES.map((badge) => {
                 const isSelected = selectedLevel === badge.level;
                 const isUnlocked = userStats.totalScore >= badge.minScore;
@@ -150,7 +150,7 @@ export default function IndividualQuestionsHub() {
                         : "bg-zinc-900/60 border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-white"
                     }`}
                   >
-                    <span className="text-xl mb-0.5">{badge.icon}</span>
+                    <span className="text-xl mb-2">{badge.icon}</span>
                     <span className="text-[11px] font-black">{badge.nameAr.split(" ")[0]}</span>
                     <span className="text-[9px] opacity-70">المستوى {badge.level}</span>
                   </button>
@@ -161,9 +161,9 @@ export default function IndividualQuestionsHub() {
         </motion.div>
 
         {/* Categories Selection */}
-        <div className="space-y-1">
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base sm:text-lg font-black flex items-center gap-0.5 text-zinc-200">
+            <h3 className="text-base sm:text-lg font-black flex items-center gap-2 text-zinc-200">
               <Layers size={18} className="text-cyan-400" />
               اختر المجالات الكنسية للتحدي:
             </h3>
@@ -181,7 +181,7 @@ export default function IndividualQuestionsHub() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {QUIZ_CATEGORIES.map((cat) => {
               const isChecked = selectedCategories.includes(cat.id);
               const qCount = COMPREHENSIVE_QUESTIONS_BANK.filter(
@@ -198,10 +198,10 @@ export default function IndividualQuestionsHub() {
                       : "bg-zinc-900/40 border-zinc-800/80 opacity-60 hover:opacity-100"
                   }`}
                 >
-                  <div className="text-2xl p-1 rounded-xl bg-black/40 shrink-0">
+                  <div className="text-2xl p-4 rounded-xl bg-black/40 shrink-0">
                     {cat.icon}
                   </div>
-                  <div className="space-y-0.25 flex-1 min-w-0">
+                  <div className="space-y-1 flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <h4 className={`text-sm font-bold truncate ${cat.color}`}>
                         {cat.titleAr}
@@ -219,17 +219,17 @@ export default function IndividualQuestionsHub() {
         </div>
 
         {/* Game Rules & Start Button Bar */}
-        <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-1.5 flex flex-col sm:flex-row items-center justify-between gap-1 shadow-xl">
-          <div className="flex items-center gap-1.5 flex-wrap text-xs text-zinc-300 font-medium">
-            <div className="flex items-center gap-0.5">
+        <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+          <div className="flex items-center gap-6 flex-wrap text-xs text-zinc-300 font-medium">
+            <div className="flex items-center gap-2">
               <Clock size={15} className="text-amber-400" />
               <span>مؤقت تفاعلي ذكي لكل سؤال</span>
             </div>
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-2">
               <Award size={15} className="text-purple-400" />
               <span>نقاط تراكمية وحفظ تلقائي في ملفك</span>
             </div>
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-2">
               <HelpCircle size={15} className="text-cyan-400" />
               <span>تلميحات غامضة وشرح بعد الإجابة</span>
             </div>
@@ -238,7 +238,7 @@ export default function IndividualQuestionsHub() {
           <button
             onClick={handleStartGame}
             disabled={selectedCategories.length === 0}
-            className="w-full sm:w-auto px-3 py-1 bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 text-sm flex items-center justify-center gap-0.5 transition active:scale-98 disabled:opacity-50"
+            className="w-full sm:w-auto px-12 py-4 bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 text-sm flex items-center justify-center gap-2 transition active:scale-98 disabled:opacity-50"
           >
             <Play size={16} />
             <span>انطلق في الامتحان الفردي</span>

@@ -127,7 +127,7 @@ export default function VerseItem({
           })}
         </p>
       ) : (
-        <p className="text-center text-zinc-500 py-4">لا توجد آيات في هذا الإصحاح.</p>
+        <p className="text-center text-zinc-500 py-6 text-xs">لا توجد آيات في هذا الإصحاح.</p>
       )}
     </div>
   );

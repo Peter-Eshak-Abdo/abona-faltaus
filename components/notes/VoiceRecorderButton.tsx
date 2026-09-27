@@ -160,7 +160,7 @@ export default function VoiceRecorderButton({
   };
 
   return (
-    <div className={`inline-flex items-center gap-0.5 ${className}`}>
+    <div className={`inline-flex items-center gap-2 ${className}`}>
       <button
         type="button"
         onClick={isRecording ? stopRecording : startRecording}

@@ -142,7 +142,7 @@ export default function VerseTranslationModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-0.5 sm:p-1 bg-black/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -150,10 +150,10 @@ export default function VerseTranslationModal({
           className="bg-stone-900 border border-amber-600/30 rounded-3xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden"
         >
           {/* Header */}
-          <div className="px-1 py-0.5 bg-stone-950/80 border-b border-amber-600/20 flex items-center justify-between">
-            <div className="flex items-center gap-0.5">
-              <span className="p-0.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <FaLanguage className="w-5 h-5" />
+          <div className="px-4 py-2 bg-stone-950/80 border-b border-amber-600/20 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <FaLanguage className="w-20 h-20" />
               </span>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-amber-100">
@@ -163,10 +163,10 @@ export default function VerseTranslationModal({
               </div>
             </div>
 
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-2">
               <button
                 onClick={handleCopyAll}
-                className="p-0.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-300 transition text-xs flex items-center gap-0.25 font-bold"
+                className="p-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-300 transition text-xs flex items-center gap-1 font-bold"
                 title="نسخ الترجمة"
               >
                 <FaCopy />
@@ -174,7 +174,7 @@ export default function VerseTranslationModal({
               </button>
               <button
                 onClick={onClose}
-                className="p-0.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 transition"
+                className="p-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 transition"
               >
                 <FaTimes />
               </button>
@@ -182,10 +182,10 @@ export default function VerseTranslationModal({
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex border-b border-stone-800 bg-stone-950/40 px-0.5 pt-0.5 gap-0.5">
+          <div className="flex border-b border-stone-800 bg-stone-950/40 px-3 pt-2 gap-2">
             <button
               onClick={() => setActiveTab("quad")}
-              className={`px-0.5 py-0.25 text-xs font-bold rounded-t-xl transition flex items-center gap-0.25 ${
+              className={`px-3 py-1.5 text-xs font-bold rounded-t-xl transition flex items-center gap-1.5 ${
                 activeTab === "quad"
                   ? "bg-amber-600/20 text-amber-300 border-b-2 border-amber-500"
                   : "text-stone-400 hover:text-stone-200"
@@ -197,7 +197,7 @@ export default function VerseTranslationModal({
 
             <button
               onClick={() => setActiveTab("words")}
-              className={`px-0.5 py-0.25 text-xs font-bold rounded-t-xl transition flex items-center gap-0.25 ${
+              className={`px-3 py-1.5 text-xs font-bold rounded-t-xl transition flex items-center gap-1.5 ${
                 activeTab === "words"
                   ? "bg-amber-600/20 text-amber-300 border-b-2 border-amber-500"
                   : "text-stone-400 hover:text-stone-200"
@@ -209,28 +209,28 @@ export default function VerseTranslationModal({
           </div>
 
           {/* Body Content */}
-          <div className="p-1 overflow-y-auto space-y-0.5 flex-1 text-right">
+          <div className="p-4 overflow-y-auto space-y-2 flex-1 text-right">
             {loading ? (
-              <div className="py-2 text-center text-amber-300/60 font-semibold animate-pulse">
+              <div className="py-8 text-center text-amber-300/60 font-semibold animate-pulse">
                 جاري استخراج الترجمات والمعاني...
               </div>
             ) : parallelVerses.length === 0 ? (
-              <div className="py-2 text-center text-stone-400">لا توجد آيات محددة.</div>
+              <div className="py-8 text-center text-stone-400">لا توجد آيات محددة.</div>
             ) : activeTab === "quad" ? (
               parallelVerses.map((v) => (
                 <div
                   key={`parallel-${v.verseNum}`}
-                  className="bg-stone-950/60 border border-amber-500/15 rounded-2xl p-0.5 space-y-0.5 shadow-inner"
+                  className="bg-stone-950/60 border border-amber-500/15 rounded-2xl p-2 space-y-2 shadow-inner"
                 >
-                  <div className="flex items-center justify-between border-b border-stone-800 pb-0.5">
-                    <span className="px-0.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-xs">
+                  <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+                    <span className="px-2 py-2 rounded-full bg-amber-500/20 text-amber-300 font-bold text-xs">
                       الآية {v.verseNum}
                     </span>
                   </div>
 
                   {/* Coptic */}
                   {v.coptic && (
-                    <div className="space-y-0.5">
+                    <div className="space-y-2">
                       <span className="text-[10px] font-bold text-cyan-400 block tracking-wider">
                         القبطي (ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ):
                       </span>
@@ -242,7 +242,7 @@ export default function VerseTranslationModal({
 
                   {/* Coptic Arabized */}
                   {v.copticArabic && (
-                    <div className="space-y-0.5 bg-amber-500/5 p-0.5 rounded-xl border border-amber-500/10">
+                    <div className="space-y-2 bg-amber-500/5 p-2 rounded-xl border border-amber-500/10">
                       <span className="text-[10px] font-bold text-amber-300 block">
                         القبطي المعرب (النطق بالحروف العربية):
                       </span>
@@ -254,7 +254,7 @@ export default function VerseTranslationModal({
 
                   {/* Arabic */}
                   {v.arabic && (
-                    <div className="space-y-0.5">
+                    <div className="space-y-2">
                       <span className="text-[10px] font-bold text-emerald-400 block">
                         العربي (النص البيروتي الفانديك):
                       </span>
@@ -266,7 +266,7 @@ export default function VerseTranslationModal({
 
                   {/* English */}
                   {v.english && (
-                    <div className="space-y-0.5">
+                    <div className="space-y-2">
                       <span className="text-[10px] font-bold text-blue-400 block tracking-wider">
                         English Translation:
                       </span>
@@ -279,11 +279,11 @@ export default function VerseTranslationModal({
               ))
             ) : (
               // Coptic Words Dictionary View
-              <div className="space-y-0.5">
+              <div className="space-y-2">
                 {parallelVerses.flatMap((v) => v.wordDetails).length === 0 ? (
                   <div className="text-center py-8 text-stone-400 space-y-2">
-                    <p>لم يتم العثور على كلمات مفتاحية شهيرة في هذه الآية داخل القاموس التوضيحي.</p>
-                    <p className="text-xs text-stone-500">
+                    <p className="text-xs">لم يتم العثور على كلمات مفتاحية شهيرة في هذه الآية داخل القاموس التوضيحي.</p>
+                    <p className="text-[11px] text-stone-500">
                       يمكنك استخدام زر "تفسير" لسؤال المرشد الآلي عن المعنى التفصيلي الكامل.
                     </p>
                   </div>
@@ -293,10 +293,10 @@ export default function VerseTranslationModal({
                     .map((w, idx) => (
                       <div
                         key={`word-${w.coptic}-${idx}`}
-                        className="bg-stone-950/60 border border-amber-500/20 rounded-2xl p-0.5 space-y-0.5"
+                        className="bg-stone-950/60 border border-amber-500/20 rounded-2xl p-2 space-y-2"
                       >
-                        <div className="flex items-center justify-between border-b border-stone-800 pb-0.5">
-                          <div className="flex items-center gap-0.5">
+                        <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+                          <div className="flex items-center gap-2">
                             <span className="font-coptic text-base font-bold text-amber-300" dir="ltr">
                               {w.coptic}
                             </span>
@@ -318,7 +318,7 @@ export default function VerseTranslationModal({
                           </div>
                         )}
 
-                        <div className="bg-stone-900/80 p-0.5 rounded-xl border border-stone-800 space-y-0.25">
+                        <div className="bg-stone-900/80 p-2 rounded-xl border border-stone-800 space-y-1">
                           <span className="text-[10px] font-bold text-stone-400 block">
                             مثال في جملة كنسية توضيحية:
                           </span>

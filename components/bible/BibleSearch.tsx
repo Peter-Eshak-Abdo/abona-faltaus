@@ -69,45 +69,45 @@ export default function BibleSearch({ isOpen, onClose, bibleData, onGoToVerse }:
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-0.5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2">
       <div className="bg-white dark:bg-zinc-900 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
         {/* الهيدر */}
-        <div className="flex justify-between items-center p-0.5 border-b dark:border-zinc-800">
+        <div className="flex justify-between items-center p-2 border-b dark:border-zinc-800">
           <h2 className="text-xl font-bold text-blue-600">{t('searchTitle')}</h2>
-          <button onClick={onClose} className="p-0.5 text-zinc-500 hover:text-red-500 rounded-full transition">
+          <button onClick={onClose} className="p-2 text-zinc-500 hover:text-red-500 rounded-full transition">
             <FaTimes size={20} />
           </button>
         </div>
 
         {/* أدوات البحث */}
-        <div className="p-0.5 space-y-0.5 border-b dark:border-zinc-800">
-          <div className="flex gap-0.5">
+        <div className="p-2 space-y-2 border-b dark:border-zinc-800">
+          <div className="flex gap-2">
             <input
               type="text"
               placeholder={t('searchPlaceholder')}
-              className="flex-1 p-0.5 rounded-lg border dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="flex-1 p-2 rounded-lg border dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 focus:ring-2 focus:ring-blue-500 outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
             <button
               onClick={handleSearch}
-              className="px-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition flex items-center gap-0.5"
+              className="px-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition flex items-center gap-2"
             >
               <FaSearch /> {t('searchBtn')}
             </button>
           </div>
 
-          <div className="flex gap-0.5 text-sm font-bold justify-around">
-            <label className="flex items-center gap-0.5 cursor-pointer">
+          <div className="flex gap-2 text-sm font-bold justify-around">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" name="filter" value="all" checked={filter === "all"} onChange={() => setFilter("all")} />
               {t('filterAll')}
             </label>
-            <label className="flex items-center gap-0.5 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" name="filter" value="old" checked={filter === "old"} onChange={() => setFilter("old")} />
               {t('filterOld')}
             </label>
-            <label className="flex items-center gap-0.5 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" name="filter" value="new" checked={filter === "new"} onChange={() => setFilter("new")} />
               {t('filterNew')}
             </label>
@@ -115,9 +115,9 @@ export default function BibleSearch({ isOpen, onClose, bibleData, onGoToVerse }:
         </div>
 
         {/* نتائج البحث */}
-        <div className="flex-1 overflow-y-auto p-0.5 space-y-0.5">
+        <div className="flex-1 overflow-y-auto p-2 space-y-2">
           {isSearching ? (
-            <p className="text-center text-zinc-500 py-1">{t('searchBtn')}...</p>
+            <p className="text-center text-zinc-500 py-4">{t('searchBtn')}...</p>
           ) : results.length > 0 ? (
             results.map((res, idx) => (
               <div
@@ -126,18 +126,18 @@ export default function BibleSearch({ isOpen, onClose, bibleData, onGoToVerse }:
                   onGoToVerse(res.bookIdx, res.chapterIdx, res.verseNum);
                   onClose();
                 }}
-                className="p-0.5 rounded-lg border dark:border-zinc-800 hover:bg-blue-50 dark:hover:bg-zinc-800 cursor-pointer transition"
+                className="p-2 rounded-lg border dark:border-zinc-800 hover:bg-blue-50 dark:hover:bg-zinc-800 cursor-pointer transition"
               >
                 <div className="text-sm font-bold text-blue-600">
                   {res.bookName} {res.chapterIdx + 1} : {res.verseNum}
                 </div>
-                <div className="text-base text-zinc-800 dark:text-zinc-200 mt-0.25">
+                <div className="text-base text-zinc-800 dark:text-zinc-200 mt-1">
                   {res.text}
                 </div>
               </div>
             ))
           ) : searchTerm ? (
-            <p className="text-center text-zinc-500 py-1">{t('noResults')}</p>
+            <p className="text-center text-zinc-500 py-4">{t('noResults')}</p>
           ) : null}
         </div>
       </div>

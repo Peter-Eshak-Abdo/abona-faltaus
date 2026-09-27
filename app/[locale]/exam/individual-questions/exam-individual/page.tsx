@@ -277,8 +277,8 @@ function IndividualQuizArena() {
 
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center p-2">
-        <div className="text-center space-y-2">
+      <div className="min-h-screen bg-black text-white flex items-center justify-center p-8">
+        <div className="text-center space-y-8">
           <div className="animate-spin text-amber-400 mx-auto text-3xl">⏳</div>
           <p className="text-lg font-bold">جاري تحميل ميدان المسابقة...</p>
         </div>
@@ -290,31 +290,31 @@ function IndividualQuizArena() {
   const currentBadge = LEVEL_BADGES.find((b) => b.level === levelParam) || LEVEL_BADGES[0];
 
   return (
-    <div className="min-h-[100dvh] bg-linear-to-b from-slate-950 via-zinc-900 to-black text-white p-0.5 sm:p-1 font-sans flex flex-col justify-between" dir="rtl">
+    <div className="min-h-[100dvh] bg-linear-to-b from-slate-950 via-zinc-900 to-black text-white p-2 sm:p-4 font-sans flex flex-col justify-between" dir="rtl">
       {/* Top HUD Bar */}
-      <div className="max-w-4xl mx-auto w-full space-y-0.5">
-        <div className="flex items-center justify-between border-b border-zinc-800 pb-0.5">
+      <div className="max-w-4xl mx-auto w-full space-y-2">
+        <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
           <Link
             href="/exam/individual-questions"
-            className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white flex items-center gap-0.5 p-0.25 rounded-lg transition"
+            className="text-xs sm:text-sm font-bold text-zinc-400 hover:text-white flex items-center gap-2 p-1 rounded-lg transition"
           >
             <ArrowRight size={16} />
             <span>إنهاء / خروج</span>
           </Link>
 
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-2">
             {streak >= 2 && (
               <motion.div
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
-                className="flex items-center gap-0.25 px-0.5 py-0.25 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 text-xs font-black"
+                className="flex items-center gap-1 px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 text-xs font-black"
               >
                 <Flame size={14} className="animate-bounce" />
                 <span>سلسلة x{streak}</span>
               </motion.div>
             )}
 
-            <div className="flex items-center gap-0.5 px-0.5 py-0.25 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs sm:text-sm font-black">
+            <div className="flex items-center gap-2 px-2 py-1 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs sm:text-sm font-black">
               <Zap size={15} />
               <span>{score} نقطة</span>
             </div>
@@ -323,17 +323,17 @@ function IndividualQuizArena() {
 
         {/* Progress & Timer Bar */}
         {!isFinished && (
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             <div className="flex items-center justify-between text-xs sm:text-sm text-zinc-400">
               <span className="font-bold">
                 السؤال {currentIdx + 1} من {questions.length}
               </span>
-              <span className="flex items-center gap-0.5 font-mono text-amber-400 font-bold">
+              <span className="flex items-center gap-2 font-mono text-amber-400 font-bold">
                 <Clock size={14} /> {timeLeft} ثانية
               </span>
             </div>
 
-            <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="w-full h-8 bg-zinc-800 rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-linear-to-r from-blue-500 to-amber-500"
                 style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}
@@ -344,7 +344,7 @@ function IndividualQuizArena() {
       </div>
 
       {/* Main Question / Result Area */}
-      <main className="max-w-4xl mx-auto w-full my-auto py-0.5 sm:py-1">
+      <main className="max-w-4xl mx-auto w-full my-auto py-2 sm:py-4">
         <AnimatePresence mode="wait">
           {!isFinished ? (
             <motion.div
@@ -352,12 +352,12 @@ function IndividualQuizArena() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
-              className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-0.5 sm:p-1 shadow-2xl space-y-1 backdrop-blur-md"
+              className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-2 sm:p-4 shadow-2xl space-y-4 backdrop-blur-md"
             >
               {/* Category & Badge Header */}
-              <div className="flex items-center justify-between gap-0.5 flex-wrap">
-                <div className="flex items-center gap-0.5">
-                  <span className="text-xl p-0.5 rounded-xl bg-black/40 border border-white/10">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl p-2 rounded-xl bg-black/40 border border-white/10">
                     {categoryMeta?.icon}
                   </span>
                   <div>
@@ -370,17 +370,17 @@ function IndividualQuizArena() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-2">
                   {currentQuestion.mysteryHint && !showMysteryHint && !showExplanation && (
                     <button
                       onClick={() => setShowMysteryHint(true)}
-                      className="px-0.5 py-0.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold hover:bg-purple-500/20 transition flex items-center gap-0.5"
+                      className="px-2 py-2 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold hover:bg-purple-500/20 transition flex items-center gap-2"
                     >
                       <HelpCircle size={14} />
                       <span>كشف التلميح 🔮</span>
                     </button>
                   )}
-                  <span className="px-0.5 py-0.5 rounded-lg bg-zinc-800 text-xs font-bold text-amber-400">
+                  <span className="px-2 py-2 rounded-lg bg-zinc-800 text-xs font-bold text-amber-400">
                     +{currentQuestion.points} نقطة
                   </span>
                 </div>
@@ -391,9 +391,9 @@ function IndividualQuizArena() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="p-0.5 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-purple-200 text-xs sm:text-sm leading-relaxed"
+                  className="p-2 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-purple-200 text-xs sm:text-sm leading-relaxed"
                 >
-                  <span className="font-black text-purple-400 ml-0.5">🔮 التلميح الكنسي:</span>
+                  <span className="font-black text-purple-400 ml-2">🔮 التلميح الكنسي:</span>
                   {currentQuestion.mysteryHint}
                 </motion.div>
               )}
@@ -404,7 +404,7 @@ function IndividualQuizArena() {
               </h2>
 
               {/* Options Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.25 sm:gap-0.5 pt-0.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 pt-2">
                 {currentQuestion.options.map((option, idx) => {
                   const isSelected = selectedAnswers[currentQuestion.id] === option;
                   const verified = verifiedAnswers[currentQuestion.id];
@@ -427,7 +427,7 @@ function IndividualQuizArena() {
                       key={idx}
                       onClick={() => handleSelectAnswer(option)}
                       disabled={hasAnswered}
-                      className={`p-0.5 sm:p-1 rounded-2xl border-2 text-right transition-all font-bold text-xs sm:text-sm flex items-center justify-between gap-2 min-h-[52px] ${btnStyle}`}
+                      className={`p-2 sm:p-4 rounded-2xl border-2 text-right transition-all font-bold text-xs sm:text-sm flex items-center justify-between gap-8 min-h-[52px] ${btnStyle}`}
                     >
                       <span className="flex-1 leading-relaxed">{option}</span>
                       {hasAnswered && isCorrect && (
@@ -446,16 +446,16 @@ function IndividualQuizArena() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-0.5 sm:p-1 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-0.5"
+                  className="p-2 sm:p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-2"
                 >
                   <div className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-                    <span className="font-black text-amber-400 ml-0.5">💡 الشرح الكنسي:</span>
+                    <span className="font-black text-amber-400 ml-2">💡 الشرح الكنسي:</span>
                     {verifiedAnswers[currentQuestion.id]?.explanation || currentQuestion.explanation || "إجابة مباركة وسليمة!"}
                   </div>
 
                   <button
                     onClick={handleNextQuestion}
-                    className="w-full py-0.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm rounded-xl shadow-lg transition active:scale-98 flex items-center justify-center gap-0.5 min-h-[46px]"
+                    className="w-full py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm rounded-xl shadow-lg transition active:scale-98 flex items-center justify-center gap-2 min-h-[46px]"
                   >
                     <span>
                       {currentIdx + 1 < questions.length ? "السؤال التالي ⬅️" : "عرض النتيجة النهائية 🏆"}
@@ -470,13 +470,13 @@ function IndividualQuizArena() {
               id="quiz-result-card"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-linear-to-b from-zinc-900 to-zinc-950 border border-amber-500/30 rounded-3xl p-0.5 sm:p-1 text-center space-y-0.5 shadow-2xl"
+              className="bg-linear-to-b from-zinc-900 to-zinc-950 border border-amber-500/30 rounded-3xl p-2 sm:p-4 text-center space-y-2 shadow-2xl"
             >
-              <div className="w-16 h-16 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center mx-auto text-3xl shadow-lg shadow-amber-500/20">
+              <div className="w-64 h-64 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center mx-auto text-3xl shadow-lg shadow-amber-500/20">
                 <Trophy size={32} />
               </div>
 
-              <div className="space-y-0.5">
+              <div className="space-y-2">
                 <h2 className="text-2xl sm:text-3xl font-black text-white">
                   مبروك يا بطل! أنهيت التحدي بنجاح
                 </h2>
@@ -486,16 +486,16 @@ function IndividualQuizArena() {
               </div>
 
               {/* Stats Box */}
-              <div className="grid grid-cols-3 gap-1 max-w-lg mx-auto py-1">
-                <div className="p-1 rounded-2xl bg-zinc-800/60 border border-zinc-700">
+              <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto py-4">
+                <div className="p-4 rounded-2xl bg-zinc-800/60 border border-zinc-700">
                   <span className="text-xs text-zinc-400 block">مجموع النقاط</span>
                   <span className="text-lg sm:text-xl font-black text-amber-400">+{score}</span>
                 </div>
-                <div className="p-1 rounded-2xl bg-zinc-800/60 border border-zinc-700">
+                <div className="p-4 rounded-2xl bg-zinc-800/60 border border-zinc-700">
                   <span className="text-xs text-zinc-400 block">أعلى سلسلة</span>
                   <span className="text-lg sm:text-xl font-black text-orange-400">x{maxStreak}</span>
                 </div>
-                <div className="p-1 rounded-2xl bg-zinc-800/60 border border-zinc-700">
+                <div className="p-4 rounded-2xl bg-zinc-800/60 border border-zinc-700">
                   <span className="text-xs text-zinc-400 block">المستوى</span>
                   <span className="text-lg sm:text-xl font-black text-cyan-400">
                     {currentBadge.icon} {currentBadge.nameAr.split(" ")[0]}
@@ -504,17 +504,17 @@ function IndividualQuizArena() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 pt-1">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                 <button
                   onClick={handleShare}
-                  className="w-full sm:w-auto px-2 py-1 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-center gap-0.5 shadow-md"
+                  className="w-full sm:w-auto px-8 py-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md"
                 >
                   <Share2 size={15} />
                   <span>مشاركة النتيجة 📲</span>
                 </button>
                 <Link
                   href="/exam/individual-questions"
-                  className="w-full sm:w-auto px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs flex items-center justify-center gap-0.5 shadow-md"
+                  className="w-full sm:w-auto px-12 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-md"
                 >
                   <RotateCcw size={15} />
                   <span>تحدي مستوى آخر 🔄</span>
@@ -526,7 +526,7 @@ function IndividualQuizArena() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center text-[10px] text-zinc-500 py-0.5">
+      <footer className="text-center text-[10px] text-zinc-500 py-2">
         مسابقة الفارس الأرثوذكسي — منصة أبونا فلتاؤس
       </footer>
     </div>

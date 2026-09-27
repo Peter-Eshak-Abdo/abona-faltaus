@@ -14,12 +14,12 @@ export function QuizStats({ quiz, groups }: { quiz: any, groups: any[] }) {
   ]
 
   return (
-    <div className="grid grid-cols-4 gap-1 p-0.5 bg-white/5 rounded-xl border border-white/10">
+    <div className="grid grid-cols-4 gap-4 p-2 bg-white/5 rounded-xl border border-white/10">
       {stats.map((stat, i) => (
-        <div key={i} className="flex flex-col items-center p-0.5 rounded-lg bg-black/20">
-          <stat.icon className="w-3 h-3 mb-0.5 text-slate-400" />
+        <div key={i} className="flex flex-col items-center p-2 rounded-lg bg-black/20">
+          <stat.icon className="w-12 h-12 mb-2 text-slate-400" />
           <span className="text-2xl font-black text-white leading-none">{stat.value}</span>
-          <span className="text-2xl text-slate-400 font-bold mt-0.5">{stat.label}</span>
+          <span className="text-2xl text-slate-400 font-bold mt-2">{stat.label}</span>
         </div>
       ))}
     </div>

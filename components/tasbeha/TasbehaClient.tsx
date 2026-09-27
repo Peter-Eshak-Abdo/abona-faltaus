@@ -122,11 +122,11 @@ export default function TasbehaClient() {
       </div>
 
       {/* Hero Banner for Selected Tasbeha */}
-      <div className="relative overflow-hidden border-b border-neutral-800 bg-neutral-900/60 py-1 px-1 md:px-1.5">
-        <div className="max-w-8xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-1">
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-0.5">
-              <span className="p-0.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 text-lg">
+      <div className="relative overflow-hidden border-b border-neutral-800 bg-neutral-900/60 py-4 px-4 md:px-6">
+        <div className="max-w-8xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="p-2 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 text-lg">
                 <FaMusic />
               </span>
               <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
@@ -139,7 +139,7 @@ export default function TasbehaClient() {
           </div>
 
         {/* Quick Tasbeha Switcher Buttons */}
-        <div className="max-w-8xl mx-auto mt-0.5 pt-0.5 border-t border-neutral-800/80 flex items-center gap-0.5 overflow-x-auto pb-1 no-scrollbar">
+        <div className="max-w-8xl mx-auto mt-2 pt-2 border-t border-neutral-800/80 flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar">
           {ALL_TASBEHA.map((tas) => (
             <button
               key={tas.id}
@@ -166,7 +166,7 @@ export default function TasbehaClient() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="max-w-8xl mx-auto mt-1 pt-1 border-t border-neutral-800 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-0.5"
+              className="max-w-8xl mx-auto mt-4 pt-4 border-t border-neutral-800 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2"
             >
               <button
                 onClick={() => {
@@ -192,7 +192,7 @@ export default function TasbehaClient() {
                   }`}
                 >
                   <span>{g.title.arabic}</span>
-                  <span className="text-[10px] text-neutral-500 px-0.5 py-0.25 rounded-full bg-neutral-800">
+                  <span className="text-[10px] text-neutral-500 px-2 py-1 rounded-full bg-neutral-800">
                     {g.sections.length} ترتيل
                   </span>
                 </button>
@@ -203,10 +203,10 @@ export default function TasbehaClient() {
       </div>
 
       {/* Main Content: Groups & Sections */}
-      <main className="flex-1 max-w-8xl mx-auto w-full p-1 md:p-1.5 space-y-0.5">
+      <main className="flex-1 max-w-8xl mx-auto w-full p-4 md:p-6 space-y-2">
         {filteredGroups.length === 0 ? (
-          <div className="text-center py-3 bg-neutral-900/30 rounded-3xl border border-neutral-800 space-y-0.5">
-            <div className="w-4 h-4 rounded-full bg-neutral-800 flex items-center justify-center mx-auto text-neutral-500 text-2xl">
+          <div className="text-center py-12 bg-neutral-900/30 rounded-3xl border border-neutral-800 space-y-2">
+            <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center mx-auto text-neutral-500 text-2xl">
               <FaSearch />
             </div>
             <h3 className="text-xl font-bold text-white">لم يتم العثور على نتائج</h3>
@@ -220,7 +220,7 @@ export default function TasbehaClient() {
                 setActiveTone('both');
                 setActiveGroupId(undefined);
               }}
-              className="px-2 py-0.5 rounded-xl bg-blue-500 text-white font-bold text-xs"
+              className="px-8 py-2 rounded-xl bg-blue-500 text-white font-bold text-xs"
             >
               إعادة ضبط الفلاتر
             </button>
@@ -230,10 +230,10 @@ export default function TasbehaClient() {
             <section
               key={group.id}
               id={`group-${group.id}`}
-              className="space-y-0.5 scroll-mt-6"
+              className="space-y-2 scroll-mt-6"
             >
               {/* Group Section Header */}
-              <div className="flex items-center justify-between gap-0.5 border-r-4 border-blue-500 pr-1 py-0.25">
+              <div className="flex items-center justify-between gap-2 border-r-4 border-blue-500 pr-4 py-1">
                 <div>
                   <h2 className="text-lg md:text-xl font-extrabold text-white">
                     {group.title.arabic}
@@ -246,7 +246,7 @@ export default function TasbehaClient() {
                 </div>
 
                 {group.badge && (
-                  <span className="px-0.5 py-0.25 rounded-full bg-neutral-800/80 border border-neutral-700 text-neutral-300 text-xs font-semibold">
+                  <span className="px-2 py-1 rounded-full bg-neutral-800/80 border border-neutral-700 text-neutral-300 text-xs font-semibold">
                     {group.badge}
                   </span>
                 )}
@@ -254,7 +254,7 @@ export default function TasbehaClient() {
 
               {/* Hyperlinked Section Buttons (مثل شرائح الباوربوينت والروابط التشعبية) */}
               {group.sections.length > 1 && (
-                <div className="flex flex-wrap gap-0.5 p-0.5 bg-neutral-900/80 rounded-2xl border border-neutral-800/80">
+                <div className="flex flex-wrap gap-2 p-2 bg-neutral-900/80 rounded-2xl border border-neutral-800/80">
                   <button
                     onClick={() => setActiveSectionId(null)}
                     className={`px-0.5 py-0.25 rounded-xl text-xs font-bold transition ${
@@ -282,7 +282,7 @@ export default function TasbehaClient() {
               )}
 
               {/* Sections list inside this group */}
-              <div className="space-y-1">
+              <div className="space-y-4">
                 {group.sections
                   .filter((section) => !activeSectionId || section.id === activeSectionId)
                   .map((section) => (

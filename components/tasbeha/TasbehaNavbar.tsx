@@ -72,10 +72,10 @@ export default function TasbehaNavbar({
   return (
     <div className="sticky top-0 z-30 bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800 shadow-xl" dir="rtl">
       {/* 1. Top Bar: Tasbeha Types Tabs Selector (عشية - نصف الليل - باكر) */}
-      <div className="px-0.5 py-0.5 flex items-center justify-between gap-0.5 overflow-x-auto no-scrollbar border-b border-white/5 bg-neutral-900/60">
-        <div className="flex items-center gap-0.5">
+      <div className="px-2 py-2 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar border-b border-white/5 bg-neutral-900/60">
+        <div className="flex items-center gap-2">
           <BackButton
-            className="p-0.5 rounded-xl bg-neutral-900 text-neutral-300 hover:bg-neutral-800 hover:text-white border border-neutral-800 transition flex items-center justify-center shrink-0"
+            className="p-2 rounded-xl bg-neutral-900 text-neutral-300 hover:bg-neutral-800 hover:text-white border border-neutral-800 transition flex items-center justify-center shrink-0"
             iconSize={16}
             title="الرجوع للصفحة السابقة"
           />
@@ -97,7 +97,7 @@ export default function TasbehaNavbar({
 
       {/* 2. Controls & Filter Bar */}
         {/* Language Toggles */}
-        <div className="flex items-center gap-0.25 bg-neutral-900 p-0.25 rounded-xl border border-neutral-800 shrink-0 text-xs">
+        <div className="flex items-center gap-1 bg-neutral-900 p-1 rounded-xl border border-neutral-800 shrink-0 text-xs">
           <button
             onClick={() => onToggleLanguage('arabic')}
             className={`px-0.5 py-0.5 rounded-lg font-bold transition ${
@@ -141,17 +141,17 @@ export default function TasbehaNavbar({
         </div>
 
         {/* Layout & Font Size Controllers */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-2">
         <button
           onClick={onOpenPresentation}
-          className="shrink-0 px-0.5 py-0.5 rounded-xl text-xs md:text-sm font-bold bg-neutral-900 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-2 transition"
+          className="shrink-0 px-2 py-2 rounded-xl text-xs md:text-sm font-bold bg-neutral-900 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-8 transition"
           title={t('presentationTitle')}
         >
           <FaTv className="text-blue-400" />
           <span className="hidden sm:inline">{t('presentationMode')}</span>
         </button>
           {/* Columns / Stacked View */}
-          <div className="hidden sm:flex items-center bg-neutral-900 p-0.5 rounded-xl border border-neutral-800">
+          <div className="hidden sm:flex items-center bg-neutral-900 p-2 rounded-xl border border-neutral-800">
             <button
               onClick={() => onToggleLayout('columns')}
               className={`p-0.5 rounded-lg text-xs transition ${
@@ -173,7 +173,7 @@ export default function TasbehaNavbar({
           </div>
 
           {/* Font Size Adjuster */}
-          <div className="flex items-center bg-neutral-900 p-0.5 rounded-xl border border-neutral-800 text-xs">
+          <div className="flex items-center bg-neutral-900 p-2 rounded-xl border border-neutral-800 text-xs">
             {(['sm', 'base', 'lg', 'xl'] as const).map((s) => (
               <button
                 key={s}
@@ -192,7 +192,7 @@ export default function TasbehaNavbar({
           {/* Search Button / Input */}
           <div className="relative">
             {showSearch ? (
-              <div className="flex items-center gap-0.5 bg-neutral-900 border border-neutral-700 rounded-xl px-0.5 py-0.5">
+              <div className="flex items-center gap-2 bg-neutral-900 border border-neutral-700 rounded-xl px-2 py-2">
                 <input
                   type="text"
                   placeholder={t('searchPlaceholder')}
@@ -214,7 +214,7 @@ export default function TasbehaNavbar({
             ) : (
               <button
                 onClick={() => setShowSearch(true)}
-                className="p-0.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-xl border border-neutral-800 transition text-xs"
+                className="p-2 bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-xl border border-neutral-800 transition text-xs"
                 title={t('searchTooltip')}
               >
                 <FaSearch />

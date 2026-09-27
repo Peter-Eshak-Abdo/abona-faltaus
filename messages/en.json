@@ -126,6 +126,7 @@
     }
   },
   "Synaxarium": {
+    "back": "Back",
     "title": "Complete Coptic Synaxarium",
     "subtitle": "Lives of the Saints, Martyrs, and Feasts for each day of the Coptic year",
     "todaySynaxarium": "Today's Synaxarium",
@@ -321,6 +322,7 @@
     ]
   },
   "Agpeya": {
+    "back": "Back",
     "title": "Holy Agpeya",
     "subtitle": "Coptic Book of Hours & Hourly Prayers",
     "prayerModeOn": "Prayer & Meditation Mode enabled",
@@ -359,6 +361,7 @@
     }
   },
   "Readings": {
+    "back": "Back",
     "title": "Daily Katamaros",
     "subtitle": "Daily Coptic Orthodox Church Lectionary Readings",
     "seasonLabel": "Reading Season",
@@ -523,6 +526,7 @@
     }
   },
   "Preparation": {
+    "back": "Back",
     "title": "Smart Preparation Notes 📝",
     "subtitle": "Prepare Sunday School lessons and spiritual talks with AI assistance",
     "notesTab": "Prep Notes",
@@ -586,6 +590,7 @@
     "loadingChat": "Loading Chat..."
   },
   "Exams": {
+    "back": "Back",
     "title": "Online Examination & Quiz System",
     "subtitle": "Choose the appropriate quiz format and test your biblical knowledge",
     "groupedTitle": "Grouped Questions",
@@ -632,6 +637,19 @@
     "hostQuiz": "Host / Start",
     "editQuiz": "Edit",
     "deleteQuiz": "Delete"
+  },
+  "Slides": {
+    "title": "Orthodox Presentation Builder",
+    "subtitle": "PowerPoint & Slides AI",
+    "back": "Back",
+    "generateAi": "Generate with AI",
+    "startPresentation": "Start Presentation",
+    "titlePlaceholder": "Presentation title...",
+    "globalTheme": "Global Theme:",
+    "exportPptx": "Export PPTX",
+    "slidesCount": "{count} slides",
+    "addSlide": "Add Slide",
+    "untitledSlide": "Untitled Slide"
   },
   "Legal": {
     "aboutTitle": "Fr. Faltaus El-Souriani",

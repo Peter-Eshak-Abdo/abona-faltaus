@@ -250,7 +250,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
   if (gs.phase === 'final') {
     const winners = [...groups].sort((a, b) => b.score - a.score).slice(0, 3);
     return (
-      <div className="h-screen w-screen bg-[#0a0412] text-white p-0.5 flex flex-col items-center justify-end font-sans pb-1 overflow-hidden relative">
+      <div className="h-screen w-screen bg-[#0a0412] text-white p-2 flex flex-col items-center justify-end font-sans pb-4 overflow-hidden relative">
         <AnimatePresence>
           {podiumStep === 0 && (
             <motion.div exit={{ opacity: 0 }} className="absolute inset-0 flex items-center justify-center bg-black z-50">
@@ -259,18 +259,18 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           )}
         </AnimatePresence>
 
-        <motion.h1 initial={{ opacity: 0, y: -50 }} animate={{ opacity: podiumStep > 0 ? 1 : 0, y: 0 }} className="text-[6vw] font-black mb-auto mt-1 text-yellow-400 z-10">
+        <motion.h1 initial={{ opacity: 0, y: -50 }} animate={{ opacity: podiumStep > 0 ? 1 : 0, y: 0 }} className="text-[6vw] font-black mb-auto mt-4 text-yellow-400 z-10">
           أبطال المسابقة 🏆
         </motion.h1>
 
-        <div className="flex items-end justify-center gap-1 w-full h-[75vh] max-w-7xl z-10">
+        <div className="flex items-end justify-center gap-4 w-full h-[75vh] max-w-7xl z-10">
           {/* المركز الثالث */}
           {winners[2] && (
             <motion.div initial={{ y: "100%" }} animate={{ y: podiumStep >= 1 ? 0 : "100%" }} transition={{ type: "spring", bounce: 0.3 }}
-              className="bg-orange-800 w-1/3 p-0.5 flex flex-col items-center rounded-t-2xl shadow-lg border-t-4 border-orange-500" style={{ height: '50%' }}>
-              <img src={winners[2].saint_image || '/placeholder.png'} className="w-[6vw] h-[7vw] rounded-full object-cover mb-1 shadow-2xl border-2 border-white" />
+              className="bg-orange-800 w-1/3 p-2 flex flex-col items-center rounded-t-2xl shadow-lg border-t-4 border-orange-500" style={{ height: '50%' }}>
+              <img src={winners[2].saint_image || '/placeholder.png'} className="w-[6vw] h-[7vw] rounded-full object-cover mb-4 shadow-2xl border-2 border-white" />
               <span className="text-[2vw] font-black text-center truncate w-full">{winners[2].group_name}</span>
-              <div className="flex flex-wrap justify-center gap-1 opacity-80 text-[1.5vw]">{winners[2].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
+              <div className="flex flex-wrap justify-center gap-4 opacity-80 text-[1.5vw]">{winners[2].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
               <div className="mt-auto text-[5vw] font-black text-white/40">3</div>
               <div className="text-[3vw] font-black text-orange-300">{winners[2].score}</div>
             </motion.div>
@@ -279,10 +279,10 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           {/* المركز الأول */}
           {winners[0] && (
             <motion.div initial={{ y: "100%" }} animate={{ y: podiumStep >= 3 ? 0 : "100%" }} transition={{ type: "spring", bounce: 0.4 }}
-              className="bg-yellow-500 w-1/3 p-1 flex flex-col items-center rounded-t-2xl shadow-[0_0_50px_rgba(234,179,8,0.8)] border-t-8 border-white z-20" style={{ height: '95%' }}>
-              <img src={winners[0].saint_image || '/placeholder.png'} className="w-[9vw] h-[10vw] rounded-full object-cover mb-1 shadow-2xl border-4 border-white" />
+              className="bg-yellow-500 w-1/3 p-4 flex flex-col items-center rounded-t-2xl shadow-[0_0_50px_rgba(234,179,8,0.8)] border-t-8 border-white z-20" style={{ height: '95%' }}>
+              <img src={winners[0].saint_image || '/placeholder.png'} className="w-[9vw] h-[10vw] rounded-full object-cover mb-4 shadow-2xl border-4 border-white" />
               <span className="text-[4vw] font-black text-center truncate w-full drop-shadow-lg">{winners[0].group_name}</span>
-              <div className="flex flex-wrap justify-center gap-1 opacity-90 text-[1.8vw]">{winners[0].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
+              <div className="flex flex-wrap justify-center gap-4 opacity-90 text-[1.8vw]">{winners[0].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
               <div className="mt-auto text-[8vw] font-black text-white/50 drop-shadow-md">1</div>
               <div className="text-[4vw] font-black text-white">{winners[0].score}</div>
             </motion.div>
@@ -291,27 +291,27 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
           {/* المركز الثاني */}
           {winners[1] && (
             <motion.div initial={{ y: "100%" }} animate={{ y: podiumStep >= 2 ? 0 : "100%" }} transition={{ type: "spring", bounce: 0.3 }}
-              className="bg-gray-400 w-1/3 p-1 flex flex-col items-center rounded-t-2xl shadow-lg border-t-4 border-gray-200" style={{ height: '70%' }}>
-              <img src={winners[1].saint_image || '/placeholder.png'} className="w-[6vw] h-[7vw] rounded-full object-cover mb-1 shadow-2xl border-2 border-white" />
+              className="bg-gray-400 w-1/3 p-4 flex flex-col items-center rounded-t-2xl shadow-lg border-t-4 border-gray-200" style={{ height: '70%' }}>
+              <img src={winners[1].saint_image || '/placeholder.png'} className="w-[6vw] h-[7vw] rounded-full object-cover mb-4 shadow-2xl border-2 border-white" />
               <span className="text-[3.5vw] font-black text-center truncate w-full">{winners[1].group_name}</span>
-              <div className="flex flex-wrap justify-center gap-1 opacity-80 text-[1.5vw]">{winners[1].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
+              <div className="flex flex-wrap justify-center gap-4 opacity-80 text-[1.5vw]">{winners[1].members?.slice(0, 5).map((m: any, i: number) => <span key={i}>{m}</span>)}</div>
               <div className="mt-auto text-[7vw] font-black text-white/40">2</div>
               <div className="text-[3vw] font-black text-gray-100">{winners[1].score}</div>
             </motion.div>
           )}
         </div>
-        <Button onClick={() => window.location.reload()} className="absolute top-2 right-2 bg-white/10 text-white hover:bg-white/30 h-10 px-4 text-xl">إغلاق</Button>
+        <Button onClick={() => window.location.reload()} className="absolute top-4 right-4 bg-white/10 text-white hover:bg-white/30 h-9 px-4 text-xs rounded-xl">إغلاق</Button>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-screen bg-[#46178f] text-white p-1 flex flex-col items-center font-sans overflow-hidden">
+    <div className="h-screen w-screen bg-[#46178f] text-white p-4 flex flex-col items-center font-sans overflow-hidden">
 
 
       {/* الشريط التقدمي والتايمر في الأعلى */}
       {gs.phase === 'question' && !isIntro && (
-        <div className="w-full h-[6vh] bg-black/40 rounded-xl mb-1 relative overflow-hidden flex items-center shadow-inner">
+        <div className="w-full h-[6vh] bg-black/40 rounded-xl mb-4 relative overflow-hidden flex items-center shadow-inner">
           <motion.div
             initial={{ width: "100%" }}
             animate={{
@@ -328,12 +328,12 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
 
       {/* زر التخطي وعدد الإجابات تحت الشريط مباشرة */}
       {gs.phase === 'question' && !isIntro && (
-        <div className="w-full flex justify-between items-center px-1 mb-1">
-          <div className="absolute top-2 right-2 bg-black/40 p-1 rounded-full text-[2.5vh] font-black shadow-lg z-50">
+        <div className="w-full flex justify-between items-center px-4 mb-4">
+          <div className="absolute top-8 right-8 bg-black/40 p-4 rounded-full text-[2.5vh] font-black shadow-lg z-50">
             {gs.current_question_index + 1} / {quiz.questions?.length || 0}
           </div>
-          <span className="bg-black/30 p-1 rounded-lg text-[3vh] font-black">إجابات: <span className="text-yellow-400">{answersCount}</span> / {groups.length}</span>
-          <Button onClick={handlePhaseEnd} className="bg-white text-black hover:bg-gray-200 text-[3vh] h-[6vh] px-1 font-black shadow-lg">تخطي</Button>
+          <span className="bg-black/30 p-4 rounded-lg text-[3vh] font-black">إجابات: <span className="text-yellow-400">{answersCount}</span> / {groups.length}</span>
+          <Button onClick={handlePhaseEnd} className="bg-white text-black hover:bg-gray-200 text-[3vh] h-[6vh] px-4 font-black shadow-lg">تخطي</Button>
         </div>
       )}
 
@@ -346,7 +346,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
             </motion.h1>
 
             {!isIntro && (
-              <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="flex-1 grid grid-cols-2 gap-1 p-1">
+              <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="flex-1 grid grid-cols-2 gap-4 p-4">
                 {currentQuestion?.choices.map((opt: any, i: number) => (
                   <div key={i} className={`rounded-2xl flex items-center justify-center p-1 text-center shadow-[0_8px_0_rgba(0,0,0,0.2)] border-2 border-white/10 ${['bg-red-500', 'bg-green-500', 'bg-blue-500', 'bg-yellow-500'][i]}`}>
                     <span className="text-[5vw] font-black drop-shadow-lg">{opt}</span>
@@ -363,7 +363,7 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
             <div className="h-[6vh] flex items-center justify-center">
               <span className="text-[4vw] opacity-80 font-black uppercase tracking-widest text-center">النتيجة</span>
             </div>
-            <div className="flex-1 grid grid-cols-2 gap-1 p-1 w-full max-w-7xl mx-auto">
+            <div className="flex-1 grid grid-cols-2 gap-4 p-4 w-full max-w-7xl mx-auto">
               {currentQuestion?.choices.map((opt: any, i: number) => {
                 const isCorrect = i === currentQuestion.correctAnswer;
                 return (
@@ -380,20 +380,20 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
                       `}
                   >
                     {/* علامة الصح للاختيار الصحيح */}
-                    {isCorrect && <div className="absolute -top-1 -right-1 bg-white rounded-full p-1 text-green-500 shadow-xl text-4xl">✅</div>}
+                    {isCorrect && <div className="absolute -top-4 -right-4 bg-white rounded-full p-4 text-green-500 shadow-xl text-4xl">✅</div>}
 
-                    <span className="text-[3.5vw] font-black drop-shadow-lg mb-1">{opt}</span>
+                    <span className="text-[3.5vw] font-black drop-shadow-lg mb-4">{opt}</span>
 
                     {/* عدد الفرق التي اختارت هذه الإجابة */}
-                    <div className="bg-black/50 p-1 rounded-full text-[2vw] font-black flex items-center gap-1 mt-auto">
+                    <div className="bg-black/50 p-4 rounded-full text-[2vw] font-black flex items-center gap-4 mt-auto">
                       👤 {answerDistribution[i] || 0}
                     </div>
                   </motion.div>
                 )
               })}
             </div>
-            <div className="p-1 flex justify-start">
-              <Button onClick={handlePhaseEnd} className="h-[6vh] px-1 text-[3vh] font-black bg-white text-black hover:bg-gray-200 rounded-full shadow-xl">
+            <div className="p-4 flex justify-start">
+              <Button onClick={handlePhaseEnd} className="h-[6vh] px-4 text-[3vh] font-black bg-white text-black hover:bg-gray-200 rounded-full shadow-xl">
                 التالي ❯
               </Button>
             </div>
@@ -402,9 +402,9 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
 
         {/* السكوربورد مع الأنيميشن */}
         {gs.phase === 'scoreboard' && (
-          <motion.div key="s" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto p-1">
-            <h2 className="text-[5vw] font-black mb-1 text-white drop-shadow-lg bg-white/20 px-1 py-1 rounded-lg">Scoreboard</h2>
-            <div className="w-full flex flex-col gap-1 relative">
+          <motion.div key="s" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto p-4">
+            <h2 className="text-[5vw] font-black mb-4 text-white drop-shadow-lg bg-white/20 px-4 py-4 rounded-lg">Scoreboard</h2>
+            <div className="w-full flex flex-col gap-4 relative">
               <AnimatePresence>
                 {[...displayGroups].sort((a: any, b: any) => b.score - a.score).slice(0, 5).map((g: any, i: number) => {
                   const oldGroupData = prevGroupsRef.current.find((pg: any) => pg.id === g.id);
@@ -417,9 +417,9 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
                       initial={{ x: -50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                      className="flex justify-between items-center p-1 bg-[#46178f]/80 rounded-sm border-l-[1vw] border-yellow-500 text-[3.5vw] font-black shadow-[0_4px_0_rgba(0,0,0,0.2)]"
+                      className="flex justify-between items-center p-4 bg-[#46178f]/80 rounded-sm border-l-[1vw] border-yellow-500 text-[3.5vw] font-black shadow-[0_4px_0_rgba(0,0,0,0.2)]"
                     >
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-4">
                         <span className="bg-white/10 w-[5vw] h-[5vw] flex items-center justify-center rounded-full text-white/80">{i + 1}</span>
                         <span>{g.group_name}</span>
                       </div>
@@ -431,16 +431,16 @@ export default function QuizHostGame({ quiz, groups, gameState: initialGS }: any
                 })}
               </AnimatePresence>
             </div>
-            <Button onClick={handlePhaseEnd} className="absolute bottom-6 right-6 h-[8vh] px-1 text-[3vh] font-black bg-white text-black hover:bg-gray-200 rounded-full shadow-xl">
+            <Button onClick={handlePhaseEnd} className="absolute bottom-24 right-24 h-[8vh] px-4 text-[3vh] font-black bg-white text-black hover:bg-gray-200 rounded-full shadow-xl">
               التالي ❯
             </Button>
           </motion.div>
         )}
 
-        <div className="fixed bottom-1 left-1 z-50">
+        <div className="fixed bottom-4 left-4 z-50">
           <button
             onClick={() => setIsMuted(!isMuted)}
-            className="p-1 bg-white/20 backdrop-blur-lg border-2 border-white/30 rounded-full hover:scale-110 transition-all shadow-2xl"
+            className="p-4 bg-white/20 backdrop-blur-lg border-2 border-white/30 rounded-full hover:scale-110 transition-all shadow-2xl"
           >
             {isMuted ? (
               <VolumeX className="text-red-500" size={18} />

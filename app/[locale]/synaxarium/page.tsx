@@ -284,30 +284,30 @@ export default function SynaxariumPage() {
   const currentMonthMeta = COPTIC_MONTHS.find((m) => m.id === selectedMonth) || COPTIC_MONTHS[0];
 
   return (
-    <div className="min-h-screen pb-1 bg-stone-50/60 dark:bg-zinc-950 text-stone-900 dark:text-zinc-100" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="min-h-screen pb-4 bg-stone-50/60 dark:bg-zinc-950 text-stone-900 dark:text-zinc-100" dir={isRtl ? "rtl" : "ltr"}>
       <audio ref={audioRef} className="hidden" />
 
       {/* Sticky Hero Bar */}
       <div className="border-b border-amber-900/10 dark:border-amber-500/10 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-30 shadow-xs">
-        <div className="mx-auto px-0.5 py-0.5 max-w-8xl flex flex-col md:flex-row items-center justify-between gap-0.5">
+        <div className="mx-auto px-2 py-2 max-w-8xl flex flex-col md:flex-row items-center justify-between gap-2">
           {/* Header title */}
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-2">
             <BackButton
-              className="p-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
+              className="p-2 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
               iconSize={18}
               title={t("back")}
             />
-            <div className="w-3 h-3 rounded-xl bg-red-700/10 dark:bg-red-500/10 text-red-700 dark:text-red-400 flex items-center justify-center font-bold">
-              <Flame className="w-2 h-2" />
+            <div className="w-12 h-12 rounded-xl bg-red-700/10 dark:bg-red-500/10 text-red-700 dark:text-red-400 flex items-center justify-center font-bold">
+              <Flame className="w-8 h-8" />
             </div>
             <div>
-              <div className="flex items-center gap-0.5">
+              <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold text-amber-950 dark:text-amber-400">{t("title")}</h1>
-                <Badge variant="outline" className="text-amber-800 border-amber-700/30 dark:text-amber-300 text-xs font-semibold px-0.5">
+                <Badge variant="outline" className="text-amber-800 border-amber-700/30 dark:text-amber-300 text-xs font-semibold px-2">
                   {locale === "en" ? todayCoptic.formattedEn : todayCoptic.formattedAr}
                 </Badge>
               </div>
-              <div className="flex items-center gap-0.5 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap">
                 <p className="text-xs text-stone-500 dark:text-zinc-400 font-medium">
                   {t("subtitle")}
                 </p>
@@ -319,80 +319,80 @@ export default function SynaxariumPage() {
           </div>
 
           {/* Top Controls: Font size, Today, Katamaros link */}
-          <div className="flex items-center gap-0.5 flex-wrap justify-center">
+          <div className="flex items-center gap-2 flex-wrap justify-center">
             {/* Font size */}
-            <div className="flex items-center bg-stone-100 dark:bg-zinc-800 rounded-lg p-0.5 border border-stone-200 dark:border-zinc-700">
+            <div className="flex items-center bg-stone-100 dark:bg-zinc-800 rounded-lg p-2 border border-stone-200 dark:border-zinc-700">
               <button
                 onClick={() => updateFontSize(-1)}
-                className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
+                className="p-2 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
                 title="Zoom Out"
               >
-                <ZoomOut className="w-2 h-2" />
+                <ZoomOut className="w-8 h-8" />
               </button>
-              <span className="px-0.5 text-xs font-bold text-stone-700 dark:text-zinc-300 font-mono">{fontSize}</span>
+              <span className="px-2 text-xs font-bold text-stone-700 dark:text-zinc-300 font-mono">{fontSize}</span>
               <button
                 onClick={() => updateFontSize(1)}
-                className="p-0.5 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
+                className="p-2 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md text-stone-600 dark:text-zinc-300 transition"
                 title="Zoom In"
               >
-                <ZoomIn className="w-2 h-2" />
+                <ZoomIn className="w-8 h-8" />
               </button>
             </div>
 
             {/* <Button
               onClick={handleTodayClick}
               variant="outline"
-              className="h-2 text-xs font-bold border-amber-700/30 text-amber-900 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 rounded-lg"
+              className="h-8 text-xs font-bold border-amber-700/30 text-amber-900 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 rounded-lg"
             >
               {t("todaySynaxarium")}
             </Button> */}
 
             <Link
               href="/readings"
-              className="h-2 text-xs font-semibold px-0.5 rounded-lg flex items-center gap-0.5 border border-stone-200 dark:border-zinc-700 text-stone-700 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-zinc-800"
+              className="h-8 text-xs font-semibold px-2 rounded-lg flex items-center gap-2 border border-stone-200 dark:border-zinc-700 text-stone-700 dark:text-zinc-300 hover:bg-stone-100 dark:hover:bg-zinc-800"
             >
-              <BookOpen className="w-2 h-2 text-amber-700" />
+              <BookOpen className="w-8 h-8 text-amber-700" />
               <span>{t("dailyKatamaros")}</span>
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-0.5 py-1 max-w-8xl space-y-1">
+      <div className="container mx-auto px-2 py-4 max-w-8xl space-y-4">
         {/* Search & Month Selector Card */}
         <Card className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs overflow-hidden">
-          <CardContent className="p-1 space-y-0.5">
+          <CardContent className="p-4 space-y-2">
             {/* Search Bar */}
-            <form onSubmit={handleSearchSubmit} className="flex gap-0.5">
+            <form onSubmit={handleSearchSubmit} className="flex gap-2">
               <div className="relative flex-1">
-                <Search className="absolute right-0.5 top-1/3 -translate-y-1/2 text-stone-400 w-1.5 h-1.5" />
+                <Search className="absolute right-2 top-1/3 -translate-y-1/2 text-stone-400 w-6 h-6" />
                 <Input
                   type="text"
                   placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="ps-3 pe-2 bg-stone-50 dark:bg-zinc-800/80 border-stone-200 dark:border-zinc-700 rounded-xl text-xs sm:text-sm h-3.5"
+                  className="ps-12 pe-8 bg-stone-50 dark:bg-zinc-800/80 border-stone-200 dark:border-zinc-700 rounded-xl text-xs sm:text-sm h-14"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={clearSearch}
-                    className="absolute left-0.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
                   >
-                    <X className="w-2 h-2" />
+                    <X className="w-8 h-8" />
                   </button>
                 )}
               </div>
               <Button
                 type="submit"
-                className="bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold px-1 h-2"
+                className="bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold px-4 h-8"
               >
                 بحث
               </Button>
             </form>
 
             {/* Month Carousel / Buttons */}
-            <div className="space-y-0.5 pt-0.5 border-t border-stone-100 dark:border-zinc-800">
+            <div className="space-y-2 pt-2 border-t border-stone-100 dark:border-zinc-800">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-stone-600 dark:text-zinc-400">{t("copticMonths")}</span>
                 <span className="text-[11px] font-semibold text-amber-800 dark:text-amber-400">
@@ -400,7 +400,7 @@ export default function SynaxariumPage() {
                 </span>
               </div>
 
-              <div className="flex items-center gap-0.5 overflow-x-auto pb-0.5 scrollbar-thin">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
                 {COPTIC_MONTHS.map((m) => (
                   <button
                     key={m.id}
@@ -410,7 +410,7 @@ export default function SynaxariumPage() {
                       if (viewMode === "search") setViewMode("day");
                     }}
                     className={cn(
-                      "px-0.5 py-0.5 rounded-xl text-xs font-bold whitespace-nowrap transition border",
+                      "px-2 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition border",
                       selectedMonth === m.id
                         ? "bg-amber-700 text-white border-amber-700 shadow-xs"
                         : "bg-stone-50 dark:bg-zinc-800/60 text-stone-700 dark:text-zinc-300 border-stone-200 dark:border-zinc-700 hover:bg-stone-100"
@@ -423,34 +423,34 @@ export default function SynaxariumPage() {
             </div>
 
             {/* Day Selector Numbers */}
-            <div className="space-y-0.5 pt-0.5 border-t border-stone-100 dark:border-zinc-800">
+            <div className="space-y-2 pt-2 border-t border-stone-100 dark:border-zinc-800">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-2">
                   <span className="text-[11px] font-bold text-stone-600 dark:text-zinc-400">
                     {t("copticDays", { month: locale === "en" ? currentMonthMeta.nameEn : currentMonthMeta.nameAr })}
                   </span>
-                  <div className="flex items-center gap-0.25">
+                  <div className="flex items-center gap-1">
                     <button
                       onClick={handlePrevDay}
-                      className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-800 rounded text-stone-600 dark:text-zinc-300"
+                      className="p-1 hover:bg-stone-200 dark:hover:bg-zinc-800 rounded text-stone-600 dark:text-zinc-300"
                       title="Previous Day"
                     >
-                      <ChevronRight className="w-2.5 h-2.5" />
+                      <ChevronRight className="w-10 h-10" />
                     </button>
                     <button
                       onClick={handleNextDay}
-                      className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-800 rounded text-stone-600 dark:text-zinc-300"
+                      className="p-1 hover:bg-stone-200 dark:hover:bg-zinc-800 rounded text-stone-600 dark:text-zinc-300"
                       title="Next Day"
                     >
-                      <ChevronLeft className="w-2.5 h-2.5" />
+                      <ChevronLeft className="w-10 h-10" />
                     </button>
                   </div>
                 </div>
-                <div className="flex gap-0.5">
+                <div className="flex gap-2">
                   <button
                     onClick={() => setViewMode(viewMode === "month" ? "day" : "month")}
                     className={cn(
-                      "text-[11px] font-bold px-0.5 py-0.25 rounded-md border",
+                      "text-[11px] font-bold px-2 py-1 rounded-md border",
                       viewMode === "month"
                         ? "bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300"
                         : "text-stone-500 hover:text-stone-800"
@@ -462,7 +462,7 @@ export default function SynaxariumPage() {
               </div>
 
               {viewMode !== "month" && (
-                <div className="grid grid-cols-10 sm:grid-cols-15 gap-0.25">
+                <div className="grid grid-cols-10 sm:grid-cols-15 gap-1">
                   {Array.from({ length: currentMonthMeta.days }, (_, i) => i + 1).map((d) => (
                     <button
                       key={d}
@@ -471,7 +471,7 @@ export default function SynaxariumPage() {
                         setViewMode("day");
                       }}
                       className={cn(
-                        "h-2 rounded-lg text-xs font-bold flex items-center justify-center transition border",
+                        "h-8 rounded-lg text-xs font-bold flex items-center justify-center transition border",
                         selectedDay === d && viewMode === "day"
                           ? "bg-amber-700 text-white border-amber-700 shadow-xs"
                           : "bg-stone-50 dark:bg-zinc-800/60 text-stone-700 dark:text-zinc-300 border-stone-200 dark:border-zinc-700 hover:bg-stone-100"
@@ -485,7 +485,7 @@ export default function SynaxariumPage() {
             </div>
 
             {/* Category Filter Pills */}
-            <div className="pt-0.5 border-t border-stone-100 dark:border-zinc-800 flex items-center gap-0.5 overflow-x-auto pb-0.5 scrollbar-thin">
+            <div className="pt-2 border-t border-stone-100 dark:border-zinc-800 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
               {CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
                 const active = selectedCategory === cat.id;
@@ -494,13 +494,13 @@ export default function SynaxariumPage() {
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
                     className={cn(
-                      "px-0.5 py-0.25 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-0.25 border transition",
+                      "px-2 py-1 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1 border transition",
                       active
                         ? "bg-amber-900 text-white border-amber-900 dark:bg-amber-500 dark:text-zinc-950"
                         : "bg-stone-50 dark:bg-zinc-800/60 text-stone-600 dark:text-zinc-400 border-stone-200 dark:border-zinc-700 hover:bg-stone-100"
                     )}
                   >
-                    <Icon className="w-2 h-2" />
+                    <Icon className="w-8 h-8" />
                     <span>{cat.label}</span>
                   </button>
                 );
@@ -510,10 +510,10 @@ export default function SynaxariumPage() {
         </Card>
 
         {/* Header for Current Selection */}
-        <div className="flex items-center justify-between px-0.5">
+        <div className="flex items-center justify-between px-2">
           <div>
-            <h2 className="text-base font-bold text-amber-950 dark:text-amber-300 flex items-center gap-0.5">
-              <Flame className="w-2.5 h-2.5 text-red-500" />
+            <h2 className="text-base font-bold text-amber-950 dark:text-amber-300 flex items-center gap-2">
+              <Flame className="w-10 h-10 text-red-500" />
               {searchQuery ? (
                 <span>{t("searchResults", { query: searchQuery })}</span>
               ) : viewMode === "month" ? (
@@ -528,12 +528,12 @@ export default function SynaxariumPage() {
 
         {/* Stories List */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-2 gap-1">
-            <Loader2 className="w-5 h-5 animate-spin text-amber-600" />
+          <div className="flex flex-col items-center justify-center py-8 gap-4">
+            <Loader2 className="w-20 h-20 animate-spin text-amber-600" />
             <p className="text-sm font-bold text-stone-500">{t("loadingStories")}</p>
           </div>
         ) : stories.length > 0 ? (
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             {stories.map((story) => (
               <StoryCard
                 key={story.id}
@@ -549,9 +549,9 @@ export default function SynaxariumPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-2 px-1 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md rounded-3xl border border-stone-200/60 dark:border-zinc-800 space-y-0.5">
-            <Flame className="w-3 h-3 text-amber-500/40 mx-auto" />
-            <div className="space-y-0.5">
+          <div className="text-center py-8 px-4 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md rounded-3xl border border-stone-200/60 dark:border-zinc-800 space-y-2">
+            <Flame className="w-12 h-12 text-amber-500/40 mx-auto" />
+            <div className="space-y-2">
               <h3 className="text-lg font-bold text-stone-700 dark:text-zinc-200">
                 {t("noStoriesFound")}
               </h3>
@@ -559,7 +559,7 @@ export default function SynaxariumPage() {
                 {t("noStoriesHint")}
               </p>
             </div>
-            <div className="flex items-center justify-center gap-0.5 pt-0.5">
+            <div className="flex items-center justify-center gap-2 pt-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -583,14 +583,14 @@ export default function SynaxariumPage() {
 
       {/* Full Story Dialog / Expanded View */}
       {activeModalStory && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-0.5">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-2">
           <div
             className="bg-white dark:bg-zinc-900 rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-amber-900/20 overflow-hidden"
             dir={isRtl ? "rtl" : "ltr"}
           >
-            <div className="p-1 border-b border-stone-100 dark:border-zinc-800 flex items-center justify-between bg-amber-50/50 dark:bg-zinc-800/50">
-              <div className="flex items-center gap-0.5">
-                <Flame className="w-2.5 h-2.5 text-red-500" />
+            <div className="p-4 border-b border-stone-100 dark:border-zinc-800 flex items-center justify-between bg-amber-50/50 dark:bg-zinc-800/50">
+              <div className="flex items-center gap-2">
+                <Flame className="w-10 h-10 text-red-500" />
                 <div>
                   <h3 className="text-sm font-bold text-amber-950 dark:text-amber-300">
                     {activeModalStory.titleAr || activeModalStory.titleEn}
@@ -602,13 +602,13 @@ export default function SynaxariumPage() {
               </div>
               <button
                 onClick={() => setActiveModalStory(null)}
-                className="p-0.5 rounded-full hover:bg-stone-200 dark:hover:bg-zinc-700 text-stone-500"
+                className="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-zinc-700 text-stone-500"
               >
-                <X className="w-2.5 h-2.5" />
+                <X className="w-10 h-10" />
               </button>
             </div>
 
-            <div className="p-1.5 overflow-y-auto space-y-1">
+            <div className="p-6 overflow-y-auto space-y-4">
               <div
                 className="text-stone-800 dark:text-zinc-200 leading-relaxed font-serif text-justify"
                 style={{ fontSize: `${fontSize}px`, lineHeight: `${fontSize * 1.9}px` }}
@@ -616,20 +616,20 @@ export default function SynaxariumPage() {
               />
             </div>
 
-            <div className="p-1 border-t border-stone-100 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-800/40 flex items-center justify-between">
+            <div className="p-4 border-t border-stone-100 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-800/40 flex items-center justify-between">
               <Button
                 variant="outline"
                 onClick={() => playStoryNarration(activeModalStory.id, activeModalStory.textAr || activeModalStory.textEn)}
-                className="text-xs font-semibold flex items-center gap-0.25"
+                className="text-xs font-semibold flex items-center gap-1"
               >
                 {playingId === activeModalStory.id ? (
                   <>
-                    <VolumeX className="w-2.5 h-2.5 text-red-600" />
+                    <VolumeX className="w-10 h-10 text-red-600" />
                     <span>{t("stopAudio")}</span>
                   </>
                 ) : (
                   <>
-                    <Volume2 className="w-2.5 h-2.5 text-amber-700" />
+                    <Volume2 className="w-10 h-10 text-amber-700" />
                     <span>{t("listen")}</span>
                   </>
                 )}
@@ -682,9 +682,9 @@ function StoryCard({
 
   return (
     <Card className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs overflow-hidden">
-      <CardHeader className="py-0.5 px-1 bg-linear-to-r from-amber-50/60 to-transparent dark:from-amber-950/20 border-b border-stone-100 dark:border-zinc-800 flex flex-row items-center justify-between">
-        <div className="flex items-center gap-0.5 flex-1 min-w-0">
-          <div className="w-2.5 h-2.5 rounded-lg bg-amber-700/10 text-amber-800 dark:text-amber-300 flex items-center justify-center shrink-0 font-bold text-[10px]">
+      <CardHeader className="py-2 px-4 bg-linear-to-r from-amber-50/60 to-transparent dark:from-amber-950/20 border-b border-stone-100 dark:border-zinc-800 flex flex-row items-center justify-between">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="w-10 h-10 rounded-lg bg-amber-700/10 text-amber-800 dark:text-amber-300 flex items-center justify-center shrink-0 font-bold text-[10px]">
             {story.day}
           </div>
           <CardTitle className="text-xs sm:text-sm font-bold text-amber-950 dark:text-amber-400 truncate">
@@ -695,24 +695,24 @@ function StoryCard({
           </Badge>
         </div>
 
-        <div className="flex items-center gap-0.25 shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           {/* Audio */}
           <Button
             variant="ghost"
             onClick={onPlay}
             disabled={isLoadingAudio}
             className={cn(
-              "h-2 w-2 px-0.5 rounded-lg",
+              "h-8 w-8 px-2 rounded-lg",
               isPlaying ? "text-amber-700 bg-amber-100 dark:bg-amber-950/60" : "text-stone-500"
             )}
             title={isPlaying ? t("stopAudio") : t("listen")}
           >
             {isLoadingAudio ? (
-              <Loader2 className="w-1.5 h-1.5 animate-spin" />
+              <Loader2 className="w-6 h-6 animate-spin" />
             ) : isPlaying ? (
-              <VolumeX className="w-1.5 h-1.5" />
+              <VolumeX className="w-6 h-6" />
             ) : (
-              <Volume2 className="w-1.5 h-1.5" />
+              <Volume2 className="w-6 h-6" />
             )}
           </Button>
 
@@ -720,7 +720,7 @@ function StoryCard({
           <Button
             variant="ghost"
             onClick={handleCopy}
-            className="h-2 w-2 px-0.5 rounded-lg text-stone-500"
+            className="h-8 w-8 px-2 rounded-lg text-stone-500"
             title={t("copySuccess")}
           >
             {copied ? <Check className=" text-green-600" size={14} /> : <Copy className="" size={14} />}
@@ -731,17 +731,17 @@ function StoryCard({
             variant="ghost"
             onClick={onBookmark}
             className={cn(
-              "h-2 w-2 px-0.5 rounded-lg",
+              "h-8 w-8 px-2 rounded-lg",
               isBookmarked ? "text-amber-700" : "text-stone-400"
             )}
             title={isBookmarked ? t("bookmarkSaved", { title: story.titleAr || story.titleEn }) : "Bookmark"}
           >
-            {isBookmarked ? <BookmarkCheck className="w-1.5 h-1.5" /> : <Bookmark className="w-1.5 h-1.5" />}
+            {isBookmarked ? <BookmarkCheck className="w-6 h-6" /> : <Bookmark className="w-6 h-6" />}
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="p-0.5 space-y-0.5">
+      <CardContent className="p-2 space-y-2">
         <div
           className={cn(
             "text-stone-800 dark:text-zinc-200 leading-relaxed font-serif text-justify transition-all",
@@ -751,7 +751,7 @@ function StoryCard({
           dangerouslySetInnerHTML={{ __html: story.textAr || story.textEn }}
         />
 
-        <div className="flex items-center justify-between pt-0.5 border-t border-stone-50 dark:border-zinc-800/60">
+        <div className="flex items-center justify-between pt-2 border-t border-stone-50 dark:border-zinc-800/60">
           <button
             onClick={() => setExpanded(!expanded)}
             className="text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline"
@@ -762,7 +762,7 @@ function StoryCard({
           <Button
             variant="ghost"
             onClick={onExpand}
-            className="text-xs text-stone-600 dark:text-zinc-400 hover:text-amber-800 pe-3 left-1"
+            className="text-xs text-stone-600 dark:text-zinc-400 hover:text-amber-800 pe-12 left-4"
           >
             {t("showMore")}
           </Button>

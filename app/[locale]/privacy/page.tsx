@@ -7,11 +7,11 @@ const REPO = process.env.NEXT_PUBLIC_GITHUB_REPO;
 
 export default function PrivacyPolicyPage() {
   return (
-    <div dir="rtl" lang="ar" className="min-h-screen flex items-center justify-center from-slate-900 via-slate-800 to-slate-900 p-0.5">
-      <main className="w-full max-w-8xl p-0.5 rounded-2xl backdrop-blur-md bg-white/6 border border-white/10 shadow-2xl">
+    <div dir="rtl" lang="ar" className="min-h-screen flex items-center justify-center from-slate-900 via-slate-800 to-slate-900 p-2">
+      <main className="w-full max-w-8xl p-2 rounded-2xl backdrop-blur-md bg-white/6 border border-white/10 shadow-2xl">
 
-        <header className="flex items-center md:flex-row flex-col gap-0.5 mb-0.5">
-          <Link href="/" className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline">
+        <header className="flex items-center md:flex-row flex-col gap-2 mb-2">
+          <Link href="/" className="p-2 m-2 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 transition self-baseline">
             <FaArrowRight size={18} />
           </Link>
           <div className="shrink-0 w-16 h-16 rounded-xl flex items-center justify-center bg-white/8 border border-white/8">
@@ -19,35 +19,35 @@ export default function PrivacyPolicyPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold">سياسة الخصوصية — موقع ابونا فلتاؤس</h1>
-            <p className="text-sm mt-1 opacity-80">نحترم خصوصيتك ونلتزم بحماية بيانات زوار الموقع ومرتاديه. اقرأ التفاصيل أدناه لتعرف إزاي بنجمع ونستخدم ونحمي البيانات.</p>
+            <p className="text-sm mt-4 opacity-80">نحترم خصوصيتك ونلتزم بحماية بيانات زوار الموقع ومرتاديه. اقرأ التفاصيل أدناه لتعرف إزاي بنجمع ونستخدم ونحمي البيانات.</p>
           </div>
         </header>
 
-        <section className="space-y-0.5 text-right leading-relaxed">
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+        <section className="space-y-2 text-right leading-relaxed">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">١. التعريف والمقدِّمة</h2>
-            <p className="mt-1">هذه الصفحة توضّح كيفية جمعنا للمعلومات الشخصية والغير شخصية، وطرق استخدامها وحماية البيانات لمستخدمي الموقع {SITE_URL} — (ابونا فلتاؤس). ننصحك تقرأ السياسة كاملة علشان تكون على علم بحقوقك.</p>
+            <p className="mt-4">هذه الصفحة توضّح كيفية جمعنا للمعلومات الشخصية والغير شخصية، وطرق استخدامها وحماية البيانات لمستخدمي الموقع {SITE_URL} — (ابونا فلتاؤس). ننصحك تقرأ السياسة كاملة علشان تكون على علم بحقوقك.</p>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">٢. المعلومات التي نجمعها</h2>
-            <ul className="list-disc mr-1 mt-1">
+            <ul className="list-disc mr-4 mt-4">
               <li>المعلومات التي تقدمها طوعياً: مثل البريد الإلكتروني عند التسجيل أو التواصل.</li>
               <li>المعلومات التقنية: مثل عنوان الـ IP، نوع المتصفح، صفحات الزيارة، وبيانات الاستخدام لتحسين الخدمة.</li>
               <li>ملفات التخزين المؤقت (Cookies) وتقنيات مماثلة لتخصيص التجربة وتحليل الأداء.</li>
             </ul>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">٣. استخدام بيانات حساب جوجل</h2>
             <p className="text-sm text-gray-700 dark:text-gray-300">
               يطلب تطبيق "أبونا فلتاؤوس" الوصول إلى معلومات حساب جوجل الأساسية الخاصة بك (الاسم، البريد الإلكتروني، والصورة الشخصية) فقط لأغراض إنشائك للملف الشخصي، والتعرف عليك أثناء استخدام الألعاب والامتحانات والتفاعلات داخل التطبيق. نحن لا نشارك بياناتك مع أي طرف ثالث ولا نستخدمها لأغراض إعلانية.
             </p>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">٤. لماذا ونستخدم هذه البيانات؟</h2>
-            <ul className="list-disc mr-1 mt-1">
+            <ul className="list-disc mr-4 mt-4">
               <li>لتشغيل وصيانة الموقع وتحسين تجربة المستخدم.</li>
               <li>للرد على الاستفسارات والاتصالات (مثل طلبات الصلاة، طلبات كلمات الترانيم، أو ملاحظات عن المحتوى).</li>
               <li>لأغراض أمنية منعاً لسوء الاستعمال أو الأنشطة الضارة.</li>
@@ -55,56 +55,56 @@ export default function PrivacyPolicyPage() {
             </ul>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">٥. ملفات تعريف الارتباط (Cookies)</h2>
-            <p className="mt-1">نستخدم الكوكيز لتذكر تفضيلاتك، لقياس أداء الموقع، ولتحسين تجربة الاستخدام. تقدر تمنع الكوكيز من إعدادات متصفحك لكن في الحالة دي بعض أجزاء الموقع ممكن متشتغلش بشكل كامل.</p>
+            <p className="mt-4">نستخدم الكوكيز لتذكر تفضيلاتك، لقياس أداء الموقع، ولتحسين تجربة الاستخدام. تقدر تمنع الكوكيز من إعدادات متصفحك لكن في الحالة دي بعض أجزاء الموقع ممكن متشتغلش بشكل كامل.</p>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">٦. الخدمات الخارجية (جهات خارجية)</h2>
-            <p className="mt-1">الموقع قد يعتمد على خدمات خارجية (مثل Vercel لاستضافة الواجهة، Firebase أو خدمات تحليلات) — هتتبادل بعض البيانات التقنية معهم لضمان عمل الموقع. لو في تكاملات تانية (مثل مزودي الفيديو أو خرائط) هنذكرها هنا ونوضّح طبيعتها وسبب مشاركتها.</p>
+            <p className="mt-4">الموقع قد يعتمد على خدمات خارجية (مثل Vercel لاستضافة الواجهة، Firebase أو خدمات تحليلات) — هتتبادل بعض البيانات التقنية معهم لضمان عمل الموقع. لو في تكاملات تانية (مثل مزودي الفيديو أو خرائط) هنذكرها هنا ونوضّح طبيعتها وسبب مشاركتها.</p>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">٧. كيف نحمي بياناتك</h2>
-            <ul className="list-disc mr-1 mt-1">
+            <ul className="list-disc mr-4 mt-4">
               <li>نتخذ تدابير تقنية وإدارية لحماية البيانات من الوصول غير المصرح به.</li>
               <li>نوصي بتحديث كلمات المرور وعدم مشاركتها مع أحد.</li>
               <li>رغم كده، لا يوجد نظام آمن 100%، وإذا حصل أي خرق هنقوم بالإجراءات القانونية والإعلامية اللازمة.</li>
             </ul>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">٨. حفظ البيانات ومدة الاحتفاظ</h2>
-            <p className="mt-1">نحتفظ بالبيانات طالما كانت مطلوبة لتقديم الخدمة أو للامتثال للقوانين المعمول بها. لو احتجت حذف أي بيانات، تقدر تراسلنا (سياسة الحذف أدناه).</p>
+            <p className="mt-4">نحتفظ بالبيانات طالما كانت مطلوبة لتقديم الخدمة أو للامتثال للقوانين المعمول بها. لو احتجت حذف أي بيانات، تقدر تراسلنا (سياسة الحذف أدناه).</p>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">٩. حقوق المستخدمين</h2>
-            <p className="mt-1">لك الحق في الوصول لبياناتك، طلب تصحيحها، طلب حذفها، وطلب تقييد معالجتها. لو عايز تمارس أي من الحقوق دي، ابعتلنا رسالة على البريد التالي:</p>
-            <div className="mt-1 p-1 rounded-md bg-white/4 border border-white/6">
+            <p className="mt-4">لك الحق في الوصول لبياناتك، طلب تصحيحها، طلب حذفها، وطلب تقييد معالجتها. لو عايز تمارس أي من الحقوق دي، ابعتلنا رسالة على البريد التالي:</p>
+            <div className="mt-4 p-4 rounded-md bg-white/4 border border-white/6">
               <strong>البريد الإلكتروني للتواصل:</strong>
-              <p className="mt-1"><a href={"mailto:" + CONTACT_EMAIL} className="underline">{CONTACT_EMAIL}</a></p>
+              <p className="mt-4"><a href={"mailto:" + CONTACT_EMAIL} className="underline">{CONTACT_EMAIL}</a></p>
             </div>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">١٠. الأطفال</h2>
-            <p className="mt-1">الموقع مخصّص عامة للجمهور. لا نجمع عن قصد بيانات شخصية من أطفال دون موافقة الوالدين أو الأوصياء. لو اكتشفنا أننا جمعنا بيانات طفل سنقوم بحذفها فوراً عند طلب ذلك.</p>
+            <p className="mt-4">الموقع مخصّص عامة للجمهور. لا نجمع عن قصد بيانات شخصية من أطفال دون موافقة الوالدين أو الأوصياء. لو اكتشفنا أننا جمعنا بيانات طفل سنقوم بحذفها فوراً عند طلب ذلك.</p>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">١١. تغييرات على سياسة الخصوصية</h2>
-            <p className="mt-1">نحتفظ بحق تحديث السياسة بحسب الحاجة. أي تغييرات هتظهر هنا مع تاريخ آخر تحديث. ننصحك بزيارة الصفحة دورياً.</p>
+            <p className="mt-4">نحتفظ بحق تحديث السياسة بحسب الحاجة. أي تغييرات هتظهر هنا مع تاريخ آخر تحديث. ننصحك بزيارة الصفحة دورياً.</p>
           </article>
 
-          <article className="p-1 rounded-xl bg-white/3 border border-white/6">
+          <article className="p-4 rounded-xl bg-white/3 border border-white/6">
             <h2 className="font-semibold text-lg">١٢. تواصل معنا</h2>
-            <p className="mt-1">لو عندك أي استفسار، أو طلب حذف بيانات، أو ملاحظة على سياسة الخصوصية تواصل معنا:</p>
-            <ul className="list-disc mr-1 mt-1">
+            <p className="mt-4">لو عندك أي استفسار، أو طلب حذف بيانات، أو ملاحظة على سياسة الخصوصية تواصل معنا:</p>
+            <ul className="list-disc mr-4 mt-4">
               <li><strong>البريد الإلكتروني:</strong><a href={"mailto:" + CONTACT_EMAIL} className="underline">{CONTACT_EMAIL}</a></li>
-              <li className="mt-1"><strong>الموقع الرسمي:</strong> <a href={SITE_URL} className="underline">{SITE_URL}</a></li>
-              <li className="mt-1">لو عايز تشوف الكود المصدري أو تساهم: <a href={REPO} className="underline">مستودع GitHub</a></li>
+              <li className="mt-4"><strong>الموقع الرسمي:</strong> <a href={SITE_URL} className="underline">{SITE_URL}</a></li>
+              <li className="mt-4">لو عايز تشوف الكود المصدري أو تساهم: <a href={REPO} className="underline">مستودع GitHub</a></li>
             </ul>
           </article>
         </section>

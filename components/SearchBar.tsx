@@ -26,7 +26,7 @@ export default function SearchBar() {
   return (
     <>
       <input
-        className="form-control mb-3"
+        className="form-control mb-12"
         value={input}
         onChange={handleChange}
         placeholder="ابحث عن لحن..."

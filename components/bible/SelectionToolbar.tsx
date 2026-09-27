@@ -158,46 +158,46 @@ export default function SelectionToolbar({
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+16px)] left-1/2 -translate-x-1/2 bg-[#2d1b18]/95 backdrop-blur-xl px-0.5 py-0.5 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-amber-500/20 gap-1 max-w-[95vw] overflow-x-auto"
+        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+16px)] left-1/2 -translate-x-1/2 bg-[#2d1b18]/95 backdrop-blur-xl px-2 py-2 rounded-2xl shadow-2xl z-50 flex items-center origin-bottom border border-amber-500/20 gap-4 max-w-[95vw] overflow-x-auto"
       >
         {onOpenTranslation && (
           <button
             onClick={onOpenTranslation}
-            className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-emerald-300 hover:bg-white/10 transition-colors"
+            className="px-2 py-2 flex flex-col items-center justify-center rounded-xl text-emerald-300 hover:bg-white/10 transition-colors"
             title="ترجمة ومعاني الآيات"
           >
             <FaLanguage size={16} />
-            <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">ترجمة</span>
+            <span className="text-[10px] font-bold mt-2 whitespace-nowrap">ترجمة</span>
           </button>
         )}
-        <button onClick={handleExplain} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-cyan-300 hover:bg-white/10 transition-colors" title={t('explain')}>
+        <button onClick={handleExplain} className="px-2 py-2 flex flex-col items-center justify-center rounded-xl text-cyan-300 hover:bg-white/10 transition-colors" title={t('explain')}>
           <FaComments size={16} />
-          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">{t('explain')}</span>
+          <span className="text-[10px] font-bold mt-2 whitespace-nowrap">{t('explain')}</span>
         </button>
-        <button onClick={handleAddToPrep} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-amber-300 hover:bg-white/10 transition-colors" title={t('prepNote')}>
+        <button onClick={handleAddToPrep} className="px-2 py-2 flex flex-col items-center justify-center rounded-xl text-amber-300 hover:bg-white/10 transition-colors" title={t('prepNote')}>
           <FaBookOpen size={16} />
-          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">{t('prepNote')}</span>
+          <span className="text-[10px] font-bold mt-2 whitespace-nowrap">{t('prepNote')}</span>
         </button>
-        <button onClick={() => setIsDayModalOpen(true)} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title={t('meeting')}>
+        <button onClick={() => setIsDayModalOpen(true)} className="px-2 py-2 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title={t('meeting')}>
           <FaPlusSquare size={16} />
-          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">{t('meeting')}</span>
+          <span className="text-[10px] font-bold mt-2 whitespace-nowrap">{t('meeting')}</span>
         </button>
-        <button onClick={handleShare} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title={t('share')}>
+        <button onClick={handleShare} className="px-2 py-2 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title={t('share')}>
           <FaShareAlt size={16} />
-          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">{t('share')}</span>
+          <span className="text-[10px] font-bold mt-2 whitespace-nowrap">{t('share')}</span>
         </button>
-        <button onClick={handleCopy} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title={t('copy')}>
+        <button onClick={handleCopy} className="px-2 py-2 flex flex-col items-center justify-center rounded-xl text-stone-200 hover:bg-white/10 transition-colors" title={t('copy')}>
           <FaCopy size={16} />
-          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">{t('copy')}</span>
+          <span className="text-[10px] font-bold mt-2 whitespace-nowrap">{t('copy')}</span>
         </button>
-        <button onClick={toggleFavorite} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-yellow-400 hover:bg-white/10 transition-colors" title={t('favorites')}>
+        <button onClick={toggleFavorite} className="px-2 py-2 flex flex-col items-center justify-center rounded-xl text-yellow-400 hover:bg-white/10 transition-colors" title={t('favorites')}>
           <FaStar size={16} />
-          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">{t('favorites')}</span>
+          <span className="text-[10px] font-bold mt-2 whitespace-nowrap">{t('favorites')}</span>
         </button>
-        <div className="w-px h-6 bg-white/20 mx-0.5"></div>
-        <button onClick={() => setSelectedVerses([])} className="px-0.5 py-0.5 flex flex-col items-center justify-center rounded-xl text-red-400 hover:bg-white/10 transition-colors" title={t('cancelSelection')}>
+        <div className="w-px h-24 bg-white/20 mx-2"></div>
+        <button onClick={() => setSelectedVerses([])} className="px-2 py-2 flex flex-col items-center justify-center rounded-xl text-red-400 hover:bg-white/10 transition-colors" title={t('cancelSelection')}>
           <FaTimes size={16} />
-          <span className="text-[10px] font-bold mt-0.5 whitespace-nowrap">{t('cancelSelection')}</span>
+          <span className="text-[10px] font-bold mt-2 whitespace-nowrap">{t('cancelSelection')}</span>
         </button>
       </motion.div>
     </AnimatePresence>

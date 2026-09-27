@@ -14,7 +14,7 @@ interface BackButtonProps {
 }
 
 export default function BackButton({
-  className = "p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline text-zinc-700 dark:text-zinc-200 flex items-center justify-center",
+  className = "p-2 m-2 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline text-zinc-700 dark:text-zinc-200 flex items-center justify-center",
   iconSize = 18,
   title = "الرجوع للخلف",
   fallbackUrl = "/",

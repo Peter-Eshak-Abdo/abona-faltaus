@@ -258,15 +258,15 @@ export default function ClassCoordinatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 pb-20 print:bg-white print:text-black" dir="rtl">
+    <div className="min-h-screen bg-[#FAF9F5] dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 pb-80 print:bg-white print:text-black" dir="rtl">
       {/* Header */}
       <header className="border-b border-[#EBE9E0] dark:border-neutral-800 bg-white/85 dark:bg-neutral-900/85 backdrop-blur-md sticky top-0 z-30 print:hidden">
-        <div className="max-w-7xl mx-auto px-1 py-0.5 flex items-center justify-between">
-          <div className="flex items-center gap-0.5">
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <BackButton />
             <div>
-              <h1 className="text-lg md:text-xl font-black text-[#4A0012] dark:text-amber-400 flex items-center gap-0.5">
-                <Users className="w-2 h-2 text-amber-600" />
+              <h1 className="text-lg md:text-xl font-black text-[#4A0012] dark:text-amber-400 flex items-center gap-2">
+                <Users className="w-8 h-8 text-amber-600" />
                 منظومة أمين الفصل — جدول توزيع الخدام
               </h1>
               <p className="text-xs text-stone-500 dark:text-neutral-400">
@@ -275,12 +275,12 @@ export default function ClassCoordinatorPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-0.5">
-            <div className="bg-stone-100 dark:bg-neutral-800 p-1 rounded-xl flex items-center gap-1 border border-stone-200 dark:border-neutral-700">
+          <div className="flex items-center gap-2">
+            <div className="bg-stone-100 dark:bg-neutral-800 p-4 rounded-xl flex items-center gap-4 border border-stone-200 dark:border-neutral-700">
               <button
                 onClick={() => setActiveTab("schedule")}
                 className={cn(
-                  "px-1 py-0.5 rounded-lg text-xs font-bold transition",
+                  "px-4 py-2 rounded-lg text-xs font-bold transition",
                   activeTab === "schedule"
                     ? "bg-[#4A0012] text-white shadow-sm"
                     : "text-stone-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
@@ -291,7 +291,7 @@ export default function ClassCoordinatorPage() {
               <button
                 onClick={() => setActiveTab("servants")}
                 className={cn(
-                  "px-1 py-0.5 rounded-lg text-xs font-bold transition",
+                  "px-4 py-2 rounded-lg text-xs font-bold transition",
                   activeTab === "servants"
                     ? "bg-[#4A0012] text-white shadow-sm"
                     : "text-stone-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
@@ -302,7 +302,7 @@ export default function ClassCoordinatorPage() {
               <button
                 onClick={() => setActiveTab("settings")}
                 className={cn(
-                  "px-1 py-0.5 rounded-lg text-xs font-bold transition",
+                  "px-4 py-2 rounded-lg text-xs font-bold transition",
                   activeTab === "settings"
                     ? "bg-[#4A0012] text-white shadow-sm"
                     : "text-stone-600 dark:text-neutral-400 hover:text-black dark:hover:text-white"
@@ -315,25 +315,25 @@ export default function ClassCoordinatorPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-1 py-1.5 space-y-0.5">
+      <main className="max-w-7xl mx-auto px-4 py-6 space-y-2">
         {/* Printable Header for print only */}
-        <div className="hidden print:block text-center border-b pb-0.5 mb-0.5">
+        <div className="hidden print:block text-center border-b pb-2 mb-2">
           <h2 className="text-xl font-bold">كنيسة القديسة العذراء مريم — خدمة مدارس الأحد</h2>
-          <h3 className="text-base font-semibold mt-1">جدول شرح وتوزيع الخدمة: {meetingName}</h3>
+          <h3 className="text-base font-semibold mt-4">جدول شرح وتوزيع الخدمة: {meetingName}</h3>
           <p className="text-xs text-gray-600">تاريخ البدء: {startDate}</p>
         </div>
 
         {/* Tab 1: Schedule Table View */}
         {activeTab === "schedule" && (
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             {/* Action Bar */}
-            <div className="flex items-center justify-between flex-wrap gap-2 print:hidden">
-              <div className="flex items-center gap-0.25">
+            <div className="flex items-center justify-between flex-wrap gap-8 print:hidden">
+              <div className="flex items-center gap-1">
                 <Button
                   onClick={handleGenerate}
-                  className="bg-[#4A0012] hover:bg-[#6B1124] text-amber-200 font-bold text-xs rounded-xl shadow-md gap-1.5"
+                  className="bg-[#4A0012] hover:bg-[#6B1124] text-amber-200 font-bold text-xs rounded-xl shadow-md gap-2 px-4 py-2"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" />
+                  <RefreshCw className="w-4 h-4" />
                   {schedule.length > 0 ? "إعادة التوزيع العشوائي العادل" : "إنشاء وتوزيع الجدول الآن"}
                 </Button>
 
@@ -345,29 +345,29 @@ export default function ClassCoordinatorPage() {
               </div>
 
               {schedule.length > 0 && (
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
                     onClick={handleExportWord}
-                    className="rounded-xl text-xs font-bold border-stone-300 dark:border-neutral-700 gap-0.5"
+                    className="rounded-xl text-xs font-bold border-stone-300 dark:border-neutral-700 gap-2"
                   >
-                    <FileText className="w-3.5 h-3.5 text-blue-600" />
+                    <FileText className="w-14 h-14 text-blue-600" />
                     تنزيل Word (.doc)
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => window.print()}
-                    className="rounded-xl text-xs font-bold border-stone-300 dark:border-neutral-700 gap-0.5"
+                    className="rounded-xl text-xs font-bold border-stone-300 dark:border-neutral-700 gap-2"
                   >
-                    <Printer className="w-3.5 h-3.5 text-stone-600 dark:text-stone-300" />
+                    <Printer className="w-14 h-14 text-stone-600 dark:text-stone-300" />
                     طباعة / PDF
                   </Button>
                   <Button
                     variant="outline"
                     onClick={handleCopyWhatsApp}
-                    className="rounded-xl text-xs font-bold border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 gap-0.5"
+                    className="rounded-xl text-xs font-bold border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 gap-2"
                   >
-                    <Share2 className="w-3.5 h-3.5" />
+                    <Share2 className="w-14 h-14" />
                     نسخ واتساب
                   </Button>
                 </div>
@@ -376,19 +376,19 @@ export default function ClassCoordinatorPage() {
 
             {/* Schedule Table */}
             {schedule.length === 0 ? (
-              <Card className="rounded-3xl border-dashed border-2 border-amber-900/20 dark:border-amber-500/20 bg-white/50 dark:bg-neutral-900/50 p-1 text-center">
-                <div className="w-4 h-4 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 mx-auto flex items-center justify-center mb-3">
-                  <CalendarIcon className="w-2 h-2" />
+              <Card className="rounded-3xl border-dashed border-2 border-amber-900/20 dark:border-amber-500/20 bg-white/50 dark:bg-neutral-900/50 p-4 text-center">
+                <div className="w-16 h-16 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 mx-auto flex items-center justify-center mb-12">
+                  <CalendarIcon className="w-8 h-8" />
                 </div>
                 <h3 className="text-base font-bold text-[#4A0012] dark:text-amber-300">
                   لم يتم إنشاء جدول بعد
                 </h3>
-                <p className="text-xs text-stone-500 dark:text-neutral-400 max-w-sm mx-auto mt-1 mb-0.5 leading-relaxed">
+                <p className="text-xs text-stone-500 dark:text-neutral-400 max-w-sm mx-auto mt-4 mb-2 leading-relaxed">
                   قم بمراجعة قائمة الخدام وإعدادات الفقرات، ثم اضغط على زر التوزيع لإنشاء جدول عادل ومتكامل.
                 </p>
                 <Button
                   onClick={handleGenerate}
-                  className="bg-[#4A0012] hover:bg-[#6B1124] text-white font-bold text-xs rounded-xl px-1 py-0.5 shadow-lg"
+                  className="bg-[#4A0012] hover:bg-[#6B1124] text-white font-bold text-xs rounded-xl px-4 py-2 shadow-lg"
                 >
                   توزيع الجدول الآن
                 </Button>
@@ -398,10 +398,10 @@ export default function ClassCoordinatorPage() {
                 <table className="w-full text-right text-xs border-collapse">
                   <thead>
                     <tr className="bg-[#4A0012] text-white border-b border-[#4A0012]">
-                      <th className="p-1 font-bold w-4 text-center">الأسبوع</th>
-                      <th className="p-1 font-bold w-12">تاريخ الاجتماع</th>
+                      <th className="p-4 font-bold w-16 text-center">الأسبوع</th>
+                      <th className="p-4 font-bold w-48">تاريخ الاجتماع</th>
                       {slots.map((s) => (
-                        <th key={s.slotIndex} className="p-0.5 font-bold">
+                        <th key={s.slotIndex} className="p-2 font-bold">
                           {s.defaultTitle}
                         </th>
                       ))}
@@ -410,16 +410,16 @@ export default function ClassCoordinatorPage() {
                   <tbody className="divide-y divide-stone-100 dark:divide-neutral-800">
                     {schedule.map((meeting) => (
                       <tr key={meeting.weekIndex} className="hover:bg-stone-50/80 dark:hover:bg-neutral-800/40 transition">
-                        <td className="p-0.5 font-black text-center font-mono text-stone-500">
+                        <td className="p-2 font-black text-center font-mono text-stone-500">
                           {meeting.weekIndex}
                         </td>
-                        <td className="p-0.5 font-bold text-stone-900 dark:text-white whitespace-nowrap">
+                        <td className="p-2 font-bold text-stone-900 dark:text-white whitespace-nowrap">
                           {meeting.formattedDateAr}
                         </td>
                         {meeting.slots.map((sl) => (
-                          <td key={sl.slotIndex} className="p-0.5 space-y-0.5">
+                          <td key={sl.slotIndex} className="p-2 space-y-2">
                             {/* Assigned Servant Selectors */}
-                            <div className="flex flex-wrap items-center gap-0.5">
+                            <div className="flex flex-wrap items-center gap-2">
                               {sl.assignedServantIds.map((sId, orderIdx) => (
                                 <select
                                   key={orderIdx}
@@ -432,7 +432,7 @@ export default function ClassCoordinatorPage() {
                                       e.target.value
                                     )
                                   }
-                                  className="bg-stone-50 dark:bg-neutral-800 border border-stone-200 dark:border-neutral-700 rounded-lg text-xs font-bold py-0.5 px-1 text-stone-800 dark:text-neutral-200 focus:ring-1 focus:ring-amber-500"
+                                  className="bg-stone-50 dark:bg-neutral-800 border border-stone-200 dark:border-neutral-700 rounded-lg text-xs font-bold py-2 px-4 text-stone-800 dark:text-neutral-200 focus:ring-1 focus:ring-amber-500"
                                 >
                                   {servants.map((sv) => (
                                     <option key={sv.id} value={sv.id}>
@@ -455,7 +455,7 @@ export default function ClassCoordinatorPage() {
                                   )
                                 }
                                 placeholder="اسم الدرس / موضوع الفقرة..."
-                                className="h-2 text-xs bg-stone-50 dark:bg-neutral-800/50 border-stone-200 dark:border-neutral-700 rounded-lg"
+                                className="h-8 text-xs bg-stone-50 dark:bg-neutral-800/50 border-stone-200 dark:border-neutral-700 rounded-lg"
                               />
                             </div>
                             {sl.lessonTitle && (
@@ -476,10 +476,10 @@ export default function ClassCoordinatorPage() {
 
         {/* Tab 2: Servants Management */}
         {activeTab === "servants" && (
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             {/* Add Servant Card */}
             <Card className="rounded-2xl border-[#EBE9E0] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm">
-              <CardHeader className="pb-0.5">
+              <CardHeader className="pb-2">
                 <CardTitle className="text-base font-bold text-[#4A0012] dark:text-amber-300">
                   إضافة خادم جديد إلى الفصل
                 </CardTitle>
@@ -488,35 +488,35 @@ export default function ClassCoordinatorPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleAddServant} className="flex flex-wrap gap-0.5 items-end">
+                <form onSubmit={handleAddServant} className="flex flex-wrap gap-2 items-end">
                   <div className="flex-1 min-w-[200px]">
-                    <label className="block text-xs font-bold text-stone-600 dark:text-neutral-400 mb-1">
+                    <label className="block text-xs font-bold text-stone-600 dark:text-neutral-400 mb-4">
                       اسم الخادم:
                     </label>
                     <Input
                       value={newServantName}
                       onChange={(e) => setNewServantName(e.target.value)}
                       placeholder="مثال: يوحنا عادل"
-                      className="rounded-xl text-xs h-2"
+                      className="rounded-xl text-xs h-8"
                     />
                   </div>
-                  <div className="w-11">
-                    <label className="block text-xs font-bold text-stone-600 dark:text-neutral-400 mb-1">
+                  <div className="w-44">
+                    <label className="block text-xs font-bold text-stone-600 dark:text-neutral-400 mb-4">
                       رقم الهاتف (اختياري):
                     </label>
                     <Input
                       value={newServantPhone}
                       onChange={(e) => setNewServantPhone(e.target.value)}
                       placeholder="012xxxxxxxx"
-                      className="rounded-xl text-xs h-2 font-mono"
+                      className="rounded-xl text-xs h-8 font-mono"
                     />
                   </div>
                   <Button
                     type="submit"
                     disabled={!newServantName.trim()}
-                    className="bg-[#4A0012] hover:bg-[#6B1124] text-white font-bold text-xs rounded-xl h-2 px-1 gap-1"
+                    className="bg-[#4A0012] hover:bg-[#6B1124] text-white font-bold text-xs rounded-xl h-8 px-4 gap-4"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-16 h-16" />
                     إضافة الخادم
                   </Button>
                 </form>
@@ -524,13 +524,13 @@ export default function ClassCoordinatorPage() {
             </Card>
 
             {/* Servants List with Constraint Controls */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {servants.map((s) => (
-                <Card key={s.id} className="rounded-2xl border-[#EBE9E0] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm p-1 flex flex-col justify-between">
-                  <div className="space-y-0.5">
+                <Card key={s.id} className="rounded-2xl border-[#EBE9E0] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm p-4 flex flex-col justify-between">
+                  <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-0.5">
-                        <div className="w-2 h-2 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 font-bold flex items-center justify-center text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 font-bold flex items-center justify-center text-xs">
                           {s.name.charAt(0)}
                         </div>
                         <div>
@@ -547,19 +547,19 @@ export default function ClassCoordinatorPage() {
 
                       <button
                         onClick={() => handleRemoveServant(s.id)}
-                        className="text-stone-400 hover:text-rose-600 p-1 transition"
+                        className="text-stone-400 hover:text-rose-600 p-4 transition"
                         title="حذف الخادم"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-16 h-16" />
                       </button>
                     </div>
 
                     {/* Constraint: Restrict slot */}
-                    <div className="pt-2 border-t border-stone-100 dark:border-neutral-800 space-y-1">
+                    <div className="pt-8 border-t border-stone-100 dark:border-neutral-800 space-y-4">
                       <span className="text-[11px] font-bold text-stone-500 dark:text-neutral-400 block">
                         شروط وموانع الفقرات:
                       </span>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-6">
                         {slots.map((sl) => {
                           const isRestricted = s.restrictedSlots.includes(sl.slotIndex);
                           return (
@@ -568,7 +568,7 @@ export default function ClassCoordinatorPage() {
                               type="button"
                               onClick={() => handleToggleSlotRestriction(s.id, sl.slotIndex)}
                               className={cn(
-                                "px-1.5 py-1 rounded-lg text-[10px] font-bold border transition",
+                                "px-6 py-4 rounded-lg text-[10px] font-bold border transition",
                                 isRestricted
                                   ? "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-300"
                                   : "bg-stone-50 dark:bg-neutral-800 text-stone-600 dark:text-neutral-300 border-stone-200 dark:border-neutral-700 hover:bg-stone-100"
@@ -589,14 +589,14 @@ export default function ClassCoordinatorPage() {
 
         {/* Tab 3: Settings */}
         {activeTab === "settings" && (
-          <Card className="rounded-2xl border-[#EBE9E0] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm p-1 space-y-0.5 max-w-2xl">
+          <Card className="rounded-2xl border-[#EBE9E0] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm p-4 space-y-2 max-w-2xl">
             <h3 className="text-base font-bold text-[#4A0012] dark:text-amber-400">
               إعدادات موعد الاجتماع وقواعد التوزيع
             </h3>
 
-            <div className="space-y-0.5 text-xs">
+            <div className="space-y-2 text-xs">
               <div>
-                <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-1">
+                <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-4">
                   اسم الأسرة أو الاجتماع:
                 </label>
                 <Input
@@ -606,9 +606,9 @@ export default function ClassCoordinatorPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-0.5">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-1">
+                  <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-4">
                     تاريخ بدء الفصل:
                   </label>
                   <Input
@@ -619,13 +619,13 @@ export default function ClassCoordinatorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-1">
+                  <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-4">
                     يوم الاجتماع الأسبوعي:
                   </label>
                   <select
                     value={meetingDayOfWeek}
                     onChange={(e) => setMeetingDayOfWeek(Number(e.target.value))}
-                    className="w-full bg-white dark:bg-neutral-900 border border-stone-200 dark:border-neutral-700 rounded-xl text-xs p-1 font-bold"
+                    className="w-full bg-white dark:bg-neutral-900 border border-stone-200 dark:border-neutral-700 rounded-xl text-xs p-4 font-bold"
                   >
                     <option value={6}>السبت</option>
                     <option value={0}>الأحد</option>
@@ -638,9 +638,9 @@ export default function ClassCoordinatorPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-0.5">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-1">
+                  <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-4">
                     عدد الأسابيع المخططة:
                   </label>
                   <Input
@@ -653,13 +653,13 @@ export default function ClassCoordinatorPage() {
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-1">
+                  <label className="block font-bold text-stone-700 dark:text-neutral-300 mb-4">
                     الحد الأدنى للفاصل بين مرات الشرح للخادم:
                   </label>
                   <select
                     value={minSpacingWeeks}
                     onChange={(e) => setMinSpacingWeeks(Number(e.target.value))}
-                    className="w-full bg-white dark:bg-neutral-900 border border-stone-200 dark:border-neutral-700 rounded-xl text-xs p-1 font-bold"
+                    className="w-full bg-white dark:bg-neutral-900 border border-stone-200 dark:border-neutral-700 rounded-xl text-xs p-4 font-bold"
                   >
                     <option value={2}>أسبوعان على الأقل (مرة كل أسبوعين)</option>
                     <option value={3}>3 أسابيع على الأقل (مرة كل 3 أسابيع)</option>
@@ -671,7 +671,7 @@ export default function ClassCoordinatorPage() {
 
             <Button
               onClick={handleGenerate}
-              className="w-full bg-[#4A0012] hover:bg-[#6B1124] text-white font-bold text-xs rounded-xl py-1 mt-1"
+              className="w-full bg-[#4A0012] hover:bg-[#6B1124] text-white font-bold text-xs rounded-xl py-4 mt-4"
             >
               حفظ الإعدادات وإعادة إنشاء الجدول
             </Button>

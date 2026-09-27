@@ -127,11 +127,11 @@ export default function ReadingControlsHeader({
   const activeBook = bibleData[currentBookIdx];
 
   return (
-    <header className="sticky bg-surface-container-low/95 backdrop-blur-xl z-30 px-1 flex items-center justify-between border-b border-surface-variant/30 flex-col md:flex-row shadow-2xl rounded-4xl pb-0.5">
-      <div className="flex gap-0.5 w-full md:w-auto items-center">
+    <header className="sticky bg-surface-container-low/95 backdrop-blur-xl z-30 px-4 flex items-center justify-between border-b border-surface-variant/30 flex-col md:flex-row shadow-2xl rounded-4xl pb-2">
+      <div className="flex gap-2 w-full md:w-auto items-center">
         <BackButton title="الرجوع للصفحة السابقة" />
         <select
-          className="flex-1 md:flex-none p-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+          className="flex-1 md:flex-none p-2 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
           value={currentBookIdx}
           onChange={(e) => {
             setCurrentBookIdx(Number(e.target.value));
@@ -146,7 +146,7 @@ export default function ReadingControlsHeader({
         </select>
 
         <select
-          className="w-5 p-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-20 p-2 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
           value={currentChapterIdx}
           onChange={(e) => setCurrentChapterIdx(Number(e.target.value))}
         >
@@ -158,9 +158,9 @@ export default function ReadingControlsHeader({
         </select>
       </div>
 
-      <div className="flex flex-wrap gap-0.5 mt-0.5 px-0.5 z-20 justify-around">
+      <div className="flex flex-wrap gap-2 mt-2 px-2 z-20 justify-around">
         {onLanguageChange && (
-          <div className="flex bg-zinc-200 dark:bg-zinc-800 p-0.5 rounded-lg text-xs font-bold">
+          <div className="flex bg-zinc-200 dark:bg-zinc-800 p-2 rounded-lg text-xs font-bold">
             <button
               onClick={() => onLanguageChange("ar")}
               className={`px-1.5 py-0.5 rounded-md transition ${language === "ar" ? "bg-blue-600 text-white shadow" : "text-zinc-600 dark:text-zinc-300"}`}
@@ -176,18 +176,18 @@ export default function ReadingControlsHeader({
           </div>
         )}
 
-        <button onClick={() => setFontSize(prev => prev + 2)} className="p-0.5 bg-cyan-200 text-on-surface text-xl rounded-lg font-bold">A+</button>
-        <button onClick={() => setFontSize(prev => prev - 2)} className="p-0.5 bg-cyan-200 text-on-surface text-sm rounded-lg font-bold">A-</button>
+        <button onClick={() => setFontSize(prev => prev + 2)} className="p-2 bg-cyan-200 text-on-surface text-xl rounded-lg font-bold">A+</button>
+        <button onClick={() => setFontSize(prev => prev - 2)} className="p-2 bg-cyan-200 text-on-surface text-sm rounded-lg font-bold">A-</button>
 
-        <Link href="/bible/favorites" className="p-0.5 bg-yellow-100 text-yellow-600 rounded-lg font-bold flex items-center" title={t('favorites')}>
+        <Link href="/bible/favorites" className="p-2 bg-yellow-100 text-yellow-600 rounded-lg font-bold flex items-center" title={t('favorites')}>
           <FaStar size={18} />
         </Link>
 
-        <Link href="/bible/day" className="p-0.5 bg-amber-200 text-blue-600 rounded-lg font-bold flex items-center" title={t('addToDay')}>
+        <Link href="/bible/day" className="p-2 bg-amber-200 text-blue-600 rounded-lg font-bold flex items-center" title={t('addToDay')}>
           <FaPlusSquare size={18} />
         </Link>
 
-        <button onClick={() => setIsSearchOpen(true)} className="p-0.5 bg-blue-100 text-blue-600 rounded-lg font-bold flex items-center" title={t('searchBtn')}>
+        <button onClick={() => setIsSearchOpen(true)} className="p-2 bg-blue-100 text-blue-600 rounded-lg font-bold flex items-center" title={t('searchBtn')}>
           <FaSearch size={18} />
         </button>
 

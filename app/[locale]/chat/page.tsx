@@ -16,10 +16,10 @@ export default function ChatPage() {
   const [activeTab, setActiveTab] = useState<"chat" | "icons">("chat");
 
   return (
-    <main className="h-dvh w-full flex flex-col p-0 md:p-0.5 bg-neutral-950 text-neutral-100" dir="rtl">
+    <main className="h-dvh w-full flex flex-col p-0 md:p-2 bg-neutral-950 text-neutral-100" dir="rtl">
       {/* Top Switcher Bar: Chat vs Icon Generator */}
-      <div className="bg-neutral-900 border-b border-neutral-800 px-0.5 py-0.5 flex items-center justify-between z-20 shrink-0">
-        <div className="flex items-center gap-0.5">
+      <div className="bg-neutral-900 border-b border-neutral-800 px-2 py-2 flex items-center justify-between z-20 shrink-0">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab("chat")}
             className={`px-0.5 py-0.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-1.5 ${

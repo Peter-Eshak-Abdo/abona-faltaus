@@ -1,0 +1,724 @@
+"use client";
+
+import React, { useState, useEffect, useMemo } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ClipboardList,
+  Plus,
+  Trash2,
+  Share2,
+  Download,
+  Users,
+  BarChart3,
+  CheckCircle2,
+  FileSpreadsheet,
+  FileText,
+  Loader2,
+  ExternalLink,
+  ShieldCheck,
+  Send,
+  HelpCircle,
+  Clock,
+  Settings,
+  ChevronRight,
+  ChevronLeft,
+  Printer,
+  UserCheck,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+
+interface FormField {
+  id: string;
+  label: string;
+  type: "text" | "paragraph" | "multiple_choice" | "rating";
+  options?: string[];
+  required: boolean;
+}
+
+export default function ChurchFormsDashboardPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // States
+  const [forms, setForms] = useState<any[]>([]);
+  const [selectedForm, setSelectedForm] = useState<any | null>(null);
+  const [responses, setResponses] = useState<any[]>([]);
+  const [loadingForms, setLoadingForms] = useState(false);
+  const [loadingResponses, setLoadingResponses] = useState(false);
+  const [dashboardTab, setDashboardTab] = useState<"summary" | "individual">("summary");
+  const [individualIndex, setIndividualIndex] = useState(0);
+
+  // Field response analytics
+  const fieldAnalytics = useMemo(() => {
+    if (!selectedForm || responses.length === 0) return {};
+    const stats: Record<string, Record<string, number>> = {};
+    selectedForm.fields?.forEach((f: any) => {
+      stats[f.id] = {};
+      responses.forEach((r: any) => {
+        const val = r.responses[f.id];
+        if (val !== undefined && val !== null && val !== "") {
+          const strVal = String(val);
+          stats[f.id][strVal] = (stats[f.id][strVal] || 0) + 1;
+        }
+      });
+    });
+    return stats;
+  }, [selectedForm, responses]);
+
+  // Modal create
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [fields, setFields] = useState<FormField[]>([
+    { id: "f1", label: "الاسم ثلاثي", type: "text", required: true },
+    { id: "f2", label: "رقم الهاتف / الواتساب", type: "text", required: true },
+    { id: "f3", label: "ملاحظات أو أسئلة للخادم", type: "paragraph", required: false },
+  ]);
+  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
+
+  // Collaborator Admin modal
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [isAddingAdmin, setIsAddingAdmin] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      setUser(session?.user || null);
+      setAuthLoading(false);
+    });
+  }, []);
+
+  const fetchServantForms = async () => {
+    if (!user) return;
+    setLoadingForms(true);
+    try {
+      const res = await fetch(`/api/forms?userId=${user.id}&userEmail=${user.email || ""}`);
+      const data = await res.json();
+      if (data.success) {
+        setForms(data.forms || []);
+        if (data.forms?.length > 0 && !selectedForm) {
+          loadFormResponses(data.forms[0]);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingForms(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchServantForms();
+    }
+  }, [user?.id]);
+
+  const loadFormResponses = async (form: any) => {
+    setSelectedForm(form);
+    setLoadingResponses(true);
+    try {
+      const res = await fetch(`/api/forms?id=${form.id}`);
+      const data = await res.json();
+      if (data.success) {
+        setResponses(data.responses || []);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingResponses(false);
+    }
+  };
+
+  const handleAddField = () => {
+    const newId = `f_${Date.now()}`;
+    setFields((prev) => [
+      ...prev,
+      { id: newId, label: "سؤال جديد", type: "text", required: false },
+    ]);
+  };
+
+  const handleRemoveField = (id: string) => {
+    setFields((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleCreateForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim()) {
+      toast.error("يرجى إدخال عنوان الاستبيان");
+      return;
+    }
+
+    setIsSubmittingForm(true);
+    try {
+      const res = await fetch("/api/forms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "create_form",
+          userId: user.id,
+          title: title.trim(),
+          description: description.trim(),
+          fields,
+          adminCollaborators: [user.email],
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("تم إنشاء الاستبيان بنجاح!");
+        setShowCreateModal(false);
+        setTitle("");
+        setDescription("");
+        fetchServantForms();
+      } else {
+        toast.error(data.error || "فشل إنشاء الاستبيان");
+      }
+    } catch {
+      toast.error("حدث خطأ أثناء الإنشاء");
+    } finally {
+      setIsSubmittingForm(false);
+    }
+  };
+
+  const handleAddCollaborator = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAdminEmail.trim() || !selectedForm) return;
+
+    setIsAddingAdmin(true);
+    try {
+      const res = await fetch("/api/forms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add_admin",
+          formId: selectedForm.id,
+          newAdminEmail: newAdminEmail.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success(`تمت إضافة الخادم ${newAdminEmail} كـ Admin بنجاح!`);
+        setSelectedForm((prev: any) => ({
+          ...prev,
+          admin_collaborators: data.admins,
+        }));
+        setNewAdminEmail("");
+      }
+    } catch {
+      toast.error("تعذر إضافة الخادم المشرف");
+    } finally {
+      setIsAddingAdmin(false);
+    }
+  };
+
+  // تصدير كـ Excel (CSV UTF-8)
+  const exportToExcel = () => {
+    if (!selectedForm || responses.length === 0) {
+      toast.error("لا توجد ردود لتصديرها");
+      return;
+    }
+
+    const formFields = selectedForm.fields || [];
+    const headers = ["تاريخ التقديم", ...formFields.map((f: any) => f.label)];
+    const rows = responses.map((r) => {
+      const dateStr = new Date(r.submitted_at).toLocaleString("ar-EG");
+      const answers = formFields.map((f: any) => `"${(r.responses[f.id] || "").replace(/"/g, '""')}"`);
+      return [`"${dateStr}"`, ...answers].join(",");
+    });
+
+    const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${selectedForm.title}_الردود.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("تم تصدير ملف الإكسيل بنجاح!");
+  };
+
+  // تصدير كـ PDF عبر الطباعة المنظمة
+  const exportToPdf = () => {
+    window.print();
+  };
+
+  const copyShareLink = (id: string) => {
+    const fullUrl = `${window.location.origin}/forms/${id}`;
+    navigator.clipboard.writeText(fullUrl);
+    toast.success("تم نسخ رابط الاستبيان لمشاركته مع المخدومين!");
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-[80vh] flex flex-col items-center justify-center p-8 gap-4">
+        <Loader2 className="w-24 h-24 animate-spin text-blue-600" />
+        <p className="text-sm font-semibold text-stone-500">جاري التحقق من الحساب...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen py-2 px-2 sm:px-16 max-w-7xl mx-auto space-y-2 font-sans" dir="rtl">
+      {/* Top Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white/80 dark:bg-zinc-900/80 p-2 rounded-3xl border border-stone-200 dark:border-zinc-800 shadow-sm">
+        <div>
+          <h1 className="text-2xl font-bold text-stone-900 dark:text-zinc-100 flex items-center gap-2">
+            <ClipboardList className="w-8 h-8 text-blue-600" />
+            <span>نظام استبيانات واستمارات الخدمة (Google Forms البديل)</span>
+          </h1>
+          <p className="text-xs text-stone-500 mt-2">
+            أنشئ استماراتك، شارك الروابط مع المخدومين، حلل الردود وشارك الإدارة مع الخدام المشرفين
+          </p>
+        </div>
+
+        <Button
+          onClick={() => setShowCreateModal(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl text-xs flex items-center gap-2 shadow-md h-12 px-4"
+        >
+          <Plus className="w-8 h-8" />
+          <span>إنشاء استبيان جديد</span>
+        </Button>
+      </div>
+
+      {/* Main Grid: Forms list + Dashboard */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+        {/* Left: Active Forms list */}
+        <div className="space-y-2">
+          <h2 className="text-sm font-bold text-stone-800 dark:text-zinc-200 flex items-center gap-1">
+            <ClipboardList className="w-8 h-8 text-blue-600" />
+            <span>استبياناتك المتاحة ({forms.length})</span>
+          </h2>
+
+          {forms.length === 0 ? (
+            <Card className="rounded-2xl p-2 text-center border-dashed border-stone-300 dark:border-zinc-700 bg-transparent">
+              <p className="text-xs text-stone-500 mb-2">لم تقم بإنشاء أي استبيان بعد</p>
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                variant="outline"
+                className="rounded-xl text-xs font-bold"
+              >
+                إنشاء أول استبيان
+              </Button>
+            </Card>
+          ) : (
+            <div className="space-y-6">
+              {forms.map((f) => {
+                const isSelected = selectedForm?.id === f.id;
+                return (
+                  <Card
+                    key={f.id}
+                    onClick={() => loadFormResponses(f)}
+                    className={`rounded-2xl p-0.5 transition cursor-pointer border ${
+                      isSelected
+                        ? "border-blue-600 bg-blue-500/10 dark:bg-blue-950/30 ring-1 ring-blue-600"
+                        : "border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-blue-400"
+                    } shadow-xs`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xs font-bold text-stone-900 dark:text-zinc-100 truncate">{f.title}</h3>
+                      <Badge variant="outline" className={`text-[10px] ${isSelected ? "text-blue-600 border-blue-500" : "text-emerald-600 border-emerald-500/30"}`}>
+                        {isSelected ? "محدد" : "نشط"}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-stone-400 mb-2">
+                      <span>{f.fields?.length || 0} أسئلة</span>
+                      <span className="flex items-center gap-2">
+                        <Users className="w-12 h-12" />
+                        {f.admin_collaborators?.length || 1} مشرفين
+                      </span>
+                    </div>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyShareLink(f.id);
+                      }}
+                      className="w-full bg-stone-100 hover:bg-blue-100 text-stone-800 dark:bg-zinc-800 dark:hover:bg-blue-950/60 dark:text-zinc-200 rounded-xl text-xs font-bold"
+                    >
+                      <Share2 className="w-10 h-10 ml-2" />
+                      نسخ الرابط للمخدومين
+                    </Button>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Right: Responses Analytics & Admin Collaborators */}
+        <div className="lg:col-span-2 space-y-2">
+          {selectedForm ? (
+            <>
+              {/* Form Dashboard Header */}
+              <Card className="rounded-3xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-xs space-y-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-stone-100 dark:border-zinc-800 pb-2">
+                  <div>
+                    <h2 className="text-lg font-bold text-stone-900 dark:text-zinc-100">{selectedForm.title}</h2>
+                    <p className="text-xs text-stone-500 mt-2">{selectedForm.description || "استبيان خدمة"}</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      onClick={exportToExcel}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-2"
+                    >
+                      <FileSpreadsheet className="w-10 h-10" />
+                      <span>تصدير Excel</span>
+                    </Button>
+
+                    <Button
+                      onClick={exportToPdf}
+                      variant="outline"
+                      className="rounded-xl text-xs font-bold flex items-center gap-2"
+                    >
+                      <FileText className="w-8 h-8" />
+                      <span>تصدير PDF</span>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Admins & Collaborators Section */}
+                <div className="bg-stone-50 dark:bg-zinc-800/50 p-2 rounded-2xl border border-stone-200/60 dark:border-zinc-700/60 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-stone-700 dark:text-zinc-300 flex items-center gap-2">
+                      <ShieldCheck className="w-8 h-8 text-blue-600" />
+                      الخدام المشرفين كـ Admin على الاستبيان:
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {(selectedForm.admin_collaborators || []).map((adminEmail: string, idx: number) => (
+                      <Badge key={idx} variant="secondary" className="text-xs font-mono">
+                        {adminEmail}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <form onSubmit={handleAddCollaborator} className="flex gap-2 pt-2">
+                    <Input
+                      value={newAdminEmail}
+                      onChange={(e) => setNewAdminEmail(e.target.value)}
+                      placeholder="أدخل إيميل الخادم لإضافته كـ Admin..."
+                      className="text-xs rounded-xl h-10"
+                      dir="ltr"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={isAddingAdmin || !newAdminEmail.trim()}
+                      className="bg-stone-800 hover:bg-black text-white text-xs rounded-xl h-10 font-bold px-2 shrink-0"
+                    >
+                      {isAddingAdmin ? "جاري الإضافة..." : "إضافة خادم مشرف"}
+                    </Button>
+                  </form>
+                </div>
+              </Card>
+
+              {/* Google Forms Style Dashboard: Summary & Individual Tabs */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-2 border-b border-stone-200 dark:border-zinc-800 pb-2">
+                  <div className="flex items-center gap-1 bg-stone-100 dark:bg-zinc-800/80 p-4 rounded-2xl">
+                    <button
+                      type="button"
+                      onClick={() => setDashboardTab("summary")}
+                      className={`px-1 py-0.5 rounded-xl text-xs font-bold transition-all flex items-center gap-0.5 ${
+                        dashboardTab === "summary"
+                          ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
+                          : "text-stone-600 dark:text-zinc-400 hover:text-stone-900"
+                      }`}
+                    >
+                      <BarChart3 className="w-14 h-14" />
+                      <span>الملخص العام ({responses.length})</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDashboardTab("individual")}
+                      disabled={responses.length === 0}
+                      className={`px-1 py-0.5 rounded-xl text-xs font-bold transition-all flex items-center gap-0.5 ${
+                        dashboardTab === "individual"
+                          ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
+                          : "text-stone-600 dark:text-zinc-400 hover:text-stone-900 disabled:opacity-40"
+                      }`}
+                    >
+                      <UserCheck className="w-14 h-14" />
+                      <span>الردود الفردية</span>
+                    </button>
+                  </div>
+
+                  {dashboardTab === "individual" && responses.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => window.print()}
+                        className="rounded-xl text-xs h-12 gap-4 border-stone-300 dark:border-zinc-700"
+                      >
+                        <Printer className="w-14 h-14" />
+                        <span>طباعة الاستمارة</span>
+                      </Button>
+                      <div className="flex items-center gap-4 text-xs font-bold text-stone-600 dark:text-zinc-400">
+                        <button
+                          type="button"
+                          onClick={() => setIndividualIndex((i) => Math.max(0, i - 1))}
+                          disabled={individualIndex === 0}
+                          className="p-2 rounded-lg border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 disabled:opacity-30"
+                        >
+                          <ChevronRight className="w-12 h-12" />
+                        </button>
+                        <span>
+                          {individualIndex + 1} من {responses.length}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setIndividualIndex((i) => Math.min(responses.length - 1, i + 1))}
+                          disabled={individualIndex >= responses.length - 1}
+                          className="p-2 rounded-lg border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 disabled:opacity-30"
+                        >
+                          <ChevronLeft className="w-12 h-12" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {loadingResponses ? (
+                  <div className="flex flex-col items-center justify-center py-6 gap-2">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                    <p className="text-xs font-semibold text-stone-500">جاري تحميل الردود والإحصائيات...</p>
+                  </div>
+                ) : responses.length === 0 ? (
+                  <Card className="rounded-3xl p-6 text-center border-stone-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60">
+                    <HelpCircle className="w-8 h-8 text-stone-300 dark:text-zinc-600 mx-auto mb-2" />
+                    <h4 className="text-sm font-bold text-stone-700 dark:text-zinc-300">لا توجد ردود مسجلة بعد</h4>
+                    <p className="text-xs text-stone-500 max-w-sm mx-auto mt-2">
+                      شارك الرابط مع المخدومين لتظهر ردودهم وإحصائياتهم التفاعلية هنا مباشرة.
+                    </p>
+                  </Card>
+                ) : dashboardTab === "summary" ? (
+                  /* Summary Analytics View */
+                  <div className="space-y-2">
+                    {/* KPI Summary Cards */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <div className="bg-blue-50/80 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40 rounded-2xl p-2 text-center">
+                        <span className="text-[11px] font-bold text-blue-700 dark:text-blue-300 block">إجمالي الردود</span>
+                        <span className="text-2xl font-black text-blue-900 dark:text-blue-100">{responses.length}</span>
+                      </div>
+                      <div className="bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 rounded-2xl p-2 text-center">
+                        <span className="text-[11px] font-bold text-amber-700 dark:text-amber-300 block">عدد الأسئلة</span>
+                        <span className="text-2xl font-black text-amber-900 dark:text-amber-100">{selectedForm.fields?.length || 0}</span>
+                      </div>
+                      <div className="bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 rounded-2xl p-2 text-center col-span-2 sm:col-span-1">
+                        <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 block">حالة الاستبيان</span>
+                        <span className="text-sm font-bold text-emerald-800 dark:text-emerald-200 mt-4 block">نشط ويستقبل ردوداً</span>
+                      </div>
+                    </div>
+
+                    {/* Per-field Analytics Breakdown */}
+                    <div className="space-y-2">
+                      {(selectedForm.fields || []).map((field: any, idx: number) => {
+                        const fieldStats = fieldAnalytics[field.id] || {};
+                        const totalAnswers = Object.values(fieldStats).reduce((a, b) => a + b, 0);
+
+                        return (
+                          <Card key={field.id} className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-xs space-y-12">
+                            <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800/80 pb-2">
+                              <h4 className="text-xs font-bold text-stone-900 dark:text-zinc-100 flex items-center gap-2">
+                                <span className="w-20 h-20 rounded-full bg-stone-100 dark:bg-zinc-800 text-stone-600 dark:text-zinc-300 inline-flex items-center justify-center text-[10px] font-bold">
+                                  {idx + 1}
+                                </span>
+                                <span>{field.label}</span>
+                              </h4>
+                              <span className="text-[11px] text-stone-400 font-medium">
+                                {totalAnswers} إجابة
+                              </span>
+                            </div>
+
+                            {field.type === "multiple_choice" || field.type === "rating" ? (
+                              <div className="space-y-2 pt-2">
+                                {Object.entries(fieldStats).map(([opt, count]) => {
+                                  const pct = totalAnswers > 0 ? Math.round((count / totalAnswers) * 100) : 0;
+                                  return (
+                                    <div key={opt} className="space-y-1">
+                                      <div className="flex items-center justify-between text-xs text-stone-700 dark:text-zinc-300">
+                                        <span className="font-semibold">{opt}</span>
+                                        <span className="font-bold text-stone-500 text-[11px]">
+                                          {count} ({pct}%)
+                                        </span>
+                                      </div>
+                                      <div className="w-full bg-stone-100 dark:bg-zinc-800 h-8 rounded-full overflow-hidden">
+                                        <div
+                                          className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
+                                          style={{ width: `${pct}%` }}
+                                        />
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            ) : (
+                              <div className="space-y-2 max-h-48 overflow-y-auto pr-4">
+                                {responses
+                                  .filter((r) => r.responses[field.id])
+                                  .slice(0, 10)
+                                  .map((r, i) => (
+                                    <div
+                                      key={r.id || i}
+                                      className="text-xs bg-stone-50 dark:bg-zinc-800/60 p-2 rounded-xl border border-stone-100 dark:border-zinc-800 text-stone-800 dark:text-zinc-200"
+                                    >
+                                      {r.responses[field.id]}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  /* Individual Examinee View */
+                  responses[individualIndex] && (
+                    <Card className="rounded-3xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-sm space-y-16">
+                      <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-2 text-xs text-stone-400">
+                        <span className="flex items-center gap-2 font-semibold text-stone-600 dark:text-zinc-400">
+                          <UserCheck className="w-16 h-16 text-blue-600" />
+                          <span>استمارة المستجيب #{individualIndex + 1}</span>
+                        </span>
+                        <span className="flex items-center gap-4 text-[11px]">
+                          <Clock className="w-14 h-14" />
+                          {new Date(responses[individualIndex].submitted_at).toLocaleString("ar-EG")}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        {(selectedForm.fields || []).map((f: any) => (
+                          <div
+                            key={f.id}
+                            className="bg-stone-50/80 dark:bg-zinc-800/40 p-2 rounded-2xl border border-stone-100 dark:border-zinc-800/60 space-y-1"
+                          >
+                            <span className="font-bold text-xs text-stone-600 dark:text-zinc-400 block">
+                              {f.label}
+                            </span>
+                            <div className="text-sm font-semibold text-stone-900 dark:text-zinc-100">
+                              {responses[individualIndex].responses[f.id] || (
+                                <span className="text-stone-400 italic font-normal text-xs">لم تتم الإجابة</span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )
+                )}
+              </div>
+            </>
+          ) : (
+            <Card className="rounded-3xl p-6 text-center border-stone-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50">
+              <ClipboardList className="w-8 h-8 text-stone-400 mx-auto mb-2" />
+              <h3 className="text-base font-bold text-stone-700 dark:text-zinc-300">اختر استبياناً لعرض إحصائياته وردوده</h3>
+            </Card>
+          )}
+        </div>
+      </div>
+
+      {/* Modal: Create Form */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-2">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-xl w-full p-4 shadow-2xl border border-stone-200 dark:border-zinc-800 space-y-2 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-bold text-stone-900 dark:text-zinc-100">إنشاء استبيان كنسي جديد</h3>
+
+            <form onSubmit={handleCreateForm} className="space-y-2 text-right">
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-2">
+                  عنوان الاستبيان:
+                </label>
+                <Input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="مثال: استمارة بيانات أسرة إعدادي 2026"
+                  className="rounded-xl text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-2">
+                  وصف الاستبيان أو رسالة للمخدومين (اختياري):
+                </label>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="يرجى ملء البيانات بدقة للتواصل معكم في أنشطة الخدمة..."
+                  className="rounded-xl text-xs resize-none min-h-[60px]"
+                />
+              </div>
+
+              {/* Fields Builder */}
+              <div className="space-y-2 pt-2 border-t border-stone-200 dark:border-zinc-800">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-stone-800 dark:text-zinc-200">الأسئلة والحقول:</span>
+                  <Button
+                    type="button"
+                    onClick={handleAddField}
+                    variant="outline"
+                    className="rounded-xl text-xs flex items-center gap-2"
+                  >
+                    <Plus className="w-10 h-10" />
+                    إضافة سؤال
+                  </Button>
+                </div>
+
+                <div className="space-y-2">
+                  {fields.map((field, idx) => (
+                    <div key={field.id} className="flex gap-2 items-center bg-stone-50 dark:bg-zinc-800 p-2 rounded-xl">
+                      <Input
+                        value={field.label}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setFields((prev) =>
+                            prev.map((f) => (f.id === field.id ? { ...f, label: val } : f))
+                          );
+                        }}
+                        className="rounded-xl text-xs flex-1"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveField(field.id)}
+                        className="text-stone-400 hover:text-rose-600 p-2"
+                      >
+                        <Trash2 className="w-10 h-10" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <Button
+                  type="submit"
+                  disabled={isSubmittingForm || !title.trim()}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold h-40"
+                >
+                  {isSubmittingForm ? "جاري الإنشاء..." : "إنشاء الاستبيان الآن"}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  variant="outline"
+                  className="w-auto rounded-xl text-xs h-40"
+                >
+                  إلغاء
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

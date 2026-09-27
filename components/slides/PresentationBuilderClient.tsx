@@ -284,18 +284,18 @@ export default function PresentationBuilderClient({
   };
 
   return (
-    <div className={`min-h-screen bg-[#fdfbf7] dark:bg-zinc-950 text-[#2d1b18] dark:text-stone-100 flex flex-col font-sans ${isEmbedded ? 'pb-2' : ''}`} dir="rtl">
+    <div className={`min-h-screen bg-[#fdfbf7] dark:bg-zinc-950 text-[#2d1b18] dark:text-stone-100 flex flex-col font-sans ${isEmbedded ? 'pb-8' : ''}`} dir="rtl">
       {/* Top Header Navbar - Hidden when embedded */}
       {!isEmbedded && (
-        <header className="bg-[#5c4538] dark:bg-zinc-900 text-[#e8cfae] px-1 py-0.5 sm:px-1.5 flex items-center justify-between shadow-md sticky top-0 z-30 pt-[calc(env(safe-area-inset-top,0px)+8px)]">
-          <div className="flex items-center gap-0.5">
+        <header className="bg-[#5c4538] dark:bg-zinc-900 text-[#e8cfae] px-4 py-2 sm:px-6 flex items-center justify-between shadow-md sticky top-0 z-30 pt-[calc(env(safe-area-inset-top,0px)+8px)]">
+          <div className="flex items-center gap-2">
             <BackButton
-              className="p-0.5 hover:bg-white/10 rounded-xl transition-colors text-white flex items-center justify-center"
+              className="p-2 hover:bg-white/10 rounded-xl transition-colors text-white flex items-center justify-center"
               iconSize={20}
               title={t('back') || 'الرجوع للخلف'}
             />
             <div>
-              <div className="flex items-center gap-0.5">
+              <div className="flex items-center gap-2">
                 <Presentation className="text-amber-400" size={20} />
                 <h1 className="text-base sm:text-lg font-black">{t('title')}</h1>
               </div>
@@ -305,10 +305,10 @@ export default function PresentationBuilderClient({
             </div>
           </div>
 
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setIsAiModalOpen(true)}
-              className="flex items-center gap-0.5 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 font-black px-0.5 py-0.5 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 font-black px-2 py-2 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <Sparkles size={16} />
               <span>{t('generateAi')}</span>
@@ -316,7 +316,7 @@ export default function PresentationBuilderClient({
 
             <button
               onClick={() => setIsPlaying(true)}
-              className="flex items-center gap-0.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-0.5 py-0.5 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-2 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <Play size={16} />
               <span>{t('startPresentation')}</span>
@@ -326,9 +326,9 @@ export default function PresentationBuilderClient({
       )}
 
       {/* Main Workspace Area */}
-      <div className="flex-1 max-w-7xl w-full mx-auto p-1 sm:p-1.5 flex flex-col gap-0.5">
+      <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-2">
         {/* Title, Global Theme & Actions Bar */}
-        <div className="bg-white dark:bg-zinc-900 rounded-3xl p-0.5 sm:p-1.5 shadow-sm border border-stone-200/80 dark:border-zinc-800 flex flex-col md:flex-row gap-0.5 items-center justify-between">
+        <div className="bg-white dark:bg-zinc-900 rounded-3xl p-2 sm:p-6 shadow-sm border border-stone-200/80 dark:border-zinc-800 flex flex-col md:flex-row gap-2 items-center justify-between">
           <input
             type="text"
             value={title}
@@ -337,12 +337,12 @@ export default function PresentationBuilderClient({
               saveToLocal(slides, e.target.value, globalTheme);
             }}
             placeholder={t('titlePlaceholder')}
-            className="w-full md:w-1/2 text-lg sm:text-xl font-black bg-transparent border-b-2 border-stone-200 dark:border-zinc-700 focus:border-amber-600 outline-none pb-1 text-[#2d1b18] dark:text-stone-100"
+            className="w-full md:w-1/2 text-lg sm:text-xl font-black bg-transparent border-b-2 border-stone-200 dark:border-zinc-700 focus:border-amber-600 outline-none pb-4 text-[#2d1b18] dark:text-stone-100"
           />
 
-          <div className="flex items-center gap-0.5 w-full md:w-auto justify-end flex-wrap">
+          <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
             {/* Global Theme Selector */}
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-stone-500 dark:text-stone-400">{t('globalTheme')}</span>
               <select
                 value={globalTheme}
@@ -351,7 +351,7 @@ export default function PresentationBuilderClient({
                   setGlobalTheme(newTheme);
                   saveToLocal(slides, title, newTheme);
                 }}
-                className="text-xs font-bold bg-stone-100 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl px-0.5 py-0.5 outline-none"
+                className="text-xs font-bold bg-stone-100 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl px-2 py-2 outline-none"
               >
                 {Object.entries(SLIDE_THEMES).map(([key, item]) => (
                   <option key={key} value={key}>
@@ -365,7 +365,7 @@ export default function PresentationBuilderClient({
             <button
               onClick={handleExportPPTX}
               disabled={isExporting}
-              className="flex items-center gap-0.5 px-0.5 py-0.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 px-2 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               {isExporting ? <Loader2 size={16} className="animate-spin" /> : <Presentation size={16} />}
               <span>{t('exportPptx')}</span>
@@ -374,24 +374,24 @@ export default function PresentationBuilderClient({
         </div>
 
         {/* Slides Thumbnails Sidebar + Active Slide Editor Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0.5 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 items-start">
           {/* Thumbnails Navigator (Left/Right depending on RTL) */}
-          <div className="lg:col-span-4 bg-white dark:bg-zinc-900 rounded-3xl p-0.5 shadow-sm border border-stone-200/80 dark:border-zinc-800 flex flex-col gap-0.5 max-h-[calc(100vh-250px)] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-0.5">
-              <div className="flex items-center gap-0.5 text-xs font-black text-stone-700 dark:text-stone-300">
+          <div className="lg:col-span-4 bg-white dark:bg-zinc-900 rounded-3xl p-2 shadow-sm border border-stone-200/80 dark:border-zinc-800 flex flex-col gap-2 max-h-[calc(100vh-250px)] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-2">
+              <div className="flex items-center gap-2 text-xs font-black text-stone-700 dark:text-stone-300">
                 <Layers size={16} className="text-amber-600" />
                 <span>{t('slidesCount', { count: slides.length })}</span>
               </div>
               <button
                 onClick={handleAddSlide}
-                className="flex items-center gap-0.25 text-xs font-bold px-0.5 py-0.25 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 rounded-xl transition cursor-pointer"
+                className="flex items-center gap-1 text-xs font-bold px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 rounded-xl transition cursor-pointer"
               >
                 <Plus size={14} />
                 <span>{t('addSlide')}</span>
               </button>
             </div>
 
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col gap-2">
               {slides.map((s, idx) => {
                 const isCurrent = idx === activeSlideIndex;
                 const slideThemeKey = s.backgroundTheme || globalTheme;
@@ -402,7 +402,7 @@ export default function PresentationBuilderClient({
                     key={s.id}
                     onClick={() => setActiveSlideIndex(idx)}
                     className={cn(
-                      "group p-0.5 rounded-2xl border transition-all cursor-pointer flex flex-col gap-0.5 select-none",
+                      "group p-2 rounded-2xl border transition-all cursor-pointer flex flex-col gap-2 select-none",
                       isCurrent
                         ? "border-amber-500 ring-2 ring-amber-500/30 bg-amber-50/50 dark:bg-zinc-800"
                         : "border-stone-200 dark:border-zinc-800 hover:border-stone-300 bg-stone-50 dark:bg-zinc-900/60"
@@ -412,14 +412,14 @@ export default function PresentationBuilderClient({
                       <span className="font-extrabold text-stone-600 dark:text-stone-300">
                         {idx + 1}. {s.title || t('untitledSlide')}
                       </span>
-                      <div className="flex items-center gap-0.25 opacity-80 group-hover:opacity-100">
+                      <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleReorder(idx, idx - 1);
                           }}
                           disabled={idx === 0}
-                          className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md disabled:opacity-30"
+                          className="p-1 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md disabled:opacity-30"
                           title="تحريك لأعلى"
                         >
                           ▲
@@ -430,7 +430,7 @@ export default function PresentationBuilderClient({
                             handleReorder(idx, idx + 1);
                           }}
                           disabled={idx === slides.length - 1}
-                          className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md disabled:opacity-30"
+                          className="p-1 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md disabled:opacity-30"
                           title="تحريك لأسفل"
                         >
                           ▼
@@ -440,7 +440,7 @@ export default function PresentationBuilderClient({
                             e.stopPropagation();
                             handleRemoveSlide(idx);
                           }}
-                          className="p-0.25 hover:bg-red-100 dark:hover:bg-red-950 text-red-600 rounded-md"
+                          className="p-1 hover:bg-red-100 dark:hover:bg-red-950 text-red-600 rounded-md"
                           title="حذف"
                         >
                           <Trash2 size={13} />
@@ -451,7 +451,7 @@ export default function PresentationBuilderClient({
                     {/* Mini Preview Box */}
                     <div
                       className={cn(
-                        "w-full h-4 rounded-xl p-0.5 flex flex-col justify-center border text-[10px] overflow-hidden leading-tight",
+                        "w-full h-16 rounded-xl p-2 flex flex-col justify-center border text-[10px] overflow-hidden leading-tight",
                         themeConf.bgClass
                       )}
                     >
@@ -473,7 +473,7 @@ export default function PresentationBuilderClient({
           </div>
 
           {/* Active Slide Editor Canvas */}
-          <div className="lg:col-span-8 bg-white dark:bg-zinc-900 rounded-3xl p-1 sm:p-1.5 shadow-sm border border-stone-200/80 dark:border-zinc-800">
+          <div className="lg:col-span-8 bg-white dark:bg-zinc-900 rounded-3xl p-4 sm:p-6 shadow-sm border border-stone-200/80 dark:border-zinc-800">
             {slides[activeSlideIndex] && (
               <SlideEditor
                 slide={slides[activeSlideIndex]}
@@ -498,11 +498,11 @@ export default function PresentationBuilderClient({
 
       {/* AI Presentation Generator Modal */}
       {isAiModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-1">
-          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-1.5 max-w-lg w-full shadow-2xl border border-amber-200/50 dark:border-zinc-800 space-y-1 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-stone-100 dark:border-zinc-800 pb-3">
-              <div className="flex items-center gap-0.5">
-                <div className="p-0.5 bg-amber-500/10 text-amber-600 rounded-xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-lg w-full shadow-2xl border border-amber-200/50 dark:border-zinc-800 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-stone-100 dark:border-zinc-800 pb-12">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl">
                   <Sparkles size={20} />
                 </div>
                 <h3 className="text-lg font-black text-stone-900 dark:text-stone-100">
@@ -511,15 +511,15 @@ export default function PresentationBuilderClient({
               </div>
               <button
                 onClick={() => setIsAiModalOpen(false)}
-                className="text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 p-0.5"
+                className="text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 p-2"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-0.5">
+            <div className="space-y-2">
               <div>
-                <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-0.5">
+                <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-2">
                   موضوع الدرس أو العرض
                 </label>
                 <input
@@ -527,19 +527,19 @@ export default function PresentationBuilderClient({
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="مثال: فضيلة التواضع، رحلة الفلك وطوفان نوح، سر الإفخارستيا..."
-                  className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-0.5 text-sm font-bold outline-none focus:border-amber-600"
+                  className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none focus:border-amber-600"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-0.5">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-0.5">
+                  <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-2">
                     الفئة المستهدفة
                   </label>
                   <select
                     value={audience}
                     onChange={(e) => setAudience(e.target.value)}
-                    className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-0.5 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
                   >
                     <option value="حضانة وابتدائي">حضانة +1و2ابتدائي</option>
                     <option value="3و4و5و6 ابتدائي">3و4و5و6 ابتدائي</option>
@@ -552,13 +552,13 @@ export default function PresentationBuilderClient({
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                  <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-4">
                     عدد الشرائح
                   </label>
                   <select
                     value={slidesCount}
                     onChange={(e) => setSlidesCount(Number(e.target.value))}
-                    className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-0.5 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
                   >
                     <option value={5}>5 شرائح (موجز سريع)</option>
                     <option value={6}>6 شرائح (نموذجي لدرس)</option>
@@ -570,15 +570,15 @@ export default function PresentationBuilderClient({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-0.5">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                  <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-4">
                     أسلوب الشرح
                   </label>
                   <select
                     value={style}
                     onChange={(e) => setStyle(e.target.value)}
-                    className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-0.5 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
                   >
                     <option value="تفاعلي وروحي">تفاعلي وروحي</option>
                     <option value="قصصي ومبسط">قصصي ومبسط</option>
@@ -588,7 +588,7 @@ export default function PresentationBuilderClient({
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                  <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-4">
                     الهدف المركزي (اختياري)
                   </label>
                   <input
@@ -596,13 +596,13 @@ export default function PresentationBuilderClient({
                     value={mainGoal}
                     onChange={(e) => setMainGoal(e.target.value)}
                     placeholder="مثال: تشجيع الشباب على الصلاة اليومية"
-                    className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-0.5 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-2 text-sm font-bold outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-1">
+                <label className="text-xs font-bold text-stone-600 dark:text-stone-300 block mb-4">
                   ملاحظات أو مراجع تريد التركيز عليها
                 </label>
                 <textarea
@@ -610,22 +610,22 @@ export default function PresentationBuilderClient({
                   onChange={(e) => setCustomNotes(e.target.value)}
                   placeholder="مثال: ركز على قصة القديس الأنبا أنطونيوس، وضع آية من رسالة أفسس..."
                   rows={2}
-                  className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-0.5 text-xs font-medium outline-none resize-none"
+                  className="w-full bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-xl p-2 text-xs font-medium outline-none resize-none"
                 />
               </div>
             </div>
 
-            <div className="flex gap-0.5 justify-end pt-0.5 border-t border-stone-100 dark:border-zinc-800">
+            <div className="flex gap-2 justify-end pt-2 border-t border-stone-100 dark:border-zinc-800">
               <button
                 onClick={() => setIsAiModalOpen(false)}
-                className="px-1 py-0.5 text-stone-600 dark:text-stone-300 font-bold hover:bg-stone-100 dark:hover:bg-zinc-800 rounded-xl text-sm"
+                className="px-4 py-2 text-stone-600 dark:text-stone-300 font-bold hover:bg-stone-100 dark:hover:bg-zinc-800 rounded-xl text-sm"
               >
                 إلغاء
               </button>
               <button
                 onClick={handleGenerateWithAI}
                 disabled={isGenerating}
-                className="flex items-center gap-0.5 px-1 py-0.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer"
               >
                 {isGenerating ? (
                   <>

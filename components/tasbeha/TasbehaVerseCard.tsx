@@ -144,14 +144,14 @@ export default function TasbehaVerseCard({
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      className={`relative rounded-2xl border transition-all duration-300 overflow-hidden ${roleInfo.bg} ${roleInfo.border} p-1 md:p-1.5 shadow-lg backdrop-blur-xs`}
+      className={`relative rounded-2xl border transition-all duration-300 overflow-hidden ${roleInfo.bg} ${roleInfo.border} p-4 md:p-6 shadow-lg backdrop-blur-xs`}
     >
       {/* Header with Role Badge, Tone Tag, & Section Title */}
-      <div className="flex flex-wrap items-center justify-between gap-0.5 pb-0.5 mb-0.5 border-b border-white/5 cursor-pointer select-none" onClick={() => setIsOpen(!isOpen)}>
-        <div className="flex items-center gap-0.5 flex-wrap">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-2 border-b border-white/5 cursor-pointer select-none" onClick={() => setIsOpen(!isOpen)}>
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             type="button"
-            className="p-0.5 text-neutral-400 hover:text-blue-400 transition"
+            className="p-2 text-neutral-400 hover:text-blue-400 transition"
             aria-label="تبديل العرض"
           >
             <span className={`inline-block transform transition-transform duration-200 text-xs ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
@@ -160,14 +160,14 @@ export default function TasbehaVerseCard({
           </button>
 
           <span
-            className={`inline-flex items-center gap-0.5 px-0.5 py-0.5 rounded-full text-xs md:text-sm font-bold border ${roleInfo.bg} ${roleInfo.text} ${roleInfo.border}`}
+            className={`inline-flex items-center gap-2 px-2 py-2 rounded-full text-xs md:text-sm font-bold border ${roleInfo.bg} ${roleInfo.text} ${roleInfo.border}`}
           >
             <RoleIcon className="text-xs" />
             <span>{roleInfo.label}</span>
           </span>
 
           {section.tone && section.tone !== 'both' && (
-            <span className="inline-flex items-center gap-0.5 px-0.5 py-0.5 rounded-full text-[11px] font-bold bg-neutral-800 border border-neutral-700 text-amber-300">
+            <span className="inline-flex items-center gap-2 px-2 py-2 rounded-full text-[11px] font-bold bg-neutral-800 border border-neutral-700 text-amber-300">
               {section.tone === 'adam' ? <FaSun className="text-[10px]" /> : <FaMoon className="text-[10px]" />}
               <span>{section.tone === 'adam' ? 'آدام' : 'واطس'}</span>
             </span>
@@ -176,28 +176,28 @@ export default function TasbehaVerseCard({
           <h4 className="font-bold text-white text-base md:text-lg">
             {section.title.arabic}
             {section.title.coptic && enabledLanguages.coptic && (
-              <span className="text-neutral-400 font-normal mr-0.5 text-sm font-coptic">
+              <span className="text-neutral-400 font-normal mr-2 text-sm font-coptic">
                 ({section.title.coptic})
               </span>
             )}
           </h4>
-          <span className="text-xs text-neutral-400 bg-neutral-800/60 px-0.5 py-0.5 rounded-full">
+          <span className="text-xs text-neutral-400 bg-neutral-800/60 px-2 py-2 rounded-full">
             {section.verses.length} ربع
           </span>
         </div>
 
         {/* Quick Toolbar */}
-        <div className="flex items-center gap-0.5 opacity-80 hover:opacity-100 transition" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-2 opacity-80 hover:opacity-100 transition" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={copySectionText}
-            className="p-0.5 text-neutral-400 hover:text-blue-400 hover:bg-white/5 rounded-lg transition text-xs"
+            className="p-2 text-neutral-400 hover:text-blue-400 hover:bg-white/5 rounded-lg transition text-xs"
             title="نسخ النص"
           >
             {copied ? <FaCheck className="text-emerald-400" /> : <FaCopy />}
           </button>
           <button
             onClick={shareSection}
-            className="p-0.5 text-neutral-400 hover:text-blue-400 hover:bg-white/5 rounded-lg transition text-xs"
+            className="p-2 text-neutral-400 hover:text-blue-400 hover:bg-white/5 rounded-lg transition text-xs"
             title="مشاركة"
           >
             <FaShareAlt />
@@ -215,14 +215,14 @@ export default function TasbehaVerseCard({
 
       {/* Rubric / Instructions if present */}
       {section.rubric?.arabic && (
-        <div className="mb-0.5 px-0.5 py-0.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs md:text-sm leading-relaxed">
-          <span className="font-bold ml-0.5">📌 توجيه طقسي:</span>
+        <div className="mb-2 px-2 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs md:text-sm leading-relaxed">
+          <span className="font-bold ml-2">📌 توجيه طقسي:</span>
           {section.rubric.arabic}
         </div>
       )}
 
       {/* Verses Container */}
-      <div className="space-y-0.5">
+      <div className="space-y-2">
         {section.verses.map((verse, vIdx) => {
           const isGrid = layoutMode === 'columns' && activeLangCount > 1;
 
@@ -230,12 +230,12 @@ export default function TasbehaVerseCard({
             <div
               key={vIdx}
               className={`rounded-xl p-0.5 md:p-1 bg-black/20 border border-white/5 space-y-0.5 ${
-                isGrid ? `grid gap-0.5 md:grid-cols-${activeLangCount}` : 'flex flex-col'
+                isGrid ? `grid gap-2 md:grid-cols-${activeLangCount}` : 'flex flex-col'
               }`}
             >
               {/* 1. Arabic View */}
               {enabledLanguages.arabic && verse.arabic && (
-                <div className="space-y-0.25">
+                <div className="space-y-1">
                   <span className="text-[11px] font-bold text-blue-400/80 uppercase tracking-wider block">
                     العربية
                   </span>
@@ -249,7 +249,7 @@ export default function TasbehaVerseCard({
 
               {/* 2. Arabized Coptic View (قبطي معرب) */}
               {enabledLanguages.coptic_arabic && verse.coptic_arabic && (
-                <div className="space-y-0.25 bg-amber-500/5 p-0.5 rounded-lg border border-amber-500/10">
+                <div className="space-y-1 bg-amber-500/5 p-2 rounded-lg border border-amber-500/10">
                   <span className="text-[11px] font-bold text-amber-300 uppercase tracking-wider block">
                     قبطي معرب (نطق بالعربي)
                   </span>
@@ -263,7 +263,7 @@ export default function TasbehaVerseCard({
 
               {/* 3. Coptic View (قبطي أصيل) */}
               {enabledLanguages.coptic && verse.coptic && (
-                <div className="space-y-0.25 bg-blue-500/5 p-0.5 rounded-lg border border-blue-500/10" dir="ltr">
+                <div className="space-y-1 bg-blue-500/5 p-2 rounded-lg border border-blue-500/10" dir="ltr">
                   <span className="text-[11px] font-bold text-blue-400 uppercase tracking-wider block text-left">
                     ⲘⲉⲧⲢⲉⲙⲛ̀ⲭⲏⲙⲓ (Coptic)
                   </span>
@@ -277,7 +277,7 @@ export default function TasbehaVerseCard({
 
               {/* 4. English View */}
               {enabledLanguages.english && verse.english && (
-                <div className="space-y-0.25" dir="ltr">
+                <div className="space-y-1" dir="ltr">
                   <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block text-left">
                     English
                   </span>
@@ -291,10 +291,10 @@ export default function TasbehaVerseCard({
 
               {/* Direct Hymn Audio & Hazat Link Button */}
               {verse.hymnRef && (
-                <div className="pt-0.5 flex items-center justify-end">
+                <div className="pt-2 flex items-center justify-end">
                   <button
                     onClick={() => onPlayHymn?.(verse.hymnRef!)}
-                    className="inline-flex items-center gap-0.5 px-0.5 py-0.5 rounded-xl bg-linear-to-r from-blue-500/20 to-indigo-600/30 hover:from-blue-500/30 hover:to-indigo-600/40 text-blue-300 border border-blue-500/40 text-xs md:text-sm font-bold shadow-md hover:scale-102 transition"
+                    className="inline-flex items-center gap-2 px-2 py-2 rounded-xl bg-linear-to-r from-blue-500/20 to-indigo-600/30 hover:from-blue-500/30 hover:to-indigo-600/40 text-blue-300 border border-blue-500/40 text-xs md:text-sm font-bold shadow-md hover:scale-102 transition"
                   >
                     <FaMusic className="text-blue-400" />
                     <span>تسجيل اللحن ومذكرة الهزات: {verse.hymnRef.name}</span>
@@ -304,7 +304,7 @@ export default function TasbehaVerseCard({
 
               {/* أزرار الانتقال والروابط التشعبية الخاصة بهذا الربع مباشرة من تحت */}
               {verse.buttons && verse.buttons.length > 0 && (
-                <div className="mt-0.5 pt-0.5 border-t border-white/5 flex flex-wrap items-center gap-0.5 bg-amber-950/20 p-0.5 rounded-xl border border-amber-500/20">
+                <div className="mt-2 pt-2 border-t border-white/5 flex flex-wrap items-center gap-2 bg-amber-950/20 p-2 rounded-xl border border-amber-500/20">
                   <span className="text-[11px] font-bold text-amber-400">🔗 روابط تشعبية تابعة لهذا الربع:</span>
                   {verse.buttons.map((btn, bIdx) => (
                     <button
@@ -318,7 +318,7 @@ export default function TasbehaVerseCard({
                           toast.info(`الانتقال إلى: ${btn.label}`);
                         }
                       }}
-                      className="px-0.5 py-0.5 rounded-lg text-xs font-bold bg-amber-600/30 hover:bg-amber-600 text-amber-200 hover:text-white border border-amber-500/40 transition flex items-center gap-0.5 shadow-xs"
+                      className="px-2 py-2 rounded-lg text-xs font-bold bg-amber-600/30 hover:bg-amber-600 text-amber-200 hover:text-white border border-amber-500/40 transition flex items-center gap-2 shadow-xs"
                     >
                       <span>{btn.label}</span>
                     </button>

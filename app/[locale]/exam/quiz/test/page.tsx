@@ -99,19 +99,19 @@ export default function FullTestPage() {
   };
 
   return (
-    <div className="p-1 font-sans bg-gray-50 min-h-screen" dir="rtl">
+    <div className="p-4 font-sans bg-gray-50 min-h-screen" dir="rtl">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-1 text-blue-900">🧪 غرفة عمليات Supabase</h1>
-        <p className="text-gray-600 mb-1">هذه الصفحة تختبر الدورة الكاملة لإنشاء مسابقة، دخول فريق، والإجابة.</p>
+        <h1 className="text-3xl font-bold mb-4 text-blue-900">🧪 غرفة عمليات Supabase</h1>
+        <p className="text-gray-600 mb-4">هذه الصفحة تختبر الدورة الكاملة لإنشاء مسابقة، دخول فريق، والإجابة.</p>
 
         <button
           onClick={runFullTest}
-          className="p-1 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all mb-1 flex items-center gap-1"
+          className="p-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all mb-4 flex items-center gap-4"
         >
           ▶️ تشغيل الاختبار الشامل (Run All)
         </button>
 
-        <div className="bg-gray-900 text-green-400 p-1 rounded-2xl h-[700px] overflow-y-auto font-mono text-sm shadow-inner border-4 border-gray-800">
+        <div className="bg-gray-900 text-green-400 p-4 rounded-2xl h-[700px] overflow-y-auto font-mono text-sm shadow-inner border-4 border-gray-800">
           {log.length === 0 && <span className="text-gray-500 animate-pulse">في انتظار بدء الاختبار...</span>}
           {log.map((l, i) => (
             <div key={i} className={`mb-1 ${l.includes('❌') ? 'text-red-400' : l.includes('✅') ? 'text-green-400' : l.includes('📡') ? 'text-purple-400' : 'text-blue-300'}`}>

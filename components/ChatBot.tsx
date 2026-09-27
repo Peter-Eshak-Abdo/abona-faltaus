@@ -21,11 +21,11 @@ const TypingIndicator = () => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
-    className="flex gap-1 p-1 bg-[#f0eded] rounded-full w-fit shadow-sm border border-[#dcc0c1]/20 mt-1"
+    className="flex gap-4 p-4 bg-[#f0eded] rounded-full w-fit shadow-sm border border-[#dcc0c1]/20 mt-4"
   >
-    <motion.div className="w-2 h-2 bg-[#4a0012]/40 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} />
-    <motion.div className="w-2 h-2 bg-[#4a0012]/40 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} />
-    <motion.div className="w-2 h-2 bg-[#4a0012]/40 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} />
+    <motion.div className="w-8 h-8 bg-[#4a0012]/40 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} />
+    <motion.div className="w-8 h-8 bg-[#4a0012]/40 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} />
+    <motion.div className="w-8 h-8 bg-[#4a0012]/40 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} />
   </motion.div>
 );
 
@@ -264,16 +264,16 @@ export default function ChatBot() {
 
       {/* --- Sidebar المحادثات (Sheet) --- */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right" className="w-20 p-0 flex flex-col">
-          <SheetHeader className="p-1 border-b bg-amber-50">
-            <SheetTitle className="text-right text-amber-900 font-bold pb-1">المحادثات السابقة</SheetTitle>
-            <Button onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }} className="w-full mt-1 border-amber-200 text-amber-800 float-end">
-              <Plus size={5} className="ml-1" /> محادثة جديدة
+        <SheetContent side="right" className="w-64 p-0 flex flex-col">
+          <SheetHeader className="p-3 border-b bg-amber-50">
+            <SheetTitle className="text-right text-amber-900 font-bold pb-4">المحادثات السابقة</SheetTitle>
+            <Button onClick={() => { setMessages([]); setConvId(null); setSheetOpen(false); }} className="w-full mt-4 border-amber-200 text-amber-800 float-end">
+              <Plus size={5} className="ml-4" /> محادثة جديدة
             </Button>
           </SheetHeader>
           <ScrollArea className="flex-1">
             {convs.map((c) => (
-              <div key={c.id} onClick={() => handleSelect(c.id)} className={cn("p-1 border-b cursor-pointer text-right text-sm hover:bg-gray-50 transition-colors", convId === c.id && "bg-amber-100")}>
+              <div key={c.id} onClick={() => handleSelect(c.id)} className={cn("p-4 border-b cursor-pointer text-right text-sm hover:bg-gray-50 transition-colors", convId === c.id && "bg-amber-100")}>
                 {c.title}
               </div>
             ))}
@@ -282,8 +282,8 @@ export default function ChatBot() {
       </Sheet>
 
       {/* --- Header المحادثة --- */}
-      <div className="flex-none border-b border-[#dcc0c1]/40 bg-[#fbf9f6]/95 dark:bg-zinc-950/90 backdrop-blur-md px-0.5 sm:px-1 py-0.5 flex items-center justify-between z-10 shadow-xs gap-0.5">
-        <div className="flex items-center gap-0.5">
+      <div className="flex-none border-b border-[#dcc0c1]/40 bg-[#fbf9f6]/95 dark:bg-zinc-950/90 backdrop-blur-md px-2 sm:px-4 py-2 flex items-center justify-between z-10 shadow-xs gap-2">
+        <div className="flex items-center gap-2">
           <BackButton iconSize={18} title="الرجوع للصفحة السابقة" />
           <PersonaSelector
             selectedBotId={selectedBotId}
@@ -291,10 +291,10 @@ export default function ChatBot() {
           />
         </div>
 
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-2">
           <Link
             href="/icon-generator"
-            className="flex items-center gap-0.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/30 px-0.5 py-0.5 rounded-xl text-xs font-bold transition-all shadow-2xs"
+            className="flex items-center gap-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/30 px-2 py-2 rounded-xl text-xs font-bold transition-all shadow-2xs"
             title="توليد أيقونات وصور بالذكاء الاصطناعي"
           >
             <Sparkles size={14} className="text-amber-600 dark:text-amber-400" />
@@ -302,7 +302,7 @@ export default function ChatBot() {
           </Link>
           <button
             onClick={() => setSheetOpen(true)}
-            className="p-0.5 flex items-center justify-center rounded-xl text-[#564243] dark:text-zinc-400 hover:bg-stone-200/60 dark:hover:bg-zinc-800 transition-colors"
+            className="p-2 flex items-center justify-center rounded-xl text-[#564243] dark:text-zinc-400 hover:bg-stone-200/60 dark:hover:bg-zinc-800 transition-colors"
             title="سجل المحادثات"
           >
             <PanelRight size={18} />
@@ -311,18 +311,18 @@ export default function ChatBot() {
       </div>
 
       {/* --- منطقة الرسائل --- */}
-      <main className="flex-1 overflow-y-auto px-1 sm:px-1.5 md:px-2 py-1 flex flex-col gap-1 relative z-10" id="chat-messages">
+      <main className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-8 py-4 flex flex-col gap-4 relative z-10" id="chat-messages">
         {/* خلفية مزخرفة شفافة */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-[-1] opacity-30 mix-blend-multiply">
           <div className="absolute -top-10 -right-10 w-64 h-64 bg-amber-200/30 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/3 -left-5 w-48 h-48 bg-[#4a0012]/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/3 -left-10 w-48 h-48 bg-[#4a0012]/10 rounded-full blur-3xl"></div>
         </div>
 
         <AnimatePresence>
           {!user && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="my-0.5 mx-auto p-1 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-2xl text-center max-w-md shadow-sm z-20">
-              <p className="text-amber-900 dark:text-amber-200 font-bold text-sm mb-0.5">برجاء تسجيل الدخول أولاً لاستخدام شات أبونا فلتاؤس والمساعدين المتخصصين</p>
-              <Link href="/auth/signin" className="inline-block bg-[#4a0012] hover:bg-[#6b1124] text-white font-bold px-1 py-0.5 rounded-xl text-xs transition-all shadow-md">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="my-2 mx-auto p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-2xl text-center max-w-md shadow-sm z-20">
+              <p className="text-amber-900 dark:text-amber-200 font-bold text-sm mb-2">برجاء تسجيل الدخول أولاً لاستخدام شات أبونا فلتاؤس والمساعدين المتخصصين</p>
+              <Link href="/auth/signin" className="inline-block bg-[#4a0012] hover:bg-[#6b1124] text-white font-bold px-4 py-2 rounded-xl text-xs transition-all shadow-md">
                 تسجيل الدخول
               </Link>
             </motion.div>
@@ -330,17 +330,17 @@ export default function ChatBot() {
 
           {messages.length === 0 && user && (
             // رسالة ترحيب أولية مخصصة للشخصية المختارة
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center p-1.5 max-w-xl mx-auto text-center mt-1">
-              <div className={cn("p-3 rounded-2xl mb-3 shadow-md", currentPersona.badgeBg)}>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center p-6 max-w-xl mx-auto text-center mt-4">
+              <div className={cn("p-12 rounded-2xl mb-12 shadow-md", currentPersona.badgeBg)}>
                 <Sparkles size={28} className="text-amber-800 dark:text-amber-200" />
               </div>
-              <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-0.5">
+              <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2">
                 {currentPersona.name}
               </h2>
-              <p className="text-xs font-semibold text-amber-800 dark:text-amber-300 mb-0.5">
+              <p className="text-xs font-semibold text-amber-800 dark:text-amber-300 mb-2">
                 {currentPersona.title}
               </p>
-              <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed max-w-md mb-0.5">
+              <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed max-w-md mb-2">
                 {currentPersona.description}
               </p>
             </motion.div>
@@ -350,17 +350,17 @@ export default function ChatBot() {
             <motion.div
               key={m.id}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} layout
-              className={cn("flex items-end gap-0.5 w-full", m.role === "user" ? "self-end justify-end max-w-2xl" : "self-start max-w-3xl")}
+              className={cn("flex items-end gap-2 w-full", m.role === "user" ? "self-end justify-end max-w-2xl" : "self-start max-w-3xl")}
             >
               {/* صورة الـ AI */}
               {m.role !== "user" && (
-                <div className="w-2 h-2 rounded-full bg-amber-100/80 dark:bg-stone-800 border border-amber-300/60 dark:border-stone-700 hidden sm:flex items-center justify-center shrink-0 shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-amber-100/80 dark:bg-stone-800 border border-amber-300/60 dark:border-stone-700 hidden sm:flex items-center justify-center shrink-0 shadow-2xs">
                   <span className="text-sm">📿</span>
                 </div>
               )}
 
               <div className={cn(
-                "p-0.5 sm:p-1 shadow-2xs relative",
+                "p-2 sm:p-4 shadow-2xs relative",
                 m.role === "user"
                   ? "bg-[#4a0012] text-white rounded-2xl rounded-tr-xs shadow-sm"
                   : "bg-white dark:bg-zinc-900 text-stone-900 dark:text-zinc-100 rounded-2xl rounded-tl-xs border border-amber-900/10 dark:border-zinc-800"
@@ -368,7 +368,7 @@ export default function ChatBot() {
                 {m.role === "user" ? (
                   <p className="text-[15px] leading-relaxed font-medium">{m.content}</p>
                 ) : (
-                  <div className="prose prose-sm md:prose-base prose-p:leading-relaxed max-w-none prose-strong:text-[#4a0012] dark:prose-strong:text-amber-400 prose-blockquote:border-r-4 prose-blockquote:border-amber-400 prose-blockquote:bg-amber-50/50 dark:prose-blockquote:bg-amber-950/20 prose-blockquote:p-2 prose-blockquote:rounded-l-lg" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />
+                  <div className="prose prose-sm md:prose-base prose-p:leading-relaxed max-w-none prose-strong:text-[#4a0012] dark:prose-strong:text-amber-400 prose-blockquote:border-r-4 prose-blockquote:border-amber-400 prose-blockquote:bg-amber-50/50 dark:prose-blockquote:bg-amber-950/20 prose-blockquote:p-8 prose-blockquote:rounded-l-lg" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(m.content) }} />
                 )}
               </div>
             </motion.div>
@@ -383,14 +383,14 @@ export default function ChatBot() {
       </main>
 
       {/* --- Quick Suggestions (Chips) --- */}
-      <div className="flex-none px-0.5 py-0.5 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-[#dcc0c1]/20 bg-linear-to-t from-[#fcf9f8] dark:from-zinc-950 to-transparent z-10">
-        <div className="flex gap-0.5 max-w-4xl mx-auto">
+      <div className="flex-none px-2 py-2 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-[#dcc0c1]/20 bg-linear-to-t from-[#fcf9f8] dark:from-zinc-950 to-transparent z-10">
+        <div className="flex gap-2 max-w-4xl mx-auto">
           {currentPersona.defaultSuggestions.map((item, idx) => (
             <button
               key={idx}
               onClick={() => handleSuggestionClick(item)}
               className={cn(
-                "inline-flex items-center gap-0.5 px-0.5 py-0.5 transition-all duration-300 rounded-full border text-xs font-semibold shadow-2xs shrink-0",
+                "inline-flex items-center gap-2 px-2 py-2 transition-all duration-300 rounded-full border text-xs font-semibold shadow-2xs shrink-0",
                 !user
                   ? "bg-gray-300 dark:bg-gray-800 text-gray-500 border-gray-400 cursor-not-allowed grayscale opacity-75"
                   : "bg-white/90 dark:bg-zinc-800/90 hover:bg-amber-50 dark:hover:bg-zinc-700 text-[#564243] dark:text-zinc-200 hover:text-[#4a0012] border-amber-900/15 dark:border-zinc-700"
@@ -404,7 +404,7 @@ export default function ChatBot() {
       </div>
 
       {/* --- منطقة الإدخال (Input Area) --- */}
-      <footer className="flex-none bg-[#f6f3f2] dark:bg-zinc-950 px-0.5 sm:px-1 py-0.5 border-t border-[#dcc0c1]/30 dark:border-zinc-800 shadow-[0_-4px_20px_rgba(31,31,31,0.02)] z-20 pb-safe">
+      <footer className="flex-none bg-[#f6f3f2] dark:bg-zinc-950 px-2 sm:px-4 py-2 border-t border-[#dcc0c1]/30 dark:border-zinc-800 shadow-[0_-4px_20px_rgba(31,31,31,0.02)] z-20 pb-safe">
         <form onSubmit={onFormSubmit} className="max-w-4xl mx-auto">
           <div
             onClickCapture={(e) => {
@@ -413,7 +413,7 @@ export default function ChatBot() {
               }
             }}
             className={cn(
-              "relative flex items-end gap-0.5 rounded-2xl border transition-all p-1 sm:p-1.5",
+              "relative flex items-end gap-2 rounded-2xl border transition-all p-4 sm:p-6",
               !user
                 ? "bg-gray-300/60 dark:bg-zinc-800/80 border-gray-400/60 cursor-not-allowed opacity-75 grayscale"
                 : "bg-white dark:bg-zinc-900 border-amber-900/20 dark:border-zinc-700 shadow-xs focus-within:border-[#4a0012]/60 focus-within:ring-2 focus-within:ring-[#4a0012]/10"
@@ -423,7 +423,7 @@ export default function ChatBot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={user ? "اكتب رسالتك أو سؤالك هنا..." : "برجاء تسجيل الدخول أولاً"}
-              className="flex-1 resize-none bg-transparent outline-none pe-2 text-[15px] leading-relaxed overflow-y-auto text-stone-900 dark:text-zinc-100 placeholder:text-stone-400"
+              className="flex-1 resize-none bg-transparent outline-none pe-8 text-[15px] leading-relaxed overflow-y-auto text-stone-900 dark:text-zinc-100 placeholder:text-stone-400"
               disabled={!user || isLoading}
               minRows={1}
               maxRows={6}
@@ -439,7 +439,7 @@ export default function ChatBot() {
               }}
             />
 
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="flex items-center gap-4 shrink-0">
               <button
                 type={user ? "submit" : "button"}
                 onClick={(e) => {
@@ -449,7 +449,7 @@ export default function ChatBot() {
                   }
                 }}
                 className={cn(
-                  "w-3 h-3 flex-none rounded-xl flex items-center justify-center text-white transition-all shadow-md",
+                  "w-12 h-12 flex-none rounded-xl flex items-center justify-center text-white transition-all shadow-md",
                   !user
                     ? "bg-gray-400 dark:bg-gray-600 text-gray-200 cursor-not-allowed grayscale opacity-75"
                     : "bg-[#4a0012] hover:bg-[#6b1124] active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
@@ -460,7 +460,7 @@ export default function ChatBot() {
               </button>
             </div>
           </div>
-          <div className="text-center mt-0.5">
+          <div className="text-center mt-2">
             <span className="text-[11px] text-stone-500 dark:text-zinc-400">قد يخطئ الذكاء الاصطناعي أحياناً. يرجى مراجعة الإجابات اللاهوتية.</span>
           </div>
         </form>

@@ -47,15 +47,15 @@ export default function ReviewClient() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-1" dir="rtl">
+    <div className="max-w-7xl mx-auto space-y-4" dir="rtl">
       {/* نموذج إرسال تقييم جديد */}
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-zinc-900 p-0.5 sm:p-1 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 space-y-0.5">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-zinc-900 p-2 sm:p-4 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 space-y-2">
         <div>
-          <label className="block text-xs sm:text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-0.5">
+          <label className="block text-xs sm:text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">
             رأيك أو اقتراحك
           </label>
           <textarea
-            className="w-full p-0.5 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-blue-500 bg-zinc-50 dark:bg-zinc-800 text-sm outline-none text-zinc-900 dark:text-zinc-100 min-h-[100px]"
+            className="w-full p-2 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-blue-500 bg-zinc-50 dark:bg-zinc-800 text-sm outline-none text-zinc-900 dark:text-zinc-100 min-h-[100px]"
             placeholder="اكتب ملاحظاتك، استفسارك أو اقتراحاتك هنا بكل صراحة..."
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
@@ -63,10 +63,10 @@ export default function ReviewClient() {
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-0.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <span className="block text-xs sm:text-sm font-bold text-zinc-600 dark:text-zinc-400 mb-0.5">التقييم العام (من 10):</span>
-            <div className="flex items-center gap-0.5 flex-wrap">
+            <span className="block text-xs sm:text-sm font-bold text-zinc-600 dark:text-zinc-400 mb-2">التقييم العام (من 10):</span>
+            <div className="flex items-center gap-2 flex-wrap">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
                 <button
                   key={star}
@@ -78,11 +78,11 @@ export default function ReviewClient() {
                   ★
                 </button>
               ))}
-              {rating && <span className="text-xs font-bold text-amber-500 mr-0.5">{rating}/10</span>}
+              {rating && <span className="text-xs font-bold text-amber-500 mr-2">{rating}/10</span>}
             </div>
           </div>
 
-          <label className="flex items-center gap-0.5 cursor-pointer select-none">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={isPublic}
@@ -95,24 +95,24 @@ export default function ReviewClient() {
 
         <button
           disabled={isSubmitting || !feedback.trim() || !rating}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-0.5 px-1 rounded-xl font-bold text-sm shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed min-h-[46px]"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl font-bold text-sm shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed min-h-[46px]"
         >
           {isSubmitting ? 'جاري الإرسال...' : 'إرسال التقييم 🚀'}
         </button>
       </form>
 
       {/* عرض التقييمات السابقة */}
-      <div className="space-y-0.5">
-        <h2 className="text-sm font-bold text-zinc-500 px-1">الملاحظات والتقييمات الأخيرة:</h2>
-        <div className="bg-zinc-50 dark:bg-zinc-900/50 p-0.5 sm:p-1 rounded-2xl border border-zinc-200 dark:border-zinc-800 max-h-[450px] overflow-y-auto space-y-0.5">
+      <div className="space-y-2">
+        <h2 className="text-sm font-bold text-zinc-500 px-4">الملاحظات والتقييمات الأخيرة:</h2>
+        <div className="bg-zinc-50 dark:bg-zinc-900/50 p-2 sm:p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 max-h-[450px] overflow-y-auto space-y-2">
           {reviews.map((rev) => (
-            <div key={rev.id} className="space-y-0.5">
+            <div key={rev.id} className="space-y-2">
               <div className={`p-0.5 sm:p-1 rounded-xl ${rev.is_public ? 'bg-white dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700' : 'bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/40'}`}>
-                <div className="flex justify-between items-center text-xs mb-0.5">
+                <div className="flex justify-between items-center text-xs mb-2">
                   <span className={`font-bold ${rev.is_public ? 'text-zinc-600 dark:text-zinc-400' : 'text-blue-600 dark:text-blue-300'}`}>
                     {rev.is_public ? 'تقييم عام' : 'رسالة خاصة للمسؤول'}
                   </span>
-                  <div className="flex items-center gap-0.25">
+                  <div className="flex items-center gap-1">
                     <span className="text-amber-500 font-bold">{rev.rating}/10 ⭐</span>
                     <span className="text-zinc-400 text-[10px]">{new Date(rev.created_at).toLocaleDateString('ar-EG')}</span>
                   </div>
@@ -122,8 +122,8 @@ export default function ReviewClient() {
 
               {/* رد المسؤول */}
               {rev.admin_reply && (
-                <div className="mr-0.5 p-0.5 rounded-xl bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800">
-                  <p className="text-[11px] font-bold text-green-700 dark:text-green-300 mb-0.5">رد الإدارة:</p>
+                <div className="mr-2 p-2 rounded-xl bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800">
+                  <p className="text-[11px] font-bold text-green-700 dark:text-green-300 mb-2">رد الإدارة:</p>
                   <p className="text-xs sm:text-sm text-green-900 dark:text-green-100">{rev.admin_reply}</p>
                 </div>
               )}
@@ -131,7 +131,7 @@ export default function ReviewClient() {
           ))}
 
           {reviews.length === 0 && (
-            <p className="text-center py-1.5 text-xs text-zinc-400">لا توجد تقييمات منشورة بعد، كن أول من يشارك!</p>
+            <p className="text-center py-6 text-xs text-zinc-400">لا توجد تقييمات منشورة بعد، كن أول من يشارك!</p>
           )}
         </div>
       </div>

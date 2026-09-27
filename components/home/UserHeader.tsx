@@ -42,9 +42,9 @@ export default function UserHeader({ user }: UserHeaderProps) {
     : t("signInPrompt");
 
   return (
-    <div className="absolute top-5 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center gap-0.5 max-w-[92%] w-auto">
+    <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center gap-2 max-w-[92%] w-auto">
       <Link href={href} className="block text-center w-auto">
-        <div className="bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 px-1 py-0.5 shadow-xl/30 inset-shadow-sm">
+        <div className="bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 px-4 py-2 shadow-xl/30 inset-shadow-sm">
           <p className="text-black dark:text-white text-sm sm:text-sm md:text-base font-semibold whitespace-nowrap">
             {subText}
           </p>

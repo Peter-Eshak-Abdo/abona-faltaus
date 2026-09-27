@@ -53,16 +53,16 @@ export default function PersonaSelector({
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-0.5 px-0.5 py-0.5 rounded-full border transition-all cursor-pointer select-none text-right",
+            "flex items-center gap-2 px-2 py-2 rounded-full border transition-all cursor-pointer select-none text-right",
             "bg-white/90 dark:bg-zinc-900/90 hover:bg-amber-50 dark:hover:bg-zinc-800 border-amber-300/40 shadow-xs group"
           )}
           title="اختر تخصص أو شخصية المساعد الذكي"
         >
-          <span className="p-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200">
+          <span className="p-2 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200">
             {ICON_MAP[currentBot.iconName] || <Sparkles size={16} />}
           </span>
           <div className="flex flex-col text-right">
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-2">
               <span className="text-xs md:text-sm font-bold text-stone-900 dark:text-stone-100">
                 {currentBot.name}
               </span>
@@ -79,9 +79,9 @@ export default function PersonaSelector({
 
       <DropdownMenuContent
         align="end"
-        className="w-18 md:w-20 max-h-[75vh] overflow-y-auto p-0.5 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-2xl border-amber-200/50 shadow-xl"
+        className="w-64 md:w-72 max-h-[75vh] overflow-y-auto p-2 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-2xl border-amber-200/50 shadow-xl"
       >
-        <div className="px-0.5 py-0.5 text-xs font-bold text-amber-900 dark:text-amber-300 border-b border-amber-100 dark:border-zinc-800 mb-1 flex items-center justify-between">
+        <div className="px-2 py-2 text-xs font-bold text-amber-900 dark:text-amber-300 border-b border-amber-100 dark:border-zinc-800 mb-4 flex items-center justify-between">
           <span>شخصيات وتخصصات الذكاء الاصطناعي الأرثوذكسي</span>
           <span className="text-[10px] text-stone-400">8 تخصصات + العام</span>
         </div>
@@ -93,7 +93,7 @@ export default function PersonaSelector({
               key={bot.id}
               onClick={() => onSelectBot(bot)}
               className={cn(
-                "flex items-start gap-0.5 p-0.5 rounded-xl cursor-pointer transition-colors text-right mb-1",
+                "flex items-start gap-2 p-2 rounded-xl cursor-pointer transition-colors text-right mb-4",
                 isSelected
                   ? "bg-amber-50 dark:bg-amber-950/60 border border-amber-300/40"
                   : "hover:bg-stone-100 dark:hover:bg-zinc-800"
@@ -101,7 +101,7 @@ export default function PersonaSelector({
             >
               <div
                 className={cn(
-                  "p-0.5 rounded-xl shrink-0 mt-0.5",
+                  "p-2 rounded-xl shrink-0 mt-2",
                   bot.badgeBg
                 )}
               >
@@ -118,7 +118,7 @@ export default function PersonaSelector({
                 <p className="text-[11px] text-amber-800/80 dark:text-amber-400 font-medium">
                   {bot.title}
                 </p>
-                <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-0.5 line-clamp-2 leading-tight">
+                <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-2 line-clamp-2 leading-tight">
                   {bot.description}
                 </p>
               </div>

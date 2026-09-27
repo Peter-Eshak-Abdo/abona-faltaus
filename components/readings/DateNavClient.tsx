@@ -31,7 +31,7 @@ export default function DateNavClient({ serverDate, availableDates }: { serverDa
   };
 
   return (
-    <div className="flex flex-col items-center gap-1 my-1">
+    <div className="flex flex-col items-center gap-4 my-4">
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -41,7 +41,7 @@ export default function DateNavClient({ serverDate, availableDates }: { serverDa
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="mr-1 h-4 w-4" />
+            <CalendarIcon className="mr-4 h-16 w-16" />
             {date ? format(date, "PPP") : <span>اختر تاريخ</span>}
           </Button>
         </PopoverTrigger>
@@ -55,7 +55,7 @@ export default function DateNavClient({ serverDate, availableDates }: { serverDa
         </PopoverContent>
       </Popover>
 
-      <div className="flex gap-1 overflow-x-auto px-1 pb-1 w-full justify-center">
+      <div className="flex gap-4 overflow-x-auto px-4 pb-4 w-full justify-center">
         {availableDates.slice(0, 30).map((d) => (
           <Button
             key={d}

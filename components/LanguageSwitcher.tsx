@@ -51,13 +51,13 @@ export default function LanguageSwitcher({ className, compact }: Props) {
   return (
     <label
       className={cn(
-        "inline-flex items-center gap-0.5 rounded-full border border-white/25 bg-white/15 backdrop-blur-md px-0.5 py-0.25 text-sm shadow-sm",
+        "inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 backdrop-blur-md px-2 py-1 text-sm shadow-sm",
         isPending && "opacity-60 pointer-events-none",
         className,
       )}
       title={t("hint")}
     >
-      <Languages className="w-3.5 h-3.5 shrink-0 opacity-80" aria-hidden />
+      <Languages className="w-14 h-14 shrink-0 opacity-80" aria-hidden />
       {!compact && (
         <span className="sr-only sm:not-sr-only sm:inline text-xs font-medium opacity-80">
           {t("label")}
@@ -67,7 +67,7 @@ export default function LanguageSwitcher({ className, compact }: Props) {
         aria-label={t("label")}
         value={locale}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-transparent border-0 outline-none text-sm font-semibold cursor-pointer py-0.25 pe-0.5 max-w-[7.5rem]"
+        className="bg-transparent border-0 outline-none text-sm font-semibold cursor-pointer py-1 pe-2 max-w-[7.5rem]"
       >
         {locales.map((code) => (
           <option key={code} value={code} className="text-black">

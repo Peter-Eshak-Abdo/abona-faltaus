@@ -195,7 +195,7 @@ function GroupedQuestionsContent() {
 
   // عرض أزرار الترقيم
   const renderPagination = () => (
-    <div className="flex flex-wrap gap-2 justify-center my-3">
+    <div className="flex flex-wrap gap-8 justify-center my-12">
       {currentQuestions.map((q, index) => {
         const answered = selectedAnswers[q.id];
         const status = questionStatus[q.id];
@@ -280,14 +280,14 @@ function GroupedQuestionsContent() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[75vh] p-3 relative">
+    <div className="flex flex-col items-center justify-center min-h-[75vh] p-4 relative">
       <div className="absolute w-full top-0 left-0">
         <div className="wave-animation"></div>
       </div>
@@ -299,7 +299,7 @@ function GroupedQuestionsContent() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className="bg-white p-4 rounded shadow w-full md:w-3/4"
+          className="bg-white dark:bg-zinc-900 p-4 sm:p-6 rounded-2xl shadow-md w-full md:w-3/4"
         >
           {quizFinished ? (
             <div id="result-share-box" className="text-center">
@@ -310,12 +310,12 @@ function GroupedQuestionsContent() {
               <motion.div
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="bg-green-500 text-white p-4 rounded shadow-xl border-2 border-green-500"
+                className="bg-green-500 text-white p-4 sm:p-6 rounded-xl shadow-lg border border-green-400"
               >
-                <h2 className="text-2xl mb-4 font-bold">🏆 النتائج النهائية</h2>
+                <h2 className="text-xl mb-4 font-bold">🏆 النتائج النهائية</h2>
 
                 {groupResults.map((group) => (
-                  <div key={group.group} className="my-3 text-lg">
+                  <div key={group.group} className="my-12 text-lg">
                     <span className="font-bold">المجموعة {group.group}: </span>
                     <span className="text-yellow-500">
                       {group.score}/{group.total}
@@ -323,11 +323,11 @@ function GroupedQuestionsContent() {
                   </div>
                 ))}
 
-                <div className="mt-4">
-                  <h5 className="text-lg mb-3">توزيع الأسئلة:</h5>
-                  <div className="flex flex-wrap justify-center gap-3">
+                <div className="mt-16">
+                  <h5 className="text-lg mb-12">توزيع الأسئلة:</h5>
+                  <div className="flex flex-wrap justify-center gap-12">
                     {Object.entries(categoriesCount).map(([cat, count]) => (
-                      <span key={cat} className="bg-blue-500 text-white px-2 py-1 rounded">
+                      <span key={cat} className="bg-blue-500 text-white px-8 py-4 rounded">
                         {cat}: {count}
                       </span>
                     ))}
@@ -337,7 +337,7 @@ function GroupedQuestionsContent() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-5"
+                  className="mt-20"
                 >
                   <Image
                     src="/exam/celebration.gif"
@@ -348,7 +348,7 @@ function GroupedQuestionsContent() {
                   />
                 </motion.div>
 
-                <div className="mt-4 flex flex-col items-center gap-2">
+                <div className="mt-16 flex flex-col items-center gap-8">
                   <Button
                     onClick={generateShareImage}
                     className="bg-blue-600 hover:bg-blue-700"
@@ -370,7 +370,7 @@ function GroupedQuestionsContent() {
                 <Button
                   onClick={() => router.push("/exam")}
                   variant="secondary"
-                  className="mt-4 px-5 py-2 text-lg"
+                  className="mt-16 px-20 py-8 text-lg"
                 >
                   العودة للرئيسية
                 </Button>
@@ -378,7 +378,7 @@ function GroupedQuestionsContent() {
             </div>
           ) : (currentQuestion && (
             <>
-              <div className="flex justify-between items-center mb-3">
+              <div className="flex justify-between items-center mb-12">
                 <span className="text-gray-500">
                   المجموعة {currentGroup + 1} - سؤال {currentQuestionIndex + 1} من {currentQuestions.length}
                 </span>
@@ -387,20 +387,20 @@ function GroupedQuestionsContent() {
                 </div>
               </div>
 
-              <div className="mb-2">
-                <span className="bg-gray-500 text-white px-2 py-1 rounded">
+              <div className="mb-8">
+                <span className="bg-gray-500 text-white px-8 py-4 rounded">
                   {currentQuestion.category}
                 </span>
               </div>
 
-              <div className="mb-4">
+              <div className="mb-16">
                 <h2 className="text-lg">{currentQuestion.text}</h2>
                 {currentQuestion.type === "mcq" && (
                   <small className="text-gray-500">اختر الإجابة الصحيحة</small>
                 )}
               </div>
 
-              <div className="grid gap-3 mb-4">
+              <div className="grid gap-12 mb-16">
                 {currentQuestion.options.map((option, index) => (
                   <Button
                     key={index}

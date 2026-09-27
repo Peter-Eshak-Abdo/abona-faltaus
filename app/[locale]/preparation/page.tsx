@@ -190,10 +190,10 @@ export default function PreparationPage() {
   return (
     <div className="min-h-screen bg-[#fdfbf7] text-[#2d1b18] flex flex-col font-sans pb-[calc(env(safe-area-inset-bottom,0px)+5px)]" dir="rtl">
       {/* Header */}
-      <header className="bg-[#5c4538] text-[#e8cfae] px-1 py-0.5 sm:px-1 flex items-center justify-between shadow-md sticky top-0 z-30 pt-[calc(env(safe-area-inset-top,0px)+3px)]">
-        <div className="flex items-center gap-0.5">
+      <header className="bg-[#5c4538] text-[#e8cfae] px-4 py-2 sm:px-4 flex items-center justify-between shadow-md sticky top-0 z-30 pt-[calc(env(safe-area-inset-top,0px)+3px)]">
+        <div className="flex items-center gap-2">
           <BackButton
-            className="p-0.5 hover:bg-white/10 rounded-xl transition-colors text-white flex items-center justify-center"
+            className="p-2 hover:bg-white/10 rounded-xl transition-colors text-white flex items-center justify-center"
             iconSize={20}
             title={t('back') || 'الرجوع للخلف'}
           />
@@ -203,9 +203,9 @@ export default function PreparationPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-2">
           {/* View Mode Toggle: Notes vs PowerPoint Slides */}
-          <div className="bg-white/10 p-0.5 rounded-xl flex items-center gap-0.5 border border-white/10">
+          <div className="bg-white/10 p-2 rounded-xl flex items-center gap-2 border border-white/10">
             <button
               onClick={() => setActiveTab("notes")}
               className={`px-0.5 py-0.5 rounded-lg text-xs font-bold transition-all flex items-center gap-0.5 ${
@@ -240,7 +240,7 @@ export default function PreparationPage() {
           {activeTab === "notes" && (
             <button
               onClick={() => setIsAiModalOpen(true)}
-              className="flex items-center gap-0.5 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 font-black px-0.5 py-0.5 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95"
+              className="flex items-center gap-2 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 font-black px-2 py-2 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95"
             >
               <Sparkles size={16} />
               <span className="hidden sm:inline">{t('generateAi')}</span>
@@ -261,18 +261,18 @@ export default function PreparationPage() {
         </div>
       ) : (
         /* Main Container */
-        <main className="flex-1 max-w-7xl w-full mx-auto p-1 sm:p-1 flex flex-col gap-0.5">
+        <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-4 flex flex-col gap-2">
         {/* Title & Toolbar */}
-        <div className="bg-white rounded-3xl p-1 sm:p-1 shadow-sm border border-stone-200/80 flex flex-col sm:flex-row gap-0.5 sm:items-center justify-between">
+        <div className="bg-white rounded-3xl p-4 sm:p-4 shadow-sm border border-stone-200/80 flex flex-col sm:flex-row gap-2 sm:items-center justify-between">
           <input
             type="text"
             value={title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="text-xl sm:text-2xl font-black bg-transparent border-b-2 border-stone-200 focus:border-amber-600 outline-none pb-0.5 flex-1 text-[#2d1b18]"
+            className="text-xl sm:text-2xl font-black bg-transparent border-b-2 border-stone-200 focus:border-amber-600 outline-none pb-2 flex-1 text-[#2d1b18]"
             placeholder="عنوان الدرس أو العظة..."
           />
 
-          <div className="flex items-center gap-0.5 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             {/* Mic Record Button */}
             {/* <VoiceRecorderButton
               onTranscript={(text) => {
@@ -287,7 +287,7 @@ export default function PreparationPage() {
                 navigator.clipboard.writeText(content);
                 toast.success("تم نسخ المحتوى!");
               }}
-              className="p-0.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl transition-colors"
+              className="p-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl transition-colors"
               title="نسخ"
             >
               <Copy size={16} />
@@ -299,7 +299,7 @@ export default function PreparationPage() {
                   handleNewLesson();
                 }
               }}
-              className="p-0.5 bg-stone-100 hover:bg-red-100 text-red-600 rounded-xl transition-colors"
+              className="p-2 bg-stone-100 hover:bg-red-100 text-red-600 rounded-xl transition-colors"
               title="مسح"
             >
               <Trash2 size={16} />
@@ -308,7 +308,7 @@ export default function PreparationPage() {
         </div>
 
         {/* Text Area Content */}
-        <div className="bg-white rounded-3xl p-1 sm:p-1 shadow-sm border border-stone-200/80 flex-1 flex flex-col min-h-[380px]">
+        <div className="bg-white rounded-3xl p-4 sm:p-4 shadow-sm border border-stone-200/80 flex-1 flex flex-col min-h-[380px]">
           <textarea
             value={content}
             onChange={(e) => handleContentChange(e.target.value)}
@@ -318,16 +318,16 @@ export default function PreparationPage() {
         </div>
 
         {/* Exports Bar */}
-        <div className="bg-white rounded-3xl p-1 sm:p-1 shadow-sm border border-stone-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-0.25 text-stone-600 text-sm font-bold">
+        <div className="bg-white rounded-3xl p-4 sm:p-4 shadow-sm border border-stone-200/80 flex flex-col sm:flex-row items-center justify-between gap-12">
+          <div className="flex items-center gap-1 text-stone-600 text-sm font-bold">
             <Download size={18} className="text-amber-700" />
             <span>تصدير ملف التحضير:</span>
           </div>
 
-          <div className="flex items-center gap-0.5 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setActiveTab("slides")}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-0.5 px-0.5 py-0.5 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 rounded-xl text-xs sm:text-sm font-black shadow-md transition-all active:scale-95"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-2 py-2 bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-stone-950 rounded-xl text-xs sm:text-sm font-black shadow-md transition-all active:scale-95"
             >
               <Presentation size={16} />
               <span>تعديل كعرض شرائح تفاعلي (Slides) 🎨</span>
@@ -346,7 +346,7 @@ export default function PreparationPage() {
                 }
               }}
               disabled={!content.trim() || isExporting !== null}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-0.25 px-1 py-0.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
             >
               {isExporting === "pptx" ? <Loader2 size={16} className="animate-spin" /> : <Presentation size={16} />}
               <span>تنزيل سريع (.pptx)</span>
@@ -365,7 +365,7 @@ export default function PreparationPage() {
                 }
               }}
               disabled={!content.trim() || isExporting !== null}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-0.25 px-1 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
             >
               {isExporting === "docx" ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
               <span>Word (.docx)</span>
@@ -384,7 +384,7 @@ export default function PreparationPage() {
                 }
               }}
               disabled={!content.trim() || isExporting !== null}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-0.25 px-1 py-0.5 bg-stone-800 hover:bg-stone-900 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-4 py-2 bg-stone-800 hover:bg-stone-900 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all disabled:opacity-50"
             >
               {isExporting === "pdf" ? <Loader2 size={16} className="animate-spin" /> : <FileDown size={16} />}
               <span>PDF (.pdf)</span>
@@ -396,39 +396,39 @@ export default function PreparationPage() {
 
       {/* AI Requirements Modal */}
       {isAiModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-1">
-          <div className="bg-white rounded-3xl p-1 sm:p-1 max-w-lg w-full shadow-2xl border border-amber-200/50 space-y-0.5 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-stone-100 pb-0.5">
-              <div className="flex items-center gap-0.25">
-                <div className="p-0.5 bg-amber-500/10 text-amber-600 rounded-xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-4 sm:p-4 max-w-lg w-full shadow-2xl border border-amber-200/50 space-y-2 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-stone-100 pb-2">
+              <div className="flex items-center gap-1">
+                <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl">
                   <Sparkles size={20} />
                 </div>
                 <h3 className="text-lg font-black text-stone-900">توليد تحضير الدرس بالذكاء الاصطناعي</h3>
               </div>
-              <button onClick={() => setIsAiModalOpen(false)} className="text-stone-400 hover:text-stone-700 p-0.5">
+              <button onClick={() => setIsAiModalOpen(false)} className="text-stone-400 hover:text-stone-700 p-2">
                 ✕
               </button>
             </div>
 
-            <div className="space-y-0.5">
+            <div className="space-y-2">
               <div>
-                <label className="text-xs font-bold text-stone-600 block mb-0.5">موضوع أو عنوان الدرس</label>
+                <label className="text-xs font-bold text-stone-600 block mb-2">موضوع أو عنوان الدرس</label>
                 <input
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="مثال: فضيلة المحبة، داود النبي وجليات، الأمانة..."
-                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none focus:border-amber-600"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-sm font-bold outline-none focus:border-amber-600"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-0.5">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs font-bold text-stone-600 block mb-0.5">المرحلة والسن المستهدف</label>
+                  <label className="text-xs font-bold text-stone-600 block mb-2">المرحلة والسن المستهدف</label>
                   <select
                     value={audience}
                     onChange={(e) => setAudience(e.target.value)}
-                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-sm font-bold outline-none"
                   >
                     <option value="حضانة وأولى وثانية ابتدائي">حضانة+ 1و2 ابتدائي</option>
                     <option value="تالتة ورابعة وخامسة وسادسة ابتدائي">3و4و5و6 ابتدائي</option>
@@ -440,11 +440,11 @@ export default function PreparationPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-stone-600 block mb-0.5">مدة الشرح التقريبية</label>
+                  <label className="text-xs font-bold text-stone-600 block mb-2">مدة الشرح التقريبية</label>
                   <select
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-sm font-bold outline-none"
                   >
                     <option value="15 دقيقة (موجز)">15 دقيقة (موجز)</option>
                     <option value="30 دقيقة (قياسي)">30 دقيقة (قياسي)</option>
@@ -454,13 +454,13 @@ export default function PreparationPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-0.5">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs font-bold text-stone-600 block mb-0.5">أسلوب وطريقة الشرح</label>
+                  <label className="text-xs font-bold text-stone-600 block mb-2">أسلوب وطريقة الشرح</label>
                   <select
                     value={style}
                     onChange={(e) => setStyle(e.target.value)}
-                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-sm font-bold outline-none"
                   >
                     <option value="قصصي وتفاعلي">قصصي وتفاعلي</option>
                     <option value="روحي وتأملي عميق">روحي وتأملي عميق</option>
@@ -470,21 +470,21 @@ export default function PreparationPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-stone-600 block mb-0.5">الهدف المركزي (اختياري)</label>
+                  <label className="text-xs font-bold text-stone-600 block mb-2">الهدف المركزي (اختياري)</label>
                   <input
                     type="text"
                     value={mainGoal}
                     onChange={(e) => setMainGoal(e.target.value)}
                     placeholder="مثال: تطبيق عملي للأمانة في المذاكرة"
-                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-0.5 text-sm font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2 text-sm font-bold outline-none"
                   />
                 </div>
               </div>
 
               {/* عناصر ومحتويات الدرس (Checkboxes) */}
-              <div className="bg-stone-50 rounded-2xl p-1 border border-stone-200/80 space-y-0.5">
+              <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80 space-y-2">
                 <h4 className="font-bold text-xs text-stone-700">عناصر الدرس المطلوب تضمينها:</h4>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-0.25 text-xs font-semibold text-stone-700">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 text-xs font-semibold text-stone-700">
                   {[
                     { key: "includeVerses", label: "آيات كتابية", icon: "📖" },
                     { key: "includeFatherQuotes", label: "أقوال آباء", icon: "✝️" },
@@ -492,14 +492,14 @@ export default function PreparationPage() {
                     { key: "includeActivity", label: "نشاط وتطبيق", icon: "🎯" },
                     { key: "includeSummary", label: "خلاصة الدرس", icon: "📝" },
                   ].map(({ key, label, icon }) => (
-                    <label key={key} className="flex items-center gap-0.25 cursor-pointer select-none">
+                    <label key={key} className="flex items-center gap-1 cursor-pointer select-none">
                       <input
                         type="checkbox"
                         checked={options[key as keyof typeof options]}
                         onChange={(e) =>
                           setOptions((prev) => ({ ...prev, [key]: e.target.checked }))
                         }
-                        className="accent-amber-600 rounded w-2 h-2"
+                        className="accent-amber-600 rounded w-8 h-8"
                       />
                       <span>{icon} {label}</span>
                     </label>
@@ -508,7 +508,7 @@ export default function PreparationPage() {
               </div>
 
               {/* تفاصيل إضافية من الخادم */}
-              <div className="bg-stone-50 rounded-2xl p-1 border border-stone-200/80 space-y-0.25">
+              <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80 space-y-1">
                 <div className="flex justify-between items-center">
                   <label className="text-xs font-bold text-stone-700">✨ ملاحظات وتفاصيل إضافية للخادم:</label>
                   <VoiceRecorderButton
@@ -520,15 +520,15 @@ export default function PreparationPage() {
                   onChange={(e) => setExtraDetails(e.target.value)}
                   placeholder="مثال: عندي شباب بيعانوا من ضغط الامتحانات، أو التركيز على موقف معين..."
                   rows={2}
-                  className="w-full bg-white border border-stone-200 rounded-xl p-0.5 text-xs font-medium outline-none focus:border-amber-600 resize-none"
+                  className="w-full bg-white border border-stone-200 rounded-xl p-2 text-xs font-medium outline-none focus:border-amber-600 resize-none"
                 />
               </div>
 
               {/* مصادر إضافية مخصصة */}
-              <div className="bg-stone-50 rounded-2xl p-1 border border-stone-200/80 space-y-0.5">
+              <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80 space-y-2">
                 <label className="text-xs font-bold text-stone-700 block">📚 مصادر ومراجع إضافية (روابط أو نصوص):</label>
                 {extraSources.map((src, i) => (
-                  <div key={i} className="flex gap-0.25">
+                  <div key={i} className="flex gap-1">
                     <input
                       type="text"
                       value={src}
@@ -538,13 +538,13 @@ export default function PreparationPage() {
                         setExtraSources(updated);
                       }}
                       placeholder="رابط تفسير أو نص مرجع..."
-                      className="flex-1 bg-white border border-stone-200 rounded-xl px-1 py-0.5 text-xs font-medium outline-none focus:border-amber-600"
+                      className="flex-1 bg-white border border-stone-200 rounded-xl px-4 py-2 text-xs font-medium outline-none focus:border-amber-600"
                     />
                     {extraSources.length > 1 && (
                       <button
                         type="button"
                         onClick={() => setExtraSources((prev) => prev.filter((_, idx) => idx !== i))}
-                        className="p-0.5 text-stone-400 hover:text-red-600 transition"
+                        className="p-2 text-stone-400 hover:text-red-600 transition"
                       >
                         <X size={14} />
                       </button>
@@ -554,24 +554,24 @@ export default function PreparationPage() {
                 <button
                   type="button"
                   onClick={() => setExtraSources((prev) => [...prev, ""])}
-                  className="text-xs text-amber-700 hover:text-amber-800 font-bold flex items-center gap-0.25"
+                  className="text-xs text-amber-700 hover:text-amber-800 font-bold flex items-center gap-1"
                 >
                   <Plus size={13} /> إضافة مرجع آخر
                 </button>
               </div>
             </div>
 
-            <div className="flex gap-0.25 justify-end pt-0.5 border-t border-stone-100">
+            <div className="flex gap-1 justify-end pt-2 border-t border-stone-100">
               <button
                 onClick={() => setIsAiModalOpen(false)}
-                className="px-1 py-0.5 text-stone-600 font-bold hover:bg-stone-100 rounded-xl text-sm"
+                className="px-4 py-2 text-stone-600 font-bold hover:bg-stone-100 rounded-xl text-sm"
               >
                 إلغاء
               </button>
               <button
                 onClick={handleGeneratePrep}
                 disabled={isGenerating}
-                className="flex items-center gap-0.25 px-1 py-0.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-bold shadow-md transition-all"
+                className="flex items-center gap-1 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-bold shadow-md transition-all"
               >
                 {isGenerating ? (
                   <>

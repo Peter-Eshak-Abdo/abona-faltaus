@@ -18,7 +18,7 @@ export default async function AdminPage() {
   }
 
   return (
-    <div className="container mx-auto p-0.5">
+    <div className="container mx-auto p-2">
       <h1 className="text-2xl font-bold">لوحة تحكم المسؤول</h1>
       <AdminReviewsClient />
     </div>

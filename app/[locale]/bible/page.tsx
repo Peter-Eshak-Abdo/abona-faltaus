@@ -209,7 +209,7 @@ export default function BibleReaderPage() {
 
   return (
     <div className="min-h-screen relative flex flex-col overflow-hidden bg-zinc-50/70 dark:bg-zinc-950/70 text-zinc-900 dark:text-zinc-100">
-      <main className="w-full pt-1 h-full">
+      <main className="w-full pt-4 h-full">
         <div className="flex flex-col w-full relative h-full" id="bible-app">
           <div className="flex flex-col w-full bg-surface-container-low">
             <ReadingControlsHeader
@@ -246,7 +246,7 @@ export default function BibleReaderPage() {
                   fontSize={fontSize}
                   language={language}
                 />
-                <div className="h-24" />
+                <div className="h-96" />
               </article>
             </section>
           </div>

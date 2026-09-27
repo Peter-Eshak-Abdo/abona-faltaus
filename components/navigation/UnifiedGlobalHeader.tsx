@@ -99,13 +99,13 @@ export default function UnifiedGlobalHeader() {
         }`}
         dir="rtl"
       >
-        <div className="max-w-7xl mx-auto px-0.5 sm:px-1 py-0.25 sm:py-0.5 flex items-center justify-between gap-2">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 py-1 sm:py-2 flex items-center justify-between gap-8">
           {/* 1. Left Side: Back Button & Logo Brand */}
-          <div className="flex items-center gap-0.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {!isHome && (
               <button
                 onClick={handleBack}
-                className="p-0.5 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition flex items-center gap-0.5 text-xs font-bold"
+                className="p-2 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition flex items-center gap-2 text-xs font-bold"
                 title={tNav('back')}
               >
                 <FaArrowRight className="text-xs" />
@@ -113,7 +113,7 @@ export default function UnifiedGlobalHeader() {
               </button>
             )}
 
-            <Link href="/" className="flex items-center gap-0.5 group">
+            <Link href="/" className="flex items-center gap-2 group">
               <Image
                 src="/images/eagle.webp"
                 alt="Logo"
@@ -130,21 +130,21 @@ export default function UnifiedGlobalHeader() {
           </div>
 
           {/* 2. Middle: Dynamic Breadcrumbs (Hidden on mobile) */}
-          <div className="hidden lg:flex flex-1 items-center justify-start px-0.5 overflow-hidden">
+          <div className="hidden lg:flex flex-1 items-center justify-start px-2 overflow-hidden">
             <GlobalBreadcrumbs />
           </div>
 
           {/* 3. Right Side: Quick Action Toolbar */}
-          <div className="flex items-center gap-0.25 sm:gap-0.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Global Search Button */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-0.25 sm:px-0.5 sm:py-0.5 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 flex items-center gap-0.5 text-xs transition"
+              className="p-1 sm:px-2 sm:py-2 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 flex items-center gap-2 text-xs transition"
               title={tNav('search')}
             >
               <FaSearch className="text-xs text-amber-400" />
               <span className="hidden sm:inline font-medium text-neutral-400">{tNav('searchPlaceholder')}</span>
-              <kbd className="hidden sm:inline-block text-[10px] font-mono px-0.5 py-0.25 bg-neutral-800 border border-neutral-700 rounded text-neutral-500">
+              <kbd className="hidden sm:inline-block text-[10px] font-mono px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-neutral-500">
                 ⌘K
               </kbd>
             </button>
@@ -152,7 +152,7 @@ export default function UnifiedGlobalHeader() {
             {/* Quick Link to Settings */}
             <Link
               href="/settings"
-              className="p-0.5 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition text-xs flex items-center"
+              className="p-2 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 border border-neutral-800 transition text-xs flex items-center"
               title={tNav('settings')}
             >
               <FaCog className="text-sm" />
@@ -161,7 +161,7 @@ export default function UnifiedGlobalHeader() {
             {/* Mobile Menu Toggle Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-0.5 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition text-xs lg:hidden flex items-center"
+              className="p-2 min-w-[38px] min-h-[38px] justify-center rounded-xl bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition text-xs lg:hidden flex items-center"
               title={tNav('menu')}
             >
               {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
@@ -171,7 +171,7 @@ export default function UnifiedGlobalHeader() {
 
         {/* Mobile Slide-down Navigation Drawer */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-neutral-800 bg-neutral-950/95 backdrop-blur-xl p-0.5 sm:p-1 grid grid-cols-1 sm:grid-cols-2 gap-0.5 animate-in slide-in-from-top duration-200">
+          <div className="lg:hidden border-t border-neutral-800 bg-neutral-950/95 backdrop-blur-xl p-2 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-2 animate-in slide-in-from-top duration-200">
             {MENU_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive = pathname.startsWith(item.href);

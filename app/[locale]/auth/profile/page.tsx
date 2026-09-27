@@ -6,7 +6,7 @@ import AccountInfo from '@/components/AccountInfo';
 
 export default function ProfilePage() {
   return (
-    <div className="min-h-screen bg-stone-50/50 dark:bg-zinc-950 flex items-center justify-center p-3">
+    <div className="min-h-screen bg-stone-50/50 dark:bg-zinc-950 flex items-center justify-center p-12">
       <AccountInfo />
     </div>
   );

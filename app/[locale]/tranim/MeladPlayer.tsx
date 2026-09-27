@@ -72,7 +72,7 @@ const MeladPlayer: React.FC = () => {
       {sounds
         .filter((sound) => sound.monasba === "melad")
         .map((sound, index) => (
-          <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-sm p-4 border dark:border-zinc-800" key={`melad-${index}`}>
+          <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-xs p-4 border border-stone-100 dark:border-zinc-800" key={`melad-${index}`}>
             <div className="flex justify-center items-center mb-4">
               <audio controls className="w-full" id={`melad-audio-${index}`}>
                 <source src={sound.src} type="audio/mpeg" />
@@ -88,7 +88,7 @@ const MeladPlayer: React.FC = () => {
                 <span className="font-bold">{t('occasion')}: </span>
                 {t('meladOccasion')}
               </p>
-              <div className="flex justify-between items-center mt-4">
+              <div className="flex justify-between items-center mt-16">
                 <Button variant="outline" size="sm">
                   {t('details')}
                 </Button>

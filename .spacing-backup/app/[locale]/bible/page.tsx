@@ -1,0 +1,300 @@
+"use client";
+import { useState, useEffect, useRef } from "react";
+import localforage from "localforage";
+import { loadBible, loadCopticBible } from "@/lib/bible-utils";
+import { useTranslations } from "next-intl";
+
+// Components
+import BibleLoading from "@/components/bible/BibleLoading";
+import BibleSearch from "@/components/bible/BibleSearch";
+import SelectionToolbar from "@/components/bible/SelectionToolbar";
+import DayModal from "@/components/bible/DayModal";
+import ReadingControlsHeader from "@/components/bible/ReadingControlsHeader";
+import VerseItem from "@/components/bible/VerseItem";
+import VerseTranslationModal from "@/components/bible/VerseTranslationModal";
+
+import type { BookObj, VerseObj } from "@/lib/bible-utils";
+
+export default function BibleReaderPage() {
+  const t = useTranslations('Bible');
+  const [bibleData, setBibleData] = useState<BookObj[]>([]);
+  const [language, setLanguage] = useState<"ar" | "cop">("ar");
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingStatus, setLoadingStatus] = useState(t('connectingServer'));
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [tipIndex, setTipIndex] = useState(0);
+
+  // Shared reading state (lifted up so all children stay in sync)
+  const [currentBookIdx, setCurrentBookIdx] = useState(0);
+  const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
+  const [fontSize, setFontSize] = useState(24);
+  const [lineHeight, setLineHeight] = useState("2.3");
+  const [selectedVerses, setSelectedVerses] = useState<number[]>([]);
+  const [favorites, setFavorites] = useState<{ bIdx: number; cIdx: number; vNum: number }[]>([]);
+  const [isDayModalOpen, setIsDayModalOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isTranslationModalOpen, setIsTranslationModalOpen] = useState(false);
+
+  const isInitialized = useRef(false);
+
+  const tips = [
+    t('tips.0'),
+    t('tips.1'),
+    t('tips.2'),
+    t('tips.3'),
+    t('tips.4'),
+    t('tips.5'),
+  ];
+
+  const loadBibleByLanguage = async (targetLang: "ar" | "cop") => {
+    try {
+      setIsLoading(true);
+      setLoadProgress(0);
+      setLoadingStatus(targetLang === "cop" ? "جاري تحميل الكتاب المقدس بالقبطية..." : t('loadingData'));
+
+      const cacheKey = targetLang === "cop" ? "offline_coptic_bible_data_v2" : "offline_bible_data";
+      let data = await localforage.getItem<BookObj[]>(cacheKey);
+
+      if (!data || data.length === 0) {
+        if (targetLang === "cop") {
+          data = await loadCopticBible((p) => setLoadProgress(p));
+        } else {
+          data = (await loadBible((p) => setLoadProgress(p))) as BookObj[];
+        }
+        if (data && data.length > 0) {
+          await localforage.setItem(cacheKey, data);
+        }
+      } else {
+        setLoadProgress(100);
+      }
+
+      if (data && data.length > 0) {
+        setBibleData(data);
+        setCurrentBookIdx((prev) => Math.min(prev, data!.length - 1));
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error loading bible language:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleLanguageChange = (lang: "ar" | "cop") => {
+    setLanguage(lang);
+    localStorage.setItem("bible_reader_lang", lang);
+    loadBibleByLanguage(lang);
+  };
+
+  useEffect(() => {
+    const initData = async () => {
+      try {
+        setIsLoading(true);
+        setLoadProgress(0);
+        setLoadingStatus(t('checkingCache'));
+
+        const savedLang = (localStorage.getItem("bible_reader_lang") as "ar" | "cop") || "ar";
+        setLanguage(savedLang);
+
+        const cacheKey = savedLang === "cop" ? "offline_coptic_bible_data_v2" : "offline_bible_data";
+        let data = await localforage.getItem<BookObj[]>(cacheKey);
+
+        if (!data || data.length === 0) {
+          setLoadingStatus(savedLang === "cop" ? "جاري تحميل الكتاب المقدس بالقبطية..." : t('loadingData'));
+          if (savedLang === "cop") {
+            data = await loadCopticBible((p) => setLoadProgress(p));
+          } else {
+            data = (await loadBible((p) => setLoadProgress(p))) as BookObj[];
+          }
+          if (data && data.length > 0) {
+            await localforage.setItem(cacheKey, data);
+          }
+        } else {
+          setLoadProgress(100);
+        }
+
+        if (data && data.length > 0) {
+          setBibleData(data);
+
+          const lastRead = localStorage.getItem("bible_last_read");
+          if (lastRead) {
+            try {
+              const { bIdx, cIdx } = JSON.parse(lastRead);
+              if (data[bIdx]?.chapters[cIdx]) {
+                setCurrentBookIdx(bIdx);
+                setCurrentChapterIdx(cIdx);
+              }
+            } catch (e) {
+              console.error("Failed to parse last read:", e);
+            }
+          }
+        }
+
+        const favs = await localforage.getItem<any[]>("bible_favorites");
+        if (favs) setFavorites(favs);
+
+        const savedSize = localStorage.getItem("bible_font_size");
+        if (savedSize) setFontSize(parseInt(savedSize));
+
+        const savedLineHeight = localStorage.getItem("bible_line_height");
+        if (savedLineHeight) setLineHeight(savedLineHeight);
+
+        setIsLoading(false);
+        isInitialized.current = true;
+      } catch (error) {
+        console.error("Error during initialization:", error);
+        const fallbackData = await localforage.getItem<BookObj[]>("offline_bible_data");
+        if (fallbackData && fallbackData.length > 0) {
+          setBibleData(fallbackData);
+          setIsLoading(false);
+        } else {
+          setLoadingStatus("حدث خطأ، يرجى التأكد من الإنترنت وإعادة المحاولة.");
+        }
+      }
+    };
+
+    initData();
+  }, []);
+
+  // Persist the last-read position so it's restored on next visit
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    localStorage.setItem("bible_last_read", JSON.stringify({ bIdx: currentBookIdx, cIdx: currentChapterIdx }));
+  }, [currentBookIdx, currentChapterIdx]);
+
+  // Persist font size so it's restored on next visit
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    localStorage.setItem("bible_font_size", String(fontSize));
+  }, [fontSize]);
+
+  // Persist line height so it's restored on next visit
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    localStorage.setItem("bible_line_height", String(lineHeight));
+  }, [lineHeight]);
+
+  const toggleVerseSelection = (verseNum: number) => {
+    setSelectedVerses(prev =>
+      prev.includes(verseNum) ? prev.filter(v => v !== verseNum) : [...prev, verseNum]
+    );
+  };
+
+  const handleGoToVerse = (bookIdx: number, chapterIdx: number, verseNum: number) => {
+    setCurrentBookIdx(bookIdx);
+    setCurrentChapterIdx(chapterIdx);
+    setIsSearchOpen(false);
+
+    // Wait for the chapter to render, then scroll to the verse
+    setTimeout(() => {
+      const canvas = document.getElementById("reading-canvas");
+      const verseEl = document.getElementById(`verse-${verseNum}`);
+      if (canvas && verseEl) {
+        const canvasTop = canvas.getBoundingClientRect().top;
+        const verseTop = verseEl.getBoundingClientRect().top;
+        canvas.scrollTop += verseTop - canvasTop - canvas.clientHeight / 2 + verseEl.clientHeight / 2;
+      } else {
+        verseEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 200);
+  };
+
+  if (isLoading) {
+    return <BibleLoading loadingStatus={loadingStatus} loadProgress={loadProgress} tipIndex={tipIndex} tips={["يمكنك الضغط مطولاً على الآية لمشاركتها مع أصدقائك.",
+      "جرب خاصية البحث السريع للوصول لأي آية في ثوانٍ.",
+      "يتم حفظ آخر مكان قرأت فيه تلقائياً لتعود إليه لاحقاً.",
+      "يمكنك إضافة الآيات التي لمست قلبك إلى قائمة المفضلة.",]} />;
+  }
+
+  if (!bibleData.length) return null;
+
+  return (
+    <div className="min-h-screen relative flex flex-col overflow-hidden bg-zinc-50/70 dark:bg-zinc-950/70 text-zinc-900 dark:text-zinc-100">
+      <main className="w-full pt-4 h-full">
+        <div className="flex flex-col w-full relative h-full" id="bible-app">
+          <div className="flex flex-col w-full bg-surface-container-low">
+            <ReadingControlsHeader
+              bibleData={bibleData}
+              currentBookIdx={currentBookIdx}
+              setCurrentBookIdx={setCurrentBookIdx}
+              currentChapterIdx={currentChapterIdx}
+              setCurrentChapterIdx={setCurrentChapterIdx}
+              fontSize={fontSize}
+              setFontSize={setFontSize}
+              setIsSearchOpen={setIsSearchOpen}
+              language={language}
+              onLanguageChange={handleLanguageChange}
+            />
+
+            <section className="grow flex flex-col relative max-w-8xl mx-auto w-full">
+              <article
+                className={`p-1 sm:p-2 font-title-lg text-title-lg text-on-surface transition-all duration-300 overflow-y-auto max-h-[calc(100dvh-15px)] flex-1 -webkit-overflow-scrolling-touch ${
+                  language === "cop" ? "font-coptic" : ""
+                }`}
+                id="reading-canvas"
+                dir={language === "cop" ? "ltr" : "rtl"}
+                style={{ fontSize: `${fontSize}px`, lineHeight: lineHeight || "2.3" }}
+              >
+                <VerseItem
+                  bibleData={bibleData}
+                  currentBookIdx={currentBookIdx}
+                  setCurrentBookIdx={setCurrentBookIdx}
+                  currentChapterIdx={currentChapterIdx}
+                  setCurrentChapterIdx={setCurrentChapterIdx}
+                  selectedVerses={selectedVerses}
+                  toggleVerseSelection={toggleVerseSelection}
+                  favorites={favorites}
+                  fontSize={fontSize}
+                  language={language}
+                />
+                <div className="h-96" />
+              </article>
+            </section>
+          </div>
+        </div>
+
+        {/* Dynamic Toolbars with Handlers */}
+        <SelectionToolbar
+          bibleData={bibleData}
+          currentBookIdx={currentBookIdx}
+          currentChapterIdx={currentChapterIdx}
+          selectedVerses={selectedVerses}
+          setSelectedVerses={setSelectedVerses}
+          favorites={favorites}
+          setFavorites={setFavorites}
+          isDayModalOpen={isDayModalOpen}
+          setIsDayModalOpen={setIsDayModalOpen}
+          onOpenTranslation={() => setIsTranslationModalOpen(true)}
+          language={language}
+        />
+
+        <VerseTranslationModal
+          isOpen={isTranslationModalOpen}
+          onClose={() => setIsTranslationModalOpen(false)}
+          bibleData={bibleData}
+          currentBookIdx={currentBookIdx}
+          currentChapterIdx={currentChapterIdx}
+          selectedVerses={selectedVerses}
+          language={language}
+        />
+
+        {isDayModalOpen && (
+          <DayModal
+            bibleData={bibleData}
+            currentBookIdx={currentBookIdx}
+            currentChapterIdx={currentChapterIdx}
+            selectedVerses={selectedVerses}
+            setSelectedVerses={setSelectedVerses}
+            onClose={() => setIsDayModalOpen(false)}
+          />
+        )}
+
+        <BibleSearch
+          isOpen={isSearchOpen}
+          onClose={() => setIsSearchOpen(false)}
+          bibleData={bibleData}
+          onGoToVerse={handleGoToVerse}
+        />
+      </main>
+    </div>
+  );
+}

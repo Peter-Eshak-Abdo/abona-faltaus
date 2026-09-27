@@ -106,26 +106,26 @@ export default function DayPortalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-start p-0.5 text-zinc-900 dark:text-zinc-100 font-arabic pt-1">
-      <div className="max-w-md w-full bg-white dark:bg-zinc-900 p-1 rounded-3xl shadow-xl border border-zinc-200 dark:border-zinc-800 mb-1">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-start p-2 text-zinc-900 dark:text-zinc-100 font-arabic pt-4">
+      <div className="max-w-md w-full bg-white dark:bg-zinc-900 p-4 rounded-3xl shadow-xl border border-zinc-200 dark:border-zinc-800 mb-4">
 
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-2">
           <div className="relative">
-            <div className="w-3 h-3 rounded-full overflow-hidden relative flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full overflow-hidden relative flex items-center justify-center">
               <BackButton fallbackUrl="/bible" />
             </div>
           </div>
           <div className="flex flex-row">
             <FaBookOpen size={18} />
             <div className="flex flex-col">
-              <h1 className="text-2xl font-black text-start ps-0.5">فقرات الاجتماع</h1>
+              <h1 className="text-2xl font-black text-start ps-2">فقرات الاجتماع</h1>
               <span className="text-xs text-[#564243] flex items-center">
-                <p className="text-center text-zinc-500 mb-1 text-sm">اعرض الآيات بشكل كامل ورتبها لاجتماعك بسهولة.</p>
+                <p className="text-center text-zinc-500 mb-4 text-sm">اعرض الآيات بشكل كامل ورتبها لاجتماعك بسهولة.</p>
               </span>
             </div>
           </div>
         </div>
-        <div className="flex gap-0.5 mb-1 bg-zinc-100 dark:bg-zinc-800 p-0.25 rounded-xl">
+        <div className="flex gap-2 mb-4 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl">
           <button
             className={`flex-1 py-0.5 font-bold rounded-lg transition ${mode === "enter" ? "bg-white dark:bg-zinc-700 shadow text-blue-600" : "text-zinc-500"}`}
             onClick={() => { setMode("enter"); setError(""); }}
@@ -140,43 +140,43 @@ export default function DayPortalPage() {
           </button>
         </div>
 
-        {error && <p className="text-red-500 text-sm text-center font-bold mb-1">{error}</p>}
+        {error && <p className="text-red-500 text-sm text-center font-bold mb-4">{error}</p>}
 
         {mode === "enter" ? (
-          <div className="space-y-1">
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-bold mb-0.5">كود الفقرة (12 رقم)</label>
+              <label className="block text-sm font-bold mb-2">كود الفقرة (12 رقم)</label>
               <input
                 type="text"
                 maxLength={12}
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, ""))}
-                className="w-full p-0.5 border rounded-xl text-center tracking-[0.2em] font-bold text-2xl bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2 border rounded-xl text-center tracking-[0.2em] font-bold text-2xl bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500"
                 dir="ltr"
                 placeholder="123456789012"
               />
             </div>
             <button
               onClick={handleEnterDay}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 rounded-xl transition shadow-lg shadow-blue-500/30"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-500/30"
             >
               عرض الآيات
             </button>
           </div>
         ) : (
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             {createdDayInfo && (
-              <div className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 p-0.5 rounded-2xl text-center space-y-0.5">
+              <div className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 p-2 rounded-2xl text-center space-y-2">
                 <p className="text-xs font-bold text-green-700 dark:text-green-300">
                   🎉 تم إنشاء الفقرة "{createdDayInfo.title}" بنجاح!
                 </p>
-                <div className="flex items-center justify-center gap-0.5">
-                  <span className="font-mono font-black text-xl tracking-widest text-green-900 dark:text-green-200 bg-white dark:bg-zinc-800 px-1 py-1 rounded-xl border border-green-300 dark:border-green-700" dir="ltr">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="font-mono font-black text-xl tracking-widest text-green-900 dark:text-green-200 bg-white dark:bg-zinc-800 px-4 py-4 rounded-xl border border-green-300 dark:border-green-700" dir="ltr">
                     {createdDayInfo.code}
                   </span>
                   <button
                     onClick={() => copyToClipboard(createdDayInfo.code)}
-                    className="p-1 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold"
+                    className="p-4 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold"
                     title="نسخ الكود"
                   >
                     نسخ
@@ -192,19 +192,19 @@ export default function DayPortalPage() {
             )}
 
             <div>
-              <label className="block text-sm font-bold mb-1">اسم اليوم أو عنوان الفقرة</label>
+              <label className="block text-sm font-bold mb-4">اسم اليوم أو عنوان الفقرة</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-1 border rounded-xl font-bold bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full p-4 border rounded-xl font-bold bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 placeholder="مثال: اجتماع الشباب - المحبة"
               />
             </div>
             <button
               onClick={handleCreateDay}
               disabled={isCreating}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-1 text-sm"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-4 text-sm"
             >
               {isCreating ? "جاري الإنشاء..." : <><FaPlus /> إنشاء الكود</>}
             </button>
@@ -213,29 +213,29 @@ export default function DayPortalPage() {
       </div>
 
       {history.length > 0 && (
-        <div className="max-w-md w-full bg-white dark:bg-zinc-900 p-1 rounded-3xl shadow border border-zinc-200 dark:border-zinc-800">
-          <h2 className="text-lg font-black mb-1">الفقرات السابقة</h2>
-          <div className="space-y-1">
+        <div className="max-w-md w-full bg-white dark:bg-zinc-900 p-4 rounded-3xl shadow border border-zinc-200 dark:border-zinc-800">
+          <h2 className="text-lg font-black mb-4">الفقرات السابقة</h2>
+          <div className="space-y-4">
             {history.map((item) => (
-              <div key={item.code} className="bg-zinc-50 dark:bg-zinc-800 p-0.5 rounded-xl flex flex-col gap-0.5 border border-zinc-100 dark:border-zinc-700">
+              <div key={item.code} className="bg-zinc-50 dark:bg-zinc-800 p-2 rounded-xl flex flex-col gap-2 border border-zinc-100 dark:border-zinc-700">
                 <div className="flex justify-between items-center">
                   {editingCode === item.code ? (
-                    <div className="flex w-full gap-0.5">
+                    <div className="flex w-full gap-2">
                       <input
                         type="text"
                         value={editTitle}
                         onChange={(e) => setEditTitle(e.target.value)}
-                        className="flex-1 p-0.25 border rounded font-bold dark:bg-zinc-700 dark:border-zinc-600 outline-none"
+                        className="flex-1 p-1 border rounded font-bold dark:bg-zinc-700 dark:border-zinc-600 outline-none"
                       />
-                      <button onClick={() => saveEditedTitle(item.code)} className="text-green-600 p-0.5"><FaCheck /></button>
-                      <button onClick={() => setEditingCode(null)} className="text-red-500 p-0.5"><FaTimes /></button>
+                      <button onClick={() => saveEditedTitle(item.code)} className="text-green-600 p-2"><FaCheck /></button>
+                      <button onClick={() => setEditingCode(null)} className="text-red-500 p-2"><FaTimes /></button>
                     </div>
                   ) : (
                     <>
                       <h3 className="font-bold text-md cursor-pointer hover:text-blue-600 transition" onClick={() => router.push(`/bible/day/${item.code}`)}>
                         {item.title}
                       </h3>
-                      <span className="text-xs font-mono bg-zinc-200 dark:bg-zinc-700 px-0.5 py-0.25 rounded text-zinc-600 dark:text-zinc-300">
+                      <span className="text-xs font-mono bg-zinc-200 dark:bg-zinc-700 px-2 py-1 rounded text-zinc-600 dark:text-zinc-300">
                         {item.code}
                       </span>
                     </>
@@ -243,21 +243,21 @@ export default function DayPortalPage() {
                 </div>
 
                 {editingCode !== item.code && (
-                  <div className="flex justify-between items-center border-t border-zinc-200 dark:border-zinc-700 pt-0.5">
+                  <div className="flex justify-between items-center border-t border-zinc-200 dark:border-zinc-700 pt-2">
                     <button
                       onClick={() => router.push(`/bible/day/${item.code}`)}
-                      className="text-sm text-blue-600 font-bold flex items-center gap-0.25 hover:underline"
+                      className="text-sm text-blue-600 font-bold flex items-center gap-1 hover:underline"
                     >
                       دخول <FaArrowLeft size={10} />
                     </button>
-                    <div className="flex gap-0.5">
-                      <button onClick={() => copyToClipboard(item.code)} className="p-0.5 text-zinc-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition" title="نسخ الكود">
+                    <div className="flex gap-2">
+                      <button onClick={() => copyToClipboard(item.code)} className="p-2 text-zinc-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition" title="نسخ الكود">
                         <FaCopy />
                       </button>
-                      <button onClick={() => startEditing(item)} className="p-0.5 text-zinc-500 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition" title="تعديل الاسم">
+                      <button onClick={() => startEditing(item)} className="p-2 text-zinc-500 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition" title="تعديل الاسم">
                         <FaEdit />
                       </button>
-                      <button onClick={() => removeFromHistory(item.code)} className="p-0.5 text-zinc-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition" title="حذف">
+                      <button onClick={() => removeFromHistory(item.code)} className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition" title="حذف">
                         <FaTrash />
                       </button>
                     </div>

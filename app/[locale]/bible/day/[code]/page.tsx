@@ -115,8 +115,8 @@ export default function PresentationPage() {
           onClick={() => interactive ? setSelectedWord({ vId: verse.id, wIdx }) : undefined}
           className={`
             inline-block mx-0.25 transition-all leading-normal
-            ${interactive ? "cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded px-0.25" : ""}
-            ${isSelected ? "bg-blue-200 dark:bg-blue-900 ring-2 ring-blue-500 rounded px-0.25" : ""}
+            ${interactive ? "cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded px-1" : ""}
+            ${isSelected ? "bg-blue-200 dark:bg-blue-900 ring-2 ring-blue-500 rounded px-1" : ""}
           `}
           style={{
             color: conf.c || "inherit",
@@ -136,29 +136,29 @@ export default function PresentationPage() {
 
   if (isEditMode) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-1 font-arabic pb-8 text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center mb-1">
+      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-4 font-arabic pb-32 text-zinc-900 dark:text-zinc-100">
+        <div className="flex justify-between items-center mb-4">
           <div>
             <h1 className="text-2xl font-bold">{title}</h1>
             <p className="text-sm text-zinc-500">تعديل الترتيب والتنسيق</p>
           </div>
           <button
             onClick={() => { setIsEditMode(false); setSelectedWord(null); }}
-            className="bg-green-600 hover:bg-green-700 text-white px-1 py-0.5 rounded-xl font-bold flex items-center gap-0.5 shadow-lg transition"
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 shadow-lg transition"
           >
             <FaCheck /> حفظ وعرض
           </button>
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-4">
           {verses.map((verse, index) => (
-            <div key={verse.id} className="bg-white dark:bg-zinc-900 p-1 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 relative">
-              <div className="flex justify-between items-start border-b border-zinc-100 dark:border-zinc-800 pb-0.5">
+            <div key={verse.id} className="bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 relative">
+              <div className="flex justify-between items-start border-b border-zinc-100 dark:border-zinc-800 pb-2">
                 <span className="text-lg font-bold text-blue-600">{verse.ref}</span>
-                <div className="flex gap-0.5">
-                  <button onClick={() => moveVerse(index, -1)} disabled={index === 0} className="p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg disabled:opacity-30 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"><FaArrowUp /></button>
-                  <button onClick={() => moveVerse(index, 1)} disabled={index === verses.length - 1} className="p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg disabled:opacity-30 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"><FaArrowDown /></button>
-                  <button onClick={() => deleteVerse(index)} className="p-0.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition"><FaTrash /></button>
+                <div className="flex gap-2">
+                  <button onClick={() => moveVerse(index, -1)} disabled={index === 0} className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg disabled:opacity-30 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"><FaArrowUp /></button>
+                  <button onClick={() => moveVerse(index, 1)} disabled={index === verses.length - 1} className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg disabled:opacity-30 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition"><FaArrowDown /></button>
+                  <button onClick={() => deleteVerse(index)} className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition"><FaTrash /></button>
                 </div>
               </div>
               <div className="text-2xl md:text-3xl leading-loose select-none font-bold">
@@ -167,49 +167,49 @@ export default function PresentationPage() {
             </div>
           ))}
           {verses.length === 0 && (
-            <div className="text-center p-2 text-zinc-500">لا توجد آيات مضافة.</div>
+            <div className="text-center p-8 text-zinc-500">لا توجد آيات مضافة.</div>
           )}
         </div>
 
         {selectedWord && (
-          <div className="fixed bottom-1 left-1/2 -translate-x-1/2 bg-white dark:bg-zinc-800 shadow-2xl p-0.5 rounded-2xl border border-zinc-300 dark:border-zinc-600 flex flex-col md:flex-row items-center gap-0.5 z-50 animate-fade-in">
-            <div className="flex items-center gap-1 border-b md:border-b-0 md:border-l border-zinc-200 dark:border-zinc-700 pb-0.5 md:pb-0 md:pl-0.5">
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white dark:bg-zinc-800 shadow-2xl p-2 rounded-2xl border border-zinc-300 dark:border-zinc-600 flex flex-col md:flex-row items-center gap-2 z-50 animate-fade-in">
+            <div className="flex items-center gap-4 border-b md:border-b-0 md:border-l border-zinc-200 dark:border-zinc-700 pb-2 md:pb-0 md:pl-2">
               <span className="text-sm text-zinc-500 font-bold">الحجم:</span>
-              <button onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "s", 0.2)} className="p-1 bg-zinc-100 dark:bg-zinc-700 rounded-xl hover:bg-zinc-200 transition">
+              <button onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "s", 0.2)} className="p-4 bg-zinc-100 dark:bg-zinc-700 rounded-xl hover:bg-zinc-200 transition">
                 <FaPlus size={14} />
               </button>
-              <button onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "s", -0.2)} className="p-1 bg-zinc-100 dark:bg-zinc-700 rounded-xl hover:bg-zinc-200 transition">
+              <button onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "s", -0.2)} className="p-4 bg-zinc-100 dark:bg-zinc-700 rounded-xl hover:bg-zinc-200 transition">
                 <FaMinus size={14} />
               </button>
             {/* </div> */}
 
-            {/* <div className="flex items-center gap-0.5 border-b md:border-b-0 md:border-l border-zinc-200 dark:border-zinc-700 pb-0.5 md:pb-0 md:pl-0.5"> */}
+            {/* <div className="flex items-center gap-2 border-b md:border-b-0 md:border-l border-zinc-200 dark:border-zinc-700 pb-2 md:pb-0 md:pl-2"> */}
               <span className="text-sm text-zinc-500 font-bold">عريض:</span>
-              <button onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "b")} className="p-1 bg-zinc-100 dark:bg-zinc-700 rounded-xl hover:bg-zinc-200 transition">
+              <button onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "b")} className="p-4 bg-zinc-100 dark:bg-zinc-700 rounded-xl hover:bg-zinc-200 transition">
                 <FaBold size={14} />
               </button>
             </div>
 
-            <div className="flex items-center gap-0.25 overflow-x-auto max-w-[90vw] md:max-w-none scrollbar-hide py-0.5 px-0.5">
+            <div className="flex items-center gap-1 overflow-x-auto max-w-[90vw] md:max-w-none scrollbar-hide py-2 px-2">
               <span className="text-sm text-zinc-500 font-bold shrink-0">اللون:</span>
               {presetColors.map((c) => (
                 <button
                   key={c}
                   onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "c", c)}
-                  className="w-3 h-3 rounded-full border-2 border-zinc-300 shadow-sm transition hover:scale-110 shrink-0"
+                  className="w-12 h-12 rounded-full border-2 border-zinc-300 shadow-sm transition hover:scale-110 shrink-0"
                   style={{ backgroundColor: c }}
                 />
               ))}
-              <div className="relative w-3 h-3 rounded-full border-2 border-zinc-300 overflow-hidden shadow-sm hover:scale-110 transition cursor-pointer shrink-0">
+              <div className="relative w-12 h-12 rounded-full border-2 border-zinc-300 overflow-hidden shadow-sm hover:scale-110 transition cursor-pointer shrink-0">
                 <input
                   type="color"
                   onChange={(e) => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "c", e.target.value)}
-                  className="absolute -top-1 -left-1 w-3 h-3 cursor-pointer"
+                  className="absolute -top-4 -left-4 w-12 h-12 cursor-pointer"
                 />
               </div>
               <button
                 onClick={() => toggleWordFormat(selectedWord.vId, selectedWord.wIdx, "c", undefined)}
-                className="w-3 h-3 rounded-full border-2 border-zinc-300 shadow-sm bg-transparent flex items-center justify-center text-xs hover:bg-red-50 transition text-red-500 shrink-0"
+                className="w-12 h-12 rounded-full border-2 border-zinc-300 shadow-sm bg-transparent flex items-center justify-center text-xs hover:bg-red-50 transition text-red-500 shrink-0"
                 title="إزالة اللون"
               >
                 <FaTimes />
@@ -226,24 +226,24 @@ export default function PresentationPage() {
 
   return (
     <div className={`h-screen w-full ${bgClass} font-arabic overflow-hidden relative transition-colors duration-500`}>
-      <div className="absolute top-1 right-1 z-50 flex gap-1">
+      <div className="absolute top-4 right-4 z-50 flex gap-4">
         <button
           onClick={() => setIsEditMode(true)}
-          className="bg-zinc-500/20 hover:bg-zinc-500/40 backdrop-blur p-1 rounded-full transition shadow-lg"
+          className="bg-zinc-500/20 hover:bg-zinc-500/40 backdrop-blur p-4 rounded-full transition shadow-lg"
           title="تعديل العرض"
         >
           <FaEdit size={18} />
         </button>
         <button
           onClick={() => setInverted(!inverted)}
-          className="bg-zinc-500/20 hover:bg-zinc-500/40 backdrop-blur p-1 rounded-full transition shadow-lg"
+          className="bg-zinc-500/20 hover:bg-zinc-500/40 backdrop-blur p-4 rounded-full transition shadow-lg"
           title="عكس الألوان"
         >
           {inverted ? <FaMoon size={18} /> : <FaSun size={18} />}
         </button>
       </div>
 
-      <div className="absolute top-1.5 left-1.5 z-50 opacity-30 text-sm font-mono tracking-widest pointer-events-none font-bold">
+      <div className="absolute top-6 left-6 z-50 opacity-30 text-sm font-mono tracking-widest pointer-events-none font-bold">
         {code}
       </div>
 
@@ -251,13 +251,13 @@ export default function PresentationPage() {
         <>
           <button
             onClick={() => scrollContainer("prev")}
-            className="absolute left-1 top-1/2 -translate-y-1/2 z-40 bg-zinc-500/10 hover:bg-zinc-500/30 p-1 rounded-full transition opacity-50 hover:opacity-100"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-zinc-500/10 hover:bg-zinc-500/30 p-4 rounded-full transition opacity-50 hover:opacity-100"
           >
             <FaChevronLeft size={24} />
           </button>
           <button
             onClick={() => scrollContainer("next")}
-            className="absolute right-1 top-1/2 -translate-y-1/2 z-40 bg-zinc-500/10 hover:bg-zinc-500/30 p-1 rounded-full transition opacity-50 hover:opacity-100"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-zinc-500/10 hover:bg-zinc-500/30 p-4 rounded-full transition opacity-50 hover:opacity-100"
           >
             <FaChevronRight size={24} />
           </button>
@@ -265,7 +265,7 @@ export default function PresentationPage() {
       )}
 
       {showHelp && verses.length > 1 && (
-        <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-50 bg-black/70 text-white px-1.5 py-0.5 rounded-full backdrop-blur text-sm animate-pulse pointer-events-none">
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 bg-black/70 text-white px-6 py-2 rounded-full backdrop-blur text-sm animate-pulse pointer-events-none">
           اسحب لليمين أو اليسار للتنقل بين الآيات
         </div>
       )}
@@ -276,14 +276,14 @@ export default function PresentationPage() {
         style={{ scrollBehavior: "smooth" }}
       >
         {verses.length === 0 ? (
-          <div className="w-full shrink-0 flex flex-col items-center justify-center p-2 mx-auto text-2xl text-zinc-500">
+          <div className="w-full shrink-0 flex flex-col items-center justify-center p-8 mx-auto text-2xl text-zinc-500">
             <p>لا توجد آيات مضافة في هذا اليوم حتى الآن.</p>
-            {/* <button onClick={() => setIsEditMode(true)} className="mt-1 text-blue-500 text-lg underline">اضغط هنا للتعديل</button> */}
-            <Link href="/bible" className="mt-1 text-blue-500 text-lg underline">ارجع الي صفحة الكتاب المقدس وأضف آيات اولا</Link>
+            {/* <button onClick={() => setIsEditMode(true)} className="mt-4 text-blue-500 text-lg underline">اضغط هنا للتعديل</button> */}
+            <Link href="/bible" className="mt-4 text-blue-500 text-lg underline">ارجع الي صفحة الكتاب المقدس وأضف آيات اولا</Link>
           </div>
         ) : (
           verses.map((verse) => (
-            <div key={verse.id} className="snap-center shrink-0 w-full h-full flex flex-col items-center justify-center p-2 md:p-3">
+            <div key={verse.id} className="snap-center shrink-0 w-full h-full flex flex-col items-center justify-center p-8 md:p-12">
               <div className="max-w-7xl text-center flex flex-col items-center justify-center">
                 <h1 className="text-4xl md:text-7xl lg:text-[6rem] leading-normal md:leading-[1.5] font-bold">
                   {renderFormattedText(verse, false)}

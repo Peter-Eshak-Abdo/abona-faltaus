@@ -259,48 +259,48 @@ export default function ChurchFormsDashboardPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center p-2 gap-1">
-        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+      <div className="min-h-[80vh] flex flex-col items-center justify-center p-8 gap-4">
+        <Loader2 className="w-24 h-24 animate-spin text-blue-600" />
         <p className="text-sm font-semibold text-stone-500">جاري التحقق من الحساب...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen py-0.5 px-0.5 sm:px-4 max-w-7xl mx-auto space-y-0.5 font-sans" dir="rtl">
+    <div className="min-h-screen py-2 px-2 sm:px-16 max-w-7xl mx-auto space-y-2 font-sans" dir="rtl">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-0.5 bg-white/80 dark:bg-zinc-900/80 p-0.5 rounded-3xl border border-stone-200 dark:border-zinc-800 shadow-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white/80 dark:bg-zinc-900/80 p-2 rounded-3xl border border-stone-200 dark:border-zinc-800 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-stone-900 dark:text-zinc-100 flex items-center gap-0.5">
-            <ClipboardList className="w-2 h-2 text-blue-600" />
+          <h1 className="text-2xl font-bold text-stone-900 dark:text-zinc-100 flex items-center gap-2">
+            <ClipboardList className="w-8 h-8 text-blue-600" />
             <span>نظام استبيانات واستمارات الخدمة (Google Forms البديل)</span>
           </h1>
-          <p className="text-xs text-stone-500 mt-0.5">
+          <p className="text-xs text-stone-500 mt-2">
             أنشئ استماراتك، شارك الروابط مع المخدومين، حلل الردود وشارك الإدارة مع الخدام المشرفين
           </p>
         </div>
 
         <Button
           onClick={() => setShowCreateModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl text-xs flex items-center gap-0.5 shadow-md h-3 px-1"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl text-xs flex items-center gap-2 shadow-md h-12 px-4"
         >
-          <Plus className="w-2 h-2" />
+          <Plus className="w-8 h-8" />
           <span>إنشاء استبيان جديد</span>
         </Button>
       </div>
 
       {/* Main Grid: Forms list + Dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-0.5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
         {/* Left: Active Forms list */}
-        <div className="space-y-0.5">
-          <h2 className="text-sm font-bold text-stone-800 dark:text-zinc-200 flex items-center gap-0.25">
-            <ClipboardList className="w-2 h-2 text-blue-600" />
+        <div className="space-y-2">
+          <h2 className="text-sm font-bold text-stone-800 dark:text-zinc-200 flex items-center gap-1">
+            <ClipboardList className="w-8 h-8 text-blue-600" />
             <span>استبياناتك المتاحة ({forms.length})</span>
           </h2>
 
           {forms.length === 0 ? (
-            <Card className="rounded-2xl p-0.5 text-center border-dashed border-stone-300 dark:border-zinc-700 bg-transparent">
-              <p className="text-xs text-stone-500 mb-0.5">لم تقم بإنشاء أي استبيان بعد</p>
+            <Card className="rounded-2xl p-2 text-center border-dashed border-stone-300 dark:border-zinc-700 bg-transparent">
+              <p className="text-xs text-stone-500 mb-2">لم تقم بإنشاء أي استبيان بعد</p>
               <Button
                 onClick={() => setShowCreateModal(true)}
                 variant="outline"
@@ -310,7 +310,7 @@ export default function ChurchFormsDashboardPage() {
               </Button>
             </Card>
           ) : (
-            <div className="space-y-1.5">
+            <div className="space-y-6">
               {forms.map((f) => {
                 const isSelected = selectedForm?.id === f.id;
                 return (
@@ -323,16 +323,16 @@ export default function ChurchFormsDashboardPage() {
                         : "border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-blue-400"
                     } shadow-xs`}
                   >
-                    <div className="flex items-center justify-between mb-0.5">
+                    <div className="flex items-center justify-between mb-2">
                       <h3 className="text-xs font-bold text-stone-900 dark:text-zinc-100 truncate">{f.title}</h3>
                       <Badge variant="outline" className={`text-[10px] ${isSelected ? "text-blue-600 border-blue-500" : "text-emerald-600 border-emerald-500/30"}`}>
                         {isSelected ? "محدد" : "نشط"}
                       </Badge>
                     </div>
-                    <div className="flex items-center justify-between text-[11px] text-stone-400 mb-0.5">
+                    <div className="flex items-center justify-between text-[11px] text-stone-400 mb-2">
                       <span>{f.fields?.length || 0} أسئلة</span>
-                      <span className="flex items-center gap-0.5">
-                        <Users className="w-3 h-3" />
+                      <span className="flex items-center gap-2">
+                        <Users className="w-12 h-12" />
                         {f.admin_collaborators?.length || 1} مشرفين
                       </span>
                     </div>
@@ -343,7 +343,7 @@ export default function ChurchFormsDashboardPage() {
                       }}
                       className="w-full bg-stone-100 hover:bg-blue-100 text-stone-800 dark:bg-zinc-800 dark:hover:bg-blue-950/60 dark:text-zinc-200 rounded-xl text-xs font-bold"
                     >
-                      <Share2 className="w-2.5 h-2.5 ml-0.5" />
+                      <Share2 className="w-10 h-10 ml-2" />
                       نسخ الرابط للمخدومين
                     </Button>
                   </Card>
@@ -354,47 +354,47 @@ export default function ChurchFormsDashboardPage() {
         </div>
 
         {/* Right: Responses Analytics & Admin Collaborators */}
-        <div className="lg:col-span-2 space-y-0.5">
+        <div className="lg:col-span-2 space-y-2">
           {selectedForm ? (
             <>
               {/* Form Dashboard Header */}
-              <Card className="rounded-3xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 shadow-xs space-y-0.5">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-0.5 border-b border-stone-100 dark:border-zinc-800 pb-0.5">
+              <Card className="rounded-3xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-xs space-y-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-stone-100 dark:border-zinc-800 pb-2">
                   <div>
                     <h2 className="text-lg font-bold text-stone-900 dark:text-zinc-100">{selectedForm.title}</h2>
-                    <p className="text-xs text-stone-500 mt-0.5">{selectedForm.description || "استبيان خدمة"}</p>
+                    <p className="text-xs text-stone-500 mt-2">{selectedForm.description || "استبيان خدمة"}</p>
                   </div>
 
-                  <div className="flex flex-wrap gap-0.5">
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       onClick={exportToExcel}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-0.5"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-2"
                     >
-                      <FileSpreadsheet className="w-2.5 h-2.5" />
+                      <FileSpreadsheet className="w-10 h-10" />
                       <span>تصدير Excel</span>
                     </Button>
 
                     <Button
                       onClick={exportToPdf}
                       variant="outline"
-                      className="rounded-xl text-xs font-bold flex items-center gap-0.5"
+                      className="rounded-xl text-xs font-bold flex items-center gap-2"
                     >
-                      <FileText className="w-2 h-2" />
+                      <FileText className="w-8 h-8" />
                       <span>تصدير PDF</span>
                     </Button>
                   </div>
                 </div>
 
                 {/* Admins & Collaborators Section */}
-                <div className="bg-stone-50 dark:bg-zinc-800/50 p-0.5 rounded-2xl border border-stone-200/60 dark:border-zinc-700/60 space-y-0.5">
+                <div className="bg-stone-50 dark:bg-zinc-800/50 p-2 rounded-2xl border border-stone-200/60 dark:border-zinc-700/60 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-stone-700 dark:text-zinc-300 flex items-center gap-0.5">
-                      <ShieldCheck className="w-2 h-2 text-blue-600" />
+                    <span className="text-xs font-bold text-stone-700 dark:text-zinc-300 flex items-center gap-2">
+                      <ShieldCheck className="w-8 h-8 text-blue-600" />
                       الخدام المشرفين كـ Admin على الاستبيان:
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap gap-0.5">
+                  <div className="flex flex-wrap gap-2">
                     {(selectedForm.admin_collaborators || []).map((adminEmail: string, idx: number) => (
                       <Badge key={idx} variant="secondary" className="text-xs font-mono">
                         {adminEmail}
@@ -402,18 +402,18 @@ export default function ChurchFormsDashboardPage() {
                     ))}
                   </div>
 
-                  <form onSubmit={handleAddCollaborator} className="flex gap-0.5 pt-0.5">
+                  <form onSubmit={handleAddCollaborator} className="flex gap-2 pt-2">
                     <Input
                       value={newAdminEmail}
                       onChange={(e) => setNewAdminEmail(e.target.value)}
                       placeholder="أدخل إيميل الخادم لإضافته كـ Admin..."
-                      className="text-xs rounded-xl h-2.5"
+                      className="text-xs rounded-xl h-10"
                       dir="ltr"
                     />
                     <Button
                       type="submit"
                       disabled={isAddingAdmin || !newAdminEmail.trim()}
-                      className="bg-stone-800 hover:bg-black text-white text-xs rounded-xl h-2.5 font-bold px-0.5 shrink-0"
+                      className="bg-stone-800 hover:bg-black text-white text-xs rounded-xl h-10 font-bold px-2 shrink-0"
                     >
                       {isAddingAdmin ? "جاري الإضافة..." : "إضافة خادم مشرف"}
                     </Button>
@@ -422,9 +422,9 @@ export default function ChurchFormsDashboardPage() {
               </Card>
 
               {/* Google Forms Style Dashboard: Summary & Individual Tabs */}
-              <div className="space-y-0.5">
-                <div className="flex items-center justify-between flex-wrap gap-0.5 border-b border-stone-200 dark:border-zinc-800 pb-0.5">
-                  <div className="flex items-center gap-0.25 bg-stone-100 dark:bg-zinc-800/80 p-1 rounded-2xl">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-2 border-b border-stone-200 dark:border-zinc-800 pb-2">
+                  <div className="flex items-center gap-1 bg-stone-100 dark:bg-zinc-800/80 p-4 rounded-2xl">
                     <button
                       type="button"
                       onClick={() => setDashboardTab("summary")}
@@ -434,7 +434,7 @@ export default function ChurchFormsDashboardPage() {
                           : "text-stone-600 dark:text-zinc-400 hover:text-stone-900"
                       }`}
                     >
-                      <BarChart3 className="w-3.5 h-3.5" />
+                      <BarChart3 className="w-14 h-14" />
                       <span>الملخص العام ({responses.length})</span>
                     </button>
                     <button
@@ -447,29 +447,29 @@ export default function ChurchFormsDashboardPage() {
                           : "text-stone-600 dark:text-zinc-400 hover:text-stone-900 disabled:opacity-40"
                       }`}
                     >
-                      <UserCheck className="w-3.5 h-3.5" />
+                      <UserCheck className="w-14 h-14" />
                       <span>الردود الفردية</span>
                     </button>
                   </div>
 
                   {dashboardTab === "individual" && responses.length > 0 && (
-                    <div className="flex items-center gap-0.5">
+                    <div className="flex items-center gap-2">
                       <Button
                         variant="outline"
                         onClick={() => window.print()}
-                        className="rounded-xl text-xs h-3 gap-1 border-stone-300 dark:border-zinc-700"
+                        className="rounded-xl text-xs h-12 gap-4 border-stone-300 dark:border-zinc-700"
                       >
-                        <Printer className="w-3.5 h-3.5" />
+                        <Printer className="w-14 h-14" />
                         <span>طباعة الاستمارة</span>
                       </Button>
-                      <div className="flex items-center gap-1 text-xs font-bold text-stone-600 dark:text-zinc-400">
+                      <div className="flex items-center gap-4 text-xs font-bold text-stone-600 dark:text-zinc-400">
                         <button
                           type="button"
                           onClick={() => setIndividualIndex((i) => Math.max(0, i - 1))}
                           disabled={individualIndex === 0}
-                          className="p-0.5 rounded-lg border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 disabled:opacity-30"
+                          className="p-2 rounded-lg border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 disabled:opacity-30"
                         >
-                          <ChevronRight className="w-3 h-3" />
+                          <ChevronRight className="w-12 h-12" />
                         </button>
                         <span>
                           {individualIndex + 1} من {responses.length}
@@ -478,9 +478,9 @@ export default function ChurchFormsDashboardPage() {
                           type="button"
                           onClick={() => setIndividualIndex((i) => Math.min(responses.length - 1, i + 1))}
                           disabled={individualIndex >= responses.length - 1}
-                          className="p-0.5 rounded-lg border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 disabled:opacity-30"
+                          className="p-2 rounded-lg border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 disabled:opacity-30"
                         >
-                          <ChevronLeft className="w-3 h-3" />
+                          <ChevronLeft className="w-12 h-12" />
                         </button>
                       </div>
                     </div>
@@ -488,48 +488,48 @@ export default function ChurchFormsDashboardPage() {
                 </div>
 
                 {loadingResponses ? (
-                  <div className="flex flex-col items-center justify-center py-1.5 gap-0.5">
-                    <Loader2 className="w-2 h-2 animate-spin text-blue-600" />
+                  <div className="flex flex-col items-center justify-center py-6 gap-2">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
                     <p className="text-xs font-semibold text-stone-500">جاري تحميل الردود والإحصائيات...</p>
                   </div>
                 ) : responses.length === 0 ? (
-                  <Card className="rounded-3xl p-1.5 text-center border-stone-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60">
-                    <HelpCircle className="w-2 h-2 text-stone-300 dark:text-zinc-600 mx-auto mb-0.5" />
+                  <Card className="rounded-3xl p-6 text-center border-stone-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60">
+                    <HelpCircle className="w-8 h-8 text-stone-300 dark:text-zinc-600 mx-auto mb-2" />
                     <h4 className="text-sm font-bold text-stone-700 dark:text-zinc-300">لا توجد ردود مسجلة بعد</h4>
-                    <p className="text-xs text-stone-500 max-w-sm mx-auto mt-0.5">
+                    <p className="text-xs text-stone-500 max-w-sm mx-auto mt-2">
                       شارك الرابط مع المخدومين لتظهر ردودهم وإحصائياتهم التفاعلية هنا مباشرة.
                     </p>
                   </Card>
                 ) : dashboardTab === "summary" ? (
                   /* Summary Analytics View */
-                  <div className="space-y-0.5">
+                  <div className="space-y-2">
                     {/* KPI Summary Cards */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-0.5">
-                      <div className="bg-blue-50/80 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40 rounded-2xl p-0.5 text-center">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <div className="bg-blue-50/80 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40 rounded-2xl p-2 text-center">
                         <span className="text-[11px] font-bold text-blue-700 dark:text-blue-300 block">إجمالي الردود</span>
                         <span className="text-2xl font-black text-blue-900 dark:text-blue-100">{responses.length}</span>
                       </div>
-                      <div className="bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 rounded-2xl p-0.5 text-center">
+                      <div className="bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 rounded-2xl p-2 text-center">
                         <span className="text-[11px] font-bold text-amber-700 dark:text-amber-300 block">عدد الأسئلة</span>
                         <span className="text-2xl font-black text-amber-900 dark:text-amber-100">{selectedForm.fields?.length || 0}</span>
                       </div>
-                      <div className="bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 rounded-2xl p-0.5 text-center col-span-2 sm:col-span-1">
+                      <div className="bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 rounded-2xl p-2 text-center col-span-2 sm:col-span-1">
                         <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 block">حالة الاستبيان</span>
-                        <span className="text-sm font-bold text-emerald-800 dark:text-emerald-200 mt-1 block">نشط ويستقبل ردوداً</span>
+                        <span className="text-sm font-bold text-emerald-800 dark:text-emerald-200 mt-4 block">نشط ويستقبل ردوداً</span>
                       </div>
                     </div>
 
                     {/* Per-field Analytics Breakdown */}
-                    <div className="space-y-0.5">
+                    <div className="space-y-2">
                       {(selectedForm.fields || []).map((field: any, idx: number) => {
                         const fieldStats = fieldAnalytics[field.id] || {};
                         const totalAnswers = Object.values(fieldStats).reduce((a, b) => a + b, 0);
 
                         return (
-                          <Card key={field.id} className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 shadow-xs space-y-3">
-                            <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800/80 pb-0.5">
-                              <h4 className="text-xs font-bold text-stone-900 dark:text-zinc-100 flex items-center gap-0.5">
-                                <span className="w-5 h-5 rounded-full bg-stone-100 dark:bg-zinc-800 text-stone-600 dark:text-zinc-300 inline-flex items-center justify-center text-[10px] font-bold">
+                          <Card key={field.id} className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-xs space-y-12">
+                            <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800/80 pb-2">
+                              <h4 className="text-xs font-bold text-stone-900 dark:text-zinc-100 flex items-center gap-2">
+                                <span className="w-20 h-20 rounded-full bg-stone-100 dark:bg-zinc-800 text-stone-600 dark:text-zinc-300 inline-flex items-center justify-center text-[10px] font-bold">
                                   {idx + 1}
                                 </span>
                                 <span>{field.label}</span>
@@ -540,18 +540,18 @@ export default function ChurchFormsDashboardPage() {
                             </div>
 
                             {field.type === "multiple_choice" || field.type === "rating" ? (
-                              <div className="space-y-0.5 pt-0.5">
+                              <div className="space-y-2 pt-2">
                                 {Object.entries(fieldStats).map(([opt, count]) => {
                                   const pct = totalAnswers > 0 ? Math.round((count / totalAnswers) * 100) : 0;
                                   return (
-                                    <div key={opt} className="space-y-0.25">
+                                    <div key={opt} className="space-y-1">
                                       <div className="flex items-center justify-between text-xs text-stone-700 dark:text-zinc-300">
                                         <span className="font-semibold">{opt}</span>
                                         <span className="font-bold text-stone-500 text-[11px]">
                                           {count} ({pct}%)
                                         </span>
                                       </div>
-                                      <div className="w-full bg-stone-100 dark:bg-zinc-800 h-2 rounded-full overflow-hidden">
+                                      <div className="w-full bg-stone-100 dark:bg-zinc-800 h-8 rounded-full overflow-hidden">
                                         <div
                                           className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
                                           style={{ width: `${pct}%` }}
@@ -562,14 +562,14 @@ export default function ChurchFormsDashboardPage() {
                                 })}
                               </div>
                             ) : (
-                              <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
+                              <div className="space-y-2 max-h-48 overflow-y-auto pr-4">
                                 {responses
                                   .filter((r) => r.responses[field.id])
                                   .slice(0, 10)
                                   .map((r, i) => (
                                     <div
                                       key={r.id || i}
-                                      className="text-xs bg-stone-50 dark:bg-zinc-800/60 p-0.5 rounded-xl border border-stone-100 dark:border-zinc-800 text-stone-800 dark:text-zinc-200"
+                                      className="text-xs bg-stone-50 dark:bg-zinc-800/60 p-2 rounded-xl border border-stone-100 dark:border-zinc-800 text-stone-800 dark:text-zinc-200"
                                     >
                                       {r.responses[field.id]}
                                     </div>
@@ -584,23 +584,23 @@ export default function ChurchFormsDashboardPage() {
                 ) : (
                   /* Individual Examinee View */
                   responses[individualIndex] && (
-                    <Card className="rounded-3xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 shadow-sm space-y-4">
-                      <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-0.5 text-xs text-stone-400">
-                        <span className="flex items-center gap-0.5 font-semibold text-stone-600 dark:text-zinc-400">
+                    <Card className="rounded-2xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-2 text-xs text-stone-400">
+                        <span className="flex items-center gap-2 font-semibold text-stone-600 dark:text-zinc-400">
                           <UserCheck className="w-4 h-4 text-blue-600" />
                           <span>استمارة المستجيب #{individualIndex + 1}</span>
                         </span>
-                        <span className="flex items-center gap-1 text-[11px]">
+                        <span className="flex items-center gap-2 text-[11px]">
                           <Clock className="w-3.5 h-3.5" />
                           {new Date(responses[individualIndex].submitted_at).toLocaleString("ar-EG")}
                         </span>
                       </div>
 
-                      <div className="space-y-0.5">
+                      <div className="space-y-2">
                         {(selectedForm.fields || []).map((f: any) => (
                           <div
                             key={f.id}
-                            className="bg-stone-50/80 dark:bg-zinc-800/40 p-0.5 rounded-2xl border border-stone-100 dark:border-zinc-800/60 space-y-0.25"
+                            className="bg-stone-50/80 dark:bg-zinc-800/40 p-2 rounded-2xl border border-stone-100 dark:border-zinc-800/60 space-y-1"
                           >
                             <span className="font-bold text-xs text-stone-600 dark:text-zinc-400 block">
                               {f.label}
@@ -619,8 +619,8 @@ export default function ChurchFormsDashboardPage() {
               </div>
             </>
           ) : (
-            <Card className="rounded-3xl p-1.5 text-center border-stone-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50">
-              <ClipboardList className="w-2 h-2 text-stone-400 mx-auto mb-0.5" />
+            <Card className="rounded-3xl p-6 text-center border-stone-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50">
+              <ClipboardList className="w-8 h-8 text-stone-400 mx-auto mb-2" />
               <h3 className="text-base font-bold text-stone-700 dark:text-zinc-300">اختر استبياناً لعرض إحصائياته وردوده</h3>
             </Card>
           )}
@@ -629,13 +629,13 @@ export default function ChurchFormsDashboardPage() {
 
       {/* Modal: Create Form */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-0.5">
-          <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-xl w-full p-1 shadow-2xl border border-stone-200 dark:border-zinc-800 space-y-0.5 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-2">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-xl w-full p-4 shadow-2xl border border-stone-200 dark:border-zinc-800 space-y-2 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-bold text-stone-900 dark:text-zinc-100">إنشاء استبيان كنسي جديد</h3>
 
-            <form onSubmit={handleCreateForm} className="space-y-0.5 text-right">
+            <form onSubmit={handleCreateForm} className="space-y-2 text-right">
               <div>
-                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-0.5">
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-2">
                   عنوان الاستبيان:
                 </label>
                 <Input
@@ -647,7 +647,7 @@ export default function ChurchFormsDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-0.5">
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-2">
                   وصف الاستبيان أو رسالة للمخدومين (اختياري):
                 </label>
                 <Textarea
@@ -659,23 +659,23 @@ export default function ChurchFormsDashboardPage() {
               </div>
 
               {/* Fields Builder */}
-              <div className="space-y-0.5 pt-0.5 border-t border-stone-200 dark:border-zinc-800">
+              <div className="space-y-2 pt-2 border-t border-stone-200 dark:border-zinc-800">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-stone-800 dark:text-zinc-200">الأسئلة والحقول:</span>
                   <Button
                     type="button"
                     onClick={handleAddField}
                     variant="outline"
-                    className="rounded-xl text-xs flex items-center gap-0.5"
+                    className="rounded-xl text-xs flex items-center gap-2"
                   >
-                    <Plus className="w-2.5 h-2.5" />
+                    <Plus className="w-10 h-10" />
                     إضافة سؤال
                   </Button>
                 </div>
 
-                <div className="space-y-0.5">
+                <div className="space-y-2">
                   {fields.map((field, idx) => (
-                    <div key={field.id} className="flex gap-0.5 items-center bg-stone-50 dark:bg-zinc-800 p-0.5 rounded-xl">
+                    <div key={field.id} className="flex gap-2 items-center bg-stone-50 dark:bg-zinc-800 p-2 rounded-xl">
                       <Input
                         value={field.label}
                         onChange={(e) => {
@@ -689,20 +689,20 @@ export default function ChurchFormsDashboardPage() {
                       <button
                         type="button"
                         onClick={() => handleRemoveField(field.id)}
-                        className="text-stone-400 hover:text-rose-600 p-0.5"
+                        className="text-stone-400 hover:text-rose-600 p-2"
                       >
-                        <Trash2 className="w-2.5 h-2.5" />
+                        <Trash2 className="w-10 h-10" />
                       </button>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="flex gap-0.5 pt-0.5">
+              <div className="flex gap-2 pt-2">
                 <Button
                   type="submit"
                   disabled={isSubmittingForm || !title.trim()}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold h-10"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold h-9"
                 >
                   {isSubmittingForm ? "جاري الإنشاء..." : "إنشاء الاستبيان الآن"}
                 </Button>
@@ -710,7 +710,7 @@ export default function ChurchFormsDashboardPage() {
                   type="button"
                   onClick={() => setShowCreateModal(false)}
                   variant="outline"
-                  className="w-auto rounded-xl text-xs h-10"
+                  className="w-auto rounded-xl text-xs h-9"
                 >
                   إلغاء
                 </Button>

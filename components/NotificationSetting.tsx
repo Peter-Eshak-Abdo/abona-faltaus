@@ -25,10 +25,10 @@ export default function NotificationSettings() {
   };
 
   return (
-    <div className="container mt-1 p-1 border rounded shadow-sm">
-      <h3 className="mb-1">إعدادات الإشعارات</h3>
+    <div className="container mt-4 p-4 border rounded shadow-sm">
+      <h3 className="mb-4">إعدادات الإشعارات</h3>
 
-      <div className="form-check form-switch fs-5 mb-1">
+      <div className="form-check form-switch fs-5 mb-4">
         <input
           className="form-check-input"
           type="checkbox"
@@ -37,7 +37,7 @@ export default function NotificationSettings() {
           checked={isSubscribed}
           onChange={handleToggle}
         />
-        <label className="form-check-label ms-1" htmlFor="dailyNotifications">
+        <label className="form-check-label ms-4" htmlFor="dailyNotifications">
           تفعيل إشعارات آية اليوم وأقوال الآباء
         </label>
       </div>

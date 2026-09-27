@@ -37,11 +37,11 @@ const sounds = [
 
 const AbDaodLam3yAltobaPlayer: React.FC = () => {
   return (
-    <div id="sec-abDaodLam3y-altoba" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+    <div id="sec-abDaodLam3y-altoba" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
       {sounds
         .filter((sound) => sound.monasba === "abDaodLam3y-altoba")
         .map((sound, index) => (
-          <Card key={`abDaodLam3y-altoba-${index}`} className="shadow-sm pt-3 ps-3">
+          <Card key={`abDaodLam3y-altoba-${index}`} className="shadow-sm pt-12 ps-12">
             <CardContent>
               <div className="flex justify-center items-center">
                 <audio controls is="x-audio" id={`abDaodLam3y-altoba-audio-${index}`}>

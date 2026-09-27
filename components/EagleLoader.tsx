@@ -37,16 +37,16 @@ export default function EagleLoader({
   return (
     <div
       className={`${
-        fullScreen ? "fixed inset-0 z-9999" : "relative w-full py-1"
+        fullScreen ? "fixed inset-0 z-9999" : "relative w-full py-4"
       } flex flex-col items-center justify-center bg-background/80 backdrop-blur-xl transition-all duration-300 p-0.5 select-none`}
       dir="rtl"
     >
       {/* Background soft ambient glow */}
-      <div className="absolute w-18 h-18 bg-linear-to-tr from-amber-500/20 via-orange-500/15 to-blue-500/15 rounded-full blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute w-72 h-72 bg-linear-to-tr from-amber-500/20 via-orange-500/15 to-blue-500/15 rounded-full blur-3xl pointer-events-none animate-pulse" />
 
-      <div className="relative z-10 flex flex-col items-center max-w-md w-full text-center space-y-0.5">
+      <div className="relative z-10 flex flex-col items-center max-w-md w-full text-center space-y-2">
         {/* Animated Eagle SVG with line drawing effect */}
-        <div className="relative w-9 h-9 flex items-center justify-center">
+        <div className="relative w-36 h-36 flex items-center justify-center">
           <svg
             viewBox="0 0 200 200"
             className="w-full h-full drop-shadow-[0_0_20px_rgba(245,158,11,0.45)]"
@@ -206,7 +206,7 @@ export default function EagleLoader({
         </div>
 
         {/* Status text */}
-        <div className="space-y-0.25">
+        <div className="space-y-1">
           <h3 className="text-lg md:text-xl font-bold bg-linear-to-r from-amber-600 via-orange-500 to-amber-600 dark:from-amber-400 dark:via-orange-300 dark:to-amber-400 bg-clip-text text-transparent">
             {statusText}
           </h3>
@@ -214,8 +214,8 @@ export default function EagleLoader({
 
         {/* Progress bar if progress is specified */}
         {typeof progress === "number" && (
-          <div className="w-full max-w-xs space-y-0.25">
-            <div className="relative w-full h-1 bg-zinc-200/80 dark:bg-zinc-800/80 rounded-full overflow-hidden border border-amber-500/20 shadow-inner">
+          <div className="w-full max-w-xs space-y-1">
+            <div className="relative w-full h-4 bg-zinc-200/80 dark:bg-zinc-800/80 rounded-full overflow-hidden border border-amber-500/20 shadow-inner">
               <motion.div
                 className="absolute top-0 right-0 h-full bg-linear-to-l from-amber-500 via-orange-500 to-amber-600 rounded-full shadow-[0_0_12px_rgba(245,158,11,0.6)]"
                 initial={{ width: 0 }}
@@ -223,7 +223,7 @@ export default function EagleLoader({
                 transition={{ duration: 0.3 }}
               />
             </div>
-            <div className="flex justify-between text-xs font-mono font-bold text-amber-600 dark:text-amber-400 px-0.25">
+            <div className="flex justify-between text-xs font-mono font-bold text-amber-600 dark:text-amber-400 px-1">
               <span>{Math.round(progress)}%</span>
               <span>مكتمل</span>
             </div>
@@ -232,7 +232,7 @@ export default function EagleLoader({
 
         {/* Inspiring tips quote box */}
         {tips && tips.length > 0 && (
-          <div className="w-full mt-0.25 p-0.5 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-amber-500/20 shadow-lg min-h-[72px] flex items-center justify-center">
+          <div className="w-full mt-1 p-2 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-amber-500/20 shadow-lg min-h-[72px] flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.p
                 key={tipIndex}

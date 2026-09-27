@@ -125,7 +125,7 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
   return (
     <>
       {/* Desktop Widgets */}
-      <div className="hidden lg:flex absolute inset-0 z-10 pointer-events-none justify-between p-0.5 items-center">
+      <div className="hidden lg:flex absolute inset-0 z-10 pointer-events-none justify-between p-2 items-center">
         {/* Right Widget: Daily Verse */}
         <AnimatePresence>
           {showMenu && (
@@ -136,10 +136,10 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
               transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
               className="w-[320px] pointer-events-auto hover:scale-[1.02] transition-transform duration-700"
             >
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-0.5 shadow-lg flex flex-col gap-0.5 relative overflow-hidden group">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-2 shadow-lg flex flex-col gap-2 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-transparent pointer-events-none"></div>
-                <div className="flex items-center gap-0.5">
-                  <div className="w-3 h-3 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600">
+                <div className="flex items-center gap-2">
+                  <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600">
                     <FaBookOpen size={16} />
                   </div>
                   <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">{t("dailyVerse")}</span>
@@ -147,8 +147,8 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
                 <p className="text-xl font-bold text-gray-900 dark:text-gray-100 leading-relaxed text-right relative z-10">
                   "{verse.text}"
                 </p>
-                <div className="flex justify-end mt-0.5">
-                  <span className="font-bold text-xs text-blue-600 bg-blue-500/10 px-1 py-0.5 rounded-full">{verse.ref}</span>
+                <div className="flex justify-end mt-2">
+                  <span className="font-bold text-xs text-blue-600 bg-blue-500/10 px-4 py-2 rounded-full">{verse.ref}</span>
                 </div>
               </div>
             </motion.div>
@@ -163,12 +163,12 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: -48, scale: 0.9 }}
               transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
-              className="w-17 pointer-events-auto hover:scale-[1.02] transition-transform duration-700"
+              className="w-68 pointer-events-auto hover:scale-[1.02] transition-transform duration-700"
             >
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-1.5 shadow-lg flex flex-col gap-1 relative overflow-hidden">
-                <Link href="/agpeya" className="flex items-center justify-between gap-0.5 mb-0.5 hover:opacity-80 transition">
-                  <div className="flex items-center gap-0.5">
-                    <div className="w-3 h-3 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-6 shadow-lg flex flex-col gap-4 relative overflow-hidden">
+                <Link href="/agpeya" className="flex items-center justify-between gap-2 mb-2 hover:opacity-80 transition">
+                  <div className="flex items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
                       <FaSun size={16} />
                     </div>
                     <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">{t("prayerTimes")}</span>
@@ -182,9 +182,9 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
                     <Link
                       href="/agpeya"
                       key={prayer.id}
-                      className={`flex items-center justify-between py-0.5 border-b border-gray-200/50 dark:border-gray-700/50 relative hover:bg-amber-500/10 rounded-lg transition ${isActive ? 'bg-blue-50/50 dark:bg-blue-900/10 rounded-lg px-0.5' : 'px-0.5'}`}
+                      className={`flex items-center justify-between py-0.5 border-b border-gray-200/50 dark:border-gray-700/50 relative hover:bg-amber-500/10 rounded-lg transition ${isActive ? 'bg-blue-50/50 dark:bg-blue-900/10 rounded-lg px-2' : 'px-2'}`}
                     >
-                      {isActive && <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-1.5 bg-blue-600 rounded-l-full"></div>}
+                      {isActive && <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-4 h-6 bg-blue-600 rounded-l-full"></div>}
                       <span className={`text-sm ${isActive ? 'text-blue-600 font-bold' : 'text-gray-800 dark:text-gray-200'}`}>{prayer.label}</span>
                       <span className={`text-xs ${isActive ? 'text-blue-600 font-bold' : 'text-gray-600 dark:text-gray-400'}`}>{prayer.time}</span>
                     </Link>
@@ -204,19 +204,19 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
-            className="lg:hidden absolute top-9 left-1.5 right-1.5 z-10 pointer-events-auto"
+            className="lg:hidden absolute top-36 left-6 right-6 z-10 pointer-events-auto"
           >
-            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-0.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
-              <Link href="/agpeya" className="flex items-center justify-between gap-0.5 mb-0.5 hover:opacity-80">
-                <div className="flex items-center gap-0.5">
-                  <div className="w-3 h-3 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-2 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
+              <Link href="/agpeya" className="flex items-center justify-between gap-2 mb-2 hover:opacity-80">
+                <div className="flex items-center gap-2">
+                  <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
                     <FaSun size={12} />
                   </div>
                   <span className="font-bold text-xs text-gray-600 dark:text-gray-300 uppercase tracking-widest">{t("prayerTimes")}</span>
                 </div>
                 <span className="text-[10px] text-blue-600 font-bold">{t("openPrayer")}</span>
               </Link>
-              <div className="flex overflow-x-auto gap-0.5 pb-0.5 scrollbar-none">
+              <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-none">
                 {prayers.map((prayer) => {
                   const isActive = activePrayer === prayer.id;
                   return (
@@ -247,14 +247,14 @@ export default function StitchWidgets({ showMenu }: { showMenu: boolean }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
-            className="lg:hidden absolute bottom-1 left-1.5 right-1.5 z-10 pointer-events-auto max-w-2/3 mx-auto"
+            className="lg:hidden absolute bottom-4 left-6 right-6 z-10 pointer-events-auto max-w-2/3 mx-auto"
           >
-            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-0.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
-              <div className="flex items-center gap-0.5 mb-0.5">
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-lg rounded-3xl p-2 shadow-lg border border-gray-200/30 dark:border-gray-700/30">
+              <div className="flex items-center gap-2 mb-2">
                 <FaSun className="text-amber-500" size={16} />
                 <span className="font-bold text-xs text-amber-500 uppercase tracking-wider">{t("dailyVerse")}</span>
               </div>
-              <p className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-0.5 leading-relaxed">
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 leading-relaxed">
                 "{verse.text}"
               </p>
               <div className="flex items-center justify-between">

@@ -149,13 +149,13 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
   // شاشة طلب كود المسؤول إذا لم يكن مسجل دخول أو مصرحاً له
   if (!isAuthorized && quiz?.admin_code) {
     return (
-      <div className="min-h-screen bg-[#130722] text-white flex items-center justify-center p-1" dir="rtl">
-        <div className="bg-white/5 border border-purple-500/30 rounded-3xl p-1 sm:p-1 max-w-md w-full shadow-2xl backdrop-blur-xl text-center space-y-1">
-          <div className="w-4 h-4 bg-purple-600/20 text-purple-400 rounded-2xl flex items-center justify-center mx-auto border border-purple-500/30 shadow-inner">
-            <KeyRound className="w-3 h-3" />
+      <div className="min-h-screen bg-[#130722] text-white flex items-center justify-center p-4" dir="rtl">
+        <div className="bg-white/5 border border-purple-500/30 rounded-3xl p-4 sm:p-4 max-w-md w-full shadow-2xl backdrop-blur-xl text-center space-y-4">
+          <div className="w-16 h-16 bg-purple-600/20 text-purple-400 rounded-2xl flex items-center justify-center mx-auto border border-purple-500/30 shadow-inner">
+            <KeyRound className="w-12 h-12" />
           </div>
 
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             <h2 className="text-2xl font-black text-purple-100">دخول مسؤول المسابقة</h2>
             <p className="text-sm text-purple-300">
               يرجى إدخال كود المشرف الخاص بمسابقة <span className="font-bold text-white font-mono">"{quiz?.title}"</span> للتحكم بالمسابقة وتشغيلها كمسؤول.
@@ -167,7 +167,7 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
               e.preventDefault();
               verifyHostCode(enteredCode, actualQuizId);
             }}
-            className="space-y-1"
+            className="space-y-4"
           >
             <div>
               <input
@@ -175,12 +175,12 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
                 value={enteredCode}
                 onChange={(e) => setEnteredCode(e.target.value)}
                 placeholder="أدخل كود المسؤول..."
-                className="w-full text-center text-xl font-mono uppercase tracking-widest bg-purple-950/60 border border-purple-500/40 rounded-2xl py-0.5 px-1 text-white placeholder-purple-400/50 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
+                className="w-full text-center text-xl font-mono uppercase tracking-widest bg-purple-950/60 border border-purple-500/40 rounded-2xl py-2 px-4 text-white placeholder-purple-400/50 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
                 autoFocus
               />
               {verifyError && (
-                <p className="text-xs text-red-400 font-bold mt-2 flex items-center justify-center gap-1">
-                  <ShieldAlert className="w-3 h-3" />
+                <p className="text-xs text-red-400 font-bold mt-8 flex items-center justify-center gap-4">
+                  <ShieldAlert className="w-12 h-12" />
                   {verifyError}
                 </p>
               )}
@@ -189,9 +189,9 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
             <Button
               type="submit"
               disabled={isVerifying || !enteredCode.trim()}
-              className="w-full h-12 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/30 transition-all text-base"
+              className="w-full h-48 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/30 transition-all text-base"
             >
-              {isVerifying ? <Loader2 className="w-4 h-4 animate-spin" /> : "دخول كمسؤول 🚀"}
+              {isVerifying ? <Loader2 className="w-16 h-16 animate-spin" /> : "دخول كمسؤول 🚀"}
             </Button>
           </form>
         </div>
@@ -202,18 +202,18 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
   if (isStarted && quiz && gameState) return <QuizHostGame quiz={quiz} groups={groups} gameState={gameState} />;
 
   return (
-    <div className="min-h-screen bg-[#130722] text-white p-1 sm:p-1 font-sans" dir="rtl">
-      <div className="flex justify-between items-center bg-white/5 backdrop-blur-md rounded-3xl p-1 sm:p-1 mb-0.5 border border-white/10 shadow-2xl flex-wrap gap-0.5">
-        <div className="flex items-center gap-0.5 flex-wrap">
+    <div className="min-h-screen bg-[#130722] text-white p-4 sm:p-4 font-sans" dir="rtl">
+      <div className="flex justify-between items-center bg-white/5 backdrop-blur-md rounded-3xl p-4 sm:p-4 mb-2 border border-white/10 shadow-2xl flex-wrap gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <BackButton
             fallbackUrl="/exam/quiz/dashboard"
-            className="p-0.5 bg-white/10 hover:bg-white/20 text-purple-200 rounded-2xl transition border border-purple-500/20 flex items-center justify-center"
+            className="p-2 bg-white/10 hover:bg-white/20 text-purple-200 rounded-2xl transition border border-purple-500/20 flex items-center justify-center"
             iconSize={18}
             title="الرجوع للوحة التحكم"
           />
           <h1 className="text-2xl sm:text-4xl font-black text-purple-200">{quiz?.title}</h1>
           {quiz?.code && (
-            <div className="flex items-center gap-0.25 bg-purple-950/80 border border-purple-500/30 px-1 py-0.25 rounded-2xl shadow-inner">
+            <div className="flex items-center gap-1 bg-purple-950/80 border border-purple-500/30 px-4 py-1 rounded-2xl shadow-inner">
               <span className="text-xs text-purple-300 font-bold">كود المسابقة:</span>
               <span className="text-lg sm:text-xl font-black font-mono tracking-widest text-white" dir="ltr">{quiz.code}</span>
               <button
@@ -221,40 +221,40 @@ export default function HostPage({ params: paramsPromise }: { params: Promise<{ 
                   navigator.clipboard.writeText(quiz.code);
                   alert(`تم نسخ الكود: ${quiz.code}`);
                 }}
-                className="text-xs bg-purple-700 hover:bg-purple-600 px-0.5 py-0.25 rounded-lg text-white font-bold transition-colors"
+                className="text-xs bg-purple-700 hover:bg-purple-600 px-2 py-1 rounded-lg text-white font-bold transition-colors"
               >
                 نسخ
               </button>
             </div>
           )}
         </div>
-        <div className="flex gap-0.5 items-center">
+        <div className="flex gap-2 items-center">
           <Button
             onClick={handleReset}
             variant="destructive"
-            className="h-3 px-1 text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 rounded-2xl transition-all"
+            className="h-12 px-4 text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 rounded-2xl transition-all"
           >
-            <RefreshCcw className="w-3 h-3 ml-0.5" />
+            <RefreshCcw className="w-12 h-12 ml-2" />
             <span>تصفير</span>
           </Button>
           <Button
             onClick={handleStart}
-            className="h-3 px-1 text-sm bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl shadow-lg shadow-green-600/30 hover:scale-105 active:scale-95 transition-all"
+            className="h-12 px-4 text-sm bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl shadow-lg shadow-green-600/30 hover:scale-105 active:scale-95 transition-all"
           >
-            <Play className="w-3 h-3 ml-0.5 fill-current" />
+            <Play className="w-12 h-12 ml-2 fill-current" />
             <span>ابدأ الآن</span>
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-0.5 sm:gap-0.5">
-        <div className="col-span-12 lg:col-span-4 xl:col-span-3 flex flex-col gap-0.5">
+      <div className="grid grid-cols-12 gap-2 sm:gap-2">
+        <div className="col-span-12 lg:col-span-4 xl:col-span-3 flex flex-col gap-2">
           <QuizStats quiz={quiz} groups={groups} />
           <QRCodeSection quizId={actualQuizId} />
         </div>
 
-        <div className="col-span-12 lg:col-span-8 xl:col-span-9 bg-white/5 border border-white/10 rounded-3xl p-1 sm:p-1 min-h-[300px] shadow-xl">
-          <h2 className="text-xl sm:text-2xl font-bold pb-0.5 mb-0.5 border-b border-white/10 text-purple-200">
+        <div className="col-span-12 lg:col-span-8 xl:col-span-9 bg-white/5 border border-white/10 rounded-3xl p-4 sm:p-4 min-h-[300px] shadow-xl">
+          <h2 className="text-xl sm:text-2xl font-bold pb-2 mb-2 border-b border-white/10 text-purple-200">
             الفرق المتصلة ({groups.length})
           </h2>
           <GroupsSection groups={groups} handleDeleteGroup={handleDeleteGroup} />

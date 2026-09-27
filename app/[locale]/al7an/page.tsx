@@ -274,11 +274,11 @@ export default function UnifiedAl7anClient() {
   return (
     <div className="flex flex-col lg:flex-row w-full h-[calc(100dvh-10px)] max-h-[100dvh] overflow-hidden bg-surface" dir="rtl">
       <div className={`w-full ${selectedHymn ? 'hidden lg:flex' : 'flex'} lg:w-[35%] h-full flex-col bg-surface border-l border-outline-variant/30 z-10 overflow-hidden`}>
-        <div className="p-0.5 shrink-0 flex flex-col gap-0.5">
+        <div className="p-2 shrink-0 flex flex-col gap-2">
           <div className="flex-none border-b border-[#dcc0c1]/20 bg-[#f6f3f2]/10 backdrop-blur-md flex items-center justify-between z-10 shadow-2xl rounded-b-4xl">
 
             <BackButton
-              className="p-0.5 m-0.5 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
+              className="p-2 m-2 bg-zinc-200 dark:bg-zinc-800 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-700 transition self-baseline inline-flex"
               iconSize={18}
               title="الرجوع للصفحة السابقة"
             />
@@ -287,16 +287,16 @@ export default function UnifiedAl7anClient() {
               placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-0.5 rounded-lg border border-outline/30 bg-surface-container-highest text-on-surface focus:outline-primary"
+              className="w-full p-2 rounded-lg border border-outline/30 bg-surface-container-highest text-on-surface focus:outline-primary"
             />
           </div>
           {!searchQuery && (
-            <div className="flex gap-0.5 overflow-x-auto pb-0.25 scrollbar-hide">
+            <div className="flex gap-2 overflow-x-auto py-1 scrollbar-hide">
               {monasbatList.map((m) => (
                 <button
                   key={m}
                   onClick={() => setActiveMonasba(m)}
-                  className={`px-0.5 py-0.25 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${activeMonasba === m ? "bg-primary text-white shadow-md" : "bg-surface-container-high hover:bg-surface-variant"
+                  className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${activeMonasba === m ? "bg-primary text-white shadow-md" : "bg-surface-container-high hover:bg-surface-variant"
                     }`}
                 >
                   {getMonasbaLabel(m)}
@@ -306,8 +306,8 @@ export default function UnifiedAl7anClient() {
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-0.5 pb-2 lg:pb-0.5 custom-scrollbar">
-          <div className="grid grid-cols-1 gap-0.25">
+        <div className="flex-1 overflow-y-auto px-2 pb-8 lg:pb-2 custom-scrollbar">
+          <div className="grid grid-cols-1 gap-1">
             {displayedHymns.map((h, idx) => (
               <motion.div
                 key={idx}
@@ -321,7 +321,7 @@ export default function UnifiedAl7anClient() {
                   setDuration(0);
                   setUseFallback(false);
                 }}
-                className="group cursor-pointer rounded-lg border bg-surface-container-lowest p-0.5 flex justify-between items-center hover:shadow-sm transition-all"
+                className="group cursor-pointer rounded-lg border bg-surface-container-lowest p-2 flex justify-between items-center hover:shadow-sm transition-all"
               >
                 <div>
                   <h3 className="font-bold text-sm">{h.name}</h3>
@@ -330,14 +330,14 @@ export default function UnifiedAl7anClient() {
                   </p>
                 </div>
                 {h.duration && (
-                  <span className="text-xs bg-primary/10 text-primary px-0.5 py-0.25 rounded">
+                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
                     {typeof h.duration === "number" ? formatTime(h.duration) : h.duration}
                   </span>
                 )}
               </motion.div>
             ))}
             {displayedHymns.length === 0 && (
-              <p className="text-center text-muted-foreground text-sm mt-1">{t('noHymnsFound')}</p>
+              <p className="text-center text-muted-foreground text-sm mt-4">{t('noHymnsFound')}</p>
             )}
           </div>
         </div>
@@ -351,20 +351,20 @@ export default function UnifiedAl7anClient() {
             exit={{ opacity: 0, x: -50 }}
             className="w-full lg:w-[65%] h-full relative overflow-hidden bg-[#121212] text-white flex flex-col"
           >
-            <div className="absolute top-1 left-1 z-50 flex gap-0.25">
-              <button onClick={handleShare} className="w-3 h-3 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
+            <div className="absolute top-4 left-4 z-50 flex gap-1">
+              <button onClick={handleShare} className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
               </button>
-              <button onClick={() => setSelectedHymn(null)} className="lg:hidden w-3 h-3 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
+              <button onClick={() => setSelectedHymn(null)} className="lg:hidden w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
                 ✕
               </button>
             </div>
 
-            <div className="relative z-10 flex flex-col h-full w-full p-0.5 lg:p-1">
+            <div className="relative z-10 flex flex-col h-full w-full p-2 lg:p-4">
 
-              <div className="flex items-center gap-0.5 mb-0.5 mt-1 lg:mt-0 justify-between">
-                <div className="flex items-center gap-0.5 overflow-hidden flex-1">
-                  <div className="w-3 h-3 rounded-xl bg-linear-to-br from-orange-500 to-red-600 flex items-center justify-center text-2xl shadow-lg shrink-0">
+              <div className="flex items-center gap-2 mb-2 mt-4 lg:mt-0 justify-between">
+                <div className="flex items-center gap-2 overflow-hidden flex-1">
+                  <div className="w-12 h-12 rounded-xl bg-linear-to-br from-orange-500 to-red-600 flex items-center justify-center text-2xl shadow-lg shrink-0">
                     🎵
                   </div>
                   <div className="flex-1 overflow-hidden">
@@ -373,24 +373,24 @@ export default function UnifiedAl7anClient() {
                   </div>
                 </div>
                 {selectedHymn.src && (
-                  <div className="shrink-0 pl-1">
+                  <div className="shrink-0 pl-4">
                     <OfflineAudioButton src={selectedHymn.src} title={selectedHymn.name} />
                   </div>
                 )}
               </div>
 
-              <div className="w-full mb-0.5 bg-[#1e1e1e] p-0.5 rounded-xl shadow-inner relative shrink-0">
+              <div className="w-full mb-2 bg-[#1e1e1e] p-2 rounded-xl shadow-inner relative shrink-0">
 
                 {isLoading && (
                   <div className="absolute inset-0 bg-[#1e1e1e]/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-xl">
-                    <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-0.25"></div>
+                    <div className="w-32 h-32 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-1"></div>
                     <span className="text-sm text-orange-500">{t('loadingHymn')}</span>
                   </div>
                 )}
                 {hasError && (
-                  <div className="absolute inset-0 bg-[#1e1e1e]/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-0.5 rounded-xl text-center">
-                    <span className="text-red-500 text-lg mb-0.25 font-bold">⚠️ {t('audioError')}</span>
-                    <p className="text-xs text-red-300/80 mb-0.5 max-w-xs dir-ltr font-mono bg-black/40 p-0.25 rounded border border-red-500/20">
+                  <div className="absolute inset-0 bg-[#1e1e1e]/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-2 rounded-xl text-center">
+                    <span className="text-red-500 text-lg mb-1 font-bold">⚠️ {t('audioError')}</span>
+                    <p className="text-xs text-red-300/80 mb-2 max-w-xs dir-ltr font-mono bg-black/40 p-1 rounded border border-red-500/20">
                       {audioErrorDetails || t('unknownError')}
                     </p>
                     <button
@@ -402,20 +402,20 @@ export default function UnifiedAl7anClient() {
                           audioRef.current.play().catch(() => { });
                         }
                       }}
-                      className="px-0.5 py-0.25 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-semibold transition"
+                      className="px-2 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-semibold transition"
                     >
                       {t('retry')}
                     </button>
                   </div>
                 )}
 
-                <div className="flex justify-between text-xs font-mono text-white/50 mb-0.25" dir="ltr">
+                <div className="flex justify-between text-xs font-mono text-white/50 mb-1" dir="ltr">
                   <span>{formatTime(currentTime)}</span>
                   <span>{formatTime(duration)}</span>
                 </div>
 
                 <div
-                  className="flex items-center gap-[2px] h-2 w-full cursor-pointer group"
+                  className="flex items-center gap-[2px] h-8 w-full cursor-pointer group"
                   onClick={handleWaveClick}
                   dir="ltr"
                 >
@@ -433,14 +433,14 @@ export default function UnifiedAl7anClient() {
                   })}
                 </div>
 
-                <div className="flex items-center justify-center gap-0.5 mt-0.5" dir="ltr">
+                <div className="flex items-center justify-center gap-2 mt-2" dir="ltr">
                   <button onClick={() => skipTime(-5)} className="text-white/60 hover:text-white transition-colors">
                   </button>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 3v18L11 12l10-9z" /><path d="M11 3v18L1 12l10-9z" /><text x="10" y="16" fontSize="8" fill="currentColor">+5</text></svg>
                   <button
                     onClick={togglePlay}
                     disabled={isLoading || hasError}
-                    className="w-3 h-3 rounded-full bg-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:scale-105 active:scale-95 transition-all text-white disabled:opacity-50"
+                    className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:scale-105 active:scale-95 transition-all text-white disabled:opacity-50"
                   >
                     {isPlaying ? (
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" /></svg>
@@ -502,8 +502,8 @@ export default function UnifiedAl7anClient() {
                 />
               </div>
 
-              <div className="flex flex-wrap justify-center gap-0.5 mb-0.5 bg-white/5 py-0.25 px-0.5 rounded-lg shrink-0">
-                <label className="flex items-center gap-0.25 cursor-pointer text-sm">
+              <div className="flex flex-wrap justify-center gap-2 mb-2 bg-white/5 py-1 px-2 rounded-lg shrink-0">
+                <label className="flex items-center gap-1 cursor-pointer text-sm">
                   <input
                     type="checkbox"
                     checked={showAr}
@@ -512,11 +512,11 @@ export default function UnifiedAl7anClient() {
                       if (!e.target.checked && activeCount <= 1) return;
                       setShowAr(e.target.checked);
                     }}
-                    className="accent-orange-500 w-2 h-2"
+                    className="accent-orange-500 w-8 h-8"
                   />
                   {t('arabic')}
                 </label>
-                <label className="flex items-center gap-0.25 cursor-pointer text-sm font-coptic">
+                <label className="flex items-center gap-1 cursor-pointer text-sm font-coptic">
                   <input
                     type="checkbox"
                     checked={showCopt}
@@ -525,11 +525,11 @@ export default function UnifiedAl7anClient() {
                       if (!e.target.checked && activeCount <= 1) return;
                       setShowCopt(e.target.checked);
                     }}
-                    className="accent-orange-500 w-2 h-2"
+                    className="accent-orange-500 w-8 h-8"
                   />
                   {t('coptic')}
                 </label>
-                <label className="flex items-center gap-0.25 cursor-pointer text-sm" dir="ltr">
+                <label className="flex items-center gap-1 cursor-pointer text-sm" dir="ltr">
                   <input
                     type="checkbox"
                     checked={showArCopt}
@@ -538,16 +538,16 @@ export default function UnifiedAl7anClient() {
                       if (!e.target.checked && activeCount <= 1) return;
                       setShowArCopt(e.target.checked);
                     }}
-                    className="accent-orange-500 w-2 h-2"
+                    className="accent-orange-500 w-8 h-8"
                   />
                   {t('copticArabic')}
                 </label>
               </div>
 
-              <div className="flex-1 overflow-y-auto scrollbar-hide px-0.5">
+              <div className="flex-1 overflow-y-auto scrollbar-hide px-2">
                 {hasLyrics ? (
-                  <div className="flex flex-col gap-0.25 pb-0.25 pt-0.25 text-center bg-white/5 rounded-xl p-0.25">
-                    <div className="flex justify-center gap-0.25 my-0.25">
+                  <div className="flex flex-col gap-1 pb-1 pt-1 text-center bg-white/5 rounded-xl p-1">
+                    <div className="flex justify-center gap-1 my-1">
                       <button
                         onClick={() => setLayoutMode("rows")}
                         className={`px-0.25 py-0.25 rounded-lg text-sm font-semibold transition ${layoutMode === "rows"
@@ -579,24 +579,24 @@ export default function UnifiedAl7anClient() {
                             <div
                               key={index}
                               className={`p-0.25 rounded-lg transition-all ${bgClass} ${layoutMode === "cols"
-                                ? `grid ${colsClass} divide-x divide-x-reverse divide-white/20 items-stretch w-full gap-0.25`
-                                : "flex flex-col gap-0.25 text-center"
+                                ? `grid ${colsClass} divide-x divide-x-reverse divide-white/20 items-stretch w-full gap-1`
+                                : "flex flex-col gap-1 text-center"
                                 }`}
                             >
                               {showAr && verse.ar && (
-                                <div className="flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed px-0.25">
+                                <div className="flex items-center justify-center text-base font-bold text-white whitespace-pre-wrap leading-relaxed px-1">
                                   {verse.ar}
                                 </div>
                               )}
 
                               {showArCopt && verse.ar_copt && (
-                                <div className="flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap px-0.25">
+                                <div className="flex items-center justify-center text-base font-serif text-white/80 whitespace-pre-wrap px-1">
                                   {verse.ar_copt}
                                 </div>
                               )}
 
                               {showCopt && verse.copt && (
-                                <div className="flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-0.25">
+                                <div className="flex items-center justify-center text-lg font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-1">
                                   {verse.copt}
                                 </div>
                               )}
@@ -604,19 +604,19 @@ export default function UnifiedAl7anClient() {
                           );
                         })
                       ) : (
-                        <div className={`p-0.25 rounded-lg bg-white/5 ${layoutMode === "cols" ? `grid ${colsClass} divide-x divide-x-reverse divide-white/20 items-stretch w-full gap-0.25` : "flex flex-col gap-0.25"}`}>
+                        <div className={`p-0.25 rounded-lg bg-white/5 ${layoutMode === "cols" ? `grid ${colsClass} divide-x divide-x-reverse divide-white/20 items-stretch w-full gap-1` : "flex flex-col gap-1"}`}>
                           {showAr && selectedHymn.lyrics_ar && (
-                            <div className="flex items-center justify-center text-lg font-bold text-white whitespace-pre-wrap leading-relaxed px-0.25">
+                            <div className="flex items-center justify-center text-lg font-bold text-white whitespace-pre-wrap leading-relaxed px-1">
                               {selectedHymn.lyrics_ar}
                             </div>
                           )}
                           {showArCopt && selectedHymn.lyrics_ar_copt && (
-                            <div className="flex items-center justify-center text-lg font-serif text-white/80 whitespace-pre-wrap px-0.25" dir="ltr">
+                            <div className="flex items-center justify-center text-lg font-serif text-white/80 whitespace-pre-wrap px-1" dir="ltr">
                               {selectedHymn.lyrics_ar_copt}
                             </div>
                           )}
                           {showCopt && selectedHymn.lyrics_copt && (
-                            <div className="flex items-center justify-center text-xl font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-0.25">
+                            <div className="flex items-center justify-center text-xl font-coptic tracking-wide text-white/90 whitespace-pre-wrap px-1">
                               {selectedHymn.lyrics_copt}
                             </div>
                           )}
@@ -625,7 +625,7 @@ export default function UnifiedAl7anClient() {
                     })()}
                   </div>
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center opacity-50 space-y-0.25">
+                  <div className="h-full flex flex-col items-center justify-center opacity-50 space-y-1">
                     <span className="text-4xl">📝</span>
                     <p>{t('noLyrics')}</p>
                   </div>
@@ -634,7 +634,7 @@ export default function UnifiedAl7anClient() {
 
               {/* قسم الهزات والمخطوطات */}
               {getImages(selectedHymn).length > 0 && (
-                <div className="mt-0.5 shrink-0 flex justify-center">
+                <div className="mt-2 shrink-0 flex justify-center">
                   <button
                     onClick={() => {
                       const imgs = getImages(selectedHymn);
@@ -642,7 +642,7 @@ export default function UnifiedAl7anClient() {
                       setCurrentImageIndex(0);
                       setImageScale(1);
                     }}
-                    className="flex items-center gap-0.25 px-0.5 py-0.25 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/30 rounded-xl text-xs font-semibold transition shadow-md"
+                    className="flex items-center gap-1 px-2 py-1 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/30 rounded-xl text-xs font-semibold transition shadow-md"
                   >
                     {t('viewHazat', { count: getImages(selectedHymn).length })}
                   </button>
@@ -670,30 +670,30 @@ export default function UnifiedAl7anClient() {
             }}
           >
             {/* شريط أدوات النافذة */}
-            <div className="absolute top-0 left-0 w-full p-3 flex justify-between items-center z-110 bg-linear-to-b from-black/80 to-transparent">
-              <div className="flex items-center gap-2">
-                <span className="text-white/80 text-xs bg-black/60 px-3 py-1 rounded-full border border-white/10">
+            <div className="absolute top-0 left-0 w-full p-12 flex justify-between items-center z-110 bg-linear-to-b from-black/80 to-transparent">
+              <div className="flex items-center gap-8">
+                <span className="text-white/80 text-xs bg-black/60 px-12 py-4 rounded-full border border-white/10">
                   مخطوطة {currentImageIndex + 1} من {getImages(selectedHymn).length}
                 </span>
-                <div className="flex items-center gap-1 bg-black/60 px-2 py-1 rounded-full border border-white/10 text-white text-xs">
+                <div className="flex items-center gap-4 bg-black/60 px-8 py-4 rounded-full border border-white/10 text-white text-xs">
                   <button
                     onClick={(e) => { e.stopPropagation(); setImageScale(prev => Math.min(prev + 0.25, 4)); }}
-                    className="px-2 py-0.5 hover:bg-white/20 rounded font-bold"
+                    className="px-8 py-2 hover:bg-white/20 rounded font-bold"
                     title="تكبير (+)"
                   >
                     +
                   </button>
-                  <span className="font-mono text-[11px] px-1">{Math.round(imageScale * 100)}%</span>
+                  <span className="font-mono text-[11px] px-4">{Math.round(imageScale * 100)}%</span>
                   <button
                     onClick={(e) => { e.stopPropagation(); setImageScale(prev => Math.max(prev - 0.25, 0.5)); }}
-                    className="px-2 py-0.5 hover:bg-white/20 rounded font-bold"
+                    className="px-8 py-2 hover:bg-white/20 rounded font-bold"
                     title="تصغير (-)"
                   >
                     -
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); setImageScale(1); }}
-                    className="px-2 py-0.5 hover:bg-white/20 rounded text-[10px]"
+                    className="px-8 py-2 hover:bg-white/20 rounded text-[10px]"
                     title="إعادة ضبط"
                   >
                     إعادة
@@ -703,7 +703,7 @@ export default function UnifiedAl7anClient() {
 
               <button
                 onClick={() => { setFullScreenImage(null); setImageScale(1); }}
-                className="w-8 h-8 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-sm backdrop-blur-md transition"
+                className="w-32 h-32 bg-white/10 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-sm backdrop-blur-md transition"
                 title="إغلاق (Esc)"
               >
                 ✕
@@ -722,7 +722,7 @@ export default function UnifiedAl7anClient() {
                     setFullScreenImage(imgs[nextIdx]);
                     setImageScale(1);
                   }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 z-110 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-md transition text-lg"
+                  className="absolute right-12 top-1/2 -translate-y-1/2 z-110 w-40 h-40 flex items-center justify-center bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-md transition text-lg"
                   title="السابق (سهم يمين)"
                 >
                   ❯
@@ -736,7 +736,7 @@ export default function UnifiedAl7anClient() {
                     setFullScreenImage(imgs[nextIdx]);
                     setImageScale(1);
                   }}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 z-110 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-md transition text-lg"
+                  className="absolute left-12 top-1/2 -translate-y-1/2 z-110 w-40 h-40 flex items-center justify-center bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-md transition text-lg"
                   title="التالي (سهم شمال)"
                 >
                   ❮
@@ -746,7 +746,7 @@ export default function UnifiedAl7anClient() {
 
             {/* عرض الصورة والزوم */}
             <div
-              className="w-full h-full overflow-auto flex items-center justify-center cursor-zoom-out p-2"
+              className="w-full h-full overflow-auto flex items-center justify-center cursor-zoom-out p-8"
               onClick={() => { setFullScreenImage(null); setImageScale(1); }}
             >
               <motion.div

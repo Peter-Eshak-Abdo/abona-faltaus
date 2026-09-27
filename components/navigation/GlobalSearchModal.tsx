@@ -241,7 +241,7 @@ export default function GlobalSearchModal({ isOpen, onClose }: Props) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-start justify-center p-0.5 sm:p-1 pt-4 sm:pt-5 bg-black/75 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-start justify-center p-2 sm:p-4 pt-16 sm:pt-20 bg-black/75 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: -20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -250,7 +250,7 @@ export default function GlobalSearchModal({ isOpen, onClose }: Props) {
           dir="rtl"
         >
           {/* Search Header */}
-          <div className="flex items-center gap-0.5 p-0.5 border-b border-neutral-800 bg-neutral-950">
+          <div className="flex items-center gap-2 p-2 border-b border-neutral-800 bg-neutral-950">
             <FaSearch className="text-amber-400 text-lg shrink-0" />
             <input
               type="text"
@@ -262,16 +262,16 @@ export default function GlobalSearchModal({ isOpen, onClose }: Props) {
             />
             <button
               onClick={onClose}
-              className="p-0.5 text-neutral-400 hover:text-white rounded-lg transition"
+              className="p-2 text-neutral-400 hover:text-white rounded-lg transition"
             >
               <FaTimes />
             </button>
           </div>
 
           {/* Results List */}
-          <div className="flex-1 overflow-y-auto p-0.5 space-y-0.5">
+          <div className="flex-1 overflow-y-auto p-2 space-y-2">
             {filteredItems.length === 0 ? (
-              <div className="text-center py-2 text-neutral-500 space-y-0.5">
+              <div className="text-center py-8 text-neutral-500 space-y-2">
                 <FaSearch className="mx-auto text-2xl opacity-40" />
                 <p className="text-sm">لم يتم العثور على نتائج مطابقة لـ &quot;{query}&quot;</p>
               </div>
@@ -282,18 +282,18 @@ export default function GlobalSearchModal({ isOpen, onClose }: Props) {
                   <button
                     key={item.id}
                     onClick={() => handleSelect(item.href)}
-                    className="w-full text-right p-0.5 rounded-xl bg-neutral-950/40 hover:bg-neutral-800 border border-neutral-800/80 hover:border-amber-500/30 flex items-center justify-between gap-3 transition group"
+                    className="w-full text-right p-2 rounded-xl bg-neutral-950/40 hover:bg-neutral-800 border border-neutral-800/80 hover:border-amber-500/30 flex items-center justify-between gap-12 transition group"
                   >
-                    <div className="flex items-center gap-0.5">
-                      <div className="p-0.5 rounded-xl bg-neutral-800 group-hover:bg-amber-500/20 text-amber-400 border border-neutral-700 group-hover:border-amber-500/40 transition">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 rounded-xl bg-neutral-800 group-hover:bg-amber-500/20 text-amber-400 border border-neutral-700 group-hover:border-amber-500/40 transition">
                         <Icon className="text-base" />
                       </div>
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-0.5">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
                           <h4 className="font-bold text-white text-sm group-hover:text-amber-300 transition">
                             {item.title}
                           </h4>
-                          <span className="text-[10px] px-1 py-0.25 rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700">
+                          <span className="text-[10px] px-4 py-1 rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700">
                             {item.category}
                           </span>
                         </div>
@@ -311,7 +311,7 @@ export default function GlobalSearchModal({ isOpen, onClose }: Props) {
           </div>
 
           {/* Footer Bar */}
-          <div className="p-1 border-t border-neutral-800 bg-neutral-950 flex items-center justify-between text-[11px] text-neutral-500">
+          <div className="p-4 border-t border-neutral-800 bg-neutral-950 flex items-center justify-between text-[11px] text-neutral-500">
             <span>انقر على أي عنصر للانتقال الفوري</span>
             <span className="font-mono">Esc للإغلاق</span>
           </div>

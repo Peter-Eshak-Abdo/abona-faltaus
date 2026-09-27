@@ -98,36 +98,36 @@ export default function BibleHeader() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface/70 backdrop-blur-md shadow-[0_4px_20px_rgba(31,31,31,0.04)]">
-        <div className="h-5 w-full px-0.5 flex items-center justify-between">
-          <div className="flex items-center gap-0.5">
+        <div className="h-12 w-full px-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
             {user?.avatar_url ? (
               <Image src={user.avatar_url} alt={user.full_name} fill className="object-cover" sizes="auto" />
             ) : (
-              <UserCircle className="w-5 h-5 text-stone-300" />
+              <UserCircle className="w-7 h-7 text-stone-300" />
             )}
             <span className="font-headline-md text-headline-md text-primary hidden sm:block">Abouna Faltaous</span>
           </div>
 
-          <nav className="hidden lg:flex items-center gap-0.5 px-0.5">
-            <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-1 py-0.5" href="/">Home</Link>
-            <Link aria-current="page" className="transition-all text-primary font-bold bg-primary-fixed/30 rounded-full px-1 py-0.5" href="#">الكتاب المقدس</Link>
-            <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-1 py-0.5" href="/al7an">الألحان</Link>
+          <nav className="hidden lg:flex items-center gap-2 px-2">
+            <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-4 py-2" href="/">Home</Link>
+            <Link aria-current="page" className="transition-all text-primary font-bold bg-primary-fixed/30 rounded-full px-4 py-2" href="#">الكتاب المقدس</Link>
+            <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-4 py-2" href="/al7an">الألحان</Link>
             {!user ? (
               <button
                 type="button"
                 onClick={() => toast.error("برجاء تسجيل الدخول أولاً")}
-                className="font-label-sm text-label-sm text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-75 grayscale px-1 py-0.5"
+                className="font-label-sm text-label-sm text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-75 grayscale px-4 py-2"
                 title="برجاء تسجيل الدخول أولاً"
               >
                 الشات بوت
               </button>
             ) : (
-              <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-1 py-0.5" href="/chat">الشات بوت</Link>
+              <Link className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all px-4 py-2" href="/chat">الشات بوت</Link>
             )}
           </nav>
 
-          <div className="flex items-center gap-1">
-            <button onClick={() => setIsSearchOpen(true)} className="p-0.5 bg-blue-100 text-blue-600 rounded-lg font-bold">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setIsSearchOpen(true)} className="p-2 bg-blue-100 text-blue-600 rounded-lg font-bold">
               <FaSearch size={8} />
             </button>
           </div>

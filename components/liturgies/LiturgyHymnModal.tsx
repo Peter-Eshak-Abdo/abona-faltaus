@@ -85,7 +85,7 @@ export default function LiturgyHymnModal({ hymn, onClose }: Props) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-0.5 bg-black/70 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black/70 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -94,8 +94,8 @@ export default function LiturgyHymnModal({ hymn, onClose }: Props) {
           dir="rtl"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-1 border-b border-neutral-800 bg-neutral-950/80">
-            <div className="flex items-center gap-0.5 text-amber-400">
+          <div className="flex items-center justify-between p-4 border-b border-neutral-800 bg-neutral-950/80">
+            <div className="flex items-center gap-2 text-amber-400">
               <FaMusic className="text-xl" />
               <div>
                 <h3 className="font-bold text-lg text-white">{hymn.name}</h3>
@@ -105,10 +105,10 @@ export default function LiturgyHymnModal({ hymn, onClose }: Props) {
               </div>
             </div>
 
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-2">
               <Link
                 href={`/al7an`}
-                className="p-0.5 text-xs bg-neutral-800 hover:bg-amber-600/20 text-neutral-300 rounded-lg flex items-center gap-1 transition"
+                className="p-2 text-xs bg-neutral-800 hover:bg-amber-600/20 text-neutral-300 rounded-lg flex items-center gap-4 transition"
                 title="فتح في صفحة الألحان الشاملة"
               >
                 <FaExternalLinkAlt />
@@ -116,7 +116,7 @@ export default function LiturgyHymnModal({ hymn, onClose }: Props) {
               </Link>
               <button
                 onClick={onClose}
-                className="p-0.5 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition"
+                className="p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition"
               >
                 <FaTimes />
               </button>
@@ -124,10 +124,10 @@ export default function LiturgyHymnModal({ hymn, onClose }: Props) {
           </div>
 
           {/* Body Content */}
-          <div className="flex-1 overflow-y-auto p-0.5 space-y-0.5">
+          <div className="flex-1 overflow-y-auto p-2 space-y-2">
             {/* Audio Player Bar */}
             {hymn.src && (
-              <div className="bg-neutral-950/60 p-0.5 rounded-xl border border-neutral-800 flex flex-col gap-0.5">
+              <div className="bg-neutral-950/60 p-2 rounded-xl border border-neutral-800 flex flex-col gap-2">
                 <audio
                   ref={audioRef}
                   src={getAudioSrc(hymn.src)}
@@ -143,22 +143,22 @@ export default function LiturgyHymnModal({ hymn, onClose }: Props) {
                   }}
                 />
 
-                <div className="flex items-center justify-between gap-0.5">
+                <div className="flex items-center justify-between gap-2">
                   <button
                     onClick={togglePlay}
-                    className="w-3 h-3 rounded-full bg-linear-to-r from-amber-500 to-amber-600 text-neutral-950 flex items-center justify-center font-bold text-lg shadow-lg shadow-amber-500/20 hover:scale-105 transition"
+                    className="w-12 h-12 rounded-full bg-linear-to-r from-amber-500 to-amber-600 text-neutral-950 flex items-center justify-center font-bold text-lg shadow-lg shadow-amber-500/20 hover:scale-105 transition"
                   >
-                    {isPlaying ? <FaPause /> : <FaPlay className="mr-0.5" />}
+                    {isPlaying ? <FaPause /> : <FaPlay className="mr-2" />}
                   </button>
 
-                  <div className="flex-1 space-y-0.5">
+                  <div className="flex-1 space-y-2">
                     <input
                       type="range"
                       min={0}
                       max={duration || 100}
                       value={currentTime}
                       onChange={handleSeek}
-                      className="w-full accent-amber-500 cursor-pointer h-1.5 bg-neutral-800 rounded-lg"
+                      className="w-full accent-amber-500 cursor-pointer h-6 bg-neutral-800 rounded-lg"
                     />
                     <div className="flex justify-between text-xs text-neutral-400 font-mono">
                       <span>{formatTime(currentTime)}</span>
@@ -171,18 +171,18 @@ export default function LiturgyHymnModal({ hymn, onClose }: Props) {
 
             {/* Hazat Musical Sheet Toggle & Display */}
             {hymn.hazatSrc && (
-              <div className="space-y-0.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <button
                     onClick={() => setShowHazat(!showHazat)}
-                    className="flex items-center gap-0.5 text-sm font-bold text-amber-400 hover:text-amber-300"
+                    className="flex items-center gap-2 text-sm font-bold text-amber-400 hover:text-amber-300"
                   >
                     <FaFileImage />
                     <span>مذكرة الهزات الموسيقية</span>
                   </button>
                   <button
                     onClick={() => setIsFullScreenImage(!isFullScreenImage)}
-                    className="text-xs text-neutral-400 hover:text-white flex items-center gap-0.25"
+                    className="text-xs text-neutral-400 hover:text-white flex items-center gap-1"
                   >
                     <FaExpand />
                     <span>تكبير المذكرة</span>
@@ -192,13 +192,13 @@ export default function LiturgyHymnModal({ hymn, onClose }: Props) {
                 {showHazat && (
                   <div
                     className={`relative rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 ${
-                      isFullScreenImage ? 'fixed inset-4 z-50 flex items-center justify-center bg-black/95' : 'h-64'
+                      isFullScreenImage ? 'fixed inset-16 z-50 flex items-center justify-center bg-black/95' : 'h-64'
                     }`}
                   >
                     {isFullScreenImage && (
                       <button
                         onClick={() => setIsFullScreenImage(false)}
-                        className="absolute top-1 left-1 z-50 p-0.5 bg-neutral-800 text-white rounded-full"
+                        className="absolute top-4 left-4 z-50 p-2 bg-neutral-800 text-white rounded-full"
                       >
                         <FaCompress />
                       </button>

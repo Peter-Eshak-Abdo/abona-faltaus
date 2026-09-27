@@ -209,7 +209,7 @@ export default function AgpeyaPage() {
     <div
       dir="rtl"
       className={cn(
-        "min-h-screen transition-colors duration-300 font-sans pb-1",
+        "min-h-screen transition-colors duration-300 font-sans pb-4",
         prayerMode
           ? "bg-stone-950 text-stone-100"
           : "bg-linear-to-b from-amber-50/50 via-stone-50 to-amber-50/20 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-stone-900 dark:text-zinc-100"
@@ -218,21 +218,21 @@ export default function AgpeyaPage() {
       {/* Top Floating Control Bar */}
       <header
         className={cn(
-          "sticky top-0 z-40 backdrop-blur-md border-b px-0.5 py-0.5 transition-all duration-200",
+          "sticky top-0 z-40 backdrop-blur-md border-b px-2 py-2 transition-all duration-200",
           prayerMode
             ? "bg-black/80 border-stone-800 text-stone-200"
             : "bg-white/80 dark:bg-zinc-900/80 border-stone-200 dark:border-zinc-800 shadow-xs"
         )}
       >
-        <div className="max-w-8xl mx-auto flex items-center justify-between gap-0.5">
-          <div className="flex items-center gap-0.5">
+        <div className="max-w-8xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
             <BackButton
-              className="p-0.5 rounded-lg hover:bg-stone-100 dark:hover:bg-zinc-800 text-stone-500 transition flex items-center justify-center"
+              className="p-2 rounded-lg hover:bg-stone-100 dark:hover:bg-zinc-800 text-stone-500 transition flex items-center justify-center"
               iconSize={18}
               title={t('back') || 'الرجوع للخلف'}
             />
-            <div className="flex items-center gap-0.5">
-              <span className="text-xl font-black text-amber-700 dark:text-amber-500 flex items-center gap-0.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-black text-amber-700 dark:text-amber-500 flex items-center gap-2">
                 <BookOpen size={20} />
                 {t('title')}
               </span>
@@ -245,7 +245,7 @@ export default function AgpeyaPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-0.5 sm:gap-0.5">
+          <div className="flex items-center gap-2 sm:gap-2">
             {/* Prayer Mode Toggle */}
             <Button
               variant={prayerMode ? "default" : "outline"}
@@ -254,7 +254,7 @@ export default function AgpeyaPage() {
                 toast(prayerMode ? t('prayerModeOff') : t('prayerModeOn'));
               }}
               className={cn(
-                "rounded-xl text-xs font-bold w-9",
+                "rounded-xl text-xs font-bold w-36",
                 prayerMode
                   ? "bg-amber-600 hover:bg-amber-700 text-white"
                   : "border-amber-600/40 text-amber-800 dark:text-amber-400 hover:bg-amber-500/10"
@@ -269,18 +269,18 @@ export default function AgpeyaPage() {
               <button
                 type="button"
                 onClick={() => changeFontSize(2)}
-                className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 transition"
+                className="p-1 hover:bg-stone-200 dark:hover:bg-zinc-700 transition"
                 title="تكبير الخط"
               >
                 <ZoomIn size={22} />
               </button>
-              <span className="text-[11px] font-mono font-bold px-0.25 text-stone-600 dark:text-zinc-400">
+              <span className="text-[11px] font-mono font-bold px-1 text-stone-600 dark:text-zinc-400">
                 {fontSize}
               </span>
               <button
                 type="button"
                 onClick={() => changeFontSize(-2)}
-                className="p-0.25 hover:bg-stone-200 dark:hover:bg-zinc-700 transition"
+                className="p-1 hover:bg-stone-200 dark:hover:bg-zinc-700 transition"
                 title="تصغير الخط"
               >
                 <ZoomOut size={22} />
@@ -291,7 +291,7 @@ export default function AgpeyaPage() {
             {/* <button
               type="button"
               onClick={() => toggleBookmark(currentHour.id)}
-              className="p-0.5 rounded-xl border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 transition"
+              className="p-2 rounded-xl border border-stone-200 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 transition"
               title="حفظ الصلاة"
             >
               {bookmarkedHours.includes(currentHour.id) ? (
@@ -305,12 +305,12 @@ export default function AgpeyaPage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-8xl mx-auto px-0.5 pt-0.5 space-y-0.5">
+      <main className="max-w-8xl mx-auto px-2 pt-2 space-y-2">
         {/* Hours Selector Horizontal Bar */}
         {!prayerMode && (
-          <section className="space-y-0.5">
-            <div className="flex items-center justify-between px-1">
-              <span className="text-xs font-bold text-stone-500 dark:text-zinc-400 flex items-center gap-0.5">
+          <section className="space-y-2">
+            <div className="flex items-center justify-between px-4">
+              <span className="text-xs font-bold text-stone-500 dark:text-zinc-400 flex items-center gap-2">
                 <Clock size={13} />
                 {t('hoursList')}:
               </span>
@@ -319,7 +319,7 @@ export default function AgpeyaPage() {
               </span>
             </div>
 
-            <div className="flex items-center gap-0.5 overflow-x-auto pb-0.5 scrollbar-thin">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
               {AGPEYA_HOURS.map((h) => {
                 const isSelected = selectedHourId === h.id;
                 const prog = getHourProgress(h);
@@ -331,7 +331,7 @@ export default function AgpeyaPage() {
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                     className={cn(
-                      "flex flex-col items-start min-w-[135px] p-0.5 rounded-2xl border text-right transition-all shrink-0 relative overflow-hidden",
+                      "flex flex-col items-start min-w-[135px] p-2 rounded-2xl border text-right transition-all shrink-0 relative overflow-hidden",
                       isSelected
                         ? "bg-linear-to-br from-amber-700 to-amber-900 text-white border-amber-800 shadow-md scale-102"
                         : "bg-white dark:bg-zinc-900 border-stone-200 dark:border-zinc-800 text-stone-800 dark:text-zinc-200 hover:border-amber-400/50 hover:bg-stone-50 dark:hover:bg-zinc-800/80"
@@ -350,7 +350,7 @@ export default function AgpeyaPage() {
                     </div>
                     <span
                       className={cn(
-                        "text-[10px] line-clamp-1 mt-0.5 font-medium",
+                        "text-[10px] line-clamp-1 mt-2 font-medium",
                         isSelected ? "text-amber-100/90" : "text-stone-500 dark:text-zinc-400"
                       )}
                     >
@@ -358,7 +358,7 @@ export default function AgpeyaPage() {
                     </span>
 
                     {/* Progress indicator line */}
-                    <div className="w-full h-1 bg-black/10 dark:bg-white/10 rounded-full mt-0.5 overflow-hidden">
+                    <div className="w-full h-4 bg-black/10 dark:bg-white/10 rounded-full mt-2 overflow-hidden">
                       <div
                         className={cn(
                           "h-full rounded-full transition-all duration-300",
@@ -383,11 +383,11 @@ export default function AgpeyaPage() {
               : "bg-linear-to-r from-amber-900 via-amber-800 to-amber-950 text-white border-amber-800/40"
           )}
         >
-          <div className="absolute top-0 right-0 left-0 h-1 bg-linear-to-r from-amber-400 via-yellow-300 to-amber-500 opacity-70" />
-          <CardContent className="p-1 sm:p-1.5 space-y-0.5">
-            <div className="flex flex-wrap items-center justify-between gap-0.5">
-              <div className="flex items-center gap-0.5">
-                <Badge className="bg-amber-500/20 text-amber-200 border-amber-400/30 text-xs px-0.5 py-0.5">
+          <div className="absolute top-0 right-0 left-0 h-4 bg-linear-to-r from-amber-400 via-yellow-300 to-amber-500 opacity-70" />
+          <CardContent className="p-4 sm:p-6 space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-amber-500/20 text-amber-200 border-amber-400/30 text-xs px-2 py-2">
                   الساعة {currentHour.order}
                 </Badge>
                 <Badge className="bg-white/10 text-stone-200 border-white/20 text-xs font-mono">
@@ -403,13 +403,13 @@ export default function AgpeyaPage() {
               <h1 className="text-2xl sm:text-3xl font-black text-amber-100 tracking-tight">
                 {currentHour.nameAr}
               </h1>
-              <p className="text-sm sm:text-base text-amber-200/90 font-medium mt-0.5">
+              <p className="text-sm sm:text-base text-amber-200/90 font-medium mt-2">
                 {currentHour.themeAr}
               </p>
             </div>
 
             {/* Quick Sections Navigation Filter */}
-            <div className="pt-0.5 flex flex-wrap gap-0.5">
+            <div className="pt-2 flex flex-wrap gap-2">
               {[
                 { id: "all", label: t('sections.all') },
                 { id: "intro", label: t('sections.intro') },
@@ -421,7 +421,7 @@ export default function AgpeyaPage() {
                   key={tab.id}
                   onClick={() => setCurrentSectionTab(tab.id)}
                   className={cn(
-                    "text-xs font-bold px-0.5 py-0.5 rounded-full transition-all border",
+                    "text-xs font-bold px-2 py-2 rounded-full transition-all border",
                     currentSectionTab === tab.id
                       ? "bg-white text-amber-950 border-white shadow-xs font-black"
                       : "bg-white/10 text-white/80 border-white/10 hover:bg-white/20"
@@ -437,19 +437,19 @@ export default function AgpeyaPage() {
         {/* Auto Scroll Floating Controls (When in Prayer Mode or active) */}
         <div
           className={cn(
-            "flex flex-wrap items-center justify-between gap-0.5 p-0.5 rounded-2xl border transition-all text-xs font-bold",
+            "flex flex-wrap items-center justify-between gap-2 p-2 rounded-2xl border transition-all text-xs font-bold",
             prayerMode
               ? "bg-zinc-900 border-zinc-800"
               : "bg-white dark:bg-zinc-900 border-stone-200 dark:border-zinc-800 shadow-sm"
           )}
         >
-          <div className="flex items-center gap-0.5 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             <Button
               variant="outline"
               // size="sm"
               onClick={() => setAutoScroll(!autoScroll)}
               className={cn(
-                "rounded-xl text-xs font-bold gap-0.5 px-0.5 py-0.5 w-12",
+                "rounded-xl text-xs font-bold gap-2 px-2 py-2 w-48",
                 autoScroll
                   ? "bg-amber-600 text-white border-amber-600 hover:bg-amber-700"
                   : "border-stone-300 dark:border-zinc-700 text-stone-700 dark:text-zinc-300"
@@ -460,7 +460,7 @@ export default function AgpeyaPage() {
             </Button>
 
             {autoScroll && (
-              <div className="flex items-center gap-0.5 bg-stone-100 dark:bg-zinc-800/80 px-0.5 py-0.5 rounded-xl border border-stone-200 dark:border-zinc-700/50">
+              <div className="flex items-center gap-2 bg-stone-100 dark:bg-zinc-800/80 px-2 py-2 rounded-xl border border-stone-200 dark:border-zinc-700/50">
                 <span className="text-xs font-semibold text-stone-600 dark:text-zinc-300 shrink-0">
                   السرعة: <span className="text-amber-600 dark:text-amber-400 font-bold font-mono">{scrollSpeed}</span>
                 </span>
@@ -470,13 +470,13 @@ export default function AgpeyaPage() {
                   min={10}
                   max={70}
                   step={5}
-                  className="w-6 sm:w-8 cursor-pointer"
+                  className="w-24 sm:w-32 cursor-pointer"
                 />
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               // size="sm"
@@ -490,7 +490,7 @@ export default function AgpeyaPage() {
                 ].join("\n\n");
                 toggleSpeech(fullPrayerText);
               }}
-              className="rounded-xl text-xs font-bold text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 py-0.5 w-12"
+              className="rounded-xl text-xs font-bold text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 py-2 w-48"
             >
               {isReadingSpeech ? <VolumeX size={14} /> : <Volume2 size={14} />}
               <span className="hidden sm:inline">
@@ -515,7 +515,7 @@ export default function AgpeyaPage() {
                 setCompletedSections((prev) => ({ ...prev, ...allKeys }));
                 toast.success("تم تحديد صلاة الساعة بالكامل كمكتملة 🎉");
               }}
-              className="rounded-xl text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-zinc-800 py-0.5 w-9"
+              className="rounded-xl text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-zinc-800 py-2 w-36"
             >
               <CheckCircle2 size={14} />
               <span className="hidden sm:inline">إتمام الصلاة</span>
@@ -525,16 +525,16 @@ export default function AgpeyaPage() {
 
         {/* 1. INTRODUCTION (مقدمة الصلاة، صلاة الشكر، المزمور الخمسون) */}
         {(currentSectionTab === "all" || currentSectionTab === "intro") && (
-          <section className="space-y-0.5">
-            <div className="flex items-center justify-between border-b pb-0.5 border-amber-600/20">
-              <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-0.5">
+          <section className="space-y-2">
+            <div className="flex items-center justify-between border-b pb-2 border-amber-600/20">
+              <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-2">
                 <Sparkles size={18} />
                 مقدمة كل ساعة والصلوات الافتتاحية
               </h2>
               <button
                 onClick={() => toggleSectionCompleted(`${currentHour.id}_intro`)}
                 className={cn(
-                  "flex items-center gap-0.5 text-xs font-bold px-0.5 py-0.5 rounded-lg border transition",
+                  "flex items-center gap-2 text-xs font-bold px-2 py-2 rounded-lg border transition",
                   completedSections[`${currentHour.id}_intro`]
                     ? "bg-emerald-600 text-white border-emerald-600"
                     : "border-stone-200 dark:border-zinc-700 text-stone-500 hover:bg-stone-100"
@@ -555,14 +555,14 @@ export default function AgpeyaPage() {
                     : "bg-white dark:bg-zinc-900 border-stone-200 dark:border-zinc-800"
                 )}
               >
-                <CardHeader className="py-0.5 px-1 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
+                <CardHeader className="py-2 px-4 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
                   <CardTitle className="text-base font-bold text-amber-700 dark:text-amber-400">
                     {intro.title}
                   </CardTitle>
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleCopy(`intro_${idx}`, intro.text.join("\n\n"))}
-                      className="p-0.5 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition"
+                      className="p-2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition"
                       title="نسخ"
                     >
                       {copiedId === `intro_${idx}` ? (
@@ -573,14 +573,14 @@ export default function AgpeyaPage() {
                     </button>
                     <button
                       onClick={() => toggleSpeech(intro.text.join(" "))}
-                      className="p-0.5 text-stone-400 hover:text-amber-600 transition"
+                      className="p-2 text-stone-400 hover:text-amber-600 transition"
                       title="استماع"
                     >
                       <Volume2 size={14} />
                     </button>
                   </div>
                 </CardHeader>
-                <CardContent className="p-1 space-y-0.5">
+                <CardContent className="p-4 space-y-2">
                   {intro.text.map((p, pIdx) => (
                     <p
                       key={pIdx}
@@ -598,17 +598,17 @@ export default function AgpeyaPage() {
 
         {/* 2. PSALMS (المزامير) */}
         {(currentSectionTab === "all" || currentSectionTab === "intro") && (
-          <section className="space-y-1 pt-0.5">
-            <div className="flex items-center justify-between border-b pb-0.5 border-amber-600/20">
-              <div className="flex items-center gap-0.5">
-                <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-0.5">
+          <section className="space-y-4 pt-2">
+            <div className="flex items-center justify-between border-b pb-2 border-amber-600/20">
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-2">
                   <BookOpen size={18} />
                   مزامير الساعة ({currentHour.psalms.length} مزموراً)
                 </h2>
               </div>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-4">
               {currentHour.psalms.map((psalm) => {
                 const pKey = `${currentHour.id}_psalm_${psalm.number}`;
                 const isDone = completedSections[pKey];
@@ -626,8 +626,8 @@ export default function AgpeyaPage() {
                         : "bg-white dark:bg-zinc-900 border-stone-200 dark:border-zinc-800"
                     )}
                   >
-                    <CardHeader className="py-0.5 px-1 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
-                      <div className="flex items-center gap-0.5">
+                    <CardHeader className="py-2 px-4 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
+                      <div className="flex items-center gap-2">
                         <Badge
                           variant="outline"
                           className="font-mono text-xs text-amber-700 dark:text-amber-400 border-amber-600/30"
@@ -639,11 +639,11 @@ export default function AgpeyaPage() {
                         </CardTitle>
                       </div>
 
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleSectionCompleted(pKey)}
                           className={cn(
-                            "p-0.5 rounded-lg border text-xs transition flex items-center gap-0.5",
+                            "p-2 rounded-lg border text-xs transition flex items-center gap-2",
                             isDone
                               ? "bg-emerald-600 text-white border-emerald-600"
                               : "border-stone-200 dark:border-zinc-700 text-stone-400 hover:text-stone-700"
@@ -654,7 +654,7 @@ export default function AgpeyaPage() {
                         </button>
                         <button
                           onClick={() => handleCopy(`psalm_${psalm.number}`, psalm.text)}
-                          className="p-0.5 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition"
+                          className="p-2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition"
                           title="نسخ المزمور"
                         >
                           {copiedId === `psalm_${psalm.number}` ? (
@@ -665,14 +665,14 @@ export default function AgpeyaPage() {
                         </button>
                         <button
                           onClick={() => toggleSpeech(psalm.text)}
-                          className="p-0.5 text-stone-400 hover:text-amber-600 transition"
+                          className="p-2 text-stone-400 hover:text-amber-600 transition"
                           title="استماع للمزمور"
                         >
                           <Volume2 size={14} />
                         </button>
                         <button
                           onClick={() => toggleCollapse(pKey)}
-                          className="p-0.5 text-stone-400 hover:text-stone-700 transition"
+                          className="p-2 text-stone-400 hover:text-stone-700 transition"
                           title={isCollapsed ? "عرض" : "طي"}
                         >
                           {isCollapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
@@ -681,7 +681,7 @@ export default function AgpeyaPage() {
                     </CardHeader>
 
                     {!isCollapsed && (
-                      <CardContent className="p-1">
+                      <CardContent className="p-4">
                         <p
                           style={{ fontSize: `${fontSize}px` }}
                           className="leading-loose font-serif text-stone-800 dark:text-stone-200 text-justify"
@@ -699,16 +699,16 @@ export default function AgpeyaPage() {
 
         {/* 3. GOSPEL (الإنجيل المقدس) */}
         {(currentSectionTab === "all" || currentSectionTab === "gospel") && (
-          <section className="space-y-1 pt-0.5">
-            <div className="flex items-center justify-between border-b pb-0.5 border-amber-600/20">
-              <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-0.5">
+          <section className="space-y-4 pt-2">
+            <div className="flex items-center justify-between border-b pb-2 border-amber-600/20">
+              <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-2">
                 <Flame size={18} />
                 فصل من الإنجيل المقدس
               </h2>
               <button
                 onClick={() => toggleSectionCompleted(`${currentHour.id}_gospel`)}
                 className={cn(
-                  "flex items-center gap-0.5 text-xs font-bold px-0.5 py-0.5 rounded-lg border transition",
+                  "flex items-center gap-2 text-xs font-bold px-2 py-2 rounded-lg border transition",
                   completedSections[`${currentHour.id}_gospel`]
                     ? "bg-emerald-600 text-white border-emerald-600"
                     : "border-stone-200 dark:border-zinc-700 text-stone-500 hover:bg-stone-100"
@@ -727,10 +727,10 @@ export default function AgpeyaPage() {
                   : "bg-linear-to-b from-amber-50/40 to-white dark:from-zinc-900 dark:to-zinc-900 border-amber-200 dark:border-amber-900/40"
               )}
             >
-              <div className="absolute top-0 right-0 bottom-0 w-0.5 bg-amber-600" />
-              <CardHeader className="py-0.5 px-1 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
+              <div className="absolute top-0 right-0 bottom-0 w-2 bg-amber-600" />
+              <CardHeader className="py-2 px-4 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
                 <div>
-                  <Badge className="bg-amber-700 text-white text-[11px] mb-1">
+                  <Badge className="bg-amber-700 text-white text-[11px] mb-4">
                     {currentHour.gospel.reference}
                   </Badge>
                   <CardTitle className="text-base font-bold text-amber-900 dark:text-amber-300">
@@ -738,10 +738,10 @@ export default function AgpeyaPage() {
                   </CardTitle>
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-4">
                   <button
                     onClick={() => handleCopy("gospel", currentHour.gospel.text)}
-                    className="p-0.5 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition"
+                    className="p-2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition"
                     title="نسخ الإنجيل"
                   >
                     {copiedId === "gospel" ? (
@@ -752,21 +752,21 @@ export default function AgpeyaPage() {
                   </button>
                   <button
                     onClick={() => toggleSpeech(currentHour.gospel.text)}
-                    className="p-0.5 text-stone-400 hover:text-amber-600 transition"
+                    className="p-2 text-stone-400 hover:text-amber-600 transition"
                     title="استماع للإنجيل"
                   >
                     <Volume2 size={14} />
                   </button>
                   <button
                     onClick={() => handleShare(currentHour.gospel.title, currentHour.gospel.text)}
-                    className="p-0.5 text-stone-400 hover:text-stone-700 transition"
+                    className="p-2 text-stone-400 hover:text-stone-700 transition"
                     title="مشاركة الإنجيل"
                   >
                     <Share2 size={14} />
                   </button>
                 </div>
               </CardHeader>
-              <CardContent className="p-1">
+              <CardContent className="p-4">
                 <div
                   style={{ fontSize: `${fontSize + 1}px` }}
                   className="leading-loose font-serif text-stone-900 dark:text-stone-100 whitespace-pre-line text-justify"
@@ -780,15 +780,15 @@ export default function AgpeyaPage() {
 
         {/* 4. LITANIES & TROPARIA (القطع والطلبات) */}
         {(currentSectionTab === "all" || currentSectionTab === "litanies") && (
-          <section className="space-y-1 pt-0.5">
-            <div className="flex items-center justify-between border-b pb-0.5 border-amber-600/20">
-              <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-0.5">
+          <section className="space-y-4 pt-2">
+            <div className="flex items-center justify-between border-b pb-2 border-amber-600/20">
+              <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-2">
                 <Sparkles size={18} />
                 القطع والطلبات وتسابيح الساعة
               </h2>
             </div>
 
-            <div className="space-y-0.5">
+            <div className="space-y-2">
               {currentHour.litanies.map((lit, idx) => {
                 const litKey = `${currentHour.id}_lit_${idx}`;
                 const isDone = completedSections[litKey];
@@ -805,15 +805,15 @@ export default function AgpeyaPage() {
                         : "bg-white dark:bg-zinc-900 border-stone-200 dark:border-zinc-800"
                     )}
                   >
-                    <CardHeader className="py-0.5 px-1 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
+                    <CardHeader className="py-2 px-4 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
                       <CardTitle className="text-base font-bold text-amber-700 dark:text-amber-400">
                         {lit.title}
                       </CardTitle>
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleSectionCompleted(litKey)}
                           className={cn(
-                            "p-0.5 rounded-lg border text-xs transition flex items-center gap-0.5",
+                            "p-2 rounded-lg border text-xs transition flex items-center gap-2",
                             isDone
                               ? "bg-emerald-600 text-white border-emerald-600"
                               : "border-stone-200 dark:border-zinc-700 text-stone-400 hover:text-stone-700"
@@ -824,7 +824,7 @@ export default function AgpeyaPage() {
                         </button>
                         <button
                           onClick={() => handleCopy(`lit_${idx}`, lit.text)}
-                          className="p-0.5 text-stone-400 hover:text-stone-700 transition"
+                          className="p-2 text-stone-400 hover:text-stone-700 transition"
                           title="نسخ القطعة"
                         >
                           {copiedId === `lit_${idx}` ? (
@@ -835,14 +835,14 @@ export default function AgpeyaPage() {
                         </button>
                         <button
                           onClick={() => toggleSpeech(lit.text)}
-                          className="p-0.5 text-stone-400 hover:text-amber-600 transition"
+                          className="p-2 text-stone-400 hover:text-amber-600 transition"
                           title="استماع"
                         >
                           <Volume2 size={14} />
                         </button>
                       </div>
                     </CardHeader>
-                    <CardContent className="p-1">
+                    <CardContent className="p-4">
                       <p
                         style={{ fontSize: `${fontSize}px` }}
                         className="leading-loose font-serif text-stone-800 dark:text-stone-200 text-justify"
@@ -859,16 +859,16 @@ export default function AgpeyaPage() {
 
         {/* 5. CONCLUSION (كيريياليسون والختام والبركة) */}
         {(currentSectionTab === "all" || currentSectionTab === "conclusion") && (
-          <section className="space-y-1 pt-0.5">
-            <div className="flex items-center justify-between border-b pb-0.5 border-amber-600/20">
-              <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-0.5">
+          <section className="space-y-4 pt-2">
+            <div className="flex items-center justify-between border-b pb-2 border-amber-600/20">
+              <h2 className="text-lg font-bold text-amber-800 dark:text-amber-400 flex items-center gap-2">
                 <CheckCircle2 size={18} />
                 التحليل وختام كل صلاة
               </h2>
               <button
                 onClick={() => toggleSectionCompleted(`${currentHour.id}_conclusion`)}
                 className={cn(
-                  "flex items-center gap-0.5 text-xs font-bold px-0.5 py-0.5 rounded-lg border transition",
+                  "flex items-center gap-2 text-xs font-bold px-2 py-2 rounded-lg border transition",
                   completedSections[`${currentHour.id}_conclusion`]
                     ? "bg-emerald-600 text-white border-emerald-600"
                     : "border-stone-200 dark:border-zinc-700 text-stone-500 hover:bg-stone-100"
@@ -889,14 +889,14 @@ export default function AgpeyaPage() {
                     : "bg-white dark:bg-zinc-900 border-stone-200 dark:border-zinc-800"
                 )}
               >
-                <CardHeader className="py-0.5 px-1 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
+                <CardHeader className="py-2 px-4 border-b border-stone-100 dark:border-zinc-800/80 flex flex-row items-center justify-between">
                   <CardTitle className="text-base font-bold text-amber-700 dark:text-amber-400">
                     {item.title}
                   </CardTitle>
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleCopy(`concl_${idx}`, item.text.join("\n\n"))}
-                      className="p-0.5 text-stone-400 hover:text-stone-700 transition"
+                      className="p-2 text-stone-400 hover:text-stone-700 transition"
                       title="نسخ"
                     >
                       {copiedId === `concl_${idx}` ? (
@@ -907,14 +907,14 @@ export default function AgpeyaPage() {
                     </button>
                     <button
                       onClick={() => toggleSpeech(item.text.join(" "))}
-                      className="p-0.5 text-stone-400 hover:text-amber-600 transition"
+                      className="p-2 text-stone-400 hover:text-amber-600 transition"
                       title="استماع"
                     >
                       <Volume2 size={14} />
                     </button>
                   </div>
                 </CardHeader>
-                <CardContent className="p-1 space-y-0.5">
+                <CardContent className="p-4 space-y-2">
                   {item.text.map((p, pIdx) => (
                     <p
                       key={pIdx}
@@ -931,7 +931,7 @@ export default function AgpeyaPage() {
         )}
 
         {/* Bottom Navigation Buttons to next/prev canonical hours */}
-        <section className="flex items-center pt-1 border-t justify-evenly gap-5 border-stone-200 dark:border-zinc-800">
+        <section className="flex items-center pt-4 border-t justify-evenly gap-20 border-stone-200 dark:border-zinc-800">
           {(() => {
             const currentIndex = AGPEYA_HOURS.findIndex((h) => h.id === currentHour.id);
             const prevHour = currentIndex > 0 ? AGPEYA_HOURS[currentIndex - 1] : null;
@@ -947,7 +947,7 @@ export default function AgpeyaPage() {
                       setSelectedHourId(prevHour.id);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="rounded-2xl text-xs font-bold  w-10"
+                    className="rounded-2xl text-xs font-bold  w-40"
                   >
                     <ChevronRight size={16} />
                     <span>{prevHour.nameAr}</span>
@@ -963,7 +963,7 @@ export default function AgpeyaPage() {
                       setSelectedHourId(nextHour.id);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="rounded-2xl text-xs font-bold w-10"
+                    className="rounded-2xl text-xs font-bold w-40"
                   >
                     <span>{nextHour.nameAr}</span>
                     <ChevronLeft size={16} />

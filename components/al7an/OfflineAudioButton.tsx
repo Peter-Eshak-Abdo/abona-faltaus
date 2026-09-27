@@ -114,9 +114,9 @@ export default function OfflineAudioButton({ src, title }: OfflineAudioButtonPro
 
   if (isOfflineReady) {
     return (
-      <div className="flex items-center gap-0.25">
+      <div className="flex items-center gap-1">
         <span
-          className="flex items-center gap-0.25 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-0.5 py-0.25 rounded-full font-medium shadow-xs"
+          className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-1 rounded-full font-medium shadow-xs"
           title={t('readyBtn')}
         >
           <Check size={13} className="text-emerald-400" />
@@ -124,7 +124,7 @@ export default function OfflineAudioButton({ src, title }: OfflineAudioButtonPro
         </span>
         <button
           onClick={handleDelete}
-          className="p-0.25 text-neutral-400 hover:text-red-400 hover:bg-red-950/40 rounded-full transition-colors"
+          className="p-1 text-neutral-400 hover:text-red-400 hover:bg-red-950/40 rounded-full transition-colors"
           title={t('deleteBtn')}
         >
           <Trash2 size={13} />

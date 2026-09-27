@@ -81,11 +81,11 @@ export default function ServiceWorkerRegister() {
   if (!showOfflinePrompt) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 bg-white dark:bg-zinc-900 p-1 rounded-2xl shadow-2xl border border-blue-500 flex flex-col gap-1">
+    <div className="fixed bottom-16 left-16 right-16 z-50 bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-2xl border border-blue-500 flex flex-col gap-4">
       <p className="text-sm font-bold text-center">هل تريد تحميل ملفات الموقع ليعمل بدون إنترنت (أوفلاين)؟</p>
-      <div className="flex gap-1 justify-center">
-        <button onClick={handleDownloadAll} className="bg-blue-600 text-white px-1 py-0.5 rounded-lg text-sm w-full">تحميل الآن</button>
-        <button onClick={handleLater} className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-1 py-0.5 rounded-lg text-sm w-full">لاحقاً</button>
+      <div className="flex gap-4 justify-center">
+        <button onClick={handleDownloadAll} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm w-full">تحميل الآن</button>
+        <button onClick={handleLater} className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded-lg text-sm w-full">لاحقاً</button>
       </div>
     </div>
   );

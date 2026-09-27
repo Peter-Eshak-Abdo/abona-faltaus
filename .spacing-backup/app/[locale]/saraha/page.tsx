@@ -1,0 +1,697 @@
+"use client";
+
+import React, { useState, useEffect, useMemo } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+import {
+  ShieldCheck,
+  Send,
+  Loader2,
+  Lock,
+  HeartHandshake,
+  CheckCircle2,
+  Sparkles,
+  HelpCircle,
+  EyeOff,
+  Link as LinkIcon,
+  Plus,
+  Trash2,
+  MessageSquare,
+  Clock,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import Link from "next/link";
+import BackButton from "@/components/navigation/BackButton";
+
+export default function SarahaPage() {
+  const params = useParams();
+  const router = useRouter();
+  const slug = params?.slug as string | undefined;
+
+  const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // حالة صفحة المخدوم (إرسال سؤال)
+  const [linkData, setLinkData] = useState<any>(null);
+  const [loadingLink, setLoadingLink] = useState(false);
+  const [questionText, setQuestionText] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [isSentSuccess, setIsSentSuccess] = useState(false);
+
+  // حالة لوحة تحكم الخادم (Dashboard)
+  const [myLinks, setMyLinks] = useState<any[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
+  const [loadingDashboard, setLoadingDashboard] = useState(false);
+  const [newSlug, setNewSlug] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [selectedBgTheme, setSelectedBgTheme] = useState("orthodox-parchment");
+  const [customThankYouMessage, setCustomThankYouMessage] = useState("صلواتك من أجل خدمتنا، ربنا يبارك حياتك ويسندك دايماً!");
+  const [isCreatingLink, setIsCreatingLink] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  // Background Theme Definitions
+  const SARAHA_THEMES = [
+    { id: "orthodox-parchment", name: "ورق بردي وقور", bgClass: "bg-[#FAF9F5] text-stone-900", cardClass: "bg-white/95 border-[#D4AF37]/40 shadow-xl", accent: "#D4AF37" },
+    { id: "sacred-burgundy", name: "عنابي كنسي ديري", bgClass: "bg-radial from-[#4A0012] via-[#240008] to-stone-950 text-stone-100", cardClass: "bg-[#33000C]/90 border-amber-500/40 text-stone-100 shadow-2xl", accent: "#E5A93C" },
+    { id: "monastery-candle", name: "ضوء شموع ديرية", bgClass: "bg-radial from-amber-950/60 via-stone-950 to-black text-amber-50", cardClass: "bg-stone-900/90 border-amber-600/40 text-amber-100 shadow-2xl", accent: "#F59E0B" },
+    { id: "celestial-blue", name: "سماء الأيقونة الزرقاء", bgClass: "bg-radial from-sky-950 via-slate-950 to-black text-sky-50", cardClass: "bg-slate-900/90 border-sky-500/40 text-sky-100 shadow-2xl", accent: "#38BDF8" },
+    { id: "ancient-mosaic", name: "موزاييك أثري ذهبي", bgClass: "bg-radial from-stone-900 via-stone-950 to-black text-stone-100", cardClass: "bg-stone-900/90 border-[#D4AF37]/50 text-stone-100 shadow-2xl", accent: "#EAB308" }
+  ];
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      setUser(session?.user || null);
+      setAuthLoading(false);
+    });
+  }, []);
+
+  // جلب بيانات الرابط إذا كان هناك slug
+  useEffect(() => {
+    if (slug) {
+      setLoadingLink(true);
+      fetch(`/api/saraha?slug=${slug}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.link) {
+            setLinkData(data.link);
+          } else {
+            toast.error(data.error || "الرابط غير موجود");
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          toast.error("تعذر تحميل الصفحة");
+        })
+        .finally(() => setLoadingLink(false));
+    }
+  }, [slug]);
+
+  // جلب بيانات الخادم إذا كان مسجلاً وبدون slug
+  const fetchServantDashboard = async (userId: string, targetLinkId?: string | null) => {
+    setLoadingDashboard(true);
+    try {
+      const queryParam = targetLinkId ? `&linkId=${targetLinkId}` : "";
+      const res = await fetch(`/api/saraha?userId=${userId}${queryParam}`);
+      const data = await res.json();
+      if (data.success) {
+        setMyLinks(data.links || []);
+        setMessages(data.messages || []);
+      }
+    } catch (err) {
+      console.error("Dashboard error:", err);
+    } finally {
+      setLoadingDashboard(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!slug && user?.id) {
+      fetchServantDashboard(user.id, selectedLinkId);
+    }
+  }, [slug, user?.id, selectedLinkId]);
+
+  // إرسال السؤال السري المجهول
+  const handleSendQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!questionText.trim()) {
+      toast.error("يرجى كتابة نص السؤال أو الاستفسار أولاً");
+      return;
+    }
+
+    if (!linkData) return;
+
+    setIsSending(true);
+    try {
+      const res = await fetch("/api/saraha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "send_message",
+          linkId: linkData.id,
+          servantId: linkData.user_id,
+          content: questionText.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setIsSentSuccess(true);
+        setQuestionText("");
+        toast.success("تم إرسال سؤالك بكل سرية وأمان!");
+      } else {
+        toast.error(data.error || "فشل إرسال السؤال");
+      }
+    } catch (err) {
+      toast.error("حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  // إنشاء رابط صراحة جديد للخادم
+  const handleCreateLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSlug.trim()) {
+      toast.error("يرجى كتابة اسم الرابط (slug) بالإنجليزية أو أرقام");
+      return;
+    }
+
+    if (!user) {
+      toast.error("يجب تسجيل الدخول كخادم لإنشاء الرابط");
+      return;
+    }
+
+    setIsCreatingLink(true);
+    try {
+      const metaPayload = JSON.stringify({
+        bgTheme: selectedBgTheme,
+        thankYou: customThankYouMessage.trim() || "صلواتك من أجل خدمتنا، ربنا يبارك حياتك ويسندك دايماً!",
+      });
+      const combinedDesc = `${newDescription.trim() || "اكتب سؤالك بكل صراحة وبدون ظهور هويتك."}:::meta:${metaPayload}`;
+
+      const res = await fetch("/api/saraha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "create_link",
+          userId: user.id,
+          slug: newSlug.trim(),
+          title: newTitle.trim() || "صندوق أسئلة واستفسارات الخدمة",
+          description: combinedDesc,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("تم إنشاء رابط الصراحة بنجاح!");
+        setShowCreateModal(false);
+        setNewSlug("");
+        setNewTitle("");
+        setNewDescription("");
+        fetchServantDashboard(user.id);
+      } else {
+        toast.error(data.error || "فشل إنشاء الرابط");
+      }
+    } catch (err) {
+      toast.error("حدث خطأ أثناء إنشاء الرابط");
+    } finally {
+      setIsCreatingLink(false);
+    }
+  };
+
+  const copyShareLink = (s: string) => {
+    const fullUrl = `${window.location.origin}/saraha/${s}`;
+    navigator.clipboard.writeText(fullUrl);
+    toast.success("تم نسخ الرابط لمشاركته مع المخدومين!");
+  };
+
+  const handleDeleteMessage = async (messageId: string) => {
+    if (!user) return;
+    if (!confirm("هل أنت متأكد من حذف هذا السؤال؟")) return;
+    try {
+      const res = await fetch("/api/saraha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "delete_message",
+          messageId,
+          userId: user.id,
+        }),
+      });
+      if (res.ok) {
+        setMessages((prev) => prev.filter((m) => m.id !== messageId));
+        toast.success("تم حذف السؤال");
+      }
+    } catch {
+      toast.error("تعذر الحذف");
+    }
+  };
+
+  const respondentMeta = useMemo(() => {
+    let desc = linkData?.description || "";
+    let themeId = "orthodox-parchment";
+    let thankYou = "صلواتك من أجل خدمتنا، ربنا يبارك حياتك ويسندك دايماً!";
+    if (desc.includes(":::meta:")) {
+      const parts = desc.split(":::meta:");
+      desc = parts[0].trim();
+      try {
+        const meta = JSON.parse(parts[1]);
+        if (meta.bgTheme) themeId = meta.bgTheme;
+        if (meta.thankYou) thankYou = meta.thankYou;
+      } catch {}
+    }
+    const themeObj = SARAHA_THEMES.find((t) => t.id === themeId) || SARAHA_THEMES[0];
+    return { desc, themeObj, thankYou };
+  }, [linkData]);
+
+  // ==========================================
+  // 1. عرض صفحة المخدوم (إرسال السؤال السري)
+  // ==========================================
+  if (slug) {
+    if (loadingLink) {
+      return (
+        <div className="min-h-[80vh] flex flex-col items-center justify-center p-8 gap-4 text-stone-600 dark:text-stone-300">
+          <Loader2 className="w-24 h-24 animate-spin text-amber-600" />
+          <p className="text-sm font-semibold">جاري فتح صندوق الأسئلة السري...</p>
+        </div>
+      );
+    }
+
+    if (!linkData) {
+      return (
+        <div className="min-h-[80vh] flex flex-col items-center justify-center p-8 text-center">
+          <Card className="max-w-md w-full p-8 border-stone-200 dark:border-zinc-800 shadow-xl">
+            <h2 className="text-lg font-bold text-rose-600 mb-2">الرابط غير متاح</h2>
+            <p className="text-xs text-stone-500 mb-4">تأكد من صحة الرابط أو تواصل مع الخادم المسؤول.</p>
+            <BackButton fallbackUrl="/" className="inline-flex px-12 py-6 rounded-xl border border-stone-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-stone-100 dark:hover:bg-zinc-700 text-xs font-bold transition items-center justify-center gap-4 mx-auto text-stone-700 dark:text-zinc-200">
+              <span>العودة للرئيسية</span>
+            </BackButton>
+          </Card>
+        </div>
+      );
+    }
+
+    return (
+      <div className={cn("min-h-screen py-4 px-2 flex flex-col items-center justify-center relative transition-colors duration-500", respondentMeta.themeObj.bgClass)} dir="rtl">
+        {/* Background ambient glow */}
+        <div className="absolute inset-0 bg-radial from-amber-500/10 via-transparent to-transparent pointer-events-none" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-lg w-full relative z-10 space-y-12"
+        >
+          {/* Header Card */}
+          <Card className={cn("rounded-3xl backdrop-blur-xl shadow-2xl overflow-hidden text-center transition-all", respondentMeta.themeObj.cardClass)}>
+            <CardHeader className="pb-2 pt-2 px-4 bg-linear-to-b from-amber-500/10 to-transparent">
+              <div className="mx-auto w-12 h-12 rounded-2xl bg-amber-600/15 text-amber-500 flex items-center justify-center mb-8 shadow-xs">
+                <ShieldCheck className="w-8 h-8" />
+              </div>
+              <CardTitle className="text-xl font-bold tracking-tight">
+                {linkData.title}
+              </CardTitle>
+              <CardDescription className="text-xs mt-4 leading-relaxed opacity-85">
+                {respondentMeta.desc}
+              </CardDescription>
+
+              {/* Privacy Guarantee Badge */}
+              <div className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
+                <EyeOff className="w-6 h-6" />
+                <span>هويتك مجهولة 100% ولن تظهر للخادم إطلاقاً</span>
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-6">
+              {isSentSuccess ? (
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="py-8 space-y-4 text-center"
+                >
+                  <div className="w-20 h-20 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-md">
+                    <CheckCircle2 className="w-12 h-12" />
+                  </div>
+                  <h3 className="text-lg font-bold">
+                    وصل سؤالك للخادم بنجاح!
+                  </h3>
+
+                  {/* Servant Custom Thank You / Blessing */}
+                  <div className="p-2 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs leading-relaxed font-semibold max-w-sm mx-auto text-amber-900 dark:text-amber-200 shadow-xs">
+                    <p className="mb-4 text-[11px] font-black uppercase opacity-75">رسالة وبركة من الخادم:</p>
+                    <p className="text-sm font-serif">"{respondentMeta.thankYou}"</p>
+                  </div>
+
+                  <p className="text-xs text-stone-500 max-w-xs mx-auto">
+                    شكراً لثقتك وصراحتك. سيقوم الخادم بمراجعة سؤالك والصلاة من أجلك والرد عليه في الخدمة.
+                  </p>
+                  <Button
+                    onClick={() => setIsSentSuccess(false)}
+                    variant="outline"
+                    className="rounded-xl text-xs font-bold mt-4 border-stone-300 dark:border-zinc-700"
+                  >
+                    إرسال سؤال آخر
+                  </Button>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleSendQuestion} className="space-y-4 text-right">
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-2">
+                      اكتب سؤالك أو استفسارك الروحي هنا:
+                    </label>
+                    <Textarea
+                      value={questionText}
+                      onChange={(e) => setQuestionText(e.target.value)}
+                      placeholder="اكتب كل ما في قلبك بحرية تامة وبدون أي قلق..."
+                      className="min-h-[140px] rounded-2xl bg-stone-50 dark:bg-zinc-800/70 border-stone-200 dark:border-zinc-700 text-sm leading-relaxed p-4 resize-none focus-visible:ring-amber-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] text-stone-400 pt-2">
+                    <span className="flex items-center gap-1">
+                      <Lock className="w-6 h-6" />
+                      مشفّر ومجهول الهوية
+                    </span>
+                    <span>{questionText.length} حرف</span>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={isSending || !questionText.trim()}
+                    className="w-full bg-amber-700 hover:bg-amber-800 text-white font-bold py-4 rounded-2xl shadow-lg transition-all text-sm flex items-center justify-center gap-2"
+                  >
+                    {isSending ? (
+                      <>
+                        <Loader2 className="w-8 h-8 animate-spin" />
+                        <span>جاري الإرسال السري...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-8 h-8" />
+                        <span>إرسال السؤال بسرية تامة</span>
+                      </>
+                    )}
+                  </Button>
+                </form>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // 2. عرض لوحة تحكم الخادم (إنشاء الروابط والاطلاع على الأسئلة)
+  // ==========================================
+  if (authLoading) {
+    return (
+      <div className="min-h-[80vh] flex flex-col items-center justify-center p-8 gap-4">
+        <Loader2 className="w-24 h-24 animate-spin text-amber-600" />
+        <p className="text-sm font-semibold text-stone-500">جاري التحقق من الحساب...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-[80vh] flex flex-col items-center justify-center p-8 text-center" dir="rtl">
+        <Card className="max-w-md w-full p-8 border-stone-200 dark:border-zinc-800 shadow-2xl rounded-3xl bg-white/90 dark:bg-zinc-900/90">
+          <div className="w-20 h-20 mx-auto rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-4">
+            <HeartHandshake className="w-12 h-12" />
+          </div>
+          <h2 className="text-xl font-bold text-amber-950 dark:text-amber-100 mb-2">
+            صندوق صراحة لخدمة المخدومين
+          </h2>
+          <p className="text-xs text-stone-500 mb-6 leading-relaxed">
+            أنشئ رابطاً خاصاً بك كخادم وشاركه مع مخدوميك لاستقبال كل أسئلتهم واستفساراتهم الروحية والشخصية بحرية تامة وبدون كشف أي بيانات عنهم.
+          </p>
+          <Button asChild className="w-full bg-amber-700 hover:bg-amber-800 text-white rounded-2xl font-bold">
+            <Link href="/auth/signin">تسجيل الدخول كخادم لإنشاء رابط</Link>
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen py-8 px-4 sm:px-8 max-w-6xl mx-auto space-y-6" dir="rtl">
+      {/* Top Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/80 dark:bg-zinc-900/80 p-6 rounded-3xl border border-stone-200 dark:border-zinc-800 shadow-xs">
+        <div className="flex items-center gap-4">
+          <BackButton
+            fallbackUrl="/"
+            className="p-4 rounded-2xl bg-stone-100 dark:bg-zinc-800 text-stone-700 dark:text-zinc-300 hover:bg-stone-200 dark:hover:bg-zinc-700 transition flex items-center justify-center"
+            iconSize={18}
+            title="الرجوع للصفحة السابقة"
+          />
+          <div>
+            <h1 className="text-xl font-bold text-amber-950 dark:text-amber-200 flex items-center gap-2">
+              <HeartHandshake className="w-12 h-12 text-amber-600" />
+              <span>لوحة أسئلة واستفسارات المخدومين (صراحة)</span>
+            </h1>
+            <p className="text-xs text-stone-500 mt-1">
+              استقبل أسئلة مخدوميك بخصوصية تامة 100% دون معرفة هوية السائل
+            </p>
+          </div>
+        </div>
+
+        <Button
+          onClick={() => setShowCreateModal(true)}
+          className="bg-amber-700 hover:bg-amber-800 text-white font-bold rounded-2xl text-xs flex items-center gap-2 shadow-md"
+        >
+          <Plus className="w-8 h-8" />
+          <span>إنشاء رابط صراحة جديد</span>
+        </Button>
+      </div>
+
+      {/* Grid: Left Links, Right Received Questions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Active Links Box */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-stone-800 dark:text-zinc-200 flex items-center gap-2">
+              <LinkIcon className="w-8 h-8 text-amber-600" />
+              <span>روابط الصراحة (المحادثات)</span>
+            </h2>
+            {myLinks.length > 0 && (
+              <button
+                onClick={() => setSelectedLinkId(null)}
+                className={`text-[11px] font-bold px-1.5 py-0.5 rounded-lg transition ${selectedLinkId === null
+                    ? "bg-amber-600 text-white"
+                    : "bg-stone-200 dark:bg-zinc-800 text-stone-600 dark:text-stone-300"
+                  }`}
+              >
+                الكل
+              </button>
+            )}
+          </div>
+
+          {myLinks.length === 0 ? (
+            <Card className="rounded-2xl p-4 text-center border-dashed border-stone-300 dark:border-zinc-700 bg-transparent">
+              <p className="text-xs text-stone-500 mb-2">لم تنشئ أي رابط للمخدومين بعد</p>
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                variant="outline"
+                className="rounded-xl text-xs font-bold"
+              >
+                إنشاء أول رابط
+              </Button>
+            </Card>
+          ) : (
+            <div className="space-y-2">
+              {myLinks.map((lnk) => {
+                const isSelected = selectedLinkId === lnk.id;
+                return (
+                  <Card
+                    key={lnk.id}
+                    onClick={() => setSelectedLinkId(lnk.id)}
+                    className={`rounded-2xl p-1 transition cursor-pointer border ${isSelected
+                        ? "border-amber-600 bg-amber-500/10 dark:bg-amber-950/30 ring-1 ring-amber-600"
+                        : "border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-amber-400"
+                      } shadow-xs`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xs font-bold text-amber-950 dark:text-amber-300 truncate">{lnk.title}</h3>
+                      <Badge variant="outline" className={`text-[10px] ${isSelected ? "text-amber-600 border-amber-500" : "text-emerald-600 border-emerald-500/30"}`}>
+                        {isSelected ? "محدد" : "نشط"}
+                      </Badge>
+                    </div>
+                    <p className="text-[11px] font-mono text-stone-400 bg-stone-50 dark:bg-zinc-800 p-2 rounded-lg truncate mb-2">
+                      /saraha/{lnk.slug}
+                    </p>
+                    <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        onClick={() => copyShareLink(lnk.slug)}
+                        className="w-full bg-stone-100 hover:bg-amber-100 text-stone-800 dark:bg-zinc-800 dark:hover:bg-amber-950/60 dark:text-zinc-200 rounded-xl text-xs font-bold"
+                      >
+                        نسخ الرابط للمخدومين
+                      </Button>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Received Questions Stream */}
+        <div className="md:col-span-2 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-stone-800 dark:text-zinc-200 flex items-center gap-2">
+              <MessageSquare className="w-8 h-8 text-amber-600" />
+              <span>الأسئلة الواردة من المخدومين ({messages.length})</span>
+            </h2>
+          </div>
+
+          {loadingDashboard ? (
+            <div className="flex flex-col items-center justify-center py-12 gap-4">
+              <Loader2 className="w-20 h-20 animate-spin text-amber-600" />
+              <p className="text-xs font-semibold text-stone-500">جاري تحميل الأسئلة...</p>
+            </div>
+          ) : messages.length === 0 ? (
+            <Card className="rounded-3xl p-12 text-center border-stone-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70">
+              <HelpCircle className="w-20 h-20 text-amber-500/40 mx-auto mb-2" />
+              <h3 className="text-sm font-bold text-stone-700 dark:text-zinc-300">لا توجد أسئلة واردة حتى الآن</h3>
+              <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
+                انسخ رابط الصراحة وشاركه في جروب الخدمة أو مع الشباب لتشجيعهم على طرح الأسئلة بحرية.
+              </p>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {messages.map((msg) => (
+                <Card key={msg.id} className="rounded-3xl border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs overflow-hidden">
+                  <div className="p-4 border-b border-stone-100 dark:border-zinc-800 flex items-center justify-between bg-amber-50/40 dark:bg-zinc-800/40 text-xs">
+                    <span className="flex items-center gap-1 text-stone-500">
+                      <Clock className="w-6 h-6" />
+                      {new Date(msg.created_at).toLocaleString("ar-EG", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    <button
+                      onClick={() => handleDeleteMessage(msg.id)}
+                      className="text-stone-400 hover:text-rose-600 p-1 transition"
+                      title="حذف الرسالة"
+                    >
+                      <Trash2 className="w-8 h-8" />
+                    </button>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-sm leading-relaxed text-stone-900 dark:text-zinc-100 font-sans">
+                      {msg.content}
+                    </p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Modal: Create New Saraha Link */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 dark:border-zinc-800 space-y-4">
+            <h3 className="text-base font-bold text-amber-950 dark:text-amber-200">
+              إنشاء رابط صراحة جديد للخدمة
+            </h3>
+
+            <form onSubmit={handleCreateLink} className="space-y-4 text-right">
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-1">
+                  عنوان الصندوق للمخدومين:
+                </label>
+                <Input
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  placeholder="مثال: أسئلة أسرة ثانوي / استفسارات اجتماع الشباب"
+                  className="rounded-xl text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-1">
+                  الاسم الفريد للرابط (Slug بالإنجليزية):
+                </label>
+                <Input
+                  value={newSlug}
+                  onChange={(e) => setNewSlug(e.target.value)}
+                  placeholder="مثال: youth-qna أو abona-shabab"
+                  className="rounded-xl text-xs font-mono text-left"
+                  dir="ltr"
+                />
+                <p className="text-[11px] text-stone-500 mt-4 bg-amber-50 dark:bg-zinc-800 p-6 rounded-xl border border-amber-200 dark:border-zinc-700 leading-relaxed">
+                  💡 <strong>ما هو الـ Slug (الاسم الفريد)؟</strong><br />
+                  هو الكلمة الإنجليزية أو الرمز الذي يظهر في نهاية رابط صفحتك على الإنترنت (مثل: <code className="text-amber-700 dark:text-amber-400 font-bold">/saraha/shabab</code>). يجب أن يكون حروف وأرقام إنجليزية بدون مسافات، ويُستخدم لتمييز هذا الصندوق تحديداً عن باقي الروابط الخاصة بالاجتماعات الأخرى.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-2">
+                  رسالة توجيهية للمخدومين (اختياري):
+                </label>
+                <Textarea
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                  placeholder="اكتب سؤالك بكل صراحة وبدون ظهور هويتك للخادم..."
+                  className="rounded-xl text-xs resize-none min-h-[50px]"
+                />
+              </div>
+
+              {/* Orthodox Background Theme Selector */}
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-4">
+                  اختر الخلفية والمظهر الأرثوذكسي لصفحة المخدوم:
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {SARAHA_THEMES.map((theme) => (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      onClick={() => setSelectedBgTheme(theme.id)}
+                      className={cn(
+                        "p-4 rounded-xl text-right text-xs font-bold border transition flex flex-col justify-between h-16",
+                        selectedBgTheme === theme.id
+                          ? "border-amber-600 bg-amber-500/15 ring-2 ring-amber-500/30"
+                          : "border-stone-200 dark:border-zinc-700 hover:bg-stone-50 dark:hover:bg-zinc-800"
+                      )}
+                    >
+                      <span className="text-[11px] leading-tight">{theme.name}</span>
+                      <div className="flex items-center gap-4">
+                        <span className="w-12 h-12 rounded-full border border-black/20" style={{ backgroundColor: theme.accent }} />
+                        {selectedBgTheme === theme.id && <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold">✓ مُختار</span>}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Thank You / Blessing after submission */}
+              <div>
+                <label className="block text-xs font-bold text-stone-700 dark:text-zinc-300 mb-2">
+                  جملة وبركة تظهر للمخدوم فور إرسال سؤاله:
+                </label>
+                <Input
+                  value={customThankYouMessage}
+                  onChange={(e) => setCustomThankYouMessage(e.target.value)}
+                  placeholder="مثال: صلواتك من أجل خدمتنا، ربنا يبارك حياتك ويسندك دايماً!"
+                  className="rounded-xl text-xs"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <Button
+                  type="submit"
+                  disabled={isCreatingLink || !newSlug.trim()}
+                  className="w-full bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold"
+                >
+                  {isCreatingLink ? "جاري الإنشاء..." : "إنشاء الرابط الآن"}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  variant="outline"
+                  className="w-auto rounded-xl text-xs"
+                >
+                  إلغاء
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

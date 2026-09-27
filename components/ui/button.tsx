@@ -9,8 +9,7 @@ function cn(...classes: (string | undefined | null | false)[]): string {
 }
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-0.5 whitespace-nowrap rounded-md text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-  // "inline-flex items-center justify-center gap-0.5 whitespace-nowrap rounded-md text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -26,18 +25,17 @@ const buttonVariants = cva(
         link: "text-blue-600 underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 p-1",
-        normal: "h-4 px-1 py-0.5",
-        sm: "h-8 rounded-md px-1 text-xs",
-        lg: "h-10 rounded-md px-2",
-        icon: "h-6 w-6",
-        smallIcon: "h-3 w-3",
+        default: "h-9 px-3.5 py-1.5 text-sm",
+        normal: "h-9 px-3.5 py-1.5 text-sm",
+        sm: "h-7 rounded-md px-2.5 text-xs",
+        lg: "h-10 rounded-md px-6 text-sm",
+        icon: "h-8 w-8",
+        smallIcon: "h-7 w-7",
       },
     },
     defaultVariants: {
       variant: "default",
-      size: "smallIcon",
-      // size: "default",
+      size: "default",
     },
   }
 )

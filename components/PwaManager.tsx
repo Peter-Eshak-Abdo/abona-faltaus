@@ -99,19 +99,19 @@ export default function PwaManager() {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-1 left-1/2 -translate-x-1/2 z-9999 bg-blue-700 text-white p-0.5 rounded-2xl shadow-2xl flex flex-col items-center gap-0.5 w-[90%] max-w-sm border border-white/20"
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-9999 bg-blue-700 text-white p-2 rounded-2xl shadow-2xl flex flex-col items-center gap-2 w-[90%] max-w-sm border border-white/20"
         >
           <div className="flex justify-between w-full items-start">
             <p className="text-sm font-bold leading-relaxed text-right">
               حمل التطبيق الآن لتتصفح الألحان والكتاب المقدس بدون الحاجة للإنترنت!
             </p>
-            <button onClick={closeMessage} className="p-0.5 bg-white/20 rounded-full hover:bg-white/30 transition mr-1 shrink-0">
+            <button onClick={closeMessage} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition mr-4 shrink-0">
               <X size={8} />
             </button>
           </div>
           <button
             onClick={handleInstallClick}
-            className="w-full bg-white text-blue-700 font-bold py-1 rounded-xl flex items-center justify-center gap-1 hover:bg-gray-100 transition active:scale-95"
+            className="w-full bg-white text-blue-700 font-bold py-4 rounded-xl flex items-center justify-center gap-4 hover:bg-gray-100 transition active:scale-95"
           >
             <Download size={10} />
             تحميل التطبيق الفعلي
@@ -125,12 +125,12 @@ export default function PwaManager() {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-0 left-0 right-0 z-9999 bg-[#1c1c1e] text-white rounded-t-3xl shadow-2xl border-t border-white/10 p-4"
+          className="fixed bottom-0 left-0 right-0 z-9999 bg-[#1c1c1e] text-white rounded-t-3xl shadow-2xl border-t border-white/10 p-4 sm:p-5"
         >
           {/* زر الإغلاق */}
           <button
             onClick={closeMessage}
-            className="absolute top-1 left-1 p-1.5 bg-white/10 rounded-full hover:bg-white/20 transition"
+            className="absolute top-3 left-3 p-1.5 bg-white/10 rounded-full hover:bg-white/20 transition"
           >
             <X size={14} />
           </button>
@@ -141,7 +141,7 @@ export default function PwaManager() {
             <img
               src="/images/icons/apple-touch-icon.png"
               alt="أيقونة التطبيق"
-              className="w-2.5 h-2.5 rounded-2xl shadow-md border border-white/20"
+              className="w-10 h-10 rounded-2xl shadow-md border border-white/20"
             />
             <div className="text-right">
               <p className="font-bold text-base">تثبيت تطبيق أبونا فلتاؤس كـ App</p>
@@ -150,7 +150,7 @@ export default function PwaManager() {
           </div>
 
           {/* الخطوات */}
-          <div className="flex flex-col gap-0.5 mb-0.5">
+          <div className="flex flex-col gap-2 mb-2">
             <Step number={1} icon={<Share2 size={18} className="text-blue-400 shrink-0" />}>
               اضغط على زر <span className="font-bold text-blue-400">المشاركة (Share)</span> في شريط Safari بالأسفل
             </Step>
@@ -163,8 +163,8 @@ export default function PwaManager() {
           </div>
 
           {/* السهم التوجيهي إلى أسفل */}
-          <div className="flex justify-center my-1">
-            <div className="flex items-center gap-0.5 text-white/60 text-xs font-semibold animate-bounce">
+          <div className="flex justify-center my-4">
+            <div className="flex items-center gap-2 text-white/60 text-xs font-semibold animate-bounce">
               <span>↓</span>
               <span>زر المشاركة موجود في أسفل متصفح Safari</span>
               <span>↓</span>
@@ -173,7 +173,7 @@ export default function PwaManager() {
 
           <button
             onClick={closeMessage}
-            className="w-full mt-1 bg-white/20 hover:bg-white/30 text-white font-bold py-0.25 rounded-xl text-sm transition active:scale-98"
+            className="w-full mt-4 bg-white/20 hover:bg-white/30 text-white font-bold py-1 rounded-xl text-sm transition active:scale-98"
           >
             حسناً، فهمت الطريقة
           </button>
@@ -186,7 +186,7 @@ export default function PwaManager() {
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -50, opacity: 0 }}
-          className="fixed top-1.5 left-1/2 -translate-x-1/2 z-9999 bg-green-600 text-white px-0.5 py-1 rounded-full shadow-lg flex items-center gap-0.5 w-max max-w-[90%]"
+          className="fixed top-6 left-1/2 -translate-x-1/2 z-9999 bg-green-600 text-white px-2 py-4 rounded-full shadow-lg flex items-center gap-2 w-max max-w-[90%]"
         >
           <CheckCircle size={11} className="shrink-0" />
           <span className="text-sm font-bold text-center">
@@ -201,11 +201,11 @@ export default function PwaManager() {
 // مكوّن خطوة بسيط
 function Step({ number, icon, children }: { number: number; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-0.5 bg-white/5 rounded-2xl px-0.5 py-0.25">
-      <div className="shrink-0 w-3 h-3 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white/60">
+    <div className="flex items-start gap-2 bg-white/5 rounded-2xl px-2 py-1">
+      <div className="shrink-0 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white/60">
         {number}
       </div>
-      <div className="flex items-center gap-0.5 flex-1">
+      <div className="flex items-center gap-2 flex-1">
         {icon}
         <p className="text-sm leading-snug text-right flex-1">{children}</p>
       </div>

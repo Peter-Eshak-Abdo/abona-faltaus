@@ -69,7 +69,7 @@ export default function PrayerViewer({ context }: Props) {
 
           {/* العنوان (Title) */}
           {node.title && (
-            <div className="mb-1 text-center">
+            <div className="mb-4 text-center">
               {typeof node.title === 'object' ? (
                 <>
                   {showCoptic && node.title.coptic && <h4 className="text-blue-800 font-bold font-coptic text-lg">{node.title.coptic}</h4>}
@@ -84,9 +84,9 @@ export default function PrayerViewer({ context }: Props) {
 
           {/* المعلومات الإضافية (Ref & Intro) */}
           {(node.introduction || node.ref) && (
-            <div className="bg-yellow-50 p-1 rounded text-center text-sm mb-3 text-gray-700 border border-yellow-100">
+            <div className="bg-yellow-50 p-4 rounded text-center text-sm mb-12 text-gray-700 border border-yellow-100">
               {node.introduction && <p>{node.introduction}</p>}
-              {node.ref && <span className="font-bold text-blue-600 block mt-1">{node.ref}</span>}
+              {node.ref && <span className="font-bold text-blue-600 block mt-4">{node.ref}</span>}
             </div>
           )}
 
@@ -97,7 +97,7 @@ export default function PrayerViewer({ context }: Props) {
                 ? node.text.map((t: any, i: number) => (
                   // معالجة لو النص عبارة عن آيات فيها لغات
                   typeof t === 'object'
-                    ? <div key={i} className="mb-1">{showArabic ? t.arabic : t.english}</div>
+                    ? <div key={i} className="mb-4">{showArabic ? t.arabic : t.english}</div>
                     : <p key={i}>{t}</p>
                 ))
                 : <p>{node.text}</p>
@@ -117,8 +117,8 @@ export default function PrayerViewer({ context }: Props) {
       if (node[key]) {
         const arTitles: Record<string, string> = { vespers: 'العشية', matins: 'باكر', liturgy: 'القداس' };
         return (
-          <div key={key} className="mb-1 border rounded-xl overflow-hidden shadow-sm">
-            <div className="bg-blue-900 text-white p-1 text-center font-bold text-xl">
+          <div key={key} className="mb-4 border rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-blue-900 text-white p-4 text-center font-bold text-xl">
               {arTitles[key]}
             </div>
             {/* ندخل جوه القسم ونعرض اللي فيه سواء قراءات أو مزمور أو إنجيل */}
@@ -143,13 +143,13 @@ export default function PrayerViewer({ context }: Props) {
     <div className="flex flex-col min-h-[calc(100vh-100px)]">
 
       {/* Navbar Controls */}
-      <div className="bg-white p-1 shadow-sm border-b sticky top-0 z-20 flex justify-between items-center">
+      <div className="bg-white p-4 shadow-sm border-b sticky top-0 z-20 flex justify-between items-center">
         <div className="relative">
-          <button onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-1 p-1 bg-gray-100 rounded text-sm font-bold">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="flex items-center gap-4 p-4 bg-gray-100 rounded text-sm font-bold">
             {siblings[currentIndex]?.replace('.json', '')} ▼
           </button>
           {menuOpen && (
-            <div className="absolute top-full right-0 w-40 max-h-60 overflow-y-auto bg-white shadow-xl border z-50 rounded-lg mt-1">
+            <div className="absolute top-full right-0 w-40 max-h-60 overflow-y-auto bg-white shadow-xl border z-50 rounded-lg mt-4">
               {siblings.map((f, i) => (
                 <button key={f} onClick={() => goToFile(f)} className={`w-full text-right p-1 border-b text-sm ${i === currentIndex ? 'bg-blue-50 font-bold' : ''}`}>
                   {f.replace('.json', '')}
@@ -159,25 +159,25 @@ export default function PrayerViewer({ context }: Props) {
           )}
         </div>
 
-        <div className="flex gap-1 text-sm bg-gray-50 p-1 rounded">
-          <label className="flex items-center gap-1 cursor-pointer"><input type="checkbox" checked={showCoptic} onChange={e => setShowCoptic(e.target.checked)} /> <span>قبطي</span></label>
-          <label className="flex items-center gap-1 cursor-pointer"><input type="checkbox" checked={showArabic} onChange={e => setShowArabic(e.target.checked)} /> <span>عربي</span></label>
+        <div className="flex gap-4 text-sm bg-gray-50 p-4 rounded">
+          <label className="flex items-center gap-4 cursor-pointer"><input type="checkbox" checked={showCoptic} onChange={e => setShowCoptic(e.target.checked)} /> <span>قبطي</span></label>
+          <label className="flex items-center gap-4 cursor-pointer"><input type="checkbox" checked={showArabic} onChange={e => setShowArabic(e.target.checked)} /> <span>عربي</span></label>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-1 md:p-1 bg-gray-100">
+      <div className="flex-1 p-4 md:p-4 bg-gray-100">
         <article className="max-w-4xl mx-auto bg-white rounded-xl shadow min-h-[500px] overflow-hidden"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
 >
 
           {/* Main Title Header */}
-          <header className="bg-linear-to-b from-blue-50 to-white p-1 text-center border-b">
+          <header className="bg-linear-to-b from-blue-50 to-white p-4 text-center border-b">
             {contentData.title && (
               typeof contentData.title === 'object' ? (
                 <>
-                  <h1 className="text-2xl font-bold text-blue-900 mb-1">{contentData.title.coptic || contentData.title.english}</h1>
+                  <h1 className="text-2xl font-bold text-blue-900 mb-4">{contentData.title.coptic || contentData.title.english}</h1>
                   <h2 className="text-xl text-gray-700">{contentData.title.arabic}</h2>
                 </>
               ) : <h1 className="text-2xl font-bold">{contentData.title}</h1>
@@ -191,11 +191,11 @@ export default function PrayerViewer({ context }: Props) {
 
             {/* Fallback لو ملقاش أي حاجة معروفة */}
             {!contentData.text && !contentData.sections && !contentData.vespers && !contentData.matins && !contentData.liturgy && (
-              <div className="p-1 text-center text-gray-400">
+              <div className="p-4 text-center text-gray-400">
                 <p>لا يوجد محتوى نصي مباشر للعرض.</p>
-                <details className="mt-1 text-left dir-ltr">
+                <details className="mt-4 text-left dir-ltr">
                   <summary>Raw JSON</summary>
-                  <pre className="bg-gray-900 text-green-400 p-1 text-xs overflow-auto">{JSON.stringify(contentData, null, 2)}</pre>
+                  <pre className="bg-gray-900 text-green-400 p-4 text-xs overflow-auto">{JSON.stringify(contentData, null, 2)}</pre>
                 </details>
               </div>
             )}

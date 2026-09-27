@@ -238,11 +238,11 @@ export default function HomeClient() {
         <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="fixed top-18 mx-auto z-30 pointer-events-auto"
+        className="fixed top-72 mx-auto z-30 pointer-events-auto"
       >
         <Link href="/exam/individual-questions">
-          <div className="bg-white/80 dark:bg-zinc-900/90 backdrop-blur-md border border-amber-500/40 shadow-xl px-0.5 py-0.5 rounded-2xl flex items-center gap-0.5 hover:scale-105 transition-all text-xs sm:text-sm group">
-            <div className="w-5 h-3 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+          <div className="bg-white/80 dark:bg-zinc-900/90 backdrop-blur-md border border-amber-500/40 shadow-xl px-2 py-2 rounded-2xl flex items-center gap-2 hover:scale-105 transition-all text-xs sm:text-sm group">
+            <div className="w-20 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
               <Trophy size={16} className="group-hover:rotate-12 transition-transform" />
             </div>
             <div className="text-right">
@@ -267,10 +267,10 @@ export default function HomeClient() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute top-5 left-1/2 -translate-x-1/2 z-30 pointer-events-auto"
+            className="absolute top-24 left-1/2 -translate-x-1/2 z-30 pointer-events-auto"
           >
             <Link href="/auth/signin">
-              <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 shadow-lg px-1 py-0.5 rounded-full flex items-center gap-0.5 cursor-pointer hover:scale-105 transition-transform text-xs sm:text-sm">
+              <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md border border-gray-200 dark:border-gray-800 shadow-lg px-4 py-2 rounded-full flex items-center gap-2 cursor-pointer hover:scale-105 transition-transform text-xs sm:text-sm">
                 <FaGoogle className="text-blue-500" />
                 <span className="font-bold text-gray-800 dark:text-gray-200">{t("signInGoogle")}</span>
               </div>
@@ -310,7 +310,7 @@ export default function HomeClient() {
               width={160}
               height={160}
               sizes="(max-width: 768px) 160px, (max-width: 1024px) 220px, 250px"
-              className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full border-2 border-blue-300"
+              className="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full border-2 border-blue-300"
               priority
               fetchPriority="high"
             />
@@ -322,7 +322,7 @@ export default function HomeClient() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-            className="absolute top-[65%] md:top-[70%] lg:top-[75%] left-1/2 -translate-x-1/2 z-10 bg-blue-600/90 text-white px-1 py-1.5 rounded-full text-sm md:text-base font-bold shadow-lg backdrop-blur-sm pointer-events-none whitespace-nowrap"
+            className="absolute top-[65%] md:top-[70%] lg:top-[75%] left-1/2 -translate-x-1/2 z-10 bg-blue-600/90 text-white px-4 py-6 rounded-full text-sm md:text-base font-bold shadow-lg backdrop-blur-sm pointer-events-none whitespace-nowrap"
           >
             {t("exploreHint")}
           </motion.div>
@@ -338,7 +338,7 @@ export default function HomeClient() {
               className={`absolute ${isMobile ? 'top-[48%] left-[29%]' : 'top-[55%] left-[37%]'} z-10 flex items-center justify-center pointer-events-none`}
               style={{ transform: "translate(-50%, -50%)" }}
             >
-              <motion.div animate={eagleControls} className="w-[50vw] max-w-12.25 md:max-w-18.75 lg:max-w-25">
+              <motion.div animate={eagleControls} className="w-[50vw] max-w-49 md:max-w-75 lg:max-w-100">
                 <Image src="/images/eagle.webp" alt="Eagle" width={400} height={266} className="w-full h-auto" priority loading="eager" />
               </motion.div>
             </motion.div>
@@ -372,17 +372,17 @@ export default function HomeClient() {
                         router.push("/auth/signin");
                       }}
                       title={t("loginRequired")}
-                      className="bg-gray-400/90 dark:bg-gray-700/90 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-md border border-gray-400 dark:border-gray-600 transition-all duration-300 cursor-not-allowed text-gray-200 dark:text-gray-400 group relative overflow-hidden opacity-75 grayscale"
+                      className="bg-gray-400/90 dark:bg-gray-700/90 backdrop-blur-md rounded-full w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 flex flex-col items-center justify-center text-center shadow-md border border-gray-400 dark:border-gray-600 transition-all duration-300 cursor-not-allowed text-gray-200 dark:text-gray-400 group relative overflow-hidden opacity-75 grayscale"
                     >
                       <div className="text-xl md:text-2xl lg:text-3xl z-10">{section.icon}</div>
-                      <div className="leading-tight text-[9px] md:text-[11px] lg:text-xs font-bold z-10 px-1">{section.name}</div>
+                      <div className="leading-tight text-[9px] md:text-[11px] lg:text-xs font-bold z-10 px-4">{section.name}</div>
                     </button>
                   ) : (
                     <Link href={section.href} prefetch={true}>
-                      <div className="hover:bg-blue-500 bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 flex flex-col items-center justify-center text-center shadow-xl border border-gray-200 dark:border-gray-800 transition-all duration-300 cursor-pointer hover:scale-110 text-gray-800 dark:text-gray-200 hover:text-white group relative overflow-hidden">
+                      <div className="hover:bg-blue-500 bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 flex flex-col items-center justify-center text-center shadow-xl border border-gray-200 dark:border-gray-800 transition-all duration-300 cursor-pointer hover:scale-110 text-gray-800 dark:text-gray-200 hover:text-white group relative overflow-hidden">
                         <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div className="text-xl md:text-2xl lg:text-3xl z-10">{section.icon}</div>
-                        <div className="leading-tight text-[9px] md:text-[11px] lg:text-xs font-bold z-10 px-1">{section.name}</div>
+                        <div className="leading-tight text-[9px] md:text-[11px] lg:text-xs font-bold z-10 px-4">{section.name}</div>
                       </div>
                     </Link>
                   )}
@@ -391,21 +391,21 @@ export default function HomeClient() {
             })}
         </AnimatePresence>
         {!showMenu && !isMobile &&
-          <footer className="absolute text-start mt-1 text-xs md:text-sm opacity-80 bottom-1 ltr:left-1 rtl:right-1 z-0 pointer-events-none w-full">
-            <div className="flex flex-col gap-0.5">
+          <footer className="absolute text-start mt-4 text-xs md:text-sm opacity-80 bottom-4 ltr:left-4 rtl:right-4 z-0 pointer-events-none w-full">
+            <div className="flex flex-col gap-2">
               <p className="font-bold text-amber-600 dark:text-amber-400">{t("copticDate", { date: copticDate })}</p>
               <p><strong>{t("lastUpdate")}</strong> {lastUpdate || "..."}</p>
-              {lastMessage && <p className="italic opacity-70 border-r-2 border-primary pr-0.25">"{lastMessage}"</p>}
+              {lastMessage && <p className="italic opacity-70 border-r-2 border-primary pr-1">"{lastMessage}"</p>}
               <p className="text-[10px]">{t("totalUpdates")} <span className="font-bold text-blue-500">{commitCount}</span></p>
             </div>
-            <div className="flex justify-center gap-0.25 pointer-events-auto">
+            <div className="flex justify-center gap-1 pointer-events-auto">
               <Link href="/privacy" className="hover:underline">{t("privacy")}</Link>
               <span>•</span>
               <Link href="/terms" className="hover:underline">{t("terms")}</Link>
               <span>•</span>
               <Link href="/about" className="hover:underline">{t("about")}</Link>
             </div>
-            <p className="mt-0.5 flex justify-end pe-2">{t("copyright", { year: new Date().getFullYear() })}</p>
+            <p className="mt-2 flex justify-end pe-8">{t("copyright", { year: new Date().getFullYear() })}</p>
           </footer>
         }
       </div>

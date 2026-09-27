@@ -201,21 +201,21 @@ export default function IconGeneratorClient() {
     <div className="min-h-screen bg-stone-950 text-stone-100 relative overflow-x-hidden" dir="rtl">
       {/* Background Ambience & Coptic Golden Dust */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute -top-10 right-1/4 w-24 h-24 bg-amber-600/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -left-10 w-24 h-24 bg-yellow-600/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-2 right-2 w-20 h-20 bg-red-950/20 rounded-full blur-3xl" />
+        <div className="absolute -top-40 right-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -left-40 w-96 h-96 bg-yellow-600/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-8 right-8 w-80 h-80 bg-red-950/20 rounded-full blur-3xl" />
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-stone-950/85 backdrop-blur-xl border-b border-amber-500/20 px-1 md:px-1.5 py-0.5 flex items-center justify-between shadow-2xl">
-        <div className="flex items-center gap-0.5">
+      <header className="sticky top-0 z-40 bg-stone-950/85 backdrop-blur-xl border-b border-amber-500/20 px-4 md:px-6 py-2 flex items-center justify-between shadow-2xl">
+        <div className="flex items-center gap-2">
           <BackButton
-            className="p-0.5 rounded-full bg-stone-900 border border-amber-500/20 hover:bg-stone-800 text-amber-300 transition-all shadow-md flex items-center justify-center"
+            className="p-2 rounded-full bg-stone-900 border border-amber-500/20 hover:bg-stone-800 text-amber-300 transition-all shadow-md flex items-center justify-center"
             iconSize={16}
             title="الرجوع للصفحة السابقة"
           />
           <div>
-            <h1 className="text-lg md:text-xl font-bold bg-linear-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent flex items-center gap-0.5 font-serif">
+            <h1 className="text-lg md:text-xl font-bold bg-linear-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent flex items-center gap-2 font-serif">
               <Sparkles className="text-amber-400 animate-pulse" size={20} />
               مولد الأيقونات والصور القبطية والأرثوذكسية
             </h1>
@@ -226,7 +226,7 @@ export default function IconGeneratorClient() {
         </div>
 
         {/* Tab switcher */}
-        <div className="flex items-center gap-0.25 bg-stone-900/90 p-0.25 rounded-2xl border border-stone-800">
+        <div className="flex items-center gap-1 bg-stone-900/90 p-1 rounded-2xl border border-stone-800">
           <button
             onClick={() => setActiveTab("create")}
             className={`px-0.5 py-0.25 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-0.25 ${
@@ -253,7 +253,7 @@ export default function IconGeneratorClient() {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-1 md:px-1.5 py-1">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-4">
         <AnimatePresence mode="wait">
           {activeTab === "create" ? (
             <motion.div
@@ -261,15 +261,15 @@ export default function IconGeneratorClient() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-1 items-start"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start"
             >
               {/* Left Column (Controls & Inputs) - 7 cols */}
-              <div className="lg:col-span-7 flex flex-col gap-1">
+              <div className="lg:col-span-7 flex flex-col gap-4">
                 {/* 1. Input Box */}
-                <div className="bg-stone-900/70 border border-amber-500/20 rounded-3xl p-1 backdrop-blur-md shadow-xl">
-                  <label className="text-sm font-bold text-amber-200 mb-0.5 flex items-center justify-between">
-                    <span className="flex items-center gap-0.25">
-                      <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <div className="bg-stone-900/70 border border-amber-500/20 rounded-3xl p-4 backdrop-blur-md shadow-xl">
+                  <label className="text-sm font-bold text-amber-200 mb-2 flex items-center justify-between">
+                    <span className="flex items-center gap-1">
+                      <span className="w-8 h-8 rounded-full bg-amber-400" />
                       صف الأيقونة أو اسم القديس المطلوب
                     </span>
                     <span className="text-xs text-amber-300/60 font-normal">
@@ -282,17 +282,17 @@ export default function IconGeneratorClient() {
                       onChange={(e) => setPrompt(e.target.value)}
                       placeholder="اكتب اسم القديس أو المشهد... (مثال: أيقونة القيامة، الشهيد مارجرجس، الأنبا أنطونيوس، السيدة العذراء، أبونا فلتاؤس...)"
                       rows={3}
-                      className="w-full bg-stone-950/80 border border-stone-700/70 focus:border-amber-400 rounded-2xl p-0.5 text-sm md:text-base text-stone-100 placeholder-stone-500 focus:outline-none transition-all resize-none shadow-inner"
+                      className="w-full bg-stone-950/80 border border-stone-700/70 focus:border-amber-400 rounded-2xl p-2 text-sm md:text-base text-stone-100 placeholder-stone-500 focus:outline-none transition-all resize-none shadow-inner"
                       disabled={isGenerating}
                     />
                   </div>
 
                   {/* Fast Saint Quick Selection Chips */}
-                  <div className="mt-0.5">
-                    <span className="text-[11px] text-amber-300/70 font-semibold mb-0.25 block">
+                  <div className="mt-2">
+                    <span className="text-[11px] text-amber-300/70 font-semibold mb-1 block">
                       ⚡ اختيار سريع لقديسين معتمدين بحروفهم القبطية:
                     </span>
-                    <div className="flex flex-wrap gap-0.25 max-h-6 overflow-y-auto pr-0.5">
+                    <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-2">
                       {COPTIC_SAINTS_REGISTRY.map((saint) => (
                         <button
                           key={saint.id}
@@ -301,10 +301,10 @@ export default function IconGeneratorClient() {
                             setPrompt(saint.arabicName);
                             setSelectedStyle("coptic");
                           }}
-                          className="text-[11px] px-0.5 py-0.25 rounded-xl bg-stone-800/80 hover:bg-amber-500/20 hover:border-amber-400/50 text-stone-300 hover:text-amber-200 border border-stone-700/60 transition-all flex items-center gap-0.25"
+                          className="text-[11px] px-2 py-1 rounded-xl bg-stone-800/80 hover:bg-amber-500/20 hover:border-amber-400/50 text-stone-300 hover:text-amber-200 border border-stone-700/60 transition-all flex items-center gap-1"
                         >
                           <span>{saint.arabicName.split(" ")[0]} {saint.arabicName.split(" ")[1] || ""}</span>
-                          <span className="text-[9px] text-amber-400 font-mono bg-amber-950/60 px-0.25 py-0.25 rounded">
+                          <span className="text-[9px] text-amber-400 font-mono bg-amber-950/60 px-1 py-1 rounded">
                             {saint.copticTitleInscription}
                           </span>
                         </button>
@@ -313,12 +313,12 @@ export default function IconGeneratorClient() {
                   </div>
 
                   {/* Aspect Ratio Selector */}
-                  <div className="mt-1 pt-0.5 border-t border-white/5 flex flex-wrap items-center justify-between gap-0.25">
-                    <span className="text-xs font-semibold text-stone-400 flex items-center gap-0.25">
+                  <div className="mt-4 pt-2 border-t border-white/5 flex flex-wrap items-center justify-between gap-1">
+                    <span className="text-xs font-semibold text-stone-400 flex items-center gap-1">
                       <Sliders size={13} />
                       نسبة الأبعاد:
                     </span>
-                    <div className="flex flex-wrap gap-0.25">
+                    <div className="flex flex-wrap gap-1">
                       {RATIOS.map((r) => (
                         <button
                           key={r.id}
@@ -363,15 +363,15 @@ export default function IconGeneratorClient() {
 
                 {/* 2. Select Style */}
                 <div>
-                  <div className="flex items-center justify-between mb-0.5 px-0.5">
-                    <h2 className="text-sm font-bold text-amber-200 flex items-center gap-0.25">
+                  <div className="flex items-center justify-between mb-2 px-2">
+                    <h2 className="text-sm font-bold text-amber-200 flex items-center gap-1">
                       <Layers size={16} className="text-amber-400" />
                       اختر النمط الأيقونوغرافي المعتمد
                     </h2>
                     <span className="text-xs text-amber-300/60">3 أنماط كنسية كلاسيكية</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {Object.values(ICON_STYLES).map((styleDef) => (
                       <IconStyleCard
                         key={styleDef.id}
@@ -384,12 +384,12 @@ export default function IconGeneratorClient() {
                 </div>
 
                 {/* 3. Quick Suggestions */}
-                <div className="bg-stone-900/40 border border-white/5 rounded-3xl p-1 backdrop-blur-md">
-                  <h3 className="text-xs font-bold text-amber-300/80 mb-0.5 flex items-center gap-0.25">
+                <div className="bg-stone-900/40 border border-white/5 rounded-3xl p-4 backdrop-blur-md">
+                  <h3 className="text-xs font-bold text-amber-300/80 mb-2 flex items-center gap-1">
                     <BookOpen size={14} className="text-amber-400" />
                     مشاهد وأيقونات كنسية شهيرة:
                   </h3>
-                  <div className="flex flex-wrap gap-0.25">
+                  <div className="flex flex-wrap gap-1">
                     {QUICK_SUGGESTIONS.map((item, idx) => (
                       <button
                         key={idx}
@@ -397,7 +397,7 @@ export default function IconGeneratorClient() {
                           setPrompt(item.arabicPrompt);
                           setSelectedStyle(item.style);
                         }}
-                        className="text-xs bg-stone-800/70 hover:bg-amber-950/40 hover:border-amber-500/40 text-stone-300 hover:text-amber-200 px-0.5 py-0.25 rounded-xl border border-stone-700/50 transition-all text-right"
+                        className="text-xs bg-stone-800/70 hover:bg-amber-950/40 hover:border-amber-500/40 text-stone-300 hover:text-amber-200 px-2 py-1 rounded-xl border border-stone-700/50 transition-all text-right"
                       >
                         {item.title}
                       </button>
@@ -406,26 +406,26 @@ export default function IconGeneratorClient() {
                 </div>
 
                 {/* 4. Canonical Coptic Iconography Secrets Guide */}
-                <div className="bg-stone-900/70 border border-amber-500/20 rounded-3xl p-1 backdrop-blur-md space-y-0.5">
+                <div className="bg-stone-900/70 border border-amber-500/20 rounded-3xl p-4 backdrop-blur-md space-y-2">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-amber-300 flex items-center gap-0.5">
+                    <h3 className="text-sm font-bold text-amber-300 flex items-center gap-2">
                       <Sparkles size={16} className="text-amber-400" />
                       أسرار وقواعد الأيقونة القبطية الأرثوذكسية:
                     </h3>
-                    <span className="text-[10px] font-bold px-1 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                    <span className="text-[10px] font-bold px-4 py-2 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
                       قواعد معتمدة
                     </span>
                   </div>
 
                   {/* 1. Colors */}
                   <div>
-                    <h4 className="text-xs font-bold text-amber-200/90 mb-0.5 flex items-center gap-0.5">
+                    <h4 className="text-xs font-bold text-amber-200/90 mb-2 flex items-center gap-2">
                       <span>🎨</span> 1. دلالات الألوان في الأيقونة:
                     </h4>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-0.5">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {CANONICAL_COPTIC_RULES.colors.map((c, i) => (
-                        <div key={i} className="p-1 rounded-xl bg-stone-950/60 border border-stone-800 flex items-start gap-0.5">
-                          <span className="w-3.5 h-3.5 rounded-full shrink-0 mt-0.5 border border-white/20" style={{ backgroundColor: c.hex }} />
+                        <div key={i} className="p-4 rounded-xl bg-stone-950/60 border border-stone-800 flex items-start gap-2">
+                          <span className="w-14 h-14 rounded-full shrink-0 mt-2 border border-white/20" style={{ backgroundColor: c.hex }} />
                           <div>
                             <span className="block text-[11px] font-bold text-stone-200">{c.name}</span>
                             <span className="block text-[9px] text-stone-400 leading-tight">{c.meaning}</span>
@@ -436,8 +436,8 @@ export default function IconGeneratorClient() {
                   </div>
 
                   {/* 2. Perspective */}
-                  <div className="p-1 rounded-2xl bg-amber-500/5 border border-amber-500/15">
-                    <h4 className="text-xs font-bold text-amber-300 mb-0.5 flex items-center gap-0.5">
+                  <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/15">
+                    <h4 className="text-xs font-bold text-amber-300 mb-2 flex items-center gap-2">
                       <span>📐</span> 2. المنظور الروحي المسطح (Flat 2D):
                     </h4>
                     <p className="text-[11px] text-stone-300 leading-relaxed">
@@ -446,14 +446,14 @@ export default function IconGeneratorClient() {
                   </div>
 
                   {/* 3. Features & 4. Symbols */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.5">
-                    <div className="p-1 rounded-2xl bg-stone-950/60 border border-stone-800">
-                      <h4 className="text-xs font-bold text-amber-200 mb-0.5 flex items-center gap-0.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="p-4 rounded-2xl bg-stone-950/60 border border-stone-800">
+                      <h4 className="text-xs font-bold text-amber-200 mb-2 flex items-center gap-2">
                         <span>👁️</span> 3. الملامح الروحية:
                       </h4>
-                      <ul className="text-[10px] text-stone-300 space-y-0.5">
+                      <ul className="text-[10px] text-stone-300 space-y-2">
                         {CANONICAL_COPTIC_RULES.facialFeatures.slice(0, 3).map((f, i) => (
-                          <li key={i} className="flex items-start gap-0.5">
+                          <li key={i} className="flex items-start gap-2">
                             <span className="text-amber-400 font-bold">•</span>
                             <span><strong>{f.feature}:</strong> {f.meaning}</span>
                           </li>
@@ -461,13 +461,13 @@ export default function IconGeneratorClient() {
                       </ul>
                     </div>
 
-                    <div className="p-1 rounded-2xl bg-stone-950/60 border border-stone-800">
-                      <h4 className="text-xs font-bold text-amber-200 mb-0.5 flex items-center gap-0.5">
+                    <div className="p-4 rounded-2xl bg-stone-950/60 border border-stone-800">
+                      <h4 className="text-xs font-bold text-amber-200 mb-2 flex items-center gap-2">
                         <span>☦️</span> 4. الرموز الكنسية:
                       </h4>
-                      <ul className="text-[10px] text-stone-300 space-y-0.5">
+                      <ul className="text-[10px] text-stone-300 space-y-2">
                         {CANONICAL_COPTIC_RULES.symbols.map((s, i) => (
-                          <li key={i} className="flex items-start gap-0.5">
+                          <li key={i} className="flex items-start gap-2">
                             <span className="text-amber-400 font-bold">•</span>
                             <span><strong>{s.symbol}:</strong> {s.meaning}</span>
                           </li>
@@ -479,15 +479,15 @@ export default function IconGeneratorClient() {
               </div>
 
               {/* Right Column (Generated Result & Interactive Live Loader) - 5 cols */}
-              <div className="lg:col-span-5 flex flex-col gap-0.5 sticky top-2">
-                <div className="bg-stone-900/80 border border-amber-500/30 rounded-3xl p-0.5 md:p-1 backdrop-blur-xl shadow-2xl flex flex-col items-center">
-                  <div className="w-full flex items-center justify-between mb-0.5">
-                    <h2 className="text-sm font-bold text-amber-200 flex items-center gap-0.25">
+              <div className="lg:col-span-5 flex flex-col gap-2 sticky top-8">
+                <div className="bg-stone-900/80 border border-amber-500/30 rounded-3xl p-2 md:p-4 backdrop-blur-xl shadow-2xl flex flex-col items-center">
+                  <div className="w-full flex items-center justify-between mb-2">
+                    <h2 className="text-sm font-bold text-amber-200 flex items-center gap-1">
                       <ImageIcon size={16} className="text-amber-400" />
                       معاينة الأيقونة الناتجة
                     </h2>
                     {currentIcon && (
-                      <span className="text-[11px] font-bold px-0.5 py-0.25 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      <span className="text-[11px] font-bold px-2 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
                         {currentIcon.styleTitle}
                       </span>
                     )}
@@ -499,19 +499,19 @@ export default function IconGeneratorClient() {
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="flex flex-col items-center gap-0.5 p-1 text-center w-full max-w-sm"
+                        className="flex flex-col items-center gap-2 p-4 text-center w-full max-w-sm"
                       >
                         {/* Golden Coptic Halo & Cross Animated Icon */}
                         <div className="relative flex items-center justify-center">
                           <motion.div
                             animate={{ rotate: 360 }}
                             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                            className="w-6 h-6 rounded-full border-2 border-dashed border-amber-400/40 flex items-center justify-center"
+                            className="w-24 h-24 rounded-full border-2 border-dashed border-amber-400/40 flex items-center justify-center"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.1, 1], opacity: [0.7, 1, 0.7] }}
                             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute w-2 h-2 rounded-full bg-amber-500/20 blur-md"
+                            className="absolute w-8 h-8 rounded-full bg-amber-500/20 blur-md"
                           />
                           <div className="absolute text-amber-300 text-2xl font-serif">
                             {LOADING_STAGES[loadingStageIdx].icon}
@@ -533,7 +533,7 @@ export default function IconGeneratorClient() {
                           </AnimatePresence>
 
                           {/* Progress Bar Animation */}
-                          <div className="w-full bg-stone-800/90 h-2 rounded-full mt-0.5 overflow-hidden border border-amber-500/20">
+                          <div className="w-full bg-stone-800/90 h-8 rounded-full mt-2 overflow-hidden border border-amber-500/20">
                             <motion.div
                               className="h-full bg-linear-to-r from-amber-500 to-yellow-300 rounded-full"
                               animate={{ width: `${LOADING_STAGES[loadingStageIdx].progress}%` }}
@@ -543,8 +543,8 @@ export default function IconGeneratorClient() {
                         </div>
 
                         {/* Spiritual Meditation Box during Generation */}
-                        <div className="mt-0.5 p-0.5 rounded-2xl bg-amber-950/40 border border-amber-500/20 text-xs text-amber-100/90 leading-relaxed font-serif text-center w-full">
-                          <p className="text-[10px] text-amber-400/70 font-semibold mb-1">
+                        <div className="mt-2 p-2 rounded-2xl bg-amber-950/40 border border-amber-500/20 text-xs text-amber-100/90 leading-relaxed font-serif text-center w-full">
+                          <p className="text-[10px] text-amber-400/70 font-semibold mb-4">
                             🕊️ تأمل كنسي مبارك:
                           </p>
                           <AnimatePresence mode="wait">
@@ -569,7 +569,7 @@ export default function IconGeneratorClient() {
                         />
 
                         {currentIcon.copticInscription && (
-                          <div className="absolute top-1 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md px-0.5 py-0.5 rounded-full border border-amber-400/50 shadow-xl pointer-events-none z-10">
+                          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md px-2 py-2 rounded-full border border-amber-400/50 shadow-xl pointer-events-none z-10">
                             <span className="text-amber-300 font-coptic text-sm md:text-base font-bold tracking-widest">
                               {currentIcon.copticInscription}
                             </span>
@@ -577,10 +577,10 @@ export default function IconGeneratorClient() {
                         )}
 
                         {/* Hover action overlay */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-0.25 p-1">
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-1 p-4">
                           <button
                             onClick={() => setModalIcon(currentIcon)}
-                            className="bg-amber-400 text-stone-950 font-bold px-1 py-0.25 rounded-xl text-xs flex items-center gap-0.25 shadow-lg hover:bg-amber-300 transition-colors"
+                            className="bg-amber-400 text-stone-950 font-bold px-4 py-1 rounded-xl text-xs flex items-center gap-1 shadow-lg hover:bg-amber-300 transition-colors"
                           >
                             <Eye size={15} />
                             <span>عرض وشرح لاهوتي</span>
@@ -588,8 +588,8 @@ export default function IconGeneratorClient() {
                         </div>
                       </>
                     ) : (
-                      <div className="flex flex-col items-center gap-0.25 p-1 text-center text-stone-500">
-                        <ImageIcon size={36} className="text-stone-700 mb-0.5" />
+                      <div className="flex flex-col items-center gap-1 p-4 text-center text-stone-500">
+                        <ImageIcon size={36} className="text-stone-700 mb-2" />
                         <p className="text-sm font-medium text-stone-400">لا توجد أيقونة مولدة بعد</p>
                         <p className="text-xs text-stone-500 max-w-xs">
                           اكتب اسم القديس أو المشهد واختر النمط واضغط على زر التوليد لتبدأ
@@ -600,8 +600,8 @@ export default function IconGeneratorClient() {
 
                   {/* Theological Insight snippet if available */}
                   {currentIcon && currentIcon.theologicalInsight && !isGenerating && (
-                    <div className="w-full mt-0.5 p-0.5 rounded-2xl bg-amber-950/30 border border-amber-500/20 text-xs text-amber-100/90 leading-relaxed font-serif">
-                      <p className="font-bold text-amber-300 mb-1 flex items-center gap-0.25">
+                    <div className="w-full mt-2 p-2 rounded-2xl bg-amber-950/30 border border-amber-500/20 text-xs text-amber-100/90 leading-relaxed font-serif">
+                      <p className="font-bold text-amber-300 mb-4 flex items-center gap-1">
                         <CheckCircle2 size={13} />
                         التأمل اللاهوتي للأيقونة:
                       </p>
@@ -618,11 +618,11 @@ export default function IconGeneratorClient() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="flex flex-col gap-1"
+              className="flex flex-col gap-4"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg md:text-xl font-bold text-amber-100 flex items-center gap-0.25">
+                  <h2 className="text-lg md:text-xl font-bold text-amber-100 flex items-center gap-1">
                     <ImageIcon className="text-amber-400" size={20} />
                     معرض الأيقونات والصور المولدة
                   </h2>
@@ -640,7 +640,7 @@ export default function IconGeneratorClient() {
                         toast.success("تم مسح المعرض");
                       }
                     }}
-                    className="text-xs text-rose-400 hover:text-rose-300 px-0.5 py-0.25 rounded-xl bg-rose-950/30 border border-rose-800/40"
+                    className="text-xs text-rose-400 hover:text-rose-300 px-2 py-1 rounded-xl bg-rose-950/30 border border-rose-800/40"
                   >
                     مسح المعرض
                   </button>
@@ -648,7 +648,7 @@ export default function IconGeneratorClient() {
               </div>
 
               {gallery.length === 0 ? (
-                <div className="bg-stone-900/40 border border-white/5 rounded-3xl p-2 text-center flex flex-col items-center gap-0.5">
+                <div className="bg-stone-900/40 border border-white/5 rounded-3xl p-8 text-center flex flex-col items-center gap-2">
                   <ImageIcon size={40} className="text-stone-700" />
                   <h3 className="text-base font-bold text-stone-300">المعرض فارغ حالياً</h3>
                   <p className="text-xs text-stone-500 max-w-sm">
@@ -656,13 +656,13 @@ export default function IconGeneratorClient() {
                   </p>
                   <button
                     onClick={() => setActiveTab("create")}
-                    className="mt-0.5 px-1 py-0.25 rounded-xl bg-amber-400 text-stone-950 font-bold text-xs"
+                    className="mt-2 px-4 py-1 rounded-xl bg-amber-400 text-stone-950 font-bold text-xs"
                   >
                     توليد أول أيقونة
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                   {gallery.map((item) => (
                     <motion.div
                       key={item.id}
@@ -677,14 +677,14 @@ export default function IconGeneratorClient() {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           loading="lazy"
                         />
-                        <div className="absolute top-1 right-1">
-                          <span className="text-[10px] font-bold px-0.5 py-0.5 rounded-full bg-black/70 text-amber-300 border border-amber-400/30 backdrop-blur-md">
+                        <div className="absolute top-4 right-4">
+                          <span className="text-[10px] font-bold px-2 py-2 rounded-full bg-black/70 text-amber-300 border border-amber-400/30 backdrop-blur-md">
                             {item.styleTitle}
                           </span>
                         </div>
                       </div>
-                      <div className="p-0.5">
-                        <p className="text-xs font-bold text-stone-200 line-clamp-2 mb-0.5">
+                      <div className="p-2">
+                        <p className="text-xs font-bold text-stone-200 line-clamp-2 mb-2">
                           {item.prompt}
                         </p>
                         <p className="text-[10px] text-stone-500">

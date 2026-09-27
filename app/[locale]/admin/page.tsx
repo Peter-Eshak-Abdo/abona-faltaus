@@ -166,8 +166,8 @@
 //   }
 
 //   return (
-//     <div className="container mx-auto p-6 space-y-8">
-//       <h1 className="text-3xl font-bold text-center mb-8">إدارة الإشعارات والآيات</h1>
+//     <div className="container mx-auto p-24 space-y-32">
+//       <h1 className="text-3xl font-bold text-center mb-32">إدارة الإشعارات والآيات</h1>
 
 //       {/* Test Notification Button */}
 //       <Card>
@@ -186,9 +186,9 @@
 //         <CardHeader>
 //           <CardTitle>إدارة الآيات ({verses.length})</CardTitle>
 //         </CardHeader>
-//         <CardContent className="space-y-4">
+//         <CardContent className="space-y-16">
 //           {/* Add New Verse */}
-//           <div className="space-y-2">
+//           <div className="space-y-8">
 //             <Textarea
 //               placeholder="نص الآية"
 //               value={newVerse.text}
@@ -200,17 +200,17 @@
 //               onChange={(e) => setNewVerse({ ...newVerse, reference: e.target.value })}
 //             />
 //             <Button onClick={addVerse} className="w-full">
-//               <Plus className="w-4 h-4 mr-2" />
+//               <Plus className="w-16 h-16 mr-8" />
 //               إضافة آية جديدة
 //             </Button>
 //           </div>
 
 //           {/* Verses List */}
-//           <div className="space-y-2 max-h-96 overflow-y-auto">
+//           <div className="space-y-8 max-h-96 overflow-y-auto">
 //             {verses.map((verse) => (
-//               <Card key={verse.id} className="p-4">
+//               <Card key={verse.id} className="p-16">
 //                 {editingVerse?.id === verse.id ? (
-//                   <div className="space-y-2">
+//                   <div className="space-y-8">
 //                     <Textarea
 //                       value={editingVerse.text}
 //                       onChange={(e) => setEditingVerse({ ...editingVerse, text: e.target.value })}
@@ -219,7 +219,7 @@
 //                       value={editingVerse.reference}
 //                       onChange={(e) => setEditingVerse({ ...editingVerse, reference: e.target.value })}
 //                     />
-//                     <div className="flex gap-2">
+//                     <div className="flex gap-8">
 //                       <Button onClick={updateVerse} size="sm">حفظ</Button>
 //                       <Button onClick={() => setEditingVerse(null)} variant="outline" size="sm">إلغاء</Button>
 //                     </div>
@@ -227,15 +227,15 @@
 //                 ) : (
 //                   <div className="flex justify-between items-start">
 //                     <div className="flex-1">
-//                       <p className="text-sm mb-1">{verse.text}</p>
+//                       <p className="text-sm mb-4">{verse.text}</p>
 //                       <Badge variant="secondary">{verse.reference}</Badge>
 //                     </div>
-//                     <div className="flex gap-2">
+//                     <div className="flex gap-8">
 //                       <Button onClick={() => setEditingVerse(verse)} size="sm" variant="outline">
-//                         <Edit className="w-4 h-4" />
+//                         <Edit className="w-16 h-16" />
 //                       </Button>
 //                       <Button onClick={() => deleteVerse(verse.id)} size="sm" variant="destructive">
-//                         <Trash2 className="w-4 h-4" />
+//                         <Trash2 className="w-16 h-16" />
 //                       </Button>
 //                     </div>
 //                   </div>
@@ -251,21 +251,21 @@
 //         <CardHeader>
 //           <CardTitle>جدولة الإشعارات ({schedules.length})</CardTitle>
 //         </CardHeader>
-//         <CardContent className="space-y-4">
+//         <CardContent className="space-y-16">
 //           {/* Add New Schedule */}
-//           <div className="space-y-2">
-//             <div className="flex gap-2">
+//           <div className="space-y-8">
+//             <div className="flex gap-8">
 //               <Input
 //                 type="time"
 //                 value={newSchedule.time}
 //                 onChange={(e) => setNewSchedule({ ...newSchedule, time: e.target.value })}
 //               />
 //               <Button onClick={addSchedule} className="flex-1">
-//                 <Clock className="w-4 h-4 mr-2" />
+//                 <Clock className="w-16 h-16 mr-8" />
 //                 إضافة جدولة جديدة
 //               </Button>
 //             </div>
-//             <div className="flex gap-1 flex-wrap">
+//             <div className="flex gap-4 flex-wrap">
 //               {dayNames.map((day, index) => (
 //                 <Badge
 //                   key={index}
@@ -285,15 +285,15 @@
 //           </div>
 
 //           {/* Schedules List */}
-//           <div className="space-y-2">
+//           <div className="space-y-8">
 //             {schedules.map((schedule) => (
-//               <Card key={schedule.id} className="p-4">
+//               <Card key={schedule.id} className="p-16">
 //                 <div className="flex justify-between items-center">
-//                   <div className="flex items-center gap-4">
+//                   <div className="flex items-center gap-16">
 //                     <Badge variant={schedule.enabled ? "default" : "secondary"}>
 //                       {schedule.time}
 //                     </Badge>
-//                     <div className="flex gap-1">
+//                     <div className="flex gap-4">
 //                       {schedule.daysOfWeek.map(day => (
 //                         <Badge key={day} variant="outline" className="text-xs">
 //                           {dayNames[day]}
@@ -301,7 +301,7 @@
 //                       ))}
 //                     </div>
 //                   </div>
-//                   <div className="flex gap-2">
+//                   <div className="flex gap-8">
 //                     <Button
 //                       onClick={() => toggleSchedule(schedule.id, !schedule.enabled)}
 //                       size="sm"
@@ -310,7 +310,7 @@
 //                       {schedule.enabled ? "مفعل" : "معطل"}
 //                     </Button>
 //                     <Button onClick={() => deleteSchedule(schedule.id)} size="sm" variant="destructive">
-//                       <Trash2 className="w-4 h-4" />
+//                       <Trash2 className="w-16 h-16" />
 //                     </Button>
 //                   </div>
 //                 </div>
